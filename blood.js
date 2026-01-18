@@ -343,7 +343,6 @@ const FOUNDATION_QUESTIONS = [
     { q: "If a cell is placed in a 'Hypertonic' solution, the cell will:", o: ["A. Swell", "B. Shrink", "C. Stay the same", "D. Explode"], a: 1 },
     { q: "If a cell is placed in a 'Hypotonic' solution, the cell will:", o: ["A. Shrink", "B. Swell", "C. Stay the same", "D. Turn red"], a: 1 },
     { q: "The selectively permeable membrane is most permeable to:", o: ["A. Proteins", "B. Water", "C. Large anions", "D. Glucose"], a: 1 },
-    { q: "The 'Fluid Mosaic Model' was proposed by:", o: ["A. Watson and Crick", "B. Singer and Nicolson", "C. Robert Hooke", "D. Louis Pasteur"], a: 1 },
     { q: "The Carbohydrate coat on the outer surface of the cell membrane is the:", o: ["A. Glycocalyx", "B. Cytoskeleton", "C. Lipid raft", "D. Nucleolus"], a: 0 },
     { q: "G-proteins act as:", o: ["A. Structural fibers", "B. Signal transducers", "C. Enzymes in lysosomes", "D. Oxygen carriers"], a: 1 },
     { q: "Which transport process requires ATP directly?", o: ["A. Simple diffusion", "B. Facilitated diffusion", "C. Primary active transport", "D. Osmosis"], a: 2 },
@@ -1189,5 +1188,6 @@ const TERMINOLOGY_QUESTIONS = [
     { q: "Increased pain sensation (oversensitivity) is called:", o: ["A. Hypertension", "B. Hyperalgesia", "C. Hypoesthesia", "D. Analgesia"], a: 1 }
 
 ];
+
 
 
