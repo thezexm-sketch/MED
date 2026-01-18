@@ -693,7 +693,6 @@ const FOUNDATION_QUESTIONS = [
     { q: "Which acidic heteropolysaccharide is major in cartilage?", o: ["a) Hyaluronic acid", "b) Chondroitin sulfate", "c) Dermatan sulfate", "d) Keratan sulfate"], a: 1 },
     { q: "Which carbohydrate can help relieve constipation?", o: ["a) Homopolysaccharide structural CHO in plants (cellulose)", "b) Homopolysaccharide storage CHO in plants (starch)", "c) Homopolysaccharide storage CHO in animals (glycogen)", "d) Homopolysaccharide structural CHO in animals (chitin)"], a: 0 },
     { q: "Which of the following is a prostaglandin precursor?", o: ["a) Linoleic acid", "b) Oleic acid", "c) arachdic acid", "d) Arachidonic acid"], a: 3 },
-    { q: "Which of the following is a non-protein neurotransmitter?", o: ["a) GABA", "b) Beta-alanine", "c) Glutamate", "d) Glycine"], a: 0 },
     { q: "Which of the following is a character of apoptosis?", o: ["A) cell swelling", "B) cell rupture", "C) breakdown of organelles", "D) Hypercondensation of chromatin"], a: 3 },
     { q: "In non-competitive inhibition:", o: ["A) Constant Km", "B) Constant Vmax", "C) Increase Vmax", "D) Decrease Km"], a: 0 },
     { q: "Which structure in the cranial region connects the ectoderm and endoderm?", o: ["A) Buccopharyngeal membrane", "B) Cloacal membrane", "C) Cardiogenic area", "D) Septum transversum"], a: 0 },
@@ -1190,4 +1189,5 @@ const TERMINOLOGY_QUESTIONS = [
     { q: "Increased pain sensation (oversensitivity) is called:", o: ["A. Hypertension", "B. Hyperalgesia", "C. Hypoesthesia", "D. Analgesia"], a: 1 }
 
 ];
+
 
