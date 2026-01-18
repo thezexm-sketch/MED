@@ -125,6 +125,9 @@
 
         .stats-box {
             margin-top: auto;
+            /* Space from top elements */
+            margin-bottom: 40px;
+            /* Space from bottom edge (Fixed for Tablet) */
             background: var(--bg-app);
             padding: 20px;
             border-radius: 16px;
@@ -500,13 +503,11 @@
             max-width: 100%;
             height: auto;
             max-height: 300px;
-            /* Prevent huge images */
             border-radius: 12px;
             margin: 15px auto;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             display: none;
-            /* Hidden by default */
         }
 
         .timer-line {
@@ -1159,9 +1160,7 @@
 
                 const total = questions.length;
                 const pct = Math.round((mastered / total) * 100);
-                const badgeText = isMistakes
-                    ? `${relevantQs.length}`
-                    : `${questions.length}`;
+                const badgeText = `${relevantQs.length}`;
 
                 const statsHTML = isMistakes ? '' : `<p style="color:var(--text-muted); font-size:0.9rem;">${mastered}/${total} Solved</p>`;
                 const imgSource = IMAGES[modName] || '';
@@ -1266,8 +1265,7 @@
             // Filter logic matches Dashboard
             let pool = CurrentSession.mode === 'mistakes'
                 ? modQs.filter(q => AppState.progress[q.q] === 'wrong')
-                : modQs; // ⭐ كل أسئلة الـ JS
-
+                : modQs.filter(q => !AppState.progress[q.q]);
 
             if (pool.length === 0) return alert("No questions available!");
 
