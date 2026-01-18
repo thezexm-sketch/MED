@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedStorm Pro</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Theme Colors */
+            --primary: #4f46e5;
+            --primary-light: #e0e7ff;
+            --primary-dark: #4338ca;
+
+            --success: #10b981;
+            --error: #ef4444;
+
+            --bg-app: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+
+            --sidebar-width: 260px;
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Dark Mode */
+        [data-theme='dark'] {
+            --bg-app: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --primary-light: rgba(79, 70, 229, 0.2);
+        }
+
+        /* Mistakes Mode - Red Accent ONLY */
+        [data-mode='mistakes'] {
+            --primary: #f43f5e;
+            --primary-light: #ffe4e6;
+        }
+
+        [data-mode='mistakes'][data-theme='dark'] {
+            --primary-light: rgba(244, 63, 94, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.2s ease-out;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-app);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            z-index: 50;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 2.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo svg {
+            width: 36px;
+            height: 36px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-app);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .stats-box {
+            margin-top: auto;
+            background: var(--bg-app);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .gold-text {
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            margin-top: 5px;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: margin 0.3s ease;
+        }
+
+        .top-bar {
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2.5rem;
+            background: var(--bg-app);
+            transition: transform 0.3s ease;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        /* --- FOCUS MODE --- */
+        body.focus-mode .sidebar {
+            transform: translateX(-100%);
+            width: 0;
+            padding: 0;
+            opacity: 0;
+        }
+
+        body.focus-mode .main-content {
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        body.focus-mode .view-section {
+            padding: 0;
+        }
+
+        .quiz-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        body.focus-mode .quiz-header {
+            display: flex;
+        }
+
+        body.focus-mode .top-bar {
+            display: none;
+        }
+
+        /* --- VIEWS --- */
+        .view-section {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 2.5rem 2.5rem 2.5rem;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- DASHBOARD --- */
+        #view-dashboard.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100%;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 220px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .card-banner {
+            width: calc(100% + 48px);
+            margin: -24px -24px 20px -24px;
+            height: 150px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 1.4rem;
+        }
+
+        .card-badge {
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        [data-mode='mistakes'] .card-badge {
+            background: var(--error);
+        }
+
+        .reset-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+        }
+
+        .reset-btn:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .progress-bar {
+            height: 8px;
+            width: 100%;
+            background: var(--bg-app);
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.8s ease;
+        }
+
+        /* --- ANALYTICS --- */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .stat-card-val {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .analytics-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .analytics-row {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stacked-bar {
+            display: flex;
+            height: 14px;
+            width: 100%;
+            border-radius: 7px;
+            overflow: hidden;
+            background: var(--bg-app);
+        }
+
+        .bar-seg {
+            height: 100%;
+        }
+
+        .bar-green {
+            background: var(--success);
+        }
+
+        .bar-red {
+            background: var(--error);
+        }
+
+        .bar-gray {
+            background: var(--border);
+        }
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        /* --- QUIZ UI --- */
+        .quiz-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding-top: 80px;
+        }
+
+        .quiz-left {
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-right {
+            padding: 0 1rem 4rem 1rem;
+            overflow-y: auto;
+        }
+
+        #q-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1.6;
+            color: var(--text-main);
+            margin: 20px auto;
+        }
+
+        #q-tag {
+            display: inline-block;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 5px 12px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Question Image Style */
+        #q-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 300px;
+            /* Prevent huge images */
+            border-radius: 12px;
+            margin: 15px auto;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: none;
+            /* Hidden by default */
+        }
+
+        .timer-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            z-index: 90;
+        }
+
+        .timer-active {
+            height: 100%;
+            background: var(--primary);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .opt-btn {
+            width: 100%;
+            padding: 20px 24px;
+            margin-bottom: 14px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            text-align: left;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .opt-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .opt-btn.correct {
+            background: #dcfce7 !important;
+            border-color: var(--success) !important;
+            color: #065f46;
+        }
+
+        .opt-btn.wrong {
+            background: #fee2e2 !important;
+            border-color: var(--error) !important;
+            color: #991b1b;
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        .nav-btns {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .quiz-btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-prev {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border: 2px solid var(--border);
+        }
+
+        .btn-prev:hover {
+            background: var(--bg-app);
+            border-color: var(--text-muted);
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-next:disabled {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* --- QUESTION MAP DRAWER (LEFT SIDE) --- */
+        .q-map-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 200;
+            display: none;
+            justify-content: flex-start;
+            backdrop-filter: blur(2px);
+        }
+
+        .q-map-sidebar {
+            width: 350px;
+            height: 100%;
+            background: var(--bg-card);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            animation: slideInLeft 0.3s ease;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .q-map-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .q-box {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--text-main);
+            background: var(--bg-app);
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .q-box:hover {
+            border-color: var(--primary);
+            background: var(--bg-card);
+        }
+
+        .q-box.active {
+            border: 2px solid var(--primary);
+            font-weight: 700;
+        }
+
+        .q-box.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .q-box.wrong {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+
+        .q-num {
+            font-weight: 800;
+            min-width: 25px;
+        }
+
+        .q-preview {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 0.8;
+        }
+
+        /* --- RESULTS --- */
+        .progress-ring-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px auto;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring__circle-bg {
+            fill: transparent;
+            stroke: var(--border);
+            stroke-width: 10;
+        }
+
+        .progress-ring__circle {
+            fill: transparent;
+            stroke: var(--primary);
+            stroke-width: 10;
+            stroke-dasharray: 502;
+            stroke-dashoffset: 502;
+            transition: stroke-dashoffset 1.5s ease-out;
+            stroke-linecap: round;
+        }
+
+        .result-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .result-percent {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            background: var(--bg-card);
+            width: 90%;
+            max-width: 450px;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: popUp 0.3s ease;
+        }
+
+        @keyframes popUp {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .chip-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .chip {
+            padding: 10px 18px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--bg-app);
+            color: var(--text-main);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 1.05rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 15px 25px;
+                flex-direction: row;
+                justify-content: space-between;
+                border-bottom: 1px solid var(--border);
+                border-right: none;
+            }
+
+            .sidebar .logo {
+                margin: 0;
+                font-size: 1.3rem;
+            }
+
+            .sidebar .nav-item span,
+            .stats-box {
+                display: none;
+            }
+
+            .sidebar .nav-item {
+                margin: 0;
+                padding: 10px;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            body.focus-mode .quiz-left {
+                padding: 1.5rem;
+                height: auto;
+            }
+
+            body.focus-mode .quiz-right {
+                padding: 1.5rem;
+                height: auto;
+            }
+
+            .q-map-sidebar {
+                width: 85%;
+            }
+        }
+    </style>
+</head>
+
+<body data-theme="light">
+
+    <nav class="sidebar">
+        <div class="logo">
+            <svg viewBox="0 0 64 64">
+                <path d="M14 22 V42 A18 18 0 0 0 50 42 V22" stroke="currentColor" />
+                <circle cx="14" cy="22" r="3" fill="currentColor" />
+                <circle cx="50" cy="22" r="3" fill="currentColor" />
+                <path d="M32 60 V40" stroke="currentColor" />
+                <circle cx="32" cy="60" r="8" fill="currentColor" />
+            </svg>
+            <span>MedStorm</span>
+        </div>
+
+        <div class="nav-item active" onclick="switchMode('dashboard')" id="nav-dash">
+            <i class="ri-apps-2-line"></i> <span>Modules</span>
+        </div>
+        <div class="nav-item" onclick="switchMode('mistakes')" id="nav-mistakes">
+            <i class="ri-error-warning-line"></i> <span>Mistakes</span>
+        </div>
+        <div class="nav-item" onclick="switchMode('analytics')" id="nav-analytics">
+            <i class="ri-bar-chart-box-line"></i> <span>Analytics</span>
+        </div>
+
+        <div class="stats-box">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:5px; font-weight:600;">Directed by :
+            </div>
+            <div class="gold-text">DRs / Mahmoud & Abdallah</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h2 id="page-title" style="font-size:1.5rem; font-weight:800;">Dashboard</h2>
+            <div class="action-group">
+                <button class="theme-btn" onclick="toggleTheme()">
+                    <i class="ri-moon-line"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="view-dashboard" class="view-section active">
+            <div class="grid" id="module-grid"></div>
+        </div>
+
+        <div id="view-analytics" class="view-section">
+            <div class="analytics-grid">
+                <div class="stat-card">
+                    <div class="stat-card-title">Total Solved</div>
+                    <div class="stat-card-val" id="ana-mastery">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-title">Questions Bank</div>
+                    <div class="stat-card-val" id="ana-total-qs">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-title">Global Accuracy</div>
+                    <div class="stat-card-val" id="ana-global-acc">0%</div>
+                </div>
+            </div>
+            <h3 style="margin-bottom:20px; font-weight:800;">Module Breakdown</h3>
+            <div class="analytics-list" id="analytics-list"></div>
+        </div>
+
+        <div id="view-quiz" class="view-section" style="padding:0; display:none;">
+            <div class="quiz-header">
+                <button class="theme-btn" onclick="toggleQMap()"><i class="ri-menu-2-line"></i></button>
+
+                <div class="action-group">
+                    <button class="theme-btn" onclick="exitQuiz()"><i class="ri-home-line"></i></button>
+                    <button class="theme-btn" onclick="toggleTheme()"><i class="ri-moon-line"></i></button>
+                </div>
+            </div>
+
+            <div class="timer-line">
+                <div class="timer-active" id="timer-bar"></div>
+            </div>
+
+            <div class="quiz-wrapper">
+                <div class="quiz-left">
+                    <span id="q-tag">TAG</span>
+                    <img id="q-image" src="" alt="Question Image">
+                    <div id="q-text">Loading...</div>
+                </div>
+                <div class="quiz-right">
+                    <div id="options-box"></div>
+                    <div class="nav-btns">
+                        <button class="quiz-btn btn-prev" id="btn-prev" onclick="prevQuestion()">Previous</button>
+                        <button class="quiz-btn btn-next" id="btn-next" onclick="nextQuestion()">Next Question</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="q-map-overlay" id="q-map-overlay" onclick="toggleQMap()">
+            <div class="q-map-sidebar" onclick="event.stopPropagation()">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h3 style="margin:0;">Question Map</h3>
+                    <i class="ri-close-line" style="font-size:1.5rem; cursor:pointer;" onclick="toggleQMap()"></i>
+                </div>
+                <div class="q-map-grid" id="q-map-grid"></div>
+            </div>
+        </div>
+
+        <div id="view-results" class="view-section"
+            style="text-align:center; display:none; align-items:center; justify-content:center; height:100%;">
+            <div style="max-width:400px; width:100%;">
+                <div class="progress-ring-container">
+                    <svg class="progress-ring" width="180" height="180">
+                        <circle class="progress-ring__circle-bg" cx="90" cy="90" r="80" />
+                        <circle class="progress-ring__circle" id="result-ring" cx="90" cy="90" r="80" />
+                    </svg>
+                    <div class="result-content">
+                        <div class="result-percent" id="final-percent">0%</div>
+                        <div style="color:var(--text-muted); font-weight:600; font-size:0.9rem; margin-top:5px;"
+                            id="final-score-text">0/0</div>
+                    </div>
+                </div>
+                <h1 style="font-size:2.2rem; margin-bottom:10px; font-weight:800;">Session Complete!</h1>
+                <p style="color:var(--text-muted); margin-bottom:30px; font-weight:500;">Excellent work. Keep storming!
+                </p>
+                <div style="display:flex; gap:12px;">
+                    <button class="quiz-btn btn-prev" onclick="switchMode('dashboard')">Home</button>
+                    <button class="quiz-btn btn-next" onclick="reviewMode()">Review Answers</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="modal-overlay" id="start-modal">
+        <div class="modal">
+            <div style="display:flex; justify-content:space-between; margin-bottom:25px;">
+                <h3 id="modal-title" style="font-size:1.4rem; font-weight:800;">Start Quiz</h3>
+                <button onclick="closeModal()"
+                    style="background:none; border:none; cursor:pointer; color:var(--text-muted);"><i
+                        class="ri-close-line" style="font-size:1.5rem;"></i></button>
+            </div>
+
+            <label
+                style="display:block; margin-bottom:12px; font-weight:700; font-size:0.9rem; color:var(--text-muted);">QUESTIONS</label>
+            <div class="chip-group" id="count-chips">
+                <div class="chip active" onclick="setOpt('count', 5, this)">5</div>
+                <div class="chip" onclick="setOpt('count', 10, this)">10</div>
+                <div class="chip" onclick="setOpt('count', 20, this)">20</div>
+                <div class="chip" onclick="setOpt('count', 50, this)">50</div>
+            </div>
+            <input type="number" id="custom-count" class="custom-input" placeholder="Or type number..."
+                oninput="clearChips()">
+
+            <label
+                style="display:block; margin-bottom:12px; font-weight:700; font-size:0.9rem; color:var(--text-muted);">TIMER
+                (SESSION)</label>
+            <div class="chip-group" id="time-chips">
+                <div class="chip" onclick="setOpt('time', 0, this)">Off</div>
+                <div class="chip" onclick="setOpt('time', 15, this)">15s</div>
+                <div class="chip active" onclick="setOpt('time', 30, this)">30s</div>
+                <div class="chip" onclick="setOpt('time', 60, this)">60s</div>
+            </div>
+            <input type="number" id="custom-time" class="custom-input" placeholder="Custom time (seconds)..."
+                oninput="clearTimeChips()">
+
+            <button class="action-btn" onclick="launchQuiz()">Start Storming ⚡</button>
+        </div>
+    </div>
+
+    <script src="blood.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // --- 1. DATA FALLBACK ---
+        window.BLOOD_QUESTIONS = window.BLOOD_QUESTIONS || [
+            { q: "in anaerobic glycolysis, which of the following do you expect to increase in concentration after addition of fluoride.......?", o: ["a. Glucose", "b. 2-phosphoglycerate", "c. Phosphoenol pyruvate", "d. Pyruvate"], a: 1 },
+            { q: "What is the most common plasma protein ?", o: ["a. Albumin", "b. Fibrinogen", "c. Globulin", "d. Prothrombin"], a: 0 }
+        ];
+        window.FOUNDATION_QUESTIONS = window.FOUNDATION_QUESTIONS || [
+            { q: "What does a low value of Km indicate?", o: ["a) High enzyme activity", "b) Low affinity", "c) High substrate affinity", "d) No effect on reaction"], a: 2 }
+        ];
+        window.TERMINOLOGY_QUESTIONS = window.TERMINOLOGY_QUESTIONS || [
+            { q: "Inflammation of small intestine:", o: ["a- ilitis", "b- ilietis", "c- Enteritis", "d- colitis"], a: 2 }
+        ];
+
+        // --- STATE ---
+        const DB = {};
+        const ICONS = { 'Blood': 'ri-drop-fill', 'Foundation': 'ri-building-2-fill', 'Terminology': 'ri-book-mark-fill' };
+        const IMAGES = { 'Blood': 'blood.png', 'Foundation': 'found.png', 'Terminology': 'terminology.jpg' };
+
+        let AppState = {
+            theme: localStorage.getItem('medStormTheme') || 'light',
+            progress: JSON.parse(localStorage.getItem('medStormProgress')) || {},
+        };
+
+        let CurrentSession = {
+            module: null, mode: 'normal', queue: [], userAnswers: [],
+            index: 0, score: 0, timer: null, interval: null, settings: { count: 5, time: 30 }, isReviewing: false
+        };
+
+        // --- INIT ---
+        window.onload = function () {
+            if (typeof BLOOD_QUESTIONS !== 'undefined') DB['Blood'] = BLOOD_QUESTIONS;
+            if (typeof FOUNDATION_QUESTIONS !== 'undefined') DB['Foundation'] = FOUNDATION_QUESTIONS;
+            if (typeof TERMINOLOGY_QUESTIONS !== 'undefined') DB['Terminology'] = TERMINOLOGY_QUESTIONS;
+
+            document.body.setAttribute('data-theme', AppState.theme);
+            renderDashboard();
+        };
+
+        // --- FUNCTIONS ---
+        function toggleTheme() {
+            AppState.theme = AppState.theme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', AppState.theme);
+            localStorage.setItem('medStormTheme', AppState.theme);
+        }
+
+        function switchMode(mode) {
+            document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            document.body.removeAttribute('data-mode');
+            document.body.classList.remove('focus-mode');
+
+            if (mode === 'mistakes') {
+                document.body.setAttribute('data-mode', 'mistakes');
+                document.getElementById('nav-mistakes').classList.add('active');
+                document.getElementById('page-title').innerText = 'My Mistakes';
+                document.getElementById('view-dashboard').style.display = 'flex';
+                renderDashboard('mistakes');
+            } else if (mode === 'analytics') {
+                document.getElementById('nav-analytics').classList.add('active');
+                document.getElementById('page-title').innerText = 'Analytics';
+                document.getElementById('view-analytics').style.display = 'block';
+                renderAnalytics();
+            } else {
+                document.getElementById('nav-dash').classList.add('active');
+                document.getElementById('page-title').innerText = 'Dashboard';
+                document.getElementById('view-dashboard').style.display = 'flex';
+                renderDashboard('normal');
+            }
+        }
+
+        function renderDashboard(mode = 'normal') {
+            const grid = document.getElementById('module-grid');
+            grid.innerHTML = '';
+            const isMistakes = mode === 'mistakes';
+
+            for (const [modName, questions] of Object.entries(DB)) {
+                let mastered = 0;
+                questions.forEach(q => { if (AppState.progress[q.q] === 'correct') mastered++; });
+
+                // --- LOGIC CHANGE ---
+                // Normal: Show questions that have NO status (undefined).
+                // Mistakes: Show questions that are 'wrong'.
+                // If a question is 'correct', it is HIDDEN from both.
+
+                let relevantQs = isMistakes
+                    ? questions.filter(q => AppState.progress[q.q] === 'wrong')
+                    : questions.filter(q => !AppState.progress[q.q]); // Show only unsolved
+
+                if (isMistakes && relevantQs.length === 0) continue;
+
+                const total = questions.length;
+                const pct = Math.round((mastered / total) * 100);
+                const badgeText = isMistakes
+                    ? `${relevantQs.length}`
+                    : `${questions.length}`;
+
+                const statsHTML = isMistakes ? '' : `<p style="color:var(--text-muted); font-size:0.9rem;">${mastered}/${total} Solved</p>`;
+                const imgSource = IMAGES[modName] || '';
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${imgSource}" class="card-banner" onerror="this.style.display='none'">
+                    <div class="card-header">
+                        <div class="card-icon"><i class="${ICONS[modName] || 'ri-file-list-3-fill'}"></i></div>
+                        <div class="card-badge">${badgeText}</div>
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom:5px; font-size:1.3rem;">${modName}</h3>
+                        ${statsHTML}
+                    </div>
+                    <button class="reset-btn" onclick="resetModule('${modName}', event)" title="Reset"><i class="ri-refresh-line"></i></button>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
+                `;
+                card.onclick = (e) => { if (!e.target.closest('.reset-btn')) openStartModal(modName, isMistakes); };
+                grid.appendChild(card);
+            }
+            if (grid.innerHTML === '') grid.innerHTML = `<div style="text-align:center; padding:50px; color:var(--text-muted);">${isMistakes ? "No mistakes found!" : 'No modules loaded.'}</div>`;
+        }
+
+        function renderAnalytics() {
+            let totalQs = 0, totalMastered = 0, totalWrong = 0;
+            const list = document.getElementById('analytics-list');
+            list.innerHTML = '';
+
+            for (const [modName, questions] of Object.entries(DB)) {
+                totalQs += questions.length;
+                let mastered = 0, wrong = 0;
+                questions.forEach(q => {
+                    if (AppState.progress[q.q] === 'correct') mastered++;
+                    else if (AppState.progress[q.q] === 'wrong') wrong++;
+                });
+                totalMastered += mastered;
+                totalWrong += wrong;
+
+                const pctM = (mastered / questions.length) * 100;
+                const pctW = (wrong / questions.length) * 100;
+                const pctR = 100 - pctM - pctW;
+
+                list.innerHTML += `
+                    <div class="analytics-row">
+                        <div style="display:flex; justify-content:space-between; font-weight:700;">
+                            <span>${modName}</span>
+                            <span>${Math.round(pctM)}%</span>
+                        </div>
+                        <div class="stacked-bar">
+                            <div class="bar-seg bar-green" style="width:${pctM}%"></div>
+                            <div class="bar-seg bar-red" style="width:${pctW}%"></div>
+                            <div class="bar-seg bar-gray" style="width:${pctR}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('ana-mastery').innerText = Math.round((totalMastered / (totalQs || 1)) * 100) + '%';
+            document.getElementById('ana-total-qs').innerText = totalQs;
+            const totalAttempts = totalMastered + totalWrong;
+            const globalAcc = totalAttempts === 0 ? 0 : Math.round((totalMastered / totalAttempts) * 100);
+            document.getElementById('ana-global-acc').innerText = globalAcc + '%';
+        }
+
+        function resetModule(modName, e) {
+            e.stopPropagation();
+            if (!confirm(`Reset progress for ${modName}?`)) return;
+            DB[modName].forEach(q => delete AppState.progress[q.q]);
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+            const isMistakes = document.body.getAttribute('data-mode') === 'mistakes';
+            renderDashboard(isMistakes ? 'mistakes' : 'normal');
+        }
+
+        // --- QUIZ LOGIC ---
+        function openStartModal(modName, isMistakes) {
+            CurrentSession.module = modName;
+            CurrentSession.mode = isMistakes ? 'mistakes' : 'normal';
+            document.getElementById('modal-title').innerText = isMistakes ? `Review ${modName}` : `Storm ${modName}`;
+            document.getElementById('custom-count').value = '';
+            document.getElementById('custom-time').value = '';
+            setOpt('count', 5, document.querySelector('#count-chips .chip'));
+            setOpt('time', 30, document.querySelectorAll('#time-chips .chip')[2]); // Default 30s
+            document.getElementById('start-modal').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('start-modal').style.display = 'none'; }
+
+        function setOpt(type, val, el) {
+            CurrentSession.settings[type] = val;
+            if (type === 'count') document.getElementById('custom-count').value = '';
+            if (type === 'time') document.getElementById('custom-time').value = '';
+
+            el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+        function clearChips() { document.querySelectorAll('#count-chips .chip').forEach(c => c.classList.remove('active')); }
+        function clearTimeChips() { document.querySelectorAll('#time-chips .chip').forEach(c => c.classList.remove('active')); }
+
+        function launchQuiz() {
+            closeModal();
+            const modQs = DB[CurrentSession.module];
+            // Filter logic matches Dashboard
+            let pool = CurrentSession.mode === 'mistakes'
+                ? modQs.filter(q => AppState.progress[q.q] === 'wrong')
+                : modQs; // ⭐ كل أسئلة الـ JS
+
+
+            if (pool.length === 0) return alert("No questions available!");
+
+            const customCount = document.getElementById('custom-count').value;
+            let count = customCount ? parseInt(customCount) : CurrentSession.settings.count;
+            if (count <= 0) count = 5;
+
+            const customTime = document.getElementById('custom-time').value;
+            let timeVal = customTime ? parseInt(customTime) : CurrentSession.settings.time;
+
+            CurrentSession.queue = pool.sort(() => 0.5 - Math.random()).slice(0, count);
+            CurrentSession.index = 0;
+            CurrentSession.score = 0;
+            CurrentSession.userAnswers = new Array(CurrentSession.queue.length).fill(null);
+            CurrentSession.isReviewing = false;
+
+            // ENTER FOCUS MODE
+            document.body.classList.add('focus-mode');
+
+            document.getElementById('view-dashboard').style.display = 'none';
+            document.getElementById('view-analytics').style.display = 'none';
+            document.getElementById('view-quiz').style.display = 'block';
+
+            // START SESSION TIMER
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.style.transition = 'none';
+            timerBar.style.width = '100%';
+
+            if (timeVal > 0) {
+                timerBar.parentElement.style.display = 'block';
+                void timerBar.offsetWidth;
+                timerBar.style.transition = `width ${timeVal}s linear`;
+                timerBar.style.width = '0%';
+
+                CurrentSession.interval = setTimeout(() => {
+                    finishQuiz();
+                }, timeVal * 1000);
+            } else {
+                timerBar.parentElement.style.display = 'none';
+            }
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = CurrentSession.queue[CurrentSession.index];
+            const isReview = CurrentSession.isReviewing;
+
+            document.getElementById('q-tag').innerText = `${CurrentSession.module.toUpperCase()} • ${CurrentSession.index + 1}/${CurrentSession.queue.length}`;
+            document.getElementById('q-text').innerText = q.q;
+
+            // Handle Image Display
+            const qImg = document.getElementById('q-image');
+            if (q.img) {
+                qImg.src = q.img;
+                qImg.style.display = 'block';
+            } else {
+                qImg.style.display = 'none';
+                qImg.src = '';
+            }
+
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            btnPrev.disabled = (CurrentSession.index === 0);
+            btnNext.innerText = "Next Question";
+
+            btnNext.disabled = false; // Allow skipping
+
+            q.o.forEach((optText, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.innerText = optText;
+
+                // Status Check
+                const ans = CurrentSession.userAnswers[CurrentSession.index];
+                const answered = ans !== null;
+
+                if (isReview || answered) {
+                    btn.disabled = true;
+                    if (i === q.a) btn.classList.add('correct');
+                    if (ans === i && i !== q.a) btn.classList.add('wrong');
+                } else {
+                    btn.onclick = () => handleAnswer(i, btn, q);
+                }
+                box.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(idx, btn, q) {
+            if (CurrentSession.isReviewing || CurrentSession.userAnswers[CurrentSession.index] !== null) return;
+
+            CurrentSession.userAnswers[CurrentSession.index] = idx;
+            const isCorrect = idx === q.a;
+
+            document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                if (btn) btn.classList.add('correct');
+                CurrentSession.score++;
+                AppState.progress[q.q] = 'correct'; // Mark Correct -> Will vanish from Dashboard
+                confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
+            } else {
+                if (btn) {
+                    btn.classList.add('wrong');
+                    btn.parentElement.classList.add('shake');
+                    setTimeout(() => btn.parentElement.classList.remove('shake'), 500);
+                }
+                const opts = document.querySelectorAll('.opt-btn');
+                if (opts[q.a]) opts[q.a].classList.add('correct');
+                AppState.progress[q.q] = 'wrong'; // Mark Wrong -> Goes to Mistakes
+            }
+
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+        }
+
+        function prevQuestion() {
+            if (CurrentSession.index > 0) {
+                CurrentSession.index--;
+                loadQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (CurrentSession.index < CurrentSession.queue.length - 1) {
+                CurrentSession.index++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            clearTimeout(CurrentSession.interval);
+
+            // Mark unanswered as wrong
+            CurrentSession.queue.forEach((q, i) => {
+                if (CurrentSession.userAnswers[i] === null) {
+                    AppState.progress[q.q] = 'wrong';
+                }
+            });
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+
+            document.getElementById('view-quiz').style.display = 'none';
+            document.getElementById('view-results').style.display = 'flex';
+            document.body.classList.remove('focus-mode');
+
+            const pct = Math.round((CurrentSession.score / CurrentSession.queue.length) * 100);
+            document.getElementById('final-percent').innerText = pct + "%";
+            document.getElementById('final-score-text').innerText = `${CurrentSession.score}/${CurrentSession.queue.length} Correct`;
+
+            const ring = document.getElementById('result-ring');
+            const offset = 502 - (pct / 100 * 502);
+            ring.style.strokeDashoffset = offset;
+            ring.style.stroke = pct >= 50 ? 'var(--success)' : 'var(--error)';
+        }
+
+        function reviewMode() {
+            CurrentSession.isReviewing = true;
+            CurrentSession.index = 0;
+            document.body.classList.add('focus-mode');
+            document.getElementById('view-results').style.display = 'none';
+            document.getElementById('view-quiz').style.display = 'block';
+            loadQuestion();
+        }
+
+        function exitQuiz() {
+            if (confirm("Exit session?")) {
+                clearTimeout(CurrentSession.interval);
+                switchMode(document.body.getAttribute('data-mode') === 'mistakes' ? 'mistakes' : 'dashboard');
+            }
+        }
+
+        // --- QUESTION MAP LOGIC (RECTANGLES) ---
+        function toggleQMap() {
+            const overlay = document.getElementById('q-map-overlay');
+            if (overlay.style.display === 'flex') {
+                overlay.style.display = 'none';
+            } else {
+                renderQMap();
+                overlay.style.display = 'flex';
+            }
+        }
+
+        function renderQMap() {
+            const grid = document.getElementById('q-map-grid');
+            grid.innerHTML = '';
+            CurrentSession.queue.forEach((q, i) => {
+                const box = document.createElement('div');
+                box.className = 'q-box';
+
+                if (CurrentSession.index === i) box.classList.add('active');
+
+                const ans = CurrentSession.userAnswers[i];
+                if (ans !== null) {
+                    if (ans === q.a) box.classList.add('correct');
+                    else box.classList.add('wrong');
+                }
+
+                // Rectangle Content: Num + Text
+                box.innerHTML = `
+                    <span class="q-num">${i + 1}.</span>
+                    <span class="q-preview">${q.q}</span>
+                `;
+
+                box.onclick = () => {
+                    CurrentSession.index = i;
+                    loadQuestion();
+                    toggleQMap();
+                };
+                grid.appendChild(box);
+            });
+        }
+
+    </script>
+</body>
+
+</html>
