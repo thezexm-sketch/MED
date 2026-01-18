@@ -1266,7 +1266,8 @@
             // Filter logic matches Dashboard
             let pool = CurrentSession.mode === 'mistakes'
                 ? modQs.filter(q => AppState.progress[q.q] === 'wrong')
-                : modQs.filter(q => !AppState.progress[q.q]);
+                : modQs; // ⭐ كل أسئلة الـ JS
+
 
             if (pool.length === 0) return alert("No questions available!");
 
