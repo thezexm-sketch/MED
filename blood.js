@@ -539,7 +539,7 @@ const FOUNDATION_QUESTIONS = [
     { q: "What is responsible for sorting lysosomal enzymes?", o: ["a. Nucleus", "b. Rough endoplasmic reticulum", "c. Nucleolus", "d. Golgi complex"], a: 3 },
     { q: "What is the explanation of the trilaminar structure of cell membrane seen in EM?", o: ["a. deposition of osmium in the hydrophobic heads of the phospholipid molecules", "b. deposition of osmium in the hydrophilic chains of cholesterol", "c. deposition of osmium in the hydrophobic chains of cholesterol", "d. deposition of osmium in the hydrophilic heads of the phospholipid molecules"], a: 3 },
     { q: "What is the site of synthesis of ribosomal subunits?", o: ["a. Golgi apparatus", "b. Rough endoplasmic reticulum", "c. Smooth endoplasmic reticulum", "d. Nucleolus"], a: 3 },
-    { q: "....... connects between extraembryonic and middlegut ", o: ["A. yolk stalk", "B. Body stalk", "C. Vitelline duct", "D. Allantois"], a: 0 },
+    { q: "....... connects between extraembryonic and middlegut ", o: ["A. yolk stalk", "B. Body stalk", "C. Umbilical cord", "D. Allantois"], a: 0 },
     { q: "A woman had postpartum hemorrhage. What is the reason?", o: ["a. Uterine atony", "b. Accessory placenta", "c. Normal placenta"], a: 1 },
     { q: "At the end of the 4th week, the fetus is called:", o: ["a. Morula", "b. Blastocyst", "c. Embryo", "d. Zygote"], a: 2 },
     { q: "Which of the following membranes enters into the composition of the embryo?", o: ["A. Chorion", "b. Yolk sac", "c. Amnion", "d. Allantois"], a: 1 },
@@ -1188,6 +1188,7 @@ const TERMINOLOGY_QUESTIONS = [
     { q: "Increased pain sensation (oversensitivity) is called:", o: ["A. Hypertension", "B. Hyperalgesia", "C. Hypoesthesia", "D. Analgesia"], a: 1 }
 
 ];
+
 
 
 
