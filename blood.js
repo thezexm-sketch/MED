@@ -689,7 +689,7 @@ const FOUNDATION_QUESTIONS = [
     { q: "What does a low value of Km indicate?", o: ["a) High enzyme activity", "b) Low affinity of the enzyme to the substrate", "c) High substrate affinity to enzyme", "d) No effect on reaction"], a: 2 },
     { q: "A 30-year-old male presents with infertility due to immotile sperms. Genetic testing reveals a mutation in the motor proteins of microtubules. The structure of which of the following is likely affected in his sperms?", o: ["a) Microvilli", "b) Flagella", "c) Stereocilia", "d) Basal infoldings"], a: 1 },
     { q: "What is the classification of the patella according to its shape?", o: ["A) Sesamoid", "B) Flat", "C) Irregular", "D) Short tubular"], a: 0 },
-    { q: "What is the main function of this structure?", img: "img/q4.png", o: ["a) Buffering", "b) Reducing agent", "c) Precursor of CoA", "d) Structural protein"], a: 1 }, // Needs Image (Chemical Structure)
+    { q: "What is the main function of this structure?", img: "img/15.png", o: ["a) Buffering", "b) Reducing agent", "c) Precursor of CoA", "d) Structural protein"], a: 1 }, // Needs Image (Chemical Structure)
     { q: "Which acidic heteropolysaccharide is major in cartilage?", o: ["a) Hyaluronic acid", "b) Chondroitin sulfate", "c) Dermatan sulfate", "d) Keratan sulfate"], a: 1 },
     { q: "Which carbohydrate can help relieve constipation?", o: ["a) Homopolysaccharide structural CHO in plants (cellulose)", "b) Homopolysaccharide storage CHO in plants (starch)", "c) Homopolysaccharide storage CHO in animals (glycogen)", "d) Homopolysaccharide structural CHO in animals (chitin)"], a: 0 },
     { q: "Which of the following is a prostaglandin precursor?", o: ["a) Linoleic acid", "b) Oleic acid", "c) arachdic acid", "d) Arachidonic acid"], a: 3 },
@@ -1188,4 +1188,5 @@ const TERMINOLOGY_QUESTIONS = [
     { q: "Hyperesthesia is:", o: ["A. Sleeping induced by narcotics", "B. No pain", "C. oversensitivity to pain", "D. Lack of sensation"], a: 2 },
     { q: "Anesthesia means:", o: ["A. Sleeping induced by narcotics", "B. lack of sensation", "C. Oversensitivity to pain", "D. No pain"], a: 1 },
     { q: "Increased pain sensation (oversensitivity) is called:", o: ["A. Hypertension", "B. Hyperalgesia", "C. Hypoesthesia", "D. Analgesia"], a: 1 }
+
 ];
