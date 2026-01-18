@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MedStorm Pro</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
@@ -57,6 +57,7 @@
             box-sizing: border-box;
             transition: all 0.2s ease-out;
             outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -125,9 +126,7 @@
 
         .stats-box {
             margin-top: auto;
-            /* Space from top elements */
             margin-bottom: 40px;
-            /* Space from bottom edge (Fixed for Tablet) */
             background: var(--bg-app);
             padding: 20px;
             border-radius: 16px;
@@ -214,11 +213,11 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 80px;
+            height: 60px; /* Reduced Height */
             display: none;
             justify-content: space-between;
             align-items: center;
-            padding: 0 2rem;
+            padding: 0 1rem;
             z-index: 100;
         }
 
@@ -244,15 +243,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* --- DASHBOARD --- */
@@ -284,11 +276,6 @@
             box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
         }
 
         .card-banner {
@@ -328,9 +315,7 @@
             text-align: center;
         }
 
-        [data-mode='mistakes'] .card-badge {
-            background: var(--error);
-        }
+        [data-mode='mistakes'] .card-badge { background: var(--error); }
 
         .reset-btn {
             position: absolute;
@@ -343,11 +328,6 @@
             padding: 8px;
             border-radius: 50%;
             font-size: 1.2rem;
-        }
-
-        .reset-btn:hover {
-            background: #fee2e2;
-            color: #ef4444;
         }
 
         .progress-bar {
@@ -423,39 +403,12 @@
             background: var(--bg-app);
         }
 
-        .bar-seg {
-            height: 100%;
-        }
+        .bar-seg { height: 100%; }
+        .bar-green { background: var(--success); }
+        .bar-red { background: var(--error); }
+        .bar-gray { background: var(--border); }
 
-        .bar-green {
-            background: var(--success);
-        }
-
-        .bar-red {
-            background: var(--error);
-        }
-
-        .bar-gray {
-            background: var(--border);
-        }
-
-        .legend {
-            display: flex;
-            gap: 15px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-        }
-
-        /* --- QUIZ UI --- */
+        /* --- QUIZ UI (OPTIMIZED) --- */
         .quiz-wrapper {
             display: flex;
             flex-direction: column;
@@ -463,48 +416,47 @@
             width: 100%;
             max-width: 700px;
             margin: 0 auto;
-            padding-top: 80px;
+            padding-top: 60px; /* Raised up from 80px */
         }
 
         .quiz-left {
-            padding: 1rem;
+            padding: 0.5rem 1rem; /* Compact padding */
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 10px; /* Reduced margin */
         }
 
         .quiz-right {
-            padding: 0 1rem 4rem 1rem;
+            padding: 0 1rem 100px 1rem; /* Extra bottom padding for fixed buttons */
             overflow-y: auto;
         }
 
         #q-text {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            line-height: 1.6;
+            line-height: 1.5;
             color: var(--text-main);
-            margin: 20px auto;
+            margin: 10px auto; /* Reduced margin */
         }
 
         #q-tag {
             display: inline-block;
-            margin-bottom: 10px;
-            font-size: 0.8rem;
+            margin-bottom: 5px;
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--primary);
             background: var(--primary-light);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 50px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Question Image Style */
         #q-image {
             max-width: 100%;
             height: auto;
-            max-height: 300px;
+            max-height: 250px; /* Slightly smaller limit */
             border-radius: 12px;
-            margin: 15px auto;
+            margin: 10px auto;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             display: none;
@@ -515,7 +467,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 6px;
+            height: 4px; /* Thinner */
             background: var(--border);
             z-index: 90;
         }
@@ -529,13 +481,13 @@
 
         .opt-btn {
             width: 100%;
-            padding: 20px 24px;
-            margin-bottom: 14px;
+            padding: 14px 16px; /* Compact padding */
+            margin-bottom: 10px; /* Compact margin */
             background: var(--bg-card);
             border: 2px solid var(--border);
-            border-radius: 16px;
+            border-radius: 14px;
             text-align: left;
-            font-size: 1.05rem;
+            font-size: 1rem;
             color: var(--text-main);
             cursor: pointer;
             font-weight: 500;
@@ -561,38 +513,10 @@
             color: #991b1b;
         }
 
-        .shake {
-            animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
-        }
-
-        @keyframes shake {
-
-            10%,
-            90% {
-                transform: translate3d(-1px, 0, 0);
-            }
-
-            20%,
-            80% {
-                transform: translate3d(2px, 0, 0);
-            }
-
-            30%,
-            50%,
-            70% {
-                transform: translate3d(-4px, 0, 0);
-            }
-
-            40%,
-            60% {
-                transform: translate3d(4px, 0, 0);
-            }
-        }
-
         .nav-btns {
             display: flex;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 10px;
         }
 
         .quiz-btn {
@@ -611,29 +535,78 @@
             border: 2px solid var(--border);
         }
 
-        .btn-prev:hover {
-            background: var(--bg-app);
-            border-color: var(--text-muted);
-        }
-
         .btn-next {
             background: var(--primary);
             color: white;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-next:disabled {
-            opacity: 1;
-            cursor: pointer;
+        /* --- MOBILE SPECIFIC TWEAKS --- */
+        @media (max-width: 768px) {
+            /* 1. Sidebar Layout */
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 10px 15px;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid var(--border);
+                border-right: none;
+            }
+
+            .sidebar .logo { margin: 0; font-size: 1.2rem; }
+            .sidebar .nav-item { margin: 0; padding: 8px; }
+            .sidebar .nav-item span { display: none; } /* Icons only */
+
+            /* 2. DIRECTED BY - VISIBLE NOW */
+            .stats-box {
+                display: flex; /* Force Show */
+                flex-direction: column;
+                margin: 0;
+                padding: 0 0 0 10px;
+                background: transparent;
+                border: none;
+                border-left: 1px solid var(--border);
+                border-radius: 0;
+                margin-bottom: 0;
+                text-align: left;
+                justify-content: center;
+            }
+            .stats-box div:first-child { display: none; } /* Hide label "Directed by" to save space */
+            .gold-text {
+                font-size: 0.75rem;
+                margin-top: 0;
+                line-height: 1.2;
+            }
+
+            /* 3. Quiz Layout - LIFTED & FIXED BUTTONS */
+            .quiz-wrapper { padding-top: 0; }
+            .quiz-left { 
+                padding: 10px 15px 0 15px; 
+                margin-bottom: 5px; 
+            }
+            #q-text { font-size: 1.1rem; }
+            
+            .quiz-right {
+                padding: 0 15px 90px 15px; /* Extra space at bottom for fixed buttons */
+            }
+
+            .nav-btns {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 15px;
+                background: var(--bg-app); /* Opaque background */
+                border-top: 1px solid var(--border);
+                margin: 0;
+                z-index: 999;
+                box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            }
         }
 
-        .btn-prev:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        /* --- QUESTION MAP DRAWER (LEFT SIDE) --- */
+        /* ... Rest of CSS ... */
         .q-map-overlay {
             position: fixed;
             inset: 0;
@@ -657,13 +630,8 @@
         }
 
         @keyframes slideInLeft {
-            from {
-                transform: translateX(-100%);
-            }
-
-            to {
-                transform: translateX(0);
-            }
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
         }
 
         .q-map-grid {
@@ -688,39 +656,13 @@
             text-align: left;
         }
 
-        .q-box:hover {
-            border-color: var(--primary);
-            background: var(--bg-card);
-        }
+        .q-box:hover { border-color: var(--primary); background: var(--bg-card); }
+        .q-box.active { border: 2px solid var(--primary); font-weight: 700; }
+        .q-box.correct { background: var(--success); color: white; border-color: var(--success); }
+        .q-box.wrong { background: var(--error); color: white; border-color: var(--error); }
 
-        .q-box.active {
-            border: 2px solid var(--primary);
-            font-weight: 700;
-        }
-
-        .q-box.correct {
-            background: var(--success);
-            color: white;
-            border-color: var(--success);
-        }
-
-        .q-box.wrong {
-            background: var(--error);
-            color: white;
-            border-color: var(--error);
-        }
-
-        .q-num {
-            font-weight: 800;
-            min-width: 25px;
-        }
-
-        .q-preview {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            opacity: 0.8;
-        }
+        .q-num { font-weight: 800; min-width: 25px; }
+        .q-preview { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; }
 
         /* --- RESULTS --- */
         .progress-ring-container {
@@ -730,16 +672,8 @@
             margin: 0 auto 30px auto;
         }
 
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-
-        .progress-ring__circle-bg {
-            fill: transparent;
-            stroke: var(--border);
-            stroke-width: 10;
-        }
-
+        .progress-ring { transform: rotate(-90deg); }
+        .progress-ring__circle-bg { fill: transparent; stroke: var(--border); stroke-width: 10; }
         .progress-ring__circle {
             fill: transparent;
             stroke: var(--primary);
@@ -752,17 +686,12 @@
 
         .result-content {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
         }
 
-        .result-percent {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--text-main);
-        }
+        .result-percent { font-size: 2.5rem; font-weight: 800; color: var(--text-main); }
 
         /* --- MODAL --- */
         .modal-overlay {
@@ -787,24 +716,11 @@
         }
 
         @keyframes popUp {
-            from {
-                transform: scale(0.95);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
-        .chip-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
+        .chip-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
         .chip {
             padding: 10px 18px;
             border-radius: 50px;
@@ -814,12 +730,7 @@
             color: var(--text-muted);
             font-weight: 600;
         }
-
-        .chip.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         .custom-input {
             width: 100%;
@@ -843,58 +754,6 @@
             cursor: pointer;
             font-size: 1.05rem;
         }
-
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-                height: auto;
-                min-height: 100vh;
-                overflow-y: auto;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                padding: 15px 25px;
-                flex-direction: row;
-                justify-content: space-between;
-                border-bottom: 1px solid var(--border);
-                border-right: none;
-            }
-
-            .sidebar .logo {
-                margin: 0;
-                font-size: 1.3rem;
-            }
-
-            .sidebar .nav-item span,
-            .stats-box {
-                display: none;
-            }
-
-            .sidebar .nav-item {
-                margin: 0;
-                padding: 10px;
-            }
-
-            .analytics-grid {
-                grid-template-columns: 1fr;
-            }
-
-            body.focus-mode .quiz-left {
-                padding: 1.5rem;
-                height: auto;
-            }
-
-            body.focus-mode .quiz-right {
-                padding: 1.5rem;
-                height: auto;
-            }
-
-            .q-map-sidebar {
-                width: 85%;
-            }
-        }
     </style>
 </head>
 
@@ -912,14 +771,16 @@
             <span>MedStorm</span>
         </div>
 
-        <div class="nav-item active" onclick="switchMode('dashboard')" id="nav-dash">
-            <i class="ri-apps-2-line"></i> <span>Modules</span>
-        </div>
-        <div class="nav-item" onclick="switchMode('mistakes')" id="nav-mistakes">
-            <i class="ri-error-warning-line"></i> <span>Mistakes</span>
-        </div>
-        <div class="nav-item" onclick="switchMode('analytics')" id="nav-analytics">
-            <i class="ri-bar-chart-box-line"></i> <span>Analytics</span>
+        <div style="display:flex; gap:5px;">
+             <div class="nav-item active" onclick="switchMode('dashboard')" id="nav-dash">
+                <i class="ri-apps-2-line"></i> <span>Modules</span>
+            </div>
+            <div class="nav-item" onclick="switchMode('mistakes')" id="nav-mistakes">
+                <i class="ri-error-warning-line"></i> <span>Mistakes</span>
+            </div>
+            <div class="nav-item" onclick="switchMode('analytics')" id="nav-analytics">
+                <i class="ri-bar-chart-box-line"></i> <span>Analytics</span>
+            </div>
         </div>
 
         <div class="stats-box">
@@ -1147,14 +1008,9 @@
                 let mastered = 0;
                 questions.forEach(q => { if (AppState.progress[q.q] === 'correct') mastered++; });
 
-                // --- LOGIC CHANGE ---
-                // Normal: Show questions that have NO status (undefined).
-                // Mistakes: Show questions that are 'wrong'.
-                // If a question is 'correct', it is HIDDEN from both.
-
                 let relevantQs = isMistakes
                     ? questions.filter(q => AppState.progress[q.q] === 'wrong')
-                    : questions.filter(q => !AppState.progress[q.q]); // Show only unsolved
+                    : questions.filter(q => !AppState.progress[q.q]); 
 
                 if (isMistakes && relevantQs.length === 0) continue;
 
@@ -1262,7 +1118,6 @@
         function launchQuiz() {
             closeModal();
             const modQs = DB[CurrentSession.module];
-            // Filter logic matches Dashboard
             let pool = CurrentSession.mode === 'mistakes'
                 ? modQs.filter(q => AppState.progress[q.q] === 'wrong')
                 : modQs.filter(q => !AppState.progress[q.q]);
@@ -1282,14 +1137,12 @@
             CurrentSession.userAnswers = new Array(CurrentSession.queue.length).fill(null);
             CurrentSession.isReviewing = false;
 
-            // ENTER FOCUS MODE
             document.body.classList.add('focus-mode');
 
             document.getElementById('view-dashboard').style.display = 'none';
             document.getElementById('view-analytics').style.display = 'none';
             document.getElementById('view-quiz').style.display = 'block';
 
-            // START SESSION TIMER
             const timerBar = document.getElementById('timer-bar');
             timerBar.style.transition = 'none';
             timerBar.style.width = '100%';
@@ -1317,7 +1170,6 @@
             document.getElementById('q-tag').innerText = `${CurrentSession.module.toUpperCase()} • ${CurrentSession.index + 1}/${CurrentSession.queue.length}`;
             document.getElementById('q-text').innerText = q.q;
 
-            // Handle Image Display
             const qImg = document.getElementById('q-image');
             if (q.img) {
                 qImg.src = q.img;
@@ -1335,14 +1187,13 @@
             btnPrev.disabled = (CurrentSession.index === 0);
             btnNext.innerText = "Next Question";
 
-            btnNext.disabled = false; // Allow skipping
+            btnNext.disabled = false;
 
             q.o.forEach((optText, i) => {
                 const btn = document.createElement('button');
                 btn.className = 'opt-btn';
                 btn.innerText = optText;
 
-                // Status Check
                 const ans = CurrentSession.userAnswers[CurrentSession.index];
                 const answered = ans !== null;
 
@@ -1368,7 +1219,7 @@
             if (isCorrect) {
                 if (btn) btn.classList.add('correct');
                 CurrentSession.score++;
-                AppState.progress[q.q] = 'correct'; // Mark Correct -> Will vanish from Dashboard
+                AppState.progress[q.q] = 'correct';
                 confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
             } else {
                 if (btn) {
@@ -1378,7 +1229,7 @@
                 }
                 const opts = document.querySelectorAll('.opt-btn');
                 if (opts[q.a]) opts[q.a].classList.add('correct');
-                AppState.progress[q.q] = 'wrong'; // Mark Wrong -> Goes to Mistakes
+                AppState.progress[q.q] = 'wrong';
             }
 
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
@@ -1403,7 +1254,6 @@
         function finishQuiz() {
             clearTimeout(CurrentSession.interval);
 
-            // Mark unanswered as wrong
             CurrentSession.queue.forEach((q, i) => {
                 if (CurrentSession.userAnswers[i] === null) {
                     AppState.progress[q.q] = 'wrong';
@@ -1467,7 +1317,6 @@
                     else box.classList.add('wrong');
                 }
 
-                // Rectangle Content: Num + Text
                 box.innerHTML = `
                     <span class="q-num">${i + 1}.</span>
                     <span class="q-preview">${q.q}</span>
@@ -1486,3 +1335,4 @@
 </body>
 
 </html>
+
