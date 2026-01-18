@@ -1159,7 +1159,8 @@
 
                 const total = questions.length;
                 const pct = Math.round((mastered / total) * 100);
-                const badgeText = `${relevantQs.length}`;
+                ? `${relevantQs.length}`        
+                : `${questions.length}`;                
                 const statsHTML = isMistakes ? '' : `<p style="color:var(--text-muted); font-size:0.9rem;">${mastered}/${total} Solved</p>`;
                 const imgSource = IMAGES[modName] || '';
 
