@@ -674,7 +674,7 @@ const FOUNDATION_QUESTIONS = [
     { q: "Mitochondrial DNA is……", o: ["a. Single stranded", "b. Synthesis of all cell protein", "c. Circular DNA", "d. Found in intermembranous space"], a: 2 },
     { q: "The central core of the nucleosome is……..", o: ["a. DNA molecules", "b. Eight histones", "c. Four histone", "d. DNA linker"], a: 1 },
     { q: "What is the check point exist in the phase pointed with black arrow…..", img: "img/10.png", o: ["a. Unreplicated DNA check point", "b. Restriction check point", "c. Spindle assembly check point", "d. Chromosome segregation check point"], a: 0 }, // Needs Image
-    { q: "What is the final cells produced from telephone 1 ?", o: ["a. 2 cells with 46 s chromosomes", "b. 2 cells with 23 d Chromosomes", "c. 4 cells with 23 d chromosomes", "d. 4 cells with 23 s chromosomes"], a: 1 },
+    { q: "What is the final cells produced from telephase 1 ?", o: ["a. 2 cells with 46 s chromosomes", "b. 2 cells with 23 d Chromosomes", "c. 4 cells with 23 d chromosomes", "d. 4 cells with 23 s chromosomes"], a: 1 },
     { q: "What is the appearance of the transitional epithelium in the empty urinary bladder?", o: ["a. Basal layer consists of pear-shaped cells", "b. Consists of 2 cuboidal layers", "c. The Superficial layer is umbrella-shaped cells", "d. The intermediate layer is dome-shaped cells"], a: 2 },
     { q: "Which of the following structures is present in the Epithelial lining the epidermis?", o: ["a. Cilia", "b. Stereocilia", "c. Microvili", "d. Flagella"], a: 1 },
     { q: "Which of the following is a unilocular gland?", img: "img/15.png", o: ["a. A", "b. B", "c. C", "d. A&b"], a: 0 }, // Needs Image
@@ -1190,3 +1190,4 @@ const TERMINOLOGY_QUESTIONS = [
     { q: "Increased pain sensation (oversensitivity) is called:", o: ["A. Hypertension", "B. Hyperalgesia", "C. Hypoesthesia", "D. Analgesia"], a: 1 }
 
 ];
+
