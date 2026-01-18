@@ -676,7 +676,7 @@ const FOUNDATION_QUESTIONS = [
     { q: "What is the final cells produced from telephase 1 ?", o: ["a. 2 cells with 46 s chromosomes", "b. 2 cells with 23 d Chromosomes", "c. 4 cells with 23 d chromosomes", "d. 4 cells with 23 s chromosomes"], a: 1 },
     { q: "What is the appearance of the transitional epithelium in the empty urinary bladder?", o: ["a. Basal layer consists of pear-shaped cells", "b. Consists of 2 cuboidal layers", "c. The Superficial layer is umbrella-shaped cells", "d. The intermediate layer is dome-shaped cells"], a: 2 },
     { q: "Which of the following structures is present in the Epithelial lining the epidermis?", o: ["a. Cilia", "b. Stereocilia", "c. Microvili", "d. Flagella"], a: 1 },
-    { q: "Which of the following is a unilocular gland?", img: "img/15.png", o: ["a. A", "b. B", "c. C", "d. A&b"], a: 0 }, // Needs Image
+    { q: "Which of the following is a unilocular gland?", img: "img/9.png", o: ["a. A", "b. B", "c. C", "d. A&b"], a: 0 }, // Needs Image
     { q: "The face of Golgi with transport vesicles is………", o: ["a. Trans", "b. Mature", "c. Secreting", "d. Forming"], a: 3 },
     { q: "What is the features of sER?", o: ["a.Formed of vesicles and tubules", "b.Parallel cisternae", "c.Has ribosomes on its surface", "d.Connected with the Outer nuclear envelope"], a: 0 },
     { q: "The part that gives rise to the embryo is….", o: ["a. Inner cell mass", "b. Outer cell mass", "c. Zona pellucida", "d. Yolk sac"], a: 0 },
@@ -1188,6 +1188,7 @@ const TERMINOLOGY_QUESTIONS = [
     { q: "Increased pain sensation (oversensitivity) is called:", o: ["A. Hypertension", "B. Hyperalgesia", "C. Hypoesthesia", "D. Analgesia"], a: 1 }
 
 ];
+
 
 
 
