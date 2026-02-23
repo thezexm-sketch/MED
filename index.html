@@ -203,6 +203,7 @@
 
         .directors-names {
             background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -511,6 +512,7 @@
             margin: 0 auto;
             padding: 6rem 2.5rem 2.5rem;
             gap: 1.5rem;
+            overflow-y: auto;
         }
 
         .question-header {
@@ -1219,7 +1221,33 @@
             background: rgba(15, 23, 42, 0.1);
         }
 
-        /* Responsive */
+        /* Responsive - Tablet & Mobile Fixes */
+        @media (max-width: 1024px) {
+            .quiz-container {
+                justify-content: flex-start;
+                padding-top: 5rem;
+                overflow-y: auto;
+            }
+            .question-text {
+                font-size: 1.15rem;
+            }
+            .question-image {
+                max-height: 25vh;
+            }
+            .option-btn {
+                padding: 1rem;
+                font-size: 0.95rem;
+            }
+            .quiz-footer {
+                flex-wrap: wrap;
+            }
+            .action-buttons {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 0.5rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -1249,7 +1277,20 @@
             }
 
             .quiz-container {
-                padding: 5rem 1rem 1rem;
+                padding: 4.5rem 1rem 1rem;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .quiz-footer {
+                flex-wrap: wrap;
+            }
+            
+            .quiz-btn {
+                padding: 0.8rem;
+                font-size: 0.9rem;
             }
 
             .map-drawer {
