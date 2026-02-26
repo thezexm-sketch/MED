@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نتائج كلية الطب - الإسكندرية</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0f1e;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --accent: #3b82f6;
+      --accent2: #06b6d4;
+      --gold: #f59e0b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: rgba(59, 130, 246, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 50%);
+    }
+
+    .header {
+      text-align: center;
+      padding: 50px 20px 30px;
+    }
+
+    .header::after {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      margin: 16px auto 0;
+      border-radius: 2px;
+    }
+
+    .logo {
+      font-size: 12px;
+      letter-spacing: 4px;
+      color: var(--accent2);
+      font-weight: 300;
+      margin-bottom: 10px;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    h1 {
+      font-size: clamp(24px, 5vw, 44px);
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 14px;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    .search-container {
+      max-width: 480px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+
+    .search-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 2px;
+      font-family: 'Cairo', sans-serif;
+      outline: none;
+      transition: border-color 0.3s;
+      margin-bottom: 20px;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    input::placeholder {
+      color: #334155;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .target-box {
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px dashed rgba(245, 158, 11, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .target-box input {
+      margin-bottom: 0;
+      font-size: 18px;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .target-box label {
+      color: var(--gold);
+    }
+
+    .btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .results-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+      animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .student-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .student-name {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .badge b {
+      color: var(--accent2);
+    }
+
+    .rank-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .rank-num {
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-family: 'Tajawal', sans-serif;
+      margin: 20px 0 14px;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .module-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .module-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+
+    .score-big {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .score-of {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .total-section {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(6, 182, 212, 0.04));
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .total-score {
+      font-size: 40px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Target Result Styles */
+    .target-result-card {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(220, 38, 38, 0.05));
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .target-result-card::before {
+      content: '🎯 Am I Far?';
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(245, 158, 11, 0.5);
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .diff-item {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+
+    .diff-value {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ef4444;
+      margin: 5px 0;
+    }
+
+    .target-value {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .error-box {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      color: #f87171;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .pass {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .fail {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    @media (max-width: 600px) {
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .diff-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="logo">Alexandria University · Faculty of Medicine</div>
+    <h1>نتائج كلية الطب</h1>
+    <p class="subtitle">أدخل رقم جلوسك لعرض النتيجة والترتيب</p>
+  </div>
+
+  <div class="search-container">
+    <div class="search-box">
+      <label>رقم الجلوس (ID)</label>
+      <input type="number" id="studentId" placeholder="مثال: 42">
+
+      <div class="target-box">
+        <label>🎯 Am I Far? (اختياري)</label>
+        <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف لتعرف الفرق بينك
+          وبينه (مثال: 1)</p>
+        <input type="number" id="targetRank" placeholder="الترتيب المستهدف">
+      </div>
+
+      <button class="btn" id="searchBtn" onclick="searchStudent()">🔍 عرض النتيجة</button>
+    </div>
+  </div>
+
+  <div id="output"></div>
+
+  <script src="data.js"></script>
+
+  <script>
+    let studentsData = [];
+    let validStudents = [];
+    const TOTAL_BATCH = 1010;
+    const MAX_GRAND_TOTAL = 520;
+
+    window.onload = () => {
+      // التأكد من تحميل الملف
+      if (typeof studentsDataRaw === 'undefined') {
+        document.getElementById('output').innerHTML = '<div class="results-container"><div class="error-box">⚠️ يرجى التأكد من تشغيل سكريبت البايثون ووضع ملف data.js في نفس المجلد.</div></div>';
+        return;
+      }
+
+      // تجهيز وحساب الترتيب مثل الإكسيل تماماً
+      validStudents = studentsDataRaw.filter(s => !s.absent);
+      validStudents.sort((a, b) => b.grandTotal - a.grandTotal);
+
+      let rank = 1;
+      for (let i = 0; i < validStudents.length; i++) {
+        // لو في حد جايب نفس مجموع اللي قبله بياخد نفس الترتيب، واللي بعده بياخد الترتيب الحقيقي
+        if (i > 0 && validStudents[i].grandTotal < validStudents[i - 1].grandTotal) {
+          rank = i + 1;
+        }
+        validStudents[i].rank = rank;
+      }
+
+      studentsData = studentsDataRaw;
+    };
+
+    function barColor(pct) {
+      if (pct >= 0.85) return '#10b981';
+      if (pct >= 0.65) return '#3b82f6';
+      if (pct >= 0.50) return '#f59e0b';
+      return '#ef4444';
+    }
+
+    function searchStudent() {
+      if (studentsData.length === 0) return; // لو الملف متحملش متعملش حاجة
+
+      const idInput = parseInt(document.getElementById('studentId').value);
+      const targetInput = parseInt(document.getElementById('targetRank').value);
+      const output = document.getElementById('output');
+
+      if (!idInput) {
+        output.innerHTML = '<div class="results-container"><div class="error-box">⚠️ من فضلك أدخل رقم الجلوس</div></div>';
+        return;
+      }
+
+      const student = studentsData.find(s => s.id === idInput);
+
+      if (!student) {
+        output.innerHTML = '<div class="results-container"><div class="error-box">❌ رقم الجلوس غير موجود!</div></div>';
+        return;
+      }
+
+      const pctTotal = student.absent ? 0 : (student.grandTotal / MAX_GRAND_TOTAL);
+      const pctPct = (pctTotal * 100).toFixed(2);
+      const passStatus = (pctTotal >= 0.6) ? 'ناجح' : (student.absent ? 'غائب' : 'راسب');
+
+      let targetHTML = '';
+
+      // ميزة Am I far
+      if (targetInput && !student.absent) {
+        // بنجيب أول شخص جايب الترتيب المطلوب أو الترتيب اللي بعده مباشرة لو في مكرر
+        let targetStudent = validStudents.find(s => s.rank === targetInput);
+        if (!targetStudent) targetStudent = validStudents.find(s => s.rank >= targetInput);
+
+        if (student.rank <= targetInput) {
+          targetHTML = `
+            <div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);">
+              <h3 style="color:#10b981; text-align:center;">🎉 أنت بالفعل في هذا الترتيب أو أفضل!</h3>
+            </div>`;
+        } else if (targetStudent) {
+          const diffScore = (targetStudent.grandTotal - student.grandTotal).toFixed(2);
+          const targetPct = ((targetStudent.grandTotal / MAX_GRAND_TOTAL) * 100).toFixed(2);
+
+          targetHTML = `
+            <div class="target-result-card">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <span style="color: var(--muted); font-size: 14px;">بيانات المركز رقم ${targetStudent.rank}</span>
+              </div>
+              <div class="diff-grid">
+                <div class="diff-item">
+                  <div style="font-size:13px; color:var(--muted)">مجموع الترتيب المستهدف</div>
+                  <div class="target-value">${targetStudent.grandTotal} <span style="font-size:14px;color:var(--muted)">/ 520</span></div>
+                  <div style="font-size:14px; color:var(--gold)">${targetPct}%</div>
+                </div>
+                <div class="diff-item">
+                  <div style="font-size:13px; color:var(--muted)">الفرق بينكم (اللي ناقصك)</div>
+                  <div class="diff-value">🔻 ${diffScore} <span style="font-size:16px">درجة</span></div>
+                </div>
+              </div>
+            </div>`;
+        }
+      }
+
+      output.innerHTML = `
+        <div class="results-container">
+          <div class="student-card">
+            <div class="student-name">${student.name}</div>
+            <div class="badges">
+              <div class="badge">رقم الجلوس: <b>${student.id}</b></div>
+            </div>
+            <div class="rank-banner">
+              🏆 الترتيب على الدفعة:
+              <span class="rank-num">${student.absent ? '-' : student.rank}</span>
+              <span style="font-size:13px;opacity:0.6">/ ${TOTAL_BATCH}</span>
+            </div>
+            ${student.engStatus ? `
+            <div style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;
+              background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);
+              border-radius:8px;padding:8px 14px;font-size:13px;color:#10b981;font-weight:700">
+              🇬🇧 English: ${student.engStatus}
+            </div>` : ''}
+          </div>
+
+          <div class="section-title">المواد الدراسية</div>
+          <div class="modules-grid">
+            <div class="module-card">
+              <div class="module-name">Foundation of Medical School</div>
+              <div class="score-row">
+                <span class="score-big" style="color:${barColor(student.fndTotal / 300)}">${student.fndTotal}</span>
+                <span class="score-of">/ 300</span>
+              </div>
+            </div>
+            <div class="module-card">
+              <div class="module-name">Blood & Immune System</div>
+              <div class="score-row">
+                <span class="score-big" style="color:${barColor(student.bldTotal / 180)}">${student.bldTotal}</span>
+                <span class="score-of">/ 180</span>
+              </div>
+            </div>
+            <div class="module-card">
+              <div class="module-name">Medical School Orientation</div>
+              <div class="score-row">
+                <span class="score-big" style="color:${barColor(student.oriTotal / 40)}">${student.oriTotal}</span>
+                <span class="score-of">/ 40</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="total-section">
+            <div>
+              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">إجمالي الدرجات</div>
+              <div class="total-score">${student.absent ? 'غائب' : student.grandTotal}<span style="font-size:18px;color:var(--muted)"> / 520</span></div>
+            </div>
+            ${!student.absent ? `
+            <div style="font-size: 26px; font-weight: 900; color: var(--accent2);">
+              ${pctPct}%
+            </div>` : ''}
+            <div class="status-pill ${passStatus === 'ناجح' ? 'pass' : 'fail'}">${passStatus === 'ناجح' ? '✓ ناجح' : (student.absent ? 'غائب' : '✗ راسب')}</div>
+          </div>
+          
+          ${targetHTML}
+
+        </div>`;
+    }
+
+    document.getElementById('studentId').addEventListener('keydown', e => {
+      if (e.key === 'Enter') searchStudent();
+    });
+    document.getElementById('targetRank').addEventListener('keydown', e => {
+      if (e.key === 'Enter') searchStudent();
+    });
+  </script>
+</body>
+
+</html>
