@@ -654,7 +654,7 @@
         let targetStudent = validStudents.find(s => s.rank === targetInput);
         if (!targetStudent) targetStudent = validStudents.find(s => s.rank >= targetInput);
         if (student.rank <= targetInput) {
-          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉 أنت بالفعل في هذا الترتيب أو أفضل!</h3></div>`;
+          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉أنت بالفعل في هذا الترتيب !</h3></div>`;
         } else if (targetStudent) {
           const diffScore = (targetStudent.grandTotal - student.grandTotal).toFixed(2);
           const targetPct = ((targetStudent.grandTotal / MAX_GRAND_TOTAL) * 100).toFixed(2);
@@ -763,7 +763,7 @@
         let targetStudent = validStudents4.find(s => s['Rank'] === targetInput);
         if (!targetStudent) targetStudent = validStudents4.find(s => s['Rank'] >= targetInput);
         if (rank4 <= targetInput) {
-          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉 أنت بالفعل في هذا الترتيب أو أفضل!</h3></div>`;
+          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉أنت بالفعل في هذا الترتيب !</h3></div>`;
         } else if (targetStudent) {
           const diffScore = (targetStudent['Cumulative'] - student['Cumulative']).toFixed(4);
           const targetPct = targetStudent['Percent'] ? targetStudent['Percent'].toFixed(2) : '—';
@@ -840,4 +840,5 @@
 </body>
 
 </html>
+
 
