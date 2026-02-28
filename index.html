@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Colors */
             --primary-green: #10B981;
             --dark-green: #059669;
             --light-green: #34D399;
@@ -22,7 +21,6 @@
             --dark-blue: #2563EB;
             --light-blue: #60A5FA;
 
-            /* Base Colors - Dark Mode Default */
             --bg-dark: #0F172A;
             --bg-darker: #1E293B;
             --bg-card: #1E293B;
@@ -31,33 +29,28 @@
             --border-color: rgba(148, 163, 184, 0.2);
             --hover-bg: rgba(255, 255, 255, 0.05);
 
-            /* Layout tokens */
             --radius-lg: 20px;
             --radius-md: 12px;
             --sidebar-width: 280px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-            /* Default Theme (Green) */
             --accent: var(--primary-green);
             --accent-dark: var(--dark-green);
             --accent-light: var(--light-green);
         }
 
-        /* Red Theme for Mistakes */
         [data-mode='mistakes'] {
             --accent: var(--primary-red);
             --accent-dark: var(--dark-red);
             --accent-light: var(--light-red);
         }
 
-        /* Blue Theme for Favorites */
         [data-mode='favorites'] {
             --accent: var(--primary-blue);
             --accent-dark: var(--dark-blue);
             --accent-light: var(--light-blue);
         }
 
-        /* Light Theme Overrides */
         [data-theme='light'] {
             --bg-dark: #FFFFFF;
             --bg-darker: #F8FAFC;
@@ -84,7 +77,6 @@
             line-height: 1.6;
         }
 
-        /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg-darker);
@@ -199,7 +191,6 @@
             }
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             display: flex;
@@ -271,7 +262,6 @@
             }
         }
 
-        /* Module Grid */
         .module-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -387,7 +377,6 @@
             transition: width 0.8s ease;
         }
 
-        /* Quiz UI */
         body.focus-mode {
             overflow: hidden;
         }
@@ -623,7 +612,6 @@
             color: white;
         }
 
-        /* Map & Other UI */
         .map-overlay {
             position: fixed;
             inset: 0;
@@ -717,7 +705,6 @@
             margin-left: auto;
         }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -933,7 +920,6 @@
             outline: none;
         }
 
-        /* Analytics */
         .analytics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1003,7 +989,6 @@
             background: transparent;
         }
 
-        /* Results Screen */
         #view-results {
             position: fixed !important;
             inset: 0 !important;
@@ -1086,21 +1071,17 @@
             margin-bottom: 2rem;
         }
 
-        /* NEW MOBILE RESPONSIVE LAYOUT */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
-                /* Stack vertically */
             }
 
             .sidebar {
                 width: 100%;
                 height: 75px;
-                /* Fixed height for bottom nav */
                 flex-direction: row;
                 padding: 0;
                 order: 2;
-                /* Move to bottom */
                 border-top: 1px solid var(--border-color);
                 border-right: none;
                 border-bottom: none;
@@ -1110,7 +1091,6 @@
                 background: var(--bg-darker);
             }
 
-            /* Style Nav for bottom bar */
             .nav-section {
                 display: flex;
                 flex-direction: row;
@@ -1141,7 +1121,6 @@
                 transform: translateY(-2px);
             }
 
-            /* Hide unnecessary side items */
             .nav-label,
             .logo,
             .directors-card {
@@ -1150,11 +1129,9 @@
 
             .main-content {
                 padding-bottom: 75px;
-                /* Make room for bottom nav */
                 height: 100vh;
             }
 
-            /* Hide Bottom Nav during focus mode (quiz) */
             body.focus-mode .main-content {
                 padding-bottom: 0;
             }
@@ -1435,7 +1412,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="blood.js"></script>
     <script>
-        // Init Data
         const FALLBACK_MSK = { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] };
         const DB = {
             'Blood': typeof BLOOD_QUESTIONS !== 'undefined' ? BLOOD_QUESTIONS : [],
