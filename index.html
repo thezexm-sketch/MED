@@ -12,11 +12,9 @@
             --primary-green: #10B981;
             --dark-green: #059669;
             --light-green: #34D399;
-
             --primary-red: #EF4444;
             --dark-red: #DC2626;
             --light-red: #F87171;
-
             --primary-blue: #3B82F6;
             --dark-blue: #2563EB;
             --light-blue: #60A5FA;
@@ -77,6 +75,7 @@
             line-height: 1.6;
         }
 
+        /* Sidebar & Sidebar Collapse */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg-darker);
@@ -87,6 +86,15 @@
             gap: 2rem;
             transition: var(--transition);
             z-index: 100;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        body.sidebar-collapsed .sidebar {
+            width: 0;
+            padding: 0;
+            border: none;
+            opacity: 0;
         }
 
         [data-theme='light'] .sidebar {
@@ -170,9 +178,10 @@
             margin-top: auto;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            padding: 1.5rem;
+            padding: 1rem;
             border-radius: 16px;
             text-align: center;
+            white-space: normal;
         }
 
         .directors-names {
@@ -191,6 +200,7 @@
             }
         }
 
+        /* Main Content */
         .main-content {
             flex: 1;
             display: flex;
@@ -211,14 +221,20 @@
             z-index: 10;
         }
 
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
         .page-title {
             font-size: 1.75rem;
             font-weight: 800;
         }
 
         .icon-btn {
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             border-radius: 12px;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -262,6 +278,7 @@
             }
         }
 
+        /* Module Grid */
         .module-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -377,6 +394,7 @@
             transition: width 0.8s ease;
         }
 
+        /* Quiz UI */
         body.focus-mode {
             overflow: hidden;
         }
@@ -612,99 +630,7 @@
             color: white;
         }
 
-        .map-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            display: none;
-            z-index: 1500;
-        }
-
-        .map-overlay.active {
-            display: flex;
-        }
-
-        .map-drawer {
-            width: 400px;
-            height: 100%;
-            background: var(--bg-dark);
-            border-right: 1px solid var(--border-color);
-            padding: 2rem;
-            overflow-y: auto;
-            animation: slideInLeft 0.3s ease;
-        }
-
-        @keyframes slideInLeft {
-            from {
-                transform: translateX(-100%);
-            }
-
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        .map-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .map-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-
-        .map-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .q-box {
-            padding: 1rem;
-            background: var(--bg-card);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .q-box:hover {
-            border-color: var(--accent);
-            transform: translateX(5px);
-        }
-
-        .q-box.active {
-            border-color: var(--accent);
-            background: var(--hover-bg);
-        }
-
-        .q-box.correct {
-            background: rgba(16, 185, 129, 0.15);
-            border-color: var(--primary-green);
-        }
-
-        .q-box.wrong {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: var(--primary-red);
-        }
-
-        .q-box.favorited::after {
-            content: '⭐';
-            margin-left: auto;
-        }
-
-        .q-box.noted::after {
-            content: '📝';
-            margin-left: auto;
-        }
-
+        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -812,10 +738,11 @@
             color: white;
         }
 
+        /* Modded Subtopic Styles (Grid & Nested) */
         .subtopic-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
             margin-bottom: 1rem;
         }
 
@@ -823,14 +750,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.8rem;
             background: var(--bg-darker);
             border: 2px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: var(--transition);
             color: var(--text-gray);
             font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .subtopic-btn:hover {
@@ -846,6 +774,46 @@
 
         [data-mode='mistakes'] .subtopic-btn.active {
             background: rgba(239, 68, 68, 0.15);
+        }
+
+        .subtopic-group {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .subtopic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .subtopic-header:hover {
+            border-color: var(--accent);
+        }
+
+        .subtopic-header i {
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .subtopic-children {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            padding-left: 0.75rem;
+            border-left: 2px solid var(--border-color);
+            margin-left: 0.5rem;
         }
 
         .custom-input {
@@ -920,6 +888,101 @@
             outline: none;
         }
 
+        /* Other UI components like Map & Analytics hidden for brevity but same as before */
+        .map-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            z-index: 1500;
+        }
+
+        .map-overlay.active {
+            display: flex;
+        }
+
+        .map-drawer {
+            width: 400px;
+            height: 100%;
+            background: var(--bg-dark);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem;
+            overflow-y: auto;
+            animation: slideInLeft 0.3s ease;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .map-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .map-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .q-box {
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .q-box:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .q-box.active {
+            border-color: var(--accent);
+            background: var(--hover-bg);
+        }
+
+        .q-box.correct {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--primary-green);
+        }
+
+        .q-box.wrong {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--primary-red);
+        }
+
+        .q-box.favorited::after {
+            content: '⭐';
+            margin-left: auto;
+        }
+
+        .q-box.noted::after {
+            content: '📝';
+            margin-left: auto;
+        }
+
+        /* Analytics */
         .analytics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -989,6 +1052,7 @@
             background: transparent;
         }
 
+        /* Results Screen */
         #view-results {
             position: fixed !important;
             inset: 0 !important;
@@ -1071,6 +1135,7 @@
             margin-bottom: 2rem;
         }
 
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -1127,6 +1192,12 @@
                 display: none;
             }
 
+            #sidebar-toggle {
+                display: none;
+            }
+
+            /* Hide toggle on mobile as we use bottom nav */
+
             .main-content {
                 padding-bottom: 75px;
                 height: 100vh;
@@ -1165,17 +1236,13 @@
                 width: 85%;
             }
 
-            .analytics-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
+            .subtopic-grid {
+                grid-template-columns: 1fr;
             }
 
-            .stat-value {
-                font-size: 2rem;
-            }
-
-            .stat-card {
-                padding: 1.5rem 1rem;
+            /* Stack buttons vertically on small screens */
+            .subtopic-children {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1233,7 +1300,11 @@
 
     <main class="main-content">
         <div class="top-bar">
-            <h1 class="page-title" id="page-title">Modules</h1>
+            <div class="top-bar-left">
+                <button class="icon-btn" onclick="toggleSidebar()" id="sidebar-toggle"><i
+                        class="ri-menu-2-line"></i></button>
+                <h1 class="page-title" id="page-title">Modules</h1>
+            </div>
             <div class="quiz-actions">
                 <button class="icon-btn" onclick="toggleTheme()"><i class="ri-sun-fill" id="theme-icon"></i></button>
             </div>
@@ -1267,7 +1338,8 @@
                         style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
                         <h3
                             style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                            <span style="font-size: 1.75rem;">📝</span> MCQs</h3>
+                            <span style="font-size: 1.75rem;">📝</span> MCQs
+                        </h3>
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSesP1grcIBAX82df_yCcJXa16F7p8Q0jl1XKK1I9ViJfgiZCg/viewform?vc=0&c=0&w=1&flr=0&hl=en"
                                 target="_blank"
@@ -1412,6 +1484,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="blood.js"></script>
     <script>
+        // Init Data & Fallbacks
         const FALLBACK_MSK = { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] };
         const DB = {
             'Blood': typeof BLOOD_QUESTIONS !== 'undefined' ? BLOOD_QUESTIONS : [],
@@ -1438,12 +1511,27 @@
         };
         let SessionStartTime = null;
 
+        // Helper: Extract all questions no matter how deeply nested
+        function extractAllQuestions(moduleData) {
+            let qs = [];
+            if (Array.isArray(moduleData)) return moduleData;
+            for (const key in moduleData) {
+                if (Array.isArray(moduleData[key])) qs.push(...moduleData[key]);
+                else qs.push(...extractAllQuestions(moduleData[key]));
+            }
+            return qs;
+        }
+
         window.onload = function () {
             document.body.setAttribute('data-theme', AppState.theme);
             updateThemeIcons();
             renderDashboard();
             document.addEventListener('keydown', handleKeyboard);
         };
+
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-collapsed');
+        }
 
         function updateThemeIcons() {
             const iconClass = AppState.theme === 'light' ? 'ri-moon-fill' : 'ri-sun-fill';
@@ -1538,9 +1626,7 @@
             const isMistakes = mode === 'mistakes';
 
             for (const modName in DB) {
-                let allQs = [];
-                if (Array.isArray(DB[modName])) allQs = DB[modName];
-                else Object.values(DB[modName]).forEach(arr => allQs.push(...arr));
+                let allQs = extractAllQuestions(DB[modName]);
 
                 let availableCount = 0, mistakesCount = 0;
                 allQs.forEach(q => {
@@ -1573,6 +1659,21 @@
             if (grid.innerHTML === '') grid.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-gray); grid-column: 1/-1;">🎉 No active modules found!</div>`;
         }
 
+        function createSubtopicBtn(label, count, value) {
+            const btn = document.createElement('div');
+            btn.className = 'subtopic-btn';
+            btn.innerHTML = `<span>${label}</span> <span>${count}</span>`;
+            btn.onclick = () => {
+                btn.classList.toggle('active');
+                if (Session.selectedSubtopics.includes(value)) {
+                    Session.selectedSubtopics = Session.selectedSubtopics.filter(s => s !== value);
+                } else {
+                    Session.selectedSubtopics.push(value);
+                }
+            };
+            return btn;
+        }
+
         function openStartModal(modName, isMistakes) {
             Session.module = modName; Session.mode = isMistakes ? 'mistakes' : 'normal'; Session.selectedSubtopics = [];
             document.getElementById('modal-title').textContent = isMistakes ? `Review ${modName}` : `Storm ${modName}`;
@@ -1585,17 +1686,53 @@
 
             if (!Array.isArray(DB[modName])) {
                 subContainer.style.display = 'block';
-                for (const subKey in DB[modName]) {
-                    const pool = isMistakes ? DB[modName][subKey].filter(q => AppState.progress[q.q] === 'wrong') : DB[modName][subKey].filter(q => !AppState.progress[q.q]);
-                    if (pool.length > 0) {
-                        const btn = document.createElement('div'); btn.className = 'subtopic-btn';
-                        btn.innerHTML = `<span>${subKey}</span> <span>${pool.length}</span>`;
-                        btn.onclick = () => {
-                            btn.classList.toggle('active');
-                            if (Session.selectedSubtopics.includes(subKey)) Session.selectedSubtopics = Session.selectedSubtopics.filter(s => s !== subKey);
-                            else Session.selectedSubtopics.push(subKey);
-                        };
-                        subGrid.appendChild(btn);
+                for (const key in DB[modName]) {
+                    const data = DB[modName][key];
+
+                    if (Array.isArray(data)) {
+                        // Regular Flat Section
+                        const pool = isMistakes ? data.filter(q => AppState.progress[q.q] === 'wrong') : data.filter(q => !AppState.progress[q.q]);
+                        if (pool.length > 0) {
+                            subGrid.appendChild(createSubtopicBtn(key, pool.length, key));
+                        }
+                    } else {
+                        // Nested Accordion Section (like Anatomy -> Upper/Lower)
+                        let groupPoolCount = 0;
+                        const childrenElements = [];
+
+                        for (const childKey in data) {
+                            const childData = data[childKey];
+                            const pool = isMistakes ? childData.filter(q => AppState.progress[q.q] === 'wrong') : childData.filter(q => !AppState.progress[q.q]);
+                            if (pool.length > 0) {
+                                groupPoolCount += pool.length;
+                                childrenElements.push(createSubtopicBtn(childKey, pool.length, `${key}___${childKey}`));
+                            }
+                        }
+
+                        if (groupPoolCount > 0) {
+                            const groupDiv = document.createElement('div');
+                            groupDiv.className = 'subtopic-group';
+
+                            const header = document.createElement('div');
+                            header.className = 'subtopic-header';
+                            header.innerHTML = `<span>${key}</span> <span>${groupPoolCount} <i class="ri-arrow-down-s-line"></i></span>`;
+
+                            const childrenContainer = document.createElement('div');
+                            childrenContainer.className = 'subtopic-children';
+                            childrenContainer.style.display = 'none';
+
+                            childrenElements.forEach(el => childrenContainer.appendChild(el));
+
+                            header.onclick = () => {
+                                const isHidden = childrenContainer.style.display === 'none';
+                                childrenContainer.style.display = isHidden ? 'grid' : 'none';
+                                header.querySelector('i').style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+                            };
+
+                            groupDiv.appendChild(header);
+                            groupDiv.appendChild(childrenContainer);
+                            subGrid.appendChild(groupDiv);
+                        }
                     }
                 }
                 if (subGrid.innerHTML === '') subGrid.innerHTML = '<div style="text-align:center; color:var(--text-gray)">No questions available.</div>';
@@ -1627,8 +1764,15 @@
             let pool = [];
             if (!Array.isArray(DB[Session.module])) {
                 if (Session.selectedSubtopics.length === 0) return alert("Select at least one subject!");
-                Session.selectedSubtopics.forEach(subKey => {
-                    const filtered = Session.mode === 'mistakes' ? DB[Session.module][subKey].filter(q => AppState.progress[q.q] === 'wrong') : DB[Session.module][subKey].filter(q => !AppState.progress[q.q]);
+                Session.selectedSubtopics.forEach(selection => {
+                    let subQs;
+                    if (selection.includes('___')) {
+                        const parts = selection.split('___');
+                        subQs = DB[Session.module][parts[0]][parts[1]];
+                    } else {
+                        subQs = DB[Session.module][selection];
+                    }
+                    const filtered = Session.mode === 'mistakes' ? subQs.filter(q => AppState.progress[q.q] === 'wrong') : subQs.filter(q => !AppState.progress[q.q]);
                     pool.push(...filtered);
                 });
             } else {
@@ -1797,8 +1941,7 @@
 
         function resetModule(modName, e) {
             e.stopPropagation(); if (!confirm(`Reset all progress for ${modName}?`)) return;
-            if (Array.isArray(DB[modName])) DB[modName].forEach(q => delete AppState.progress[q.q]);
-            else Object.values(DB[modName]).forEach(arr => arr.forEach(q => delete AppState.progress[q.q]));
+            extractAllQuestions(DB[modName]).forEach(q => delete AppState.progress[q.q]);
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); renderDashboard(Session.mode);
         }
 
@@ -1810,7 +1953,7 @@
             let hasFav = false, hasNotes = false;
 
             for (const modName in DB) {
-                let qs = []; if (Array.isArray(DB[modName])) qs = DB[modName]; else Object.values(DB[modName]).forEach(arr => qs.push(...arr));
+                let qs = extractAllQuestions(DB[modName]);
                 qs.forEach(q => {
                     if (AppState.favorites[q.q]) { hasFav = true; favGrid.appendChild(createFavoriteCard(q, modName)); }
                     if (AppState.notes[q.q]) { hasNotes = true; notesGrid.appendChild(createNoteCard(q, modName)); }
@@ -1847,7 +1990,7 @@
             let totalQs = 0, totalMastered = 0, totalWrong = 0;
             const list = document.getElementById('analytics-list'); list.innerHTML = '';
             for (const [modName, modContent] of Object.entries(DB)) {
-                let qs = []; if (Array.isArray(modContent)) qs = modContent; else Object.values(modContent).forEach(arr => qs.push(...arr));
+                let qs = extractAllQuestions(modContent);
                 totalQs += qs.length; let m = 0, w = 0;
                 qs.forEach(q => { if (AppState.progress[q.q] === 'correct') m++; else if (AppState.progress[q.q] === 'wrong') w++; });
                 totalMastered += m; totalWrong += w;
