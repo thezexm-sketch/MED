@@ -1332,8 +1332,10 @@
             <input type="password" id="user-password" class="custom-input" placeholder="Password..."
                 style="margin-bottom: 1.5rem;">
             <button class="action-btn" onclick="handleLogin()">Login 🔓</button>
-            <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-gray);">Contact Dr. Mahmoud for an
-                account</p>
+            <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-gray);">Contact <a
+                    href="https://t.me/behonor" target="_blank"
+                    style="color: var(--primary-green); text-decoration: none; font-weight: bold;">Dr. Mahmoud</a> for
+                an account</p>
         </div>
     </div>
 
@@ -1563,7 +1565,16 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // تسجيل الدخول الحقيقي
+
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('medStormDeviceId');
+            if (!deviceId) {
+                deviceId = 'device_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('medStormDeviceId', deviceId);
+            }
+            return deviceId;
+        }
+
         window.handleLogin = async () => {
             const email = document.getElementById('user-email').value.trim();
             const pass = document.getElementById('user-password').value.trim();
@@ -1571,16 +1582,37 @@
             if (!email || !pass) return alert("Please enter your email and password!");
 
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+                const deviceId = getDeviceId();
+
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    let devices = userSnap.data().devices || [];
+
+                    if (!devices.includes(deviceId)) {
+                        if (devices.length >= 2) {
+                            await auth.signOut();
+                            return alert("❌ الحساب ده مفتوح على جهازين بالفعل! تواصل مع د. محمود @behonor");
+                        } else {
+                            devices.push(deviceId);
+                            await setDoc(userRef, { devices: devices }, { merge: true });
+                        }
+                    }
+                } else {
+                    await setDoc(userRef, { devices: [deviceId] });
+                }
+
                 document.getElementById('login-overlay').style.display = 'none';
                 if (window.confetti) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                 fetchQuestionsFromDB();
+
             } catch (error) {
                 alert("Login Failed: Incorrect Email or Password.");
             }
         };
-
-        // التحقق من حالة المستخدم (عشان ميدخلش الباسورد كل مرة)
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-overlay').style.display = 'none';
@@ -1590,8 +1622,6 @@
             }
         });
 
-        // سحب الأسئلة من Firestore المخفية
-        // سحب الأسئلة من Firestore المخفية وفك تغليفها
         async function fetchQuestionsFromDB() {
             try {
                 const modulesToFetch = [
@@ -1607,7 +1637,6 @@
 
                     if (docSnap.exists()) {
                         let data = docSnap.data();
-                        // فك التغليف لو كانت مصفوفة (عشان الـ Blood والـ Foundation)
                         if (data.questionsList) {
                             window.DB[mod.key] = data.questionsList;
                         } else {
@@ -1616,7 +1645,6 @@
                     }
                 }
 
-                // تشغيل الموقع بعد تحميل كل الداتا
                 if (typeof window.renderDashboard === "function") window.renderDashboard();
             } catch (e) {
                 console.error("Error fetching data: ", e);
@@ -1625,7 +1653,6 @@
     </script>
 
     <script>
-        // قاعدة بيانات فارغة مبدئياً لحين تحميلها من Firebase
         var DB = {
             'Blood': [],
             'Foundation': [],
@@ -2152,6 +2179,5 @@
         }
     </script>
 </body>
-
 
 </html>
