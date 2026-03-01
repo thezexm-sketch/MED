@@ -1608,7 +1608,7 @@
                     if (!devices.includes(deviceId)) {
                         if (devices.length >= 2) {
                             await signOut(auth);
-                            return showError("❌ الحساب ده مفتوح على جهازين بالفعل! تواصل مع د. محمود @behonor");
+                            return showError("❌ الحساب ده مفتوح على جهازين بالفعل! تواصل مع د. محمود على التيليجرام @behonor");
                         } else {
                             devices.push(deviceId);
                             await setDoc(userRef, { devices: devices }, { merge: true });
@@ -1642,16 +1642,19 @@
                             await setDoc(userRef, { devices: devices }, { merge: true });
                         }
                     }
-
                     await signOut(auth);
+
+                    localStorage.removeItem('medStorm_Blood');
+                    localStorage.removeItem('medStorm_Foundation');
+                    localStorage.removeItem('medStorm_Terminology');
+                    localStorage.removeItem('medStorm_MSK');
+                    localStorage.removeItem('medStorm_DB_Cache');
 
                     window.DB = { 'Blood': [], 'Foundation': [], 'Terminology': [], 'MSK': { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] } };
                     document.getElementById('module-grid').innerHTML = '';
                     document.getElementById('login-overlay').style.display = 'flex';
 
-                } catch (e) {
-                    console.error("Logout Error:", e);
-                }
+                } catch (e) { console.error("Logout Error:", e); }
             }
         };
 
@@ -1665,6 +1668,8 @@
         });
 
         async function fetchQuestionsFromDB() {
+            if (typeof window.renderDashboard === "function") window.renderDashboard();
+
             try {
                 const modules = [
                     { id: 'msk_questions', key: 'MSK' },
@@ -1673,25 +1678,49 @@
                     { id: 'terminology_questions', key: 'Terminology' }
                 ];
 
-                for (const mod of modules) {
-                    const docRef = doc(db, "content", mod.id);
-                    const docSnap = await getDoc(docRef);
+                const fetchPromises = modules.map(mod => getDoc(doc(db, "content", mod.id)));
+                const snapshots = await Promise.all(fetchPromises);
+
+                let isUpdated = false;
+
+                snapshots.forEach((docSnap, index) => {
                     if (docSnap.exists()) {
                         let data = docSnap.data();
-                        window.DB[mod.key] = data.questionsList ? data.questionsList : data;
+                        let finalData = data.questionsList ? data.questionsList : data;
+                        window.DB[modules[index].key] = finalData;
+
+                        try {
+                            localStorage.setItem('medStorm_' + modules[index].key, JSON.stringify(finalData));
+                        } catch (e) {
+                            console.warn("المساحة ممتلئة للموديول:", modules[index].key);
+                        }
+                        isUpdated = true;
                     }
+                });
+
+                if (isUpdated && typeof window.renderDashboard === "function") {
+                    window.renderDashboard();
                 }
-                if (typeof window.renderDashboard === "function") window.renderDashboard();
-            } catch (e) { console.error("Fetch Error:", e); }
+
+            } catch (e) {
+                console.error("Fetch Error:", e);
+            }
         }
     </script>
 
     <script>
-        var DB = {
-            'Blood': [],
-            'Foundation': [],
-            'Terminology': [],
-            'MSK': { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] }
+        function getSafeData(key, fallback) {
+            try {
+                let data = localStorage.getItem(key);
+                return (data && data !== "null") ? JSON.parse(data) : fallback;
+            } catch (e) { return fallback; }
+        }
+
+        window.DB = {
+            'Blood': getSafeData('medStorm_Blood', []),
+            'Foundation': getSafeData('medStorm_Foundation', []),
+            'Terminology': getSafeData('medStorm_Terminology', []),
+            'MSK': getSafeData('medStorm_MSK', { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] })
         };
 
         const ICONS = { 'Blood': '🩸', 'Foundation': '🏥', 'Terminology': '📖', 'MSK': '🦴' };
@@ -1713,13 +1742,23 @@
         };
         let SessionStartTime = null;
 
-        // --- Helpers ---
         function extractAllQuestions(moduleData) {
             let qs = [];
-            if (Array.isArray(moduleData)) return moduleData;
+            if (!moduleData) return qs;
+
+            if (Array.isArray(moduleData)) {
+                return moduleData.filter(q => q && typeof q === 'object' && q.q);
+            }
+
+            if (typeof moduleData !== 'object') return qs;
+
             for (const key in moduleData) {
-                if (Array.isArray(moduleData[key])) qs.push(...moduleData[key]);
-                else qs.push(...extractAllQuestions(moduleData[key]));
+                if (!moduleData[key]) continue;
+                if (Array.isArray(moduleData[key])) {
+                    qs.push(...moduleData[key].filter(q => q && typeof q === 'object' && q.q));
+                } else {
+                    qs.push(...extractAllQuestions(moduleData[key]));
+                }
             }
             return qs;
         }
@@ -1746,7 +1785,6 @@
             updateThemeIcons();
         }
 
-        // --- Session Tracking ---
         function startSession() { SessionStartTime = Date.now(); }
         function endSession() {
             if (!SessionStartTime) return;
@@ -1775,7 +1813,6 @@
             }
         }
 
-        // --- Navigation ---
         function switchMode(mode) {
             clearTimeout(Session.timer);
             if (SessionStartTime) endSession();
@@ -1822,7 +1859,6 @@
             }
         }
 
-        // --- Rendering ---
         function renderDashboard(mode = 'normal') {
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
@@ -1833,6 +1869,7 @@
 
                 let availableCount = 0, mistakesCount = 0;
                 allQs.forEach(q => {
+                    if (!q || !q.q) return;
                     const status = AppState.progress[q.q];
                     if (status === 'wrong') mistakesCount++;
                     if (isMistakes && status === 'wrong') availableCount++;
@@ -1841,7 +1878,7 @@
 
                 if (availableCount === 0 && isMistakes) continue;
                 const total = allQs.length;
-                let solved = allQs.filter(q => AppState.progress[q.q]).length;
+                let solved = allQs.filter(q => q && q.q && AppState.progress[q.q]).length;
                 const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
                 const badgeText = isMistakes ? `${mistakesCount}` : `${availableCount}`;
 
@@ -1898,7 +1935,6 @@
                             subGrid.appendChild(createSubtopicBtn(key, pool.length, key));
                         }
                     } else {
-                        // Nested Accordion Section (Anatomy -> Upper/Lower)
                         let groupPoolCount = 0;
                         const childrenElements = [];
 
@@ -1962,7 +1998,6 @@
             el.classList.add('active');
         }
 
-        // --- Quiz Logic ---
         function launchQuiz() {
             let pool = [];
             if (!Array.isArray(DB[Session.module])) {
