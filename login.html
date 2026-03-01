@@ -75,7 +75,6 @@
             line-height: 1.6;
         }
 
-        /* --- Login Overlay --- */
         #login-overlay {
             position: fixed;
             inset: 0;
@@ -116,7 +115,6 @@
             font-size: 0.9rem;
         }
 
-        /* --- Sidebar & Sidebar Collapse --- */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg-darker);
@@ -215,7 +213,6 @@
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
         }
 
-        /* تعديل صندوق الدكاترة عشان الأسماء تنزل براحتها */
         .directors-card {
             margin-top: auto;
             background: var(--bg-card);
@@ -250,7 +247,6 @@
             }
         }
 
-        /* --- Main Content --- */
         .main-content {
             flex: 1;
             display: flex;
@@ -328,7 +324,6 @@
             }
         }
 
-        /* --- Module Grid --- */
         .module-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -444,7 +439,6 @@
             transition: width 0.8s ease;
         }
 
-        /* --- Quiz UI --- */
         body.focus-mode {
             overflow: hidden;
         }
@@ -680,7 +674,6 @@
             color: white;
         }
 
-        /* --- Modal & Form Elements --- */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -788,7 +781,6 @@
             color: white;
         }
 
-        /* Modded Subtopic Styles (Grid & Nested) - زراير أصغر وجنب بعض */
         .subtopic-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -938,7 +930,6 @@
             outline: none;
         }
 
-        /* --- Analytics & Results (نفس القديم) --- */
         .analytics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1183,7 +1174,6 @@
             margin-left: auto;
         }
 
-        /* --- Responsive adjustments --- */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -1244,7 +1234,6 @@
                 display: none;
             }
 
-            /* Hide toggle on mobile as we use bottom nav */
 
             .main-content {
                 padding-bottom: 75px;
@@ -1293,30 +1282,59 @@
             }
         }
 
-        @media (max-width: 1024px) and (orientation: landscape) {
-            .quiz-container {
-                padding: 4rem 1.5rem 1rem;
+
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .sidebar {
+                width: 220px;
+                padding: 1.5rem 1rem;
             }
 
-            .question-text {
-                font-size: 1.1rem;
-                margin-bottom: 0.75rem;
+            .directors-card {
+                padding: 0.75rem;
+                word-wrap: break-word;
             }
 
-            .option-btn {
-                padding: 0.75rem 1rem;
-                font-size: 0.95rem;
+            .directors-names {
+                font-size: 0.75rem;
+                line-height: 1.3;
             }
 
-            .options-container {
-                gap: 0.5rem;
-                margin-bottom: 1rem;
+            .nav-item {
+                font-size: 0.8rem;
+                padding: 8px 10px;
             }
 
-            .modal {
-                max-height: 90vh;
-                padding: 1.25rem;
+            .logo-text {
+                font-size: 1.2rem;
             }
+
+            .top-bar {
+                padding: 0 1.5rem;
+            }
+
+            .view-section {
+                padding: 1.5rem;
+            }
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .option-btn {
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+        }
+
+        .options-container {
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal {
+            max-height: 90vh;
+            padding: 1.25rem;
         }
     </style>
 </head>
@@ -1364,9 +1382,7 @@
         <div class="directors-card">
             <div class="directors-label">Directed by:</div>
             <div class="directors-names">DRs / Mahmoud & Abdallah</div>
-            <div class="nav-item" onclick="handleLogout()" style="margin-top: auto; color: var(--light-red);">
-                <i class="ri-logout-box-r-line"></i><span>Logout</span>
-            </div>
+        </div>
     </nav>
 
     <main class="main-content">
@@ -1376,8 +1392,13 @@
                         class="ri-menu-2-line"></i></button>
                 <h1 class="page-title" id="page-title">Modules</h1>
             </div>
-            <div class="quiz-actions">
-                <button class="icon-btn" onclick="toggleTheme()"><i class="ri-sun-fill" id="theme-icon"></i></button>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <button class="icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i class="ri-sun-fill"
+                        id="theme-icon"></i></button>
+                <button class="icon-btn" onclick="handleLogout()" title="Logout"
+                    style="color: var(--primary-red); background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
+                    <i class="ri-logout-box-r-line"></i>
+                </button>
             </div>
         </div>
 
@@ -1587,44 +1608,79 @@
             return deviceId;
         }
 
+        window.isExplicitLogin = false;
+        let isCheckingDevice = false;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                if (isCheckingDevice) return;
+                isCheckingDevice = true;
+
+                try {
+                    const deviceId = getDeviceId();
+                    const userRef = doc(db, "users", user.uid);
+                    const userSnap = await getDoc(userRef);
+
+                    if (userSnap.exists()) {
+                        let devices = userSnap.data().devices || [];
+                        if (!devices.includes(deviceId)) {
+                            if (devices.length >= 2) {
+                                await signOut(auth);
+                                showError("❌ Maximum device limit reached. Please contact <a href='https://t.me/behonor' target='_blank' style='color: var(--primary-green); text-decoration: none; font-weight: bold;'>Dr. Mahmoud</a> to reset your account.");
+
+                                const btn = document.querySelector('.action-btn');
+                                if (btn) { btn.innerHTML = "Login 🔓"; btn.disabled = false; }
+                                isCheckingDevice = false;
+                                return;
+                            } else {
+                                devices.push(deviceId);
+                                await setDoc(userRef, { devices: devices }, { merge: true });
+                            }
+                        }
+                    } else {
+                        await setDoc(userRef, { devices: [deviceId] });
+                    }
+
+                    document.getElementById('login-overlay').style.display = 'none';
+                    if (window.isExplicitLogin && window.confetti) {
+                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                    }
+                    window.isExplicitLogin = false;
+                    fetchQuestionsFromDB();
+
+                } catch (e) {
+                    console.error("Device Check Error:", e);
+                } finally {
+                    isCheckingDevice = false;
+                    const btn = document.querySelector('.action-btn');
+                    if (btn) { btn.innerHTML = "Login 🔓"; btn.disabled = false; }
+                }
+            } else {
+                document.getElementById('login-overlay').style.display = 'flex';
+                const btn = document.querySelector('.action-btn');
+                if (btn) { btn.innerHTML = "Login 🔓"; btn.disabled = false; }
+            }
+        });
+
         window.handleLogin = async () => {
             const email = document.getElementById('user-email').value.trim();
             const pass = document.getElementById('user-password').value.trim();
             document.getElementById('login-error').style.display = 'none';
 
-            if (!email || !pass) return showError("⚠️ برجاء إدخال البريد الإلكتروني وكلمة المرور.");
+            if (!email || !pass) return showError("⚠️ Please enter your email and password.");
+
+            const btn = document.querySelector('.action-btn');
+            btn.innerHTML = "Authenticating... ⏳";
+            btn.disabled = true;
+            window.isExplicitLogin = true;
 
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-                const user = userCredential.user;
-                const deviceId = getDeviceId();
-
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-
-                if (userSnap.exists()) {
-                    let devices = userSnap.data().devices || [];
-
-                    if (!devices.includes(deviceId)) {
-                        if (devices.length >= 2) {
-                            await signOut(auth);
-                            return showError("❌ الحساب ده مفتوح على جهازين بالفعل! تواصل مع د. محمود على التيليجرام @behonor");
-                        } else {
-                            devices.push(deviceId);
-                            await setDoc(userRef, { devices: devices }, { merge: true });
-                        }
-                    }
-                } else {
-                    await setDoc(userRef, { devices: [deviceId] });
-                }
-
-                document.getElementById('login-overlay').style.display = 'none';
-                if (window.confetti) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                fetchQuestionsFromDB();
-
+                await signInWithEmailAndPassword(auth, email, pass);
             } catch (error) {
                 console.error("Auth Error:", error);
-                showError("❌ البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+                showError("❌ Incorrect Email or Password.");
+                btn.innerHTML = "Login 🔓";
+                btn.disabled = false;
             }
         };
 
@@ -1652,20 +1708,10 @@
 
                     window.DB = { 'Blood': [], 'Foundation': [], 'Terminology': [], 'MSK': { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] } };
                     document.getElementById('module-grid').innerHTML = '';
-                    document.getElementById('login-overlay').style.display = 'flex';
 
                 } catch (e) { console.error("Logout Error:", e); }
             }
         };
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('login-overlay').style.display = 'none';
-                fetchQuestionsFromDB();
-            } else {
-                document.getElementById('login-overlay').style.display = 'flex';
-            }
-        });
 
         async function fetchQuestionsFromDB() {
             if (typeof window.renderDashboard === "function") window.renderDashboard();
@@ -1701,13 +1747,11 @@
                 if (isUpdated && typeof window.renderDashboard === "function") {
                     window.renderDashboard();
                 }
-
             } catch (e) {
                 console.error("Fetch Error:", e);
             }
         }
     </script>
-
     <script>
         function getSafeData(key, fallback) {
             try {
