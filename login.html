@@ -70,6 +70,7 @@
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
             color: var(--text-light);
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             display: flex;
             line-height: 1.6;
@@ -125,7 +126,8 @@
             gap: 2rem;
             transition: var(--transition);
             z-index: 100;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             white-space: nowrap;
         }
 
@@ -303,7 +305,7 @@
             display: none;
             flex: 1;
             overflow-y: auto;
-            padding: 2rem 3rem;
+            padding: 2rem 3rem 4rem 3rem;
             animation: fadeSlideIn 0.4s ease;
         }
 
@@ -1398,6 +1400,11 @@
                 <h1 class="page-title" id="page-title">Modules</h1>
             </div>
             <div style="display: flex; gap: 0.75rem; align-items: center;">
+
+                <button class="icon-btn" onclick="toggleFullScreen()" title="Full Screen">
+                    <i class="ri-fullscreen-line" id="fullscreen-icon"></i>
+                </button>
+
                 <button class="icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i class="ri-sun-fill"
                         id="theme-icon"></i></button>
                 <button class="icon-btn" onclick="handleLogout()" title="Logout"
@@ -2218,7 +2225,29 @@
             document.getElementById('view-quiz').style.display = 'flex'; document.getElementById('view-quiz').classList.add('active');
             loadQuestion();
         }
+        window.toggleFullScreen = function () {
+            const icon = document.getElementById('fullscreen-icon');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    icon.className = 'ri-fullscreen-exit-line';
+                }).catch(err => {
+                    console.log("Error attempting to enable fullscreen:", err);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        icon.className = 'ri-fullscreen-line';
+                    });
+                }
+            }
+        };
 
+        document.addEventListener('fullscreenchange', () => {
+            const icon = document.getElementById('fullscreen-icon');
+            if (icon) {
+                icon.className = document.fullscreenElement ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line';
+            }
+        });
         function exitQuiz() {
             if (confirm("Exit current session?")) { clearTimeout(Session.timer); if (typeof endSession === 'function') endSession(); switchMode(Session.mode === 'mistakes' ? 'mistakes' : 'dashboard'); }
         }
