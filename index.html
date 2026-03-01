@@ -75,7 +75,6 @@
             line-height: 1.6;
         }
 
-        /* Sidebar & Sidebar Collapse */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg-darker);
@@ -200,7 +199,6 @@
             }
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             display: flex;
@@ -278,7 +276,6 @@
             }
         }
 
-        /* Module Grid */
         .module-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -394,7 +391,6 @@
             transition: width 0.8s ease;
         }
 
-        /* Quiz UI */
         body.focus-mode {
             overflow: hidden;
         }
@@ -630,7 +626,6 @@
             color: white;
         }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -738,7 +733,6 @@
             color: white;
         }
 
-        /* Modded Subtopic Styles (Grid & Nested) */
         .subtopic-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -888,7 +882,6 @@
             outline: none;
         }
 
-        /* Other UI components like Map & Analytics hidden for brevity but same as before */
         .map-overlay {
             position: fixed;
             inset: 0;
@@ -982,7 +975,6 @@
             margin-left: auto;
         }
 
-        /* Analytics */
         .analytics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1052,7 +1044,6 @@
             background: transparent;
         }
 
-        /* Results Screen */
         #view-results {
             position: fixed !important;
             inset: 0 !important;
@@ -1135,7 +1126,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -1196,7 +1186,6 @@
                 display: none;
             }
 
-            /* Hide toggle on mobile as we use bottom nav */
 
             .main-content {
                 padding-bottom: 75px;
@@ -1240,7 +1229,7 @@
                 grid-template-columns: 1fr;
             }
 
-            /* Stack buttons vertically on small screens */
+              Stack buttons vertically on small screens */
             .subtopic-children {
                 grid-template-columns: 1fr;
             }
@@ -1484,7 +1473,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="blood.js"></script>
     <script>
-        // Init Data & Fallbacks
         const FALLBACK_MSK = { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] };
         const DB = {
             'Blood': typeof BLOOD_QUESTIONS !== 'undefined' ? BLOOD_QUESTIONS : [],
@@ -1511,7 +1499,6 @@
         };
         let SessionStartTime = null;
 
-        // Helper: Extract all questions no matter how deeply nested
         function extractAllQuestions(moduleData) {
             let qs = [];
             if (Array.isArray(moduleData)) return moduleData;
@@ -1690,13 +1677,11 @@
                     const data = DB[modName][key];
 
                     if (Array.isArray(data)) {
-                        // Regular Flat Section
                         const pool = isMistakes ? data.filter(q => AppState.progress[q.q] === 'wrong') : data.filter(q => !AppState.progress[q.q]);
                         if (pool.length > 0) {
                             subGrid.appendChild(createSubtopicBtn(key, pool.length, key));
                         }
                     } else {
-                        // Nested Accordion Section (like Anatomy -> Upper/Lower)
                         let groupPoolCount = 0;
                         const childrenElements = [];
 
