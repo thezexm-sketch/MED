@@ -1,4 +1,3 @@
-// 1. Blood Module
 const BLOOD_QUESTIONS = [
     { q: "in anaerobic glycolysis, which of the following do you expect to increase in concentration after addition of fluoride…….?", o: ["a. Glucose", "b. 2-phosphoglycerate", "c. Phosphoenol pyruvate", "d. Pyruvate"], a: 1 },
     { q: "What is the most common plasma protein ?", o: ["a. Albumin", "b. Fibrinogen", "c. Globulin", "d. Prothrombin"], a: 0 },
@@ -185,7 +184,6 @@ const BLOOD_QUESTIONS = [
     { q: "*(End Question)*\n Why HbA1c used to assess glucose level for long term?", o: ["a- Show daily fluctuations", "b- bind permanent to hb during its life span", "c- don't affected by rbcs turnover"], a: 1 }
 ];
 
-// 2. Foundation Module
 const FOUNDATION_QUESTIONS = [
     { q: "What does a low value of Km indicate?", o: ["a) High enzyme activity", "b) Low affinity of the enzyme to the substrate", "c) High substrate affinity to enzyme", "d) No effect on reaction"], a: 2 },
     { q: "A 30-year-old male presents with Infertility due to immotile sperms. Genetic testing reveals a mutation in the motor proteins of microtubules. The structure of which of the following is likely affected in his sperms?", o: ["a) Microvilli", "b) Flagella", "c) Stereocilia", "d) Basal infoldings"], a: 1 },
@@ -666,21 +664,21 @@ const FOUNDATION_QUESTIONS = [
     { q: "What will happen due to stimulation of the anterior part of hypothalamus?", o: ["a. Bile retention", "b. Increase in glucose concentration in Blood", "c. Secretion of copious watery saliva", "d. Mydriasis"], a: 2 },
     { q: "Which of these cells in the stable cell population?", o: ["a. Cardiac muscles", "b. Smooth muscle cells", "c. Epithelial cells", "d. Blood cells"], a: 1 },
     { q: "The nucleus of macrophage is……", o: ["a. Stellate", "b. Central rounded", "c. Cartwheel", "d. Essentric kidney shaped"], a: 3 },
-    { q: "Which type of cytoskeleton that forms the centerioles?", img: "img/12.png", o: ["a.1", "b.2", "c.3", "d.2&3"], a: 1 }, // Needs Image
+    { q: "Which type of cytoskeleton that forms the centerioles?", img: "img/12.png", o: ["a.1", "b.2", "c.3", "d.2&3"], a: 1 }, 
     { q: "A 50-year-old male patient presented with milky white irregular patches on the skin of the hand and face. Which of the following cells is most probably affected?", o: ["a. Melanocytes", "b. Merkel’s cells", "c. Langerhan’s cells", "d. Keratinocytes"], a: 0 },
     { q: "Which of the following connective tissue fibers forms delicate networks supporting the cells of organs?", o: ["a. Collagen type 1", "b. Elastic", "c. Collagen type 2", "d. Collagen type 3"], a: 3 },
     { q: "A 44-year-old man was diagnosed with a tumor originated in neuroglial cells. Which structre helped the doctor in diagnosis using immunohistochemical methods?", o: ["a. Microtubules", "b. Desmin intermediate filaments", "c. Glial fibriliary acidic protein filament", "d. Lamin intermediate filaments"], a: 2 },
     { q: "A 44-year-old man suffer from many problems in his Tendons and ligaments, what is the most affected connective tissue?", o: ["a. Loose areolar", "b. Elastic CT", "c. Dense irregular CT", "d. White fibrous CT"], a: 3 },
-    { q: "Which types of junctions that consists of cytokerain filaments?", img: "img/11.png", o: ["a.2&4", "b.2&6", "c.3&6", "d.3&4"], a: 2 }, // Needs Image
+    { q: "Which types of junctions that consists of cytokerain filaments?", img: "img/11.png", o: ["a.2&4", "b.2&6", "c.3&6", "d.3&4"], a: 2 }, 
     { q: "Which of the following can be a site for adipose connective tissue?", o: ["a. Capsule of the organs", "b. Behind eye ball", "c. Vocal cords", "d. Tendons"], a: 1 },
     { q: "What substance that enter the cell with pinocytosis?", o: ["a. Large protein molecules", "b. Bacteria", "c. Cell debris", "d. Fluid with ions"], a: 3 },
     { q: "Mitochondrial DNA is……", o: ["a. Single stranded", "b. Synthesis of all cell protein", "c. Circular DNA", "d. Found in intermembranous space"], a: 2 },
     { q: "The central core of the nucleosome is……..", o: ["a. DNA molecules", "b. Eight histones", "c. Four histone", "d. DNA linker"], a: 1 },
-    { q: "What is the check point exist in the phase pointed with black arrow…..", img: "img/10.png", o: ["a. Unreplicated DNA check point", "b. Restriction check point", "c. Spindle assembly check point", "d. Chromosome segregation check point"], a: 0 }, // Needs Image
+    { q: "What is the check point exist in the phase pointed with black arrow…..", img: "img/10.png", o: ["a. Unreplicated DNA check point", "b. Restriction check point", "c. Spindle assembly check point", "d. Chromosome segregation check point"], a: 0 }, 
     { q: "What is the final cells produced from telephone 1 ?", o: ["a. 2 cells with 46 s chromosomes", "b. 2 cells with 23 d Chromosomes", "c. 4 cells with 23 d chromosomes", "d. 4 cells with 23 s chromosomes"], a: 1 },
     { q: "What is the appearance of the transitional epithelium in the empty urinary bladder?", o: ["a. Basal layer consists of pear-shaped cells", "b. Consists of 2 cuboidal layers", "c. The Superficial layer is umbrella-shaped cells", "d. The intermediate layer is dome-shaped cells"], a: 2 },
     { q: "Which of the following structures is present in the Epithelial lining the epidermis?", o: ["a. Cilia", "b. Stereocilia", "c. Microvili", "d. Flagella"], a: 1 },
-    { q: "Which of the following is a unilocular gland?", img: "img/15.png", o: ["a. A", "b. B", "c. C", "d. A&b"], a: 0 }, // Needs Image
+    { q: "Which of the following is a unilocular gland?", img: "img/15.png", o: ["a. A", "b. B", "c. C", "d. A&b"], a: 0 },
     { q: "The face of Golgi with transport vesicles is………", o: ["a. Trans", "b. Mature", "c. Secreting", "d. Forming"], a: 3 },
     { q: "What is the features of sER?", o: ["a.Formed of vesicles and tubules", "b.Parallel cisternae", "c.Has ribosomes on its surface", "d.Connected with the Outer nuclear envelope"], a: 0 },
     { q: "The part that gives rise to the embryo is….", o: ["a. Inner cell mass", "b. Outer cell mass", "c. Zona pellucida", "d. Yolk sac"], a: 0 },
@@ -692,7 +690,7 @@ const FOUNDATION_QUESTIONS = [
     { q: "What does a low value of Km indicate?", o: ["a) High enzyme activity", "b) Low affinity of the enzyme to the substrate", "c) High substrate affinity to enzyme", "d) No effect on reaction"], a: 2 },
     { q: "A 30-year-old male presents with infertility due to immotile sperms. Genetic testing reveals a mutation in the motor proteins of microtubules. The structure of which of the following is likely affected in his sperms?", o: ["a) Microvilli", "b) Flagella", "c) Stereocilia", "d) Basal infoldings"], a: 1 },
     { q: "What is the classification of the patella according to its shape?", o: ["A) Sesamoid", "B) Flat", "C) Irregular", "D) Short tubular"], a: 0 },
-    { q: "What is the main function of this structure?", img: "img/q4.png", o: ["a) Buffering", "b) Reducing agent", "c) Precursor of CoA", "d) Structural protein"], a: 1 }, // Needs Image (Chemical Structure)
+    { q: "What is the main function of this structure?", img: "img/q4.png", o: ["a) Buffering", "b) Reducing agent", "c) Precursor of CoA", "d) Structural protein"], a: 1 }, 
     { q: "Which acidic heteropolysaccharide is major in cartilage?", o: ["a) Hyaluronic acid", "b) Chondroitin sulfate", "c) Dermatan sulfate", "d) Keratan sulfate"], a: 1 },
     { q: "Which carbohydrate can help relieve constipation?", o: ["a) Homopolysaccharide structural CHO in plants (cellulose)", "b) Homopolysaccharide storage CHO in plants (starch)", "c) Homopolysaccharide storage CHO in animals (glycogen)", "d) Homopolysaccharide structural CHO in animals (chitin)"], a: 0 },
     { q: "Which of the following is a prostaglandin precursor?", o: ["a) Linoleic acid", "b) Oleic acid", "c) arachdic acid", "d) Arachidonic acid"], a: 3 },
@@ -720,7 +718,7 @@ const FOUNDATION_QUESTIONS = [
     { q: "Which of the following is true about stratum spinosum?", o: ["A) has numerous desmosomes", "B) has few hemidesmosomes", "C) has a layer of melanocytes", "D) contains merkels cells"], a: 0 },
     { q: "What type of joint is the shoulder joint?", o: ["a) Hinge joint", "b) Ball and socket joint", "c) Peg and socket joint", "d) Saddle joint"], a: 1 },
     { q: "From which embryonic germ layer is the epithelium lining the gastrointestinal (GI) tract derived?", o: ["a) Ectoderm", "b) Mesoderm", "c) Endoderm", "d) Neural crest"], a: 2 },
-    { q: "What is the function of the structure labelled (2) in the figure?", img: "img/14.png", o: ["A) Its deposition provides trilaminar structure of cell membrane", "B) Cell receptor", "C) Protein pump", "D) Semi-permeability of the membrane"], a: 1 }, // Needs Image
+    { q: "What is the function of the structure labelled (2) in the figure?", img: "img/14.png", o: ["A) Its deposition provides trilaminar structure of cell membrane", "B) Cell receptor", "C) Protein pump", "D) Semi-permeability of the membrane"], a: 1 },
     { q: "Which enzyme seals the nicks between phosphodiester bonds in DNA?", o: ["a) DNA polymerase", "b) DNA ligase", "c) DNA helicase B", "d) DNA topoisomerase"], a: 1 },
     { q: "Which adrenergic receptor increases the air entering the bronchioles?", o: ["A) Alpha 1", "B) Beta 2", "C) Alpha 2", "D) Beta 1"], a: 1 },
     { q: "The autonomic preganglionic fiber stimulates which receptor?", o: ["A) Muscarinic on target cells", "B) Nicotinic on postganglionic neurone", "C) Adrenergic on effector cells", "D) Dopamine on spinal cord"], a: 1 },
@@ -742,14 +740,13 @@ const FOUNDATION_QUESTIONS = [
     { q: "What is the primary function of polysomes (polyribosomes)?", o: ["a) Synthesizing cytosolic proteins", "b) Synthesizing secretory proteins", "c) Synthesizing membrane-bound proteins", "d) Synthesizing proteins for lysosomes"], a: 0 },
     { q: "Which of the following best characterizes the G1 phase of the cell cycle?", o: ["a) DNA replication occurs", "b) active RNA and protein synthesis", "c) Chromosome segregation occurs", "d) Cell is in a quiescent state with no metabolic activity"], a: 1 },
     { q: "Insulin binds to which of the following types of receptors?", o: ["a) Intrinsic (intrinsic tyrosine kinase) receptor", "b) steriod hormone receptor", "c) G-protein-coupled receptor", "d) ligand gate receptor"], a: 0 },
-    { q: "In the structure shown in the image Which of the following is correct about it?", img: "img/13.png", o: ["a) Made of connexon proteins", "b) Made of selectin proteins", "c) Present in skeletal muscles", "D) the protein is cadheren"], a: 0 }, // Needs Image
+    { q: "In the structure shown in the image Which of the following is correct about it?", img: "img/13.png", o: ["a) Made of connexon proteins", "b) Made of selectin proteins", "c) Present in skeletal muscles", "D) the protein is cadheren"], a: 0 },
     { q: "The complex formed by a segment of DNA wrapped twice around 8 histone proteins is called:", o: ["a) Nucleosome", "b) Nucleoside", "c) Nucleotide", "d) Chromatosome"], a: 0 },
     { q: "Which of the following cell types primarily performs constitutive secretion?", o: ["a) Pancreatic acinar cells", "b) macrophages", "c) Plasma cells", "d) Mast cells"], a: 2 },
     { q: "When the body touches a hot object and reflexively withdraws the hand, which of the following is the primary motor center involved?", o: ["a) Anterior horn cells (AHC)", "b) lateral horn cells (LHC)", "c) Dorsal horn cell (DHC)", "d) Hypothalamus"], a: 0 },
     { q: "Which of the following adrenergic receptors mediates bronchodilation and enhances airflow in the respiratory airways?", o: ["a) Alpha 1 receptors", "b) Alpha 2 receptors", "c) Beta 2 receptors", "d) Beta 1 receptors"], a: 2 }
 ];
 
-// 3. Terminology Module
 const TERMINOLOGY_QUESTIONS = [
     { q: " inflammation of small intestine:", o: ["a- ilitis", "b- ilietis", "c- Enteritis", "d- colitis"], a: 2 },
     { q: " a 40 year old man, had i colon cancer and did a surgical removal and made permanent open to get rid of the waste:", o: ["a- coloectomy", "b- colostomy", "c- colitis", "d- colotomy"], a: 1 },
@@ -1095,7 +1092,7 @@ const TERMINOLOGY_QUESTIONS = [
     { q: "A sphincter is a", o: ["A. Ring of muscles", "B. Pertaining to spinal cord", "C. Pertaining to gallbladder"], a: 0 },
     { q: "The instrument used to record 'ECG' is called an", o: ["A. Hydrocardiogram", "B. Electrocardiogram", "C. Electrocardiograph"], a: 2 },
     { q: "Another word for Arrhythmia is", o: ["A. Anrrhythmia", "B. Dysrhythmia", "C. Antiarrhythmic"], a: 1 },
-    { q: "The heart has 3 chambers (True/False)", o: ["A. True", "B. False"], a: 1 }, // It has 4 chambers
+    { q: "The heart has 3 chambers (True/False)", o: ["A. True", "B. False"], a: 1 },
     { q: "In the blood vessel, the space in which blood moves is the", o: ["A. Inner layer", "B. Outer layer", "C. Lumen"], a: 2 },
     { q: "EKG refers to", o: ["A. Lectrocardiograph", "B. Electrocardiogram", "C. Electrocardiograph"], a: 1 },
     { q: "Abnormally slow heart rate is called", o: ["A. Abnormally fast", "B. Inflammation", "C. Enlarged heart", "D. Bradycardia"], a: 3 },
@@ -1213,110 +1210,110 @@ const MSK = {
             {
                 q: "Which muscle of the following are inserted in a base of first metatarsal bone?",
                 o: ["A) Peroneas Longus", "B) Peroneas brevis", "C) Peroneas Tertius", "D) Flexor digitorum"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "A patient come to the Emergency with wrist drop, after Neurons investigation it is found that An injury in a nerve causes wrist drop and no loss of sensation in the whole upper limp, what is the Traumatic nerve?",
                 o: ["A) Radial nerve", "B) ulnar nerve", "C) median nerve", "D) anterior interosseus nerve"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "What is the root Value of Median Nerve?",
                 o: ["A) C5,6,7", "B) C5,6,7,8 , T1", "C) C5,6", "D) C8, T1"],
-                a: 1 // B
+                a: 1 
             },
             {
                 q: "A body Builder young man, result of increasing of muscle mass has compression on quadrangular space, what is the nerve More likely to be injured?",
                 o: ["A) Axillary Nerve", "B) Radial Nerve", "C) Ulnar Nerve", "D) Median nerve"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "What is the Relation of Femoral Vein to Femoral Artery at apex of Femoral Triangle?",
                 o: ["A) Posterior", "B) Anterior", "C) Lateral", "D) Medial"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "Patient has a excessive abduction and the lower trunk of Brachial plexus is injured, which nerve will be affected?",
                 o: ["A) musculocutaneous nerve", "B) dorsal scapular nerve", "C) ulnar nerve", "D) Radial Nerve"],
-                a: 2 // C
+                a: 2 
             },
             {
                 q: "What is the stage of Brachial plexus just behind the indicated bone?",
                 img: "img/22.png",
                 o: ["A) Divisions", "B) Trunks", "C) Roots", "D) Branches"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "What is the indicated part of Radius?",
                 img: "img/20.png",
                 o: ["A) Circumference of the head", "B) Neck of Radius", "C) Radial Tuberosity", "D) Radial Notch"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "What is the Branch from the Following Branches come from Radial Nerve in the groove between Brachialis and brachioradialis?",
                 o: ["A) Posterior Cutaneous nerve of arm", "B) Muscular Branch to Long Head of Triceps", "C) Muscular Branch to Extensor Carpi Radialis Longus", "D) Lower layer cutaneous nerve of arm"],
-                a: 2 // C
+                a: 2 
             },
             {
                 q: "A patient come to the Emergency with a lot of pain in his shoulder, after radiographic examinations show that he has a surgical neck Fracture Of Humerus, what is the suspected injured nerve in this case?",
                 o: ["A) Ulnar Nerve", "B) Median Nerve", "C) Axillary Nerve", "D) Radial Nerve"],
-                a: 2 // C
+                a: 2 
             },
 
             {
                 q: "What is the attachment of Flexor Retinaculum?",
                 o: ["A) Lateral Tubercle of Calcaneus", "B) Medial Tubercle of Calcaneus", "C) Inferior Tubercle of Calcaneus", "D) Superior Tubercle of Calcaneus"],
-                a: 1 // B
+                a: 1 
             },
             {
                 q: "What is the action of the Trapezius muscle?",
                 o: ["A) Protraction of Shoulder", "B) Adduction of shoulder", "C) Abduction of the shoulder", "D) Extension of the shoulder"],
-                a: 0 // A (Note: Upper fibers elevate, middle retract, lower depress/rotate. Protraction is usually Serratus Anterior. However, matching key 26 -> A)
+                a: 0 
             },
             {
                 q: "What is the action of Flexor Pollicis Longus?",
                 o: ["A) Flexion of elbow", "B) Flexion of first metacarpophalengeal joint", "C) Pronation", "D) Supination"],
-                a: 1 // B
+                a: 1 
             },
             {
                 q: "From the Following structures, what is the structure pass superficial to Extensor Retinaculum?",
                 o: ["A) Superfical radial nerve", "B) Ulnar nerve", "C) Median nerve", "D) Superfical cutaneous branch of median nerve"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "If you want to increase the muscle mass of latissimus dorsi, which of the following actions would you most likely perform?",
                 o: ["A) Depression of the scapula", "B) Abduction of the arm", "C) Extension of the arm", "D) Lateral rotation of the arm"],
-                a: 2 // C (Extension of the arm. Note: Key in text was blank, but C is the correct anatomical action)
+                a: 2 
             },
             {
                 q: "Patient has a loss in Adduction and medial rotation of arm, what is the injured nerve that make his case?",
                 o: ["A) Lower Scapular nerve", "B) Dorsal Scapular", "C) Long Thoracic nerve", "D) Axillary"],
-                a: 0 // A (Supplies Teres Major -> Adduction & Medial rotation)
+                a: 0 
             },
             {
                 q: "which tendon Is the Landmark of pulse of radial artery?",
                 o: ["A) Flexor carpi radialis", "B) Plamaris longus", "C) Flexor carpi ulnaris", "D) Flexor Digitorm Profundus"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "Patient has weakness of medial rotation and Flexion and Adduction of arm, what is the injured muscle?",
                 o: ["A) Pectoralis Major", "B) Deltoid", "C) Infraspinatus", "D) Teres Major"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "What is the component from the Following structures make the posterior Fold of the Axilla?",
                 o: ["A) Teres Major", "B) Pectoralis Major", "C) Coracobrachialis", "D) Serratus Anterior"],
-                a: 0 // A
+                a: 0 
             },
             {
                 q: "What is the part of Axillary Artery that Thoracoacromial Branch come from it?",
                 o: ["A) Second", "B) Third", "C) First", "D) None of the above"],
-                a: 0 // A (Key says A - Second part)
+                a: 0 
             },
             {
                 q: "Subscapular artery come from which artery from the Following?",
                 o: ["A) 2nd part of Axillary Artery", "B) Brachial Artery", "C) Thoracoacromial arch", "D) 3rd part of Axillary Artery"],
-                a: 3 // D
+                a: 3
             },
             {
                 q: "Female had an mastectomy surgery of her breast, after while had a complications from her operation on of them is winging of the medial Border of Scapula, what is the injured nerve that make this case?",
@@ -1628,7 +1625,6 @@ const MSK = {
             { q: "The abductor pollicis brevis muscle is innervated by which nerve and performs what action?", o: ["A) Superficial ulnar nerve; abduction of thumb", "B) Median nerve; abduction of thumb", "C) Radial nerve; flexion of thumb", "D) Ulnar nerve; flexion of thumb"], a: 1 },
             { q: "Which of the following muscles is part of the thenar group and flexes the thumb at the MCP joint?", o: ["A) Flexor pollicis brevis", "B) Abductor pollicis longus", "C) Adductor pollicis", "D) Extensor pollicis brevis"], a: 0 },
             { q: "Adductor pollicis is innervated by which nerve?", o: ["A) Median nerve", "B) Superficial branch of radial nerve", "C) Deep branch of ulnar nerve", "D) Anterior interosseous nerve"], a: 2 },
-            { q: "Which hypothenar muscle acts on the fifth digit and is innervated by the ulnar nerve?", o: ["A) Flexor digiti minimi brevis", "B) Abductor digiti minimi", "C) Opponens digiti minimi", "D) Palmaris brevis"], a: 0 },
             { q: "The flexor digiti minimi is located in which group and performs what action?", o: ["A) Thenar group; extension of thumb", "B) Hypothenar group; flexion of fifth digit", "C) Central group; adduction of thumb", "D) Hypothenar group; abduction of fifth digit"], a: 1 },
             { q: "Palmaris brevis is supplied by:", o: ["A) Superficial ulnar nerve", "B) Deep ulnar nerve", "C) Median nerve", "D) Anterior interosseous nerve"], a: 0 },
             { q: "Which muscle is responsible for adduction of fingers and is innervated by the ulnar nerve?", o: ["A) Palmar interossei", "B) Dorsal interossei", "C) 3rd and 4th Lumbricals", "D) Flexor digitorum profundus"], a: 0 },
@@ -2483,3 +2479,4 @@ const MSK = {
         { q: "Which type of cartilage is characterized by the presence of chondrocytes in lacunae?", o: ["a. Hyaline cartilage", "b. Elastic cartilage", "c. Fibrocartilage", "d. All of the above"], a: 3 }
     ]
 };
+
