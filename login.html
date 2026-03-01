@@ -1322,11 +1322,16 @@
 </head>
 
 <body data-theme="dark">
-    <div id="login-overlay">
+    <div id="login-overlay" style="display: none;">
         <div class="login-box">
             <div class="login-logo">⚡</div>
             <h2 class="login-title">MedStorm Access</h2>
             <p class="login-subtitle">Enter your registered email to start storming</p>
+
+            <div id="login-error"
+                style="display: none; background: rgba(239, 68, 68, 0.1); color: #EF4444; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; border: 1px solid rgba(239, 68, 68, 0.3);">
+            </div>
+
             <input type="email" id="user-email" class="custom-input" placeholder="Email..."
                 style="margin-bottom: 0.5rem;">
             <input type="password" id="user-password" class="custom-input" placeholder="Password..."
@@ -1359,7 +1364,9 @@
         <div class="directors-card">
             <div class="directors-label">Directed by:</div>
             <div class="directors-names">DRs / Mahmoud & Abdallah</div>
-        </div>
+            <div class="nav-item" onclick="handleLogout()" style="margin-top: auto; color: var(--light-red);">
+                <i class="ri-logout-box-r-line"></i><span>Logout</span>
+            </div>
     </nav>
 
     <main class="main-content">
@@ -1549,8 +1556,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
@@ -1565,6 +1572,11 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        function showError(message) {
+            const errDiv = document.getElementById('login-error');
+            errDiv.innerHTML = message;
+            errDiv.style.display = 'block';
+        }
 
         function getDeviceId() {
             let deviceId = localStorage.getItem('medStormDeviceId');
@@ -1578,8 +1590,9 @@
         window.handleLogin = async () => {
             const email = document.getElementById('user-email').value.trim();
             const pass = document.getElementById('user-password').value.trim();
+            document.getElementById('login-error').style.display = 'none';
 
-            if (!email || !pass) return alert("Please enter your email and password!");
+            if (!email || !pass) return showError("⚠️ برجاء إدخال البريد الإلكتروني وكلمة المرور.");
 
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, pass);
@@ -1594,8 +1607,8 @@
 
                     if (!devices.includes(deviceId)) {
                         if (devices.length >= 2) {
-                            await auth.signOut();
-                            return alert("❌ الحساب ده مفتوح على جهازين بالفعل! تواصل مع د. محمود @behonor");
+                            await signOut(auth);
+                            return showError("❌ الحساب ده مفتوح على جهازين بالفعل! تواصل مع د. محمود @behonor");
                         } else {
                             devices.push(deviceId);
                             await setDoc(userRef, { devices: devices }, { merge: true });
@@ -1610,9 +1623,38 @@
                 fetchQuestionsFromDB();
 
             } catch (error) {
-                alert("Login Failed: Incorrect Email or Password.");
+                console.error("Auth Error:", error);
+                showError("❌ البريد الإلكتروني أو كلمة المرور غير صحيحة.");
             }
         };
+
+        window.handleLogout = async () => {
+            if (confirm("هل تريد تسجيل الخروج؟")) {
+                try {
+                    const user = auth.currentUser;
+                    if (user) {
+                        const deviceId = getDeviceId();
+                        const userRef = doc(db, "users", user.uid);
+                        const userSnap = await getDoc(userRef);
+                        if (userSnap.exists()) {
+                            let devices = userSnap.data().devices || [];
+                            devices = devices.filter(id => id !== deviceId);
+                            await setDoc(userRef, { devices: devices }, { merge: true });
+                        }
+                    }
+
+                    await signOut(auth);
+
+                    window.DB = { 'Blood': [], 'Foundation': [], 'Terminology': [], 'MSK': { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] } };
+                    document.getElementById('module-grid').innerHTML = '';
+                    document.getElementById('login-overlay').style.display = 'flex';
+
+                } catch (e) {
+                    console.error("Logout Error:", e);
+                }
+            }
+        };
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-overlay').style.display = 'none';
@@ -1624,31 +1666,23 @@
 
         async function fetchQuestionsFromDB() {
             try {
-                const modulesToFetch = [
+                const modules = [
                     { id: 'msk_questions', key: 'MSK' },
                     { id: 'blood_questions', key: 'Blood' },
                     { id: 'foundation_questions', key: 'Foundation' },
                     { id: 'terminology_questions', key: 'Terminology' }
                 ];
 
-                for (const mod of modulesToFetch) {
+                for (const mod of modules) {
                     const docRef = doc(db, "content", mod.id);
                     const docSnap = await getDoc(docRef);
-
                     if (docSnap.exists()) {
                         let data = docSnap.data();
-                        if (data.questionsList) {
-                            window.DB[mod.key] = data.questionsList;
-                        } else {
-                            window.DB[mod.key] = data;
-                        }
+                        window.DB[mod.key] = data.questionsList ? data.questionsList : data;
                     }
                 }
-
                 if (typeof window.renderDashboard === "function") window.renderDashboard();
-            } catch (e) {
-                console.error("Error fetching data: ", e);
-            }
+            } catch (e) { console.error("Fetch Error:", e); }
         }
     </script>
 
