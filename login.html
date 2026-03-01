@@ -1356,7 +1356,8 @@
             </div>
 
             <input type="email" id="user-email" class="custom-input" placeholder="Email..."
-                style="margin-bottom: 0.5rem;">
+                style="margin-bottom: 0.5rem;" autocapitalize="none" autocorrect="off" spellcheck="false">
+            style="margin-bottom: 0.5rem;">
             <input type="password" id="user-password" class="custom-input" placeholder="Password..."
                 style="margin-bottom: 1.5rem;">
             <button class="action-btn" onclick="handleLogin()">Login 🔓</button>
@@ -1671,7 +1672,7 @@
         });
 
         window.handleLogin = async () => {
-            const email = document.getElementById('user-email').value.trim();
+            const email = document.getElementById('user-email').value.trim().toLowerCase();
             const pass = document.getElementById('user-password').value.trim();
             document.getElementById('login-error').style.display = 'none';
 
@@ -1687,7 +1688,10 @@
                 localStorage.setItem('medStorm_isLoggedIn', 'true');
             } catch (error) {
                 console.error("Auth Error:", error);
-                showError("❌ Incorrect Email or Password.");
+
+
+                showError("❌ " + error.message);
+
                 btn.innerHTML = "Login 🔓";
                 btn.disabled = false;
             }
