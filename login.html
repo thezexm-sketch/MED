@@ -1855,26 +1855,37 @@
             });
         }
 
-        // ── avatar upload → Firebase Storage ──────────────────────────────
-        window.handleAvatarUpload = function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            if (file.size > 2 * 1024 * 1024) { alert("⚠️ Please choose an image smaller than 2MB."); return; }
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64 = e.target.result;
-                setAvatarUI(base64);
-                if (!window.currentUserId) return;
-                try {
-                    const aRef = storageRef(storage, `avatars/${window.currentUserId}`);
-                    await uploadString(aRef, base64, 'data_url');
-                    const url = await getDownloadURL(aRef);
-                    localStorage.setItem('medStorm_avatar_' + window.currentUserId, url);
-                    await window.saveUserData('avatarUrl', url);
-                } catch(err) { console.warn("Avatar upload failed:", err); }
-            };
-            reader.readAsDataURL(file);
-        };
+window.handleAvatarUpload = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert("⚠️ Please choose an image smaller than 2MB."); return; }
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const base64 = e.target.result;
+        // 1. معاينة فورية محلية (لنفس الجهاز)
+        setAvatarUI(base64);
+        if (!window.currentUserId) return;
+        try {
+            const aRef = storageRef(storage, `avatars/${window.currentUserId}`);
+            // 2. رفع الصورة الجديدة إلى Firebase Storage
+            await uploadString(aRef, base64, 'data_url');
+            // 3. الحصول على الرابط الجديد من Firebase
+            const url = await getDownloadURL(aRef);
+
+            // 4. حفظ الرابط الجديد محلياً في الـ Cache الخاص بهذا الجهاز
+            localStorage.setItem('medStorm_avatar_' + window.currentUserId, url);
+
+            // 5. **الأهم**: حفظ الرابط الجديد في قاعدة بيانات Firestore
+            //    هذا هو السطر الذي سيجعل الصورة تظهر على جميع الأجهزة الأخرى.
+            await window.saveUserData('avatarUrl', url); // هنا نقوم بحفظ الـ URL وليس base64
+
+            // 6. تحديث الواجهة بالرابط الجديد (للتأكد)
+            setAvatarUI(url);
+
+        } catch(err) { console.warn("Avatar upload failed:", err); }
+    };
+    reader.readAsDataURL(file);
+};
 
         // ── remove avatar ──────────────────────────────────────────────────
         window.removeAvatar = async function() {
@@ -2583,14 +2594,14 @@
             });
         }
 
-        function resetModule(modName, e) {
-            e.stopPropagation(); if (!confirm(`Reset all progress for ${modName}?`)) return;
-            extractAllQuestions(DB[modName]).forEach(q => delete AppState.progress[q.q]);
-            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            if (window.saveUserData) window.saveUserData('progress', AppState.progress);
-            renderDashboard(Session.mode);
-        }
-
+function resetModule(modName, e) {
+    e.stopPropagation();
+    if (!confirm(`Reset all progress for ${modName}?`)) return;
+    extractAllQuestions(DB[modName]).forEach(q => delete AppState.progress[q.q]);
+    localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+    if (window.saveUserData) window.saveUserData('progress', AppState.progress);
+    renderDashboard(Session.mode);
+}
         function renderFavorites() {
             const favList = document.getElementById('favorites-list'); const notesList = document.getElementById('notes-list');
             favList.innerHTML = ''; notesList.innerHTML = '';
@@ -2658,3 +2669,4 @@
 </body>
 
 </html>
+
