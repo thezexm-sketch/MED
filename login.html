@@ -1755,10 +1755,9 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <script type="module">
-        import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref as storageRef, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
@@ -1769,154 +1768,91 @@
             appId: "1:857983887711:web:981274bfdd5038cc89aeea"
         };
 
-        const app     = initializeApp(firebaseConfig);
-        const auth    = getAuth(app);
-        const db      = getFirestore(app);
-        const storage = getStorage(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // ── helpers ────────────────────────────────────────────────────────
-        function showError(msg) {
-            const el = document.getElementById('login-error');
-            el.innerHTML = msg; el.style.display = 'block';
-        }
-        function getDeviceId() {
-            let id = localStorage.getItem('medStormDeviceId');
-            if (!id) { id = 'device_' + Math.random().toString(36).substr(2,9); localStorage.setItem('medStormDeviceId', id); }
-            return id;
-        }
-        function setAvatarUI(src) {
-            const t = document.getElementById('top-bar-avatar');
-            const m = document.getElementById('main-profile-avatar');
-            if (t) t.src = src;
-            if (m) m.src = src;
-        }
-        function defaultAvatar(email) {
-            return `https://ui-avatars.com/api/?name=${(email||'U').charAt(0).toUpperCase()}&background=10B981&color=fff`;
-        }
-
-        // ── cloud save ─────────────────────────────────────────────────────
-        // localWriteFields: أي field بنكتبه إحنا، الـ listener بيتجاهله مرة واحدة
-        const localWriteFields = new Set();
-
-        window.saveUserData = async function(field, value) {
+        window.saveUserData = async function (field, value) {
             if (!window.currentUserId) return;
-            localWriteFields.add(field);
             try {
-                await setDoc(doc(db, "users", window.currentUserId), { [field]: value }, { merge: true });
-            } catch(e) {
-                localWriteFields.delete(field);
-                console.warn("saveUserData failed:", field, e);
+                await updateDoc(doc(db, "users", window.currentUserId), { [field]: value });
+            } catch (e) {
+                if (e.code === 'not-found') {
+                    await setDoc(doc(db, "users", window.currentUserId), { [field]: value }, { merge: true });
+                } else {
+                    console.warn("saveUserData failed:", field, e);
+                }
             }
         };
 
-        // ── real-time listener ─────────────────────────────────────────────
-        let unsubscribe = null;
-
-        function startListener(user) {
-            if (unsubscribe) unsubscribe();
-
-            unsubscribe = onSnapshot(doc(db, "users", user.uid), (snap) => {
-                if (!snap.exists()) return;
-                const data = snap.data();
-                const inQuiz = document.body.classList.contains('focus-mode');
-
-                if (data.progress !== undefined) {
-                    if (localWriteFields.has('progress')) { localWriteFields.delete('progress'); }
-                    else {
-                        AppState.progress = data.progress;
-                        localStorage.setItem('medStormProgress', JSON.stringify(data.progress));
-                        if (!inQuiz && typeof renderDashboard === 'function') renderDashboard();
+        async function loadUserData(user) {
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.progress) { AppState.progress = data.progress; localStorage.setItem('medStormProgress', JSON.stringify(data.progress)); }
+                    if (data.favorites) { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
+                    if (data.notes) { AppState.notes = data.notes; localStorage.setItem('medStormNotes', JSON.stringify(data.notes)); }
+                    if (data.stats) { AppState.stats = data.stats; localStorage.setItem('medStormStats', JSON.stringify(data.stats)); }
+                    if (data.avatar) {
+                        localStorage.setItem('medStorm_avatar_' + user.uid, data.avatar);
+                        const topAvatar = document.getElementById('top-bar-avatar');
+                        const mainAvatar = document.getElementById('main-profile-avatar');
+                        if (topAvatar) topAvatar.src = data.avatar;
+                        if (mainAvatar) mainAvatar.src = data.avatar;
                     }
                 }
-                if (data.favorites !== undefined) {
-                    if (localWriteFields.has('favorites')) { localWriteFields.delete('favorites'); }
-                    else { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
-                }
-                if (data.notes !== undefined) {
-                    if (localWriteFields.has('notes')) { localWriteFields.delete('notes'); }
-                    else { AppState.notes = data.notes; localStorage.setItem('medStormNotes', JSON.stringify(data.notes)); }
-                }
-                if (data.stats !== undefined) {
-                    if (localWriteFields.has('stats')) { localWriteFields.delete('stats'); }
-                    else { AppState.stats = data.stats; localStorage.setItem('medStormStats', JSON.stringify(data.stats)); }
-                }
-                if (data.avatarUrl !== undefined) {
-                    if (localWriteFields.has('avatarUrl')) { localWriteFields.delete('avatarUrl'); }
-                    else {
-                        if (data.avatarUrl) {
-                            localStorage.setItem('medStorm_avatar_' + user.uid, data.avatarUrl);
-                            setAvatarUI(data.avatarUrl);
-                        } else {
-                            localStorage.removeItem('medStorm_avatar_' + user.uid);
-                            setAvatarUI(defaultAvatar(user.email));
-                        }
-                    }
-                }
-            });
+            } catch (e) { console.warn("Cloud load failed:", e); }
+        }
+        // ===== END CLOUD SYNC =====
+
+        function showError(message) {
+            const errDiv = document.getElementById('login-error');
+            errDiv.innerHTML = message;
+            errDiv.style.display = 'block';
         }
 
-window.handleAvatarUpload = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { alert("⚠️ Please choose an image smaller than 2MB."); return; }
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        const base64 = e.target.result;
-        // 1. معاينة فورية محلية (لنفس الجهاز)
-        setAvatarUI(base64);
-        if (!window.currentUserId) return;
-        try {
-            const aRef = storageRef(storage, `avatars/${window.currentUserId}`);
-            // 2. رفع الصورة الجديدة إلى Firebase Storage
-            await uploadString(aRef, base64, 'data_url');
-            // 3. الحصول على الرابط الجديد من Firebase
-            const url = await getDownloadURL(aRef);
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('medStormDeviceId');
+            if (!deviceId) {
+                deviceId = 'device_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('medStormDeviceId', deviceId);
+            }
+            return deviceId;
+        }
 
-            // 4. حفظ الرابط الجديد محلياً في الـ Cache الخاص بهذا الجهاز
-            localStorage.setItem('medStorm_avatar_' + window.currentUserId, url);
-
-            // 5. **الأهم**: حفظ الرابط الجديد في قاعدة بيانات Firestore
-            //    هذا هو السطر الذي سيجعل الصورة تظهر على جميع الأجهزة الأخرى.
-            await window.saveUserData('avatarUrl', url); // هنا نقوم بحفظ الـ URL وليس base64
-
-            // 6. تحديث الواجهة بالرابط الجديد (للتأكد)
-            setAvatarUI(url);
-
-        } catch(err) { console.warn("Avatar upload failed:", err); }
-    };
-    reader.readAsDataURL(file);
-};
-
-        // ── remove avatar ──────────────────────────────────────────────────
-        window.removeAvatar = async function() {
-            if (!window.currentUserId) return;
-            const email = document.getElementById('profile-page-email')?.textContent || '';
-            setAvatarUI(defaultAvatar(email));
-            localStorage.removeItem('medStorm_avatar_' + window.currentUserId);
-            try { await deleteObject(storageRef(storage, `avatars/${window.currentUserId}`)); } catch(_) {}
-            await window.saveUserData('avatarUrl', '');
-        };
-
-        // ── auth state ─────────────────────────────────────────────────────
         window.isExplicitLogin = false;
         let isCheckingDevice = false;
 
         onAuthStateChanged(auth, async (user) => {
+
             if (user) {
                 localStorage.setItem('medStorm_isLoggedIn', 'true');
                 const emailDisplay = document.getElementById('profile-page-email');
                 if (emailDisplay) emailDisplay.textContent = user.email;
                 window.currentUserId = user.uid;
+                window.currentUserId = user.uid;
+                localStorage.removeItem('medStorm_avatar');
 
-                const cached = localStorage.getItem('medStorm_avatar_' + user.uid);
-                setAvatarUI(cached || defaultAvatar(user.email));
+                const savedAvatar = localStorage.getItem('medStorm_avatar_' + user.uid);
+                const topAvatar = document.getElementById('top-bar-avatar');
+                const mainAvatar = document.getElementById('main-profile-avatar');
 
+                if (savedAvatar) {
+                    if (topAvatar) topAvatar.src = savedAvatar;
+                    if (mainAvatar) mainAvatar.src = savedAvatar;
+                } else {
+                    const defaultAvatar = `https://ui-avatars.com/api/?name=${user.email.charAt(0)}&background=10B981&color=fff`;
+                    if (topAvatar) topAvatar.src = defaultAvatar;
+                    if (mainAvatar) mainAvatar.src = defaultAvatar;
+                }
                 if (isCheckingDevice) return;
                 isCheckingDevice = true;
 
                 try {
                     const deviceId = getDeviceId();
-                    const userRef  = doc(db, "users", user.uid);
+                    const userRef = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userRef);
 
                     if (userSnap.exists()) {
@@ -1926,24 +1862,26 @@ window.handleAvatarUpload = function(event) {
                                 await signOut(auth);
                                 localStorage.removeItem('medStorm_isLoggedIn');
                                 showError("❌ Maximum device limit reached. Please contact <a href='https://t.me/behonor' target='_blank' style='color: var(--primary-green); text-decoration: none; font-weight: bold;'>Dr. Mahmoud</a> to reset your account.");
+
                                 const btn = document.querySelector('.action-btn');
                                 if (btn) { btn.innerHTML = "Login 🔓"; btn.disabled = false; }
                                 isCheckingDevice = false;
                                 return;
+                            } else {
+                                devices.push(deviceId);
+                                await setDoc(userRef, { devices: devices }, { merge: true });
                             }
-                            devices.push(deviceId);
-                            await setDoc(userRef, { devices }, { merge: true });
                         }
                     } else {
                         await setDoc(userRef, { devices: [deviceId] });
                     }
 
                     document.getElementById('login-overlay').style.display = 'none';
-                    if (window.isExplicitLogin && window.confetti)
+                    if (window.isExplicitLogin && window.confetti) {
                         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                    }
                     window.isExplicitLogin = false;
-
-                    startListener(user);
+                    await loadUserData(user);
                     fetchQuestionsFromDB();
 
                 } catch (e) {
@@ -1954,7 +1892,6 @@ window.handleAvatarUpload = function(event) {
                     if (btn) { btn.innerHTML = "Login 🔓"; btn.disabled = false; }
                 }
             } else {
-                if (unsubscribe) { unsubscribe(); unsubscribe = null; }
                 localStorage.removeItem('medStorm_isLoggedIn');
                 document.getElementById('login-overlay').style.display = 'flex';
                 const btn = document.querySelector('.action-btn');
@@ -1962,73 +1899,115 @@ window.handleAvatarUpload = function(event) {
             }
         });
 
-        // ── login / logout ─────────────────────────────────────────────────
         window.handleLogin = async () => {
             const email = document.getElementById('user-email').value.trim().toLowerCase();
-            const pass  = document.getElementById('user-password').value.trim();
+            const pass = document.getElementById('user-password').value.trim();
             document.getElementById('login-error').style.display = 'none';
+
             if (!email || !pass) return showError("⚠️ Please enter your email and password.");
+
             const btn = document.querySelector('.action-btn');
-            btn.innerHTML = "Authenticating... ⏳"; btn.disabled = true;
+            btn.innerHTML = "Authenticating... ⏳";
+            btn.disabled = true;
             window.isExplicitLogin = true;
+
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
                 localStorage.setItem('medStorm_isLoggedIn', 'true');
-            } catch (err) {
-                showError("❌ " + err.message);
-                btn.innerHTML = "Login 🔓"; btn.disabled = false;
+            } catch (error) {
+                console.error("Auth Error:", error);
+
+
+                showError("❌ " + error.message);
+
+                btn.innerHTML = "Login 🔓";
+                btn.disabled = false;
             }
         };
 
-        window.handleLogout     = () => document.getElementById('logout-modal').classList.add('active');
-        window.closeLogoutModal = () => document.getElementById('logout-modal').classList.remove('active');
+        window.handleLogout = () => {
+            document.getElementById('logout-modal').classList.add('active');
+        };
+
+        window.closeLogoutModal = () => {
+            document.getElementById('logout-modal').classList.remove('active');
+        };
 
         window.executeLogout = async () => {
             closeLogoutModal();
+
             try {
                 const user = auth.currentUser;
                 if (user) {
                     const deviceId = getDeviceId();
-                    const userRef  = doc(db, "users", user.uid);
+                    const userRef = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userRef);
                     if (userSnap.exists()) {
-                        const devices = (userSnap.data().devices || []).filter(id => id !== deviceId);
-                        await setDoc(userRef, { devices }, { merge: true });
+                        let devices = userSnap.data().devices || [];
+                        devices = devices.filter(id => id !== deviceId);
+                        await setDoc(userRef, { devices: devices }, { merge: true });
                     }
                 }
                 await signOut(auth);
-                ['medStorm_Blood','medStorm_Foundation','medStorm_Terminology','medStorm_MSK','medStorm_DB_Cache','medStorm_isLoggedIn']
-                    .forEach(k => localStorage.removeItem(k));
-                window.DB = { Blood:[], Foundation:[], Terminology:[], MSK:{ ANATOMY:[], PHYSIOLOGY:[], HISTOLOGY:[] } };
-                document.getElementById('module-grid').innerHTML = '';
-                document.getElementById('login-overlay').style.display = 'flex';
-                window.currentUserId = null;
-                setAvatarUI('https://ui-avatars.com/api/?name=User&background=10B981&color=fff');
-            } catch (e) { console.error("Logout Error:", e); }
-        };
 
-        // ── fetch questions ────────────────────────────────────────────────
+                localStorage.removeItem('medStorm_Blood');
+                localStorage.removeItem('medStorm_Foundation');
+                localStorage.removeItem('medStorm_Terminology');
+                localStorage.removeItem('medStorm_MSK');
+                localStorage.removeItem('medStorm_DB_Cache');
+                localStorage.removeItem('medStorm_isLoggedIn');
+
+                window.DB = { 'Blood': [], 'Foundation': [], 'Terminology': [], 'MSK': { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] } };
+                document.getElementById('module-grid').innerHTML = '';
+
+                document.getElementById('login-overlay').style.display = 'flex';
+
+                window.currentUserId = null;
+                const defaultEmpty = 'https://ui-avatars.com/api/?name=User&background=10B981&color=fff';
+                document.getElementById('top-bar-avatar').src = defaultEmpty;
+                document.getElementById('main-profile-avatar').src = defaultEmpty;
+
+            } catch (e) {
+                console.error("Logout Error:", e);
+            }
+        };
         async function fetchQuestionsFromDB() {
             if (typeof window.renderDashboard === "function") window.renderDashboard();
+
             try {
                 const modules = [
-                    { id: 'msk_questions',        key: 'MSK' },
-                    { id: 'blood_questions',       key: 'Blood' },
-                    { id: 'foundation_questions',  key: 'Foundation' },
+                    { id: 'msk_questions', key: 'MSK' },
+                    { id: 'blood_questions', key: 'Blood' },
+                    { id: 'foundation_questions', key: 'Foundation' },
                     { id: 'terminology_questions', key: 'Terminology' }
                 ];
-                const snaps = await Promise.all(modules.map(m => getDoc(doc(db, "content", m.id))));
-                let updated = false;
-                snaps.forEach((s, i) => {
-                    if (!s.exists()) return;
-                    const data = s.data();
-                    const final = data.questionsList ? data.questionsList : data;
-                    window.DB[modules[i].key] = final;
-                    try { localStorage.setItem('medStorm_' + modules[i].key, JSON.stringify(final)); } catch(_) {}
-                    updated = true;
+
+                const fetchPromises = modules.map(mod => getDoc(doc(db, "content", mod.id)));
+                const snapshots = await Promise.all(fetchPromises);
+
+                let isUpdated = false;
+
+                snapshots.forEach((docSnap, index) => {
+                    if (docSnap.exists()) {
+                        let data = docSnap.data();
+                        let finalData = data.questionsList ? data.questionsList : data;
+                        window.DB[modules[index].key] = finalData;
+
+                        try {
+                            localStorage.setItem('medStorm_' + modules[index].key, JSON.stringify(finalData));
+                        } catch (e) {
+                            console.warn("المساحة ممتلئة للموديول:", modules[index].key);
+                        }
+                        isUpdated = true;
+                    }
                 });
-                if (updated && typeof window.renderDashboard === "function") window.renderDashboard();
-            } catch (e) { console.error("Fetch Error:", e); }
+
+                if (isUpdated && typeof window.renderDashboard === "function") {
+                    window.renderDashboard();
+                }
+            } catch (e) {
+                console.error("Fetch Error:", e);
+            }
         }
     </script>
     <script>
@@ -2131,7 +2110,7 @@ window.handleAvatarUpload = function(event) {
             if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
             AppState.stats.dailyProgress[today].time += timeSpent;
             localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveUserData) window.saveUserData('stats', AppState.stats);
+            window.saveUserData('stats', AppState.stats);
             SessionStartTime = null;
         }
 
@@ -2211,7 +2190,65 @@ window.handleAvatarUpload = function(event) {
 
 
 
-        // handleAvatarUpload and removeAvatar are defined in the Firebase module above
+        window.removeAvatar = async function () {
+            if (!window.currentUserId) return;
+
+            // 1. مسح الصورة من الجهاز الحالي (LocalStorage)
+            localStorage.removeItem('medStorm_avatar_' + window.currentUserId);
+
+            // 2. تجهيز الصورة الافتراضية بناءً على أول حرف من الإيميل
+            const userEmail = document.getElementById('profile-page-email').textContent;
+            let firstChar = 'U';
+            if (userEmail && userEmail !== 'Loading...') {
+                firstChar = userEmail.charAt(0).toUpperCase();
+            }
+            const defaultAvatar = `https://ui-avatars.com/api/?name=${firstChar}&background=10B981&color=fff`;
+
+            // 3. تحديث الواجهة قدامك فوراً
+            const topAvatar = document.getElementById('top-bar-avatar');
+            const mainAvatar = document.getElementById('main-profile-avatar');
+            if (topAvatar) topAvatar.src = defaultAvatar;
+            if (mainAvatar) mainAvatar.src = defaultAvatar;
+
+            // 4. السطر السحري: إبلاغ السحابة بمسح الصورة (عشان تسمّع في التابلت)
+            if (window.saveUserData) {
+                await window.saveUserData('avatarUrl', ''); // لازم تكون avatarUrl
+            }
+        };
+
+        window.handleAvatarUpload = function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = async function () {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const maxSize = 250;
+
+                    if (width > height) {
+                        if (width > maxSize) { height *= maxSize / width; width = maxSize; }
+                    } else {
+                        if (height > maxSize) { width *= maxSize / height; height = maxSize; }
+                    }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const base64 = canvas.toDataURL('image/jpeg', 0.8);
+
+                    setAvatarUI(base64);
+                    localStorage.setItem('medStorm_avatar_' + window.currentUserId, base64);
+
+                    await window.saveUserData('avatarUrl', base64);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
 
         function renderDashboard(mode = 'normal') {
             const grid = document.getElementById('module-grid');
@@ -2436,7 +2473,7 @@ window.handleAvatarUpload = function(event) {
                 else if (Session.answers[Session.index] === null && !Session.reviewing) {
                     AppState.progress[Session.queue[Session.index].q] = 'wrong';
                     localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-                    if (window.saveUserData) window.saveUserData('progress', AppState.progress);
+                    window.saveUserData('progress', AppState.progress);
                     document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
                     const opts = document.querySelectorAll('.option-btn');
                     if (opts[Session.queue[Session.index].a]) opts[Session.queue[Session.index].a].classList.add('correct');
@@ -2468,7 +2505,7 @@ window.handleAvatarUpload = function(event) {
                 AppState.progress[q.q] = 'wrong';
             }
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            if (window.saveUserData) window.saveUserData('progress', AppState.progress);
+            window.saveUserData('progress', AppState.progress);
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => {
@@ -2481,7 +2518,7 @@ window.handleAvatarUpload = function(event) {
             const qText = Session.queue[Session.index].q;
             if (AppState.favorites[qText]) delete AppState.favorites[qText]; else AppState.favorites[qText] = true;
             localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
-            if (window.saveUserData) window.saveUserData('favorites', AppState.favorites);
+            window.saveUserData('favorites', AppState.favorites);
             document.getElementById('btn-favorite').classList.toggle('active', !!AppState.favorites[qText]);
             document.getElementById('btn-favorite').querySelector('i').className = AppState.favorites[qText] ? 'ri-star-fill' : 'ri-star-line';
         }
@@ -2492,7 +2529,7 @@ window.handleAvatarUpload = function(event) {
             const text = document.getElementById('note-text').value.trim(); const qText = Session.queue[Session.index].q;
             if (text) AppState.notes[qText] = text; else delete AppState.notes[qText];
             localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); closeNoteModal();
-            if (window.saveUserData) window.saveUserData('notes', AppState.notes);
+            window.saveUserData('notes', AppState.notes);
             document.getElementById('btn-note').classList.toggle('active', !!text);
             document.getElementById('btn-note').querySelector('i').className = text ? 'ri-file-text-fill' : 'ri-file-text-line';
         }
@@ -2514,7 +2551,7 @@ window.handleAvatarUpload = function(event) {
             clearTimeout(Session.timer); if (typeof endSession === 'function') endSession();
             Session.queue.forEach((q, i) => { if (Session.answers[i] === null) AppState.progress[q.q] = 'wrong'; });
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            if (window.saveUserData) window.saveUserData('progress', AppState.progress);
+            window.saveUserData('progress', AppState.progress);
 
             document.body.classList.remove('focus-mode');
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
@@ -2594,14 +2631,12 @@ window.handleAvatarUpload = function(event) {
             });
         }
 
-function resetModule(modName, e) {
-    e.stopPropagation();
-    if (!confirm(`Reset all progress for ${modName}?`)) return;
-    extractAllQuestions(DB[modName]).forEach(q => delete AppState.progress[q.q]);
-    localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-    if (window.saveUserData) window.saveUserData('progress', AppState.progress);
-    renderDashboard(Session.mode);
-}
+        function resetModule(modName, e) {
+            e.stopPropagation(); if (!confirm(`Reset all progress for ${modName}?`)) return;
+            extractAllQuestions(DB[modName]).forEach(q => delete AppState.progress[q.q]);
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); window.saveUserData('progress', AppState.progress); renderDashboard(Session.mode);
+        }
+
         function renderFavorites() {
             const favList = document.getElementById('favorites-list'); const notesList = document.getElementById('notes-list');
             favList.innerHTML = ''; notesList.innerHTML = '';
@@ -2639,8 +2674,8 @@ function resetModule(modName, e) {
 
         function toggleNoteExpand(cardId) { const content = document.getElementById(cardId + '-content'); const icon = document.getElementById(cardId + '-icon'); if (content.style.display === 'none') { content.style.display = 'block'; icon.style.transform = 'rotate(180deg)'; } else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; } }
         function solveSingle(q, mod) { Session.queue = [q]; Session.module = mod; Session.index = 0; Session.score = 0; Session.answers = [null]; Session.mode = 'practice'; document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; }); document.body.classList.add('focus-mode'); const quizView = document.getElementById('view-quiz'); quizView.style.display = 'flex'; quizView.classList.add('active'); loadQuestion(); }
-        function removeFavorite(qText, e) { if (e) e.stopPropagation(); delete AppState.favorites[qText]; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); if (window.saveUserData) window.saveUserData('favorites', AppState.favorites); renderFavorites(); }
-        function removeNote(qText, e) { if (e) e.stopPropagation(); delete AppState.notes[qText]; localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); if (window.saveUserData) window.saveUserData('notes', AppState.notes); renderFavorites(); }
+        function removeFavorite(qText, e) { if (e) e.stopPropagation(); delete AppState.favorites[qText]; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); window.saveUserData('favorites', AppState.favorites); renderFavorites(); }
+        function removeNote(qText, e) { if (e) e.stopPropagation(); delete AppState.notes[qText]; localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); window.saveUserData('notes', AppState.notes); renderFavorites(); }
         function formatTime(s) { const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h > 0 ? `${h}h ${m}m` : `${m}m`; }
 
         function renderAnalytics() {
@@ -2669,4 +2704,3 @@ function resetModule(modName, e) {
 </body>
 
 </html>
-
