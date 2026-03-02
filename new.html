@@ -1805,9 +1805,12 @@
             return qs;
         }
 
-        window.onload = function () {
+window.onload = function () {
             document.body.setAttribute('data-theme', AppState.theme);
             updateThemeIcons();
+            
+            if (typeof fetchQuestionsFromDB === "function") fetchQuestionsFromDB();
+            
             renderDashboard();
             document.addEventListener('keydown', handleKeyboard);
             history.replaceState({ mode: 'dashboard' }, '', '#dashboard');
