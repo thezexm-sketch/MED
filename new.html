@@ -1652,10 +1652,13 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // إبقاء Firebase هنا فقط لجلب الأسئلة من الـ Firestore
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
             authDomain: "medstorm-63475.firebaseapp.com",
@@ -1668,29 +1671,35 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // تعديل دالة الحفظ لتعتمد على المتصفح فقط
         window.saveUserData = async function (field, value) {
             console.log("تم الحفظ محلياً فقط بنجاح.");
         };
 
         window.currentUserId = 'free_user';
 
-        window.defaultAvatar = function () {
+        // دالة الصورة الافتراضية
+        window.defaultAvatar = function() {
             return `https://ui-avatars.com/api/?name=User&background=10B981&color=fff`;
         }
 
-        window.setAvatarUI = function (url) {
+        // دالة تحديث الصورة
+        window.setAvatarUI = function(url) {
             const topAvatar = document.getElementById('top-bar-avatar');
             const mainAvatar = document.getElementById('main-profile-avatar');
             if (topAvatar) topAvatar.src = url;
             if (mainAvatar) mainAvatar.src = url;
         }
 
+        // استرجاع الصورة المحفوظة إن وجدت
         const savedAvatar = localStorage.getItem('medStorm_avatar_' + window.currentUserId);
         if (savedAvatar) {
-            window.setAvatarUI(savedAvatar);
+            setAvatarUI(savedAvatar);
         }
 
-        window.fetchQuestionsFromDB = async function () {
+        async function fetchQuestionsFromDB() {
+            if (typeof window.renderDashboard === "function") window.renderDashboard();
+
             try {
                 const modules = [
                     { id: 'msk_questions', key: 'MSK' },
@@ -1725,20 +1734,10 @@
             } catch (e) {
                 console.error("Fetch Error:", e);
             }
-        };
+        }
 
-                if (isUpdated && typeof window.renderDashboard === "function") {
-                    window.renderDashboard();
-                    if (title) title.innerHTML = "Modules";
-                }
-            } catch (e) {
-                console.error("Fetch Error:", e);
-                if (title) title.innerHTML = "❌ خطأ في الاتصال";
-                alert("السيرفر رفض إرسال الأسئلة! السبب: " + e.message);
-            }
-        };
-
-        window.fetchQuestionsFromDB();
+        // استدعاء الأسئلة فوراً عند فتح الصفحة
+        fetchQuestionsFromDB();
     </script>
     <script>
         window.addEventListener('popstate', (e) => {
@@ -1809,9 +1808,6 @@
         window.onload = function () {
             document.body.setAttribute('data-theme', AppState.theme);
             updateThemeIcons();
-
-            if (typeof fetchQuestionsFromDB === "function") fetchQuestionsFromDB();
-
             renderDashboard();
             document.addEventListener('keydown', handleKeyboard);
             history.replaceState({ mode: 'dashboard' }, '', '#dashboard');
@@ -2185,7 +2181,7 @@
                     const opts = document.querySelectorAll('.option-btn');
                     if (opts[Session.queue[Session.index].a]) opts[Session.queue[Session.index].a].classList.add('correct');
 
-                    Session.answers[Session.index] = -1; 
+                    Session.answers[Session.index] = -1; // تسجيل إنه ضاع وقته
 
                     setTimeout(() => {
                         if (!Session.answers.includes(null)) {
