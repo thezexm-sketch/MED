@@ -1773,12 +1773,12 @@
         const db = getFirestore(app);
 
         // ===== CLOUD SYNC =====
-        window.saveUserData = async function (field, value) {
+        window.saveUserData = async function(field, value) {
             if (!window.currentUserId) return;
             try {
                 const userRef = doc(db, "users", window.currentUserId);
                 await setDoc(userRef, { [field]: value }, { merge: true });
-            } catch (e) { console.warn("Cloud save failed:", e); }
+            } catch(e) { console.warn("Cloud save failed:", e); }
         };
 
         async function loadUserData(user) {
@@ -1787,22 +1787,10 @@
                 const snap = await getDoc(userRef);
                 if (snap.exists()) {
                     const data = snap.data();
-                    if (data.progress) {
-                        AppState.progress = data.progress;
-                        localStorage.setItem('medStormProgress', JSON.stringify(data.progress));
-                    }
-                    if (data.favorites) {
-                        AppState.favorites = data.favorites;
-                        localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites));
-                    }
-                    if (data.notes) {
-                        AppState.notes = data.notes;
-                        localStorage.setItem('medStormNotes', JSON.stringify(data.notes));
-                    }
-                    if (data.stats) {
-                        AppState.stats = data.stats;
-                        localStorage.setItem('medStormStats', JSON.stringify(data.stats));
-                    }
+                    if (data.progress) { AppState.progress = data.progress; localStorage.setItem('medStormProgress', JSON.stringify(data.progress)); }
+                    if (data.favorites) { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
+                    if (data.notes) { AppState.notes = data.notes; localStorage.setItem('medStormNotes', JSON.stringify(data.notes)); }
+                    if (data.stats) { AppState.stats = data.stats; localStorage.setItem('medStormStats', JSON.stringify(data.stats)); }
                     if (data.avatar) {
                         localStorage.setItem('medStorm_avatar_' + user.uid, data.avatar);
                         const topAvatar = document.getElementById('top-bar-avatar');
@@ -1811,7 +1799,7 @@
                         if (mainAvatar) mainAvatar.src = data.avatar;
                     }
                 }
-            } catch (e) { console.warn("Cloud load failed:", e); }
+            } catch(e) { console.warn("Cloud load failed:", e); }
         }
         // ===== END CLOUD SYNC =====
 
@@ -2198,6 +2186,28 @@
 
 
 
+        window.removeAvatar = function () {
+            if (window.currentUserId) {
+                localStorage.removeItem('medStorm_avatar_' + window.currentUserId);
+
+                const userEmail = document.getElementById('profile-page-email').textContent;
+                let firstChar = 'U';
+                if (userEmail && userEmail !== 'Loading...') {
+                    firstChar = userEmail.charAt(0).toUpperCase();
+                }
+
+                const defaultAvatar = `https://ui-avatars.com/api/?name=${firstChar}&background=10B981&color=fff`;
+
+                const topAvatar = document.getElementById('top-bar-avatar');
+                const mainAvatar = document.getElementById('main-profile-avatar');
+
+                if (topAvatar) topAvatar.src = defaultAvatar;
+                if (mainAvatar) mainAvatar.src = defaultAvatar;
+
+                if (window.saveUserData) window.saveUserData('avatar', '');
+            }
+        };
+
         window.handleAvatarUpload = function (event) {
             const file = event.target.files[0];
             if (file) {
@@ -2205,25 +2215,6 @@
                     alert("⚠️ Please choose an image smaller than 2MB.");
                     return;
                 }
-                window.removeAvatar = function () {
-                    if (window.currentUserId) {
-                        localStorage.removeItem('medStorm_avatar_' + window.currentUserId);
-
-                        const userEmail = document.getElementById('profile-page-email').textContent;
-                        let firstChar = 'U';
-                        if (userEmail && userEmail !== 'Loading...') {
-                            firstChar = userEmail.charAt(0).toUpperCase();
-                        }
-
-                        const defaultAvatar = `https://ui-avatars.com/api/?name=${firstChar}&background=10B981&color=fff`;
-
-                        const topAvatar = document.getElementById('top-bar-avatar');
-                        const mainAvatar = document.getElementById('main-profile-avatar');
-
-                        if (topAvatar) topAvatar.src = defaultAvatar;
-                        if (mainAvatar) mainAvatar.src = defaultAvatar;
-                    }
-                };
 
                 const reader = new FileReader();
                 reader.onload = function (e) {
