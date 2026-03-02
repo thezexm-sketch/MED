@@ -1973,9 +1973,7 @@
                 console.error("Logout Error:", e);
             }
         };
-        async function fetchQuestionsFromDB() {
-            if (typeof window.renderDashboard === "function") window.renderDashboard();
-
+        window.fetchQuestionsFromDB = async function () {
             try {
                 const modules = [
                     { id: 'msk_questions', key: 'MSK' },
@@ -2004,6 +2002,13 @@
                     }
                 });
 
+                if (isUpdated && typeof window.renderDashboard === "function") {
+                    window.renderDashboard();
+                }
+            } catch (e) {
+                console.error("Fetch Error:", e);
+            }
+        };
                 if (isUpdated && typeof window.renderDashboard === "function") {
                     window.renderDashboard();
                 }
@@ -2715,3 +2720,4 @@
 </body>
 
 </html>
+
