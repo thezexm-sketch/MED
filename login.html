@@ -1795,12 +1795,14 @@
                     if (data.favorites) { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
                     if (data.notes) { AppState.notes = data.notes; localStorage.setItem('medStormNotes', JSON.stringify(data.notes)); }
                     if (data.stats) { AppState.stats = data.stats; localStorage.setItem('medStormStats', JSON.stringify(data.stats)); }
-                    if (data.avatar) {
-                        localStorage.setItem('medStorm_avatar_' + user.uid, data.avatar);
+
+                    // التعديل هنا: غيرنا avatar لـ avatarUrl
+                    if (data.avatarUrl) {
+                        localStorage.setItem('medStorm_avatar_' + user.uid, data.avatarUrl);
                         const topAvatar = document.getElementById('top-bar-avatar');
                         const mainAvatar = document.getElementById('main-profile-avatar');
-                        if (topAvatar) topAvatar.src = data.avatar;
-                        if (mainAvatar) mainAvatar.src = data.avatar;
+                        if (topAvatar) topAvatar.src = data.avatarUrl;
+                        if (mainAvatar) mainAvatar.src = data.avatarUrl;
                     }
                 }
             } catch (e) { console.warn("Cloud load failed:", e); }
