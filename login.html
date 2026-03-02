@@ -120,7 +120,7 @@
             width: var(--sidebar-width);
             background: var(--bg-darker);
             border-right: 1px solid var(--border-color);
-            padding: 2.25rem 1.75rem;
+            padding: 2.25rem 1.75rem 5rem 1.75rem;
             display: flex;
             flex-direction: column;
             gap: 2rem;
@@ -305,7 +305,7 @@
             display: none;
             flex: 1;
             overflow-y: auto;
-            padding: 2rem 3rem 4rem 3rem;
+            padding: 2rem 3rem 8rem 3rem;
             animation: fadeSlideIn 0.4s ease;
         }
 
@@ -685,6 +685,62 @@
             align-items: center;
             justify-content: center;
             z-index: 2000;
+        }
+
+        .profile-btn-container {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .profile-btn-container:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .profile-btn-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-avatar-wrapper {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+            border: 4px solid var(--accent);
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-edit-icon {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 0;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .profile-avatar-wrapper:hover .avatar-edit-icon {
+            opacity: 1;
         }
 
         .modal-overlay.active {
@@ -1395,18 +1451,24 @@
     <main class="main-content">
         <div class="top-bar">
             <div class="top-bar-left">
-                <button class="icon-btn" onclick="toggleSidebar()" id="sidebar-toggle"><i
-                        class="ri-menu-2-line"></i></button>
+                <button class="icon-btn" onclick="toggleSidebar()" id="sidebar-toggle">
+                    <i class="ri-menu-2-line"></i>
+                </button>
                 <h1 class="page-title" id="page-title">Modules</h1>
             </div>
             <div style="display: flex; gap: 0.75rem; align-items: center;">
 
+                <div class="profile-btn-container" onclick="switchMode('profile')" title="My Profile"> <img
+                        id="top-bar-avatar" src="https://ui-avatars.com/api/?name=Mahmoud&background=10B981&color=fff"
+                        alt="Profile">
+                </div>
+
                 <button class="icon-btn" onclick="toggleFullScreen()" title="Full Screen">
                     <i class="ri-fullscreen-line" id="fullscreen-icon"></i>
                 </button>
-
-                <button class="icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i class="ri-sun-fill"
-                        id="theme-icon"></i></button>
+                <button class="icon-btn" onclick="toggleTheme()" title="Dark/Light Mode">
+                    <i class="ri-sun-fill" id="theme-icon"></i>
+                </button>
                 <button class="icon-btn" onclick="handleLogout()" title="Logout"
                     style="color: var(--primary-red); background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
                     <i class="ri-logout-box-r-line"></i>
@@ -1452,6 +1514,33 @@
                                     style="font-size: 1.25rem;"></i>
                             </a>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="view-profile" class="view-section">
+            <div
+                style="max-width: 1200px; margin: 0 auto; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+                <div
+                    style="background: var(--bg-card); padding: 3rem; border-radius: 24px; border: 1px solid var(--border-color); text-align: center; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);">
+                    <h2 style="margin-bottom: 2rem; font-weight: 800;">My Profile</h2>
+
+                    <div class="profile-avatar-wrapper" onclick="document.getElementById('avatar-upload').click()"
+                        title="Click to change picture">
+                        <img id="main-profile-avatar"
+                            src="https://ui-avatars.com/api/?name=Mahmoud&background=10B981&color=fff" alt="Profile">
+                        <div class="avatar-edit-icon"><i class="ri-camera-fill"></i></div>
+                    </div>
+                    <input type="file" id="avatar-upload" accept="image/*" style="display: none;"
+                        onchange="handleAvatarUpload(event)">
+
+                    <div style="margin-top: 2rem; text-align: left;">
+                        <div
+                            style="color: var(--text-gray); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; font-weight: 700;">
+                            Connected Email</div>
+                        <div id="profile-page-email"
+                            style="font-size: 1.1rem; font-weight: 800; color: var(--text-light); word-break: break-all; background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            Loading...</div>
                     </div>
                 </div>
             </div>
@@ -1624,8 +1713,11 @@
         let isCheckingDevice = false;
 
         onAuthStateChanged(auth, async (user) => {
+
             if (user) {
                 localStorage.setItem('medStorm_isLoggedIn', 'true');
+                const emailDisplay = document.getElementById('profile-page-email');
+                if (emailDisplay) emailDisplay.textContent = user.email;
                 if (isCheckingDevice) return;
                 isCheckingDevice = true;
 
@@ -1774,6 +1866,18 @@
         }
     </script>
     <script>
+        window.addEventListener('popstate', (e) => {
+            document.getElementById('start-modal').classList.remove('active');
+            document.getElementById('note-modal').classList.remove('active');
+            document.getElementById('map-overlay').classList.remove('active');
+
+            // 2. الرجوع للقسم السابق
+            if (e.state && e.state.mode) {
+                switchMode(e.state.mode, true);
+            } else {
+                switchMode('dashboard', true);
+            }
+        });
         function getSafeData(key, fallback) {
             try {
                 let data = localStorage.getItem(key);
@@ -1833,6 +1937,7 @@
             updateThemeIcons();
             renderDashboard();
             document.addEventListener('keydown', handleKeyboard);
+            history.replaceState({ mode: 'dashboard' }, '', '#dashboard');
         };
 
         function toggleSidebar() { document.body.classList.toggle('sidebar-collapsed'); }
@@ -1878,7 +1983,7 @@
             }
         }
 
-        function switchMode(mode) {
+        function switchMode(mode, fromHistory = false) {
             clearTimeout(Session.timer);
             if (SessionStartTime) endSession();
             document.getElementById('view-results').classList.remove('active');
@@ -1915,12 +2020,71 @@
                 document.getElementById('page-title').textContent = 'Important Links';
                 document.getElementById('view-links').classList.add('active');
                 document.getElementById('view-links').style.display = 'block';
+            } else if (mode === 'profile') {
+                document.getElementById('page-title').textContent = 'My Profile';
+                document.getElementById('view-profile').classList.add('active');
+                document.getElementById('view-profile').style.display = 'block';
             } else {
                 document.getElementById('nav-dash').classList.add('active');
                 document.getElementById('page-title').textContent = 'Modules';
                 document.getElementById('view-dashboard').classList.add('active');
                 document.getElementById('view-dashboard').style.display = 'block';
                 renderDashboard('normal');
+            }
+            if (!fromHistory) {
+                history.pushState({ mode: mode }, '', '#' + mode);
+            }
+        }
+        function openProfileModal() {
+            document.getElementById('profile-modal').classList.add('active');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.remove('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedAvatar = localStorage.getItem('medStorm_avatar');
+            if (savedAvatar) {
+                document.getElementById('top-bar-avatar').src = savedAvatar;
+                document.getElementById('modal-avatar').src = savedAvatar;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedAvatar = localStorage.getItem('medStorm_avatar');
+            if (savedAvatar) {
+                const topAvatar = document.getElementById('top-bar-avatar');
+                const mainAvatar = document.getElementById('main-profile-avatar');
+                if (topAvatar) topAvatar.src = savedAvatar;
+                if (mainAvatar) mainAvatar.src = savedAvatar;
+            }
+        });
+
+        window.handleAvatarUpload = function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("⚠️ Please choose an image smaller than 2MB.");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const base64Image = e.target.result;
+                    const topAvatar = document.getElementById('top-bar-avatar');
+                    const mainAvatar = document.getElementById('main-profile-avatar');
+
+                    if (topAvatar) topAvatar.src = base64Image;
+                    if (mainAvatar) mainAvatar.src = base64Image;
+
+                    try {
+                        localStorage.setItem('medStorm_avatar', base64Image);
+                    } catch (err) {
+                        alert("⚠️ Storage quota exceeded. Image too large to save.");
+                    }
+                };
+                reader.readAsDataURL(file);
             }
         }
 
@@ -2337,5 +2501,3 @@
 </body>
 
 </html>
-
-
