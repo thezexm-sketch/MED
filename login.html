@@ -2192,41 +2192,22 @@
 
         window.removeAvatar = async function () {
             if (!window.currentUserId) return;
-
-            // 1. مسح الصورة من الجهاز الحالي (LocalStorage)
+            const email = document.getElementById('profile-page-email')?.textContent || '';
+            const def = defaultAvatar(email);
+            setAvatarUI(def);
             localStorage.removeItem('medStorm_avatar_' + window.currentUserId);
-
-            // 2. تجهيز الصورة الافتراضية بناءً على أول حرف من الإيميل
-            const userEmail = document.getElementById('profile-page-email').textContent;
-            let firstChar = 'U';
-            if (userEmail && userEmail !== 'Loading...') {
-                firstChar = userEmail.charAt(0).toUpperCase();
-            }
-            const defaultAvatar = `https://ui-avatars.com/api/?name=${firstChar}&background=10B981&color=fff`;
-
-            // 3. تحديث الواجهة قدامك فوراً
-            const topAvatar = document.getElementById('top-bar-avatar');
-            const mainAvatar = document.getElementById('main-profile-avatar');
-            if (topAvatar) topAvatar.src = defaultAvatar;
-            if (mainAvatar) mainAvatar.src = defaultAvatar;
-
-            // 4. السطر السحري: إبلاغ السحابة بمسح الصورة (عشان تسمّع في التابلت)
-            if (window.saveUserData) {
-                await window.saveUserData('avatarUrl', ''); // لازم تكون avatarUrl
-            }
+            await window.saveUserData('avatarUrl', '');
         };
-
         window.handleAvatarUpload = function (event) {
             const file = event.target.files[0];
-            if (!file) return;
+            if (!file || !window.currentUserId) return;
 
             const reader = new FileReader();
             reader.onload = function (e) {
                 const img = new Image();
                 img.onload = async function () {
                     const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
+                    let width = img.width, height = img.height;
                     const maxSize = 250;
 
                     if (width > height) {
@@ -2240,16 +2221,22 @@
 
                     const base64 = canvas.toDataURL('image/jpeg', 0.8);
 
+                    // تحديث الشكل فوراً
                     setAvatarUI(base64);
                     localStorage.setItem('medStorm_avatar_' + window.currentUserId, base64);
 
-                    await window.saveUserData('avatarUrl', base64);
+                    try {
+                        // الحفظ في السحابة
+                        await window.saveUserData('avatarUrl', base64);
+                        alert("✅ تم رفع الصورة بنجاح!");
+                    } catch (err) {
+                        alert("❌ فشل الرفع، تأكد من اتصالك بالإنترنت.");
+                    }
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         };
-
         function renderDashboard(mode = 'normal') {
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
@@ -2632,9 +2619,23 @@
         }
 
         function resetModule(modName, e) {
-            e.stopPropagation(); if (!confirm(`Reset all progress for ${modName}?`)) return;
-            extractAllQuestions(DB[modName]).forEach(q => delete AppState.progress[q.q]);
-            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); window.saveUserData('progress', AppState.progress); renderDashboard(Session.mode);
+            e.stopPropagation();
+            const isMistakes = document.body.getAttribute('data-mode') === 'mistakes';
+
+            if (!confirm(`Are you sure you want to reset ${isMistakes ? 'MISTAKES only' : 'ALL progress'} for ${modName}?`)) return;
+
+            extractAllQuestions(DB[modName]).forEach(q => {
+                if (isMistakes) {
+                    if (AppState.progress[q.q] === 'wrong') delete AppState.progress[q.q];
+                } else {
+                    delete AppState.progress[q.q];
+                }
+            });
+
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+            if (window.saveUserData) window.saveUserData('progress', AppState.progress);
+
+            renderDashboard(isMistakes ? 'mistakes' : 'normal');
         }
 
         function renderFavorites() {
