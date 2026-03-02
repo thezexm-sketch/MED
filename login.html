@@ -1755,10 +1755,10 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot }          from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref as storageRef, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
@@ -1769,115 +1769,107 @@
             appId: "1:857983887711:web:981274bfdd5038cc89aeea"
         };
 
-        const app = initializeApp(firebaseConfig);
+        const app  = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        const db   = getFirestore(app);
         const storage = getStorage(app);
 
-        // ─── helpers ────────────────────────────────────────────────
-        function showError(message) {
-            const errDiv = document.getElementById('login-error');
-            errDiv.innerHTML = message;
-            errDiv.style.display = 'block';
+        // ── helpers ────────────────────────────────────────────────────────
+        function showError(msg) {
+            const el = document.getElementById('login-error');
+            el.innerHTML = msg; el.style.display = 'block';
         }
-
         function getDeviceId() {
-            let deviceId = localStorage.getItem('medStormDeviceId');
-            if (!deviceId) {
-                deviceId = 'device_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('medStormDeviceId', deviceId);
-            }
-            return deviceId;
+            let id = localStorage.getItem('medStormDeviceId');
+            if (!id) { id = 'device_' + Math.random().toString(36).substr(2,9); localStorage.setItem('medStormDeviceId', id); }
+            return id;
         }
-
         function setAvatarUI(src) {
-            const topAvatar = document.getElementById('top-bar-avatar');
-            const mainAvatar = document.getElementById('main-profile-avatar');
-            if (topAvatar) topAvatar.src = src;
-            if (mainAvatar) mainAvatar.src = src;
+            const t = document.getElementById('top-bar-avatar');
+            const m = document.getElementById('main-profile-avatar');
+            if (t) t.src = src;
+            if (m) m.src = src;
+        }
+        function defaultAvatar(email) {
+            return `https://ui-avatars.com/api/?name=${(email||'U').charAt(0).toUpperCase()}&background=10B981&color=fff`;
         }
 
-        function defaultAvatarUrl(email) {
-            return `https://ui-avatars.com/api/?name=${(email || 'U').charAt(0).toUpperCase()}&background=10B981&color=fff`;
-        }
-
-        // ─── cloud save (progress / favorites / notes / stats) ──────
+        // ── cloud save ─────────────────────────────────────────────────────
         window.saveUserData = async function(field, value) {
             if (!window.currentUserId) return;
             try {
                 await setDoc(doc(db, "users", window.currentUserId), { [field]: value }, { merge: true });
-            } catch(e) { console.warn("Cloud save failed:", field, e); }
+            } catch(e) { console.warn("saveUserData failed:", field, e); }
         };
 
-        // ─── avatar upload → Firebase Storage ───────────────────────
+        // ── real-time listener ─────────────────────────────────────────────
+        // القاعدة: دايماً حدّث AppState، بس مش renderDashboard لو في quiz
+        let unsubscribe = null;
+
+        function startListener(user) {
+            if (unsubscribe) unsubscribe();
+            let firstFire = true;
+
+            unsubscribe = onSnapshot(doc(db, "users", user.uid), (snap) => {
+                if (!snap.exists()) return;
+                const data = snap.data();
+                const inQuiz = document.body.classList.contains('focus-mode');
+
+                if (data.progress !== undefined) {
+                    AppState.progress = data.progress;
+                    localStorage.setItem('medStormProgress', JSON.stringify(data.progress));
+                    if (!firstFire && !inQuiz && typeof renderDashboard === 'function')
+                        renderDashboard();
+                }
+                if (data.favorites !== undefined) { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
+                if (data.notes     !== undefined) { AppState.notes     = data.notes;     localStorage.setItem('medStormNotes',     JSON.stringify(data.notes)); }
+                if (data.stats     !== undefined) { AppState.stats     = data.stats;     localStorage.setItem('medStormStats',     JSON.stringify(data.stats)); }
+                if (data.avatarUrl !== undefined) {
+                    if (data.avatarUrl) {
+                        setAvatarUI(data.avatarUrl);
+                        localStorage.setItem('medStorm_avatar_' + user.uid, data.avatarUrl);
+                    } else if (data.avatarUrl === '') {
+                        localStorage.removeItem('medStorm_avatar_' + user.uid);
+                        setAvatarUI(defaultAvatar(user.email));
+                    }
+                }
+                firstFire = false;
+            });
+        }
+
+        // ── avatar upload → Firebase Storage ──────────────────────────────
         window.handleAvatarUpload = function(event) {
             const file = event.target.files[0];
             if (!file) return;
             if (file.size > 2 * 1024 * 1024) { alert("⚠️ Please choose an image smaller than 2MB."); return; }
-
             const reader = new FileReader();
             reader.onload = async function(e) {
-                const base64Image = e.target.result;
-                setAvatarUI(base64Image); // show instantly locally
-
+                const base64 = e.target.result;
+                setAvatarUI(base64);                            // instant local preview
                 if (!window.currentUserId) return;
                 try {
-                    // upload to Storage
-                    const avatarRef = ref(storage, `avatars/${window.currentUserId}`);
-                    await uploadString(avatarRef, base64Image, 'data_url');
-                    const url = await getDownloadURL(avatarRef);
-                    // save URL in Firestore (tiny string, not base64)
-                    await setDoc(doc(db, "users", window.currentUserId), { avatarUrl: url }, { merge: true });
+                    const aRef = storageRef(storage, `avatars/${window.currentUserId}`);
+                    await uploadString(aRef, base64, 'data_url');
+                    const url = await getDownloadURL(aRef);
                     localStorage.setItem('medStorm_avatar_' + window.currentUserId, url);
+                    await window.saveUserData('avatarUrl', url); // saves URL (not base64)
                 } catch(err) { console.warn("Avatar upload failed:", err); }
             };
             reader.readAsDataURL(file);
         };
 
-        // ─── remove avatar ───────────────────────────────────────────
+        // ── remove avatar ──────────────────────────────────────────────────
         window.removeAvatar = async function() {
             if (!window.currentUserId) return;
-            const userEmail = document.getElementById('profile-page-email')?.textContent || '';
-            const def = defaultAvatarUrl(userEmail);
+            const email = document.getElementById('profile-page-email')?.textContent || '';
+            const def = defaultAvatar(email);
             setAvatarUI(def);
             localStorage.removeItem('medStorm_avatar_' + window.currentUserId);
-            try {
-                await deleteObject(ref(storage, `avatars/${window.currentUserId}`));
-            } catch(e) {} // ok if file doesn't exist
-            await setDoc(doc(db, "users", window.currentUserId), { avatarUrl: '' }, { merge: true });
+            try { await deleteObject(storageRef(storage, `avatars/${window.currentUserId}`)); } catch(_) {}
+            await window.saveUserData('avatarUrl', '');
         };
 
-        // ─── real-time listener for user data ────────────────────────
-        let unsubscribeUserListener = null;
-
-        function startUserListener(user) {
-            if (unsubscribeUserListener) unsubscribeUserListener();
-            const userRef = doc(db, "users", user.uid);
-
-            unsubscribeUserListener = onSnapshot(userRef, (snap) => {
-                if (!snap.exists()) return;
-                const data = snap.data();
-
-                // only apply if data came from another device (not our own write)
-                if (data.progress)   { AppState.progress  = data.progress;  localStorage.setItem('medStormProgress',  JSON.stringify(data.progress));  if (typeof renderDashboard === 'function') renderDashboard(); }
-                if (data.favorites)  { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
-                if (data.notes)      { AppState.notes     = data.notes;     localStorage.setItem('medStormNotes',     JSON.stringify(data.notes)); }
-                if (data.stats)      { AppState.stats     = data.stats;     localStorage.setItem('medStormStats',     JSON.stringify(data.stats)); }
-
-                // avatar
-                const avatarUrl = data.avatarUrl;
-                if (avatarUrl) {
-                    setAvatarUI(avatarUrl);
-                    localStorage.setItem('medStorm_avatar_' + user.uid, avatarUrl);
-                } else if (avatarUrl === '') {
-                    // explicitly removed
-                    localStorage.removeItem('medStorm_avatar_' + user.uid);
-                    setAvatarUI(defaultAvatarUrl(user.email));
-                }
-            });
-        }
-
-        // ─── auth state ──────────────────────────────────────────────
+        // ── auth state ─────────────────────────────────────────────────────
         window.isExplicitLogin = false;
         let isCheckingDevice = false;
 
@@ -1888,16 +1880,16 @@
                 if (emailDisplay) emailDisplay.textContent = user.email;
                 window.currentUserId = user.uid;
 
-                // show cached avatar immediately while listener loads
+                // show cached avatar immediately (listener will update if needed)
                 const cached = localStorage.getItem('medStorm_avatar_' + user.uid);
-                setAvatarUI(cached || defaultAvatarUrl(user.email));
+                setAvatarUI(cached || defaultAvatar(user.email));
 
                 if (isCheckingDevice) return;
                 isCheckingDevice = true;
 
                 try {
                     const deviceId = getDeviceId();
-                    const userRef = doc(db, "users", user.uid);
+                    const userRef  = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userRef);
 
                     if (userSnap.exists()) {
@@ -1906,28 +1898,25 @@
                             if (devices.length >= 2) {
                                 await signOut(auth);
                                 localStorage.removeItem('medStorm_isLoggedIn');
-                                showError("❌ Maximum device limit reached. Please contact <a href='https://t.me/behonor' target='_blank' style='color: var(--primary-green); text-decoration: none; font-weight: bold;'>Dr. Mahmoud</a> to reset your account.");
+                                showError("❌ Maximum device limit reached. Please contact <a href='https://t.me/behonor' target='_blank' style='color:var(--primary-green);text-decoration:none;font-weight:bold;'>Dr. Mahmoud</a> to reset your account.");
                                 const btn = document.querySelector('.action-btn');
                                 if (btn) { btn.innerHTML = "Login 🔓"; btn.disabled = false; }
                                 isCheckingDevice = false;
                                 return;
-                            } else {
-                                devices.push(deviceId);
-                                await setDoc(userRef, { devices }, { merge: true });
                             }
+                            devices.push(deviceId);
+                            await setDoc(userRef, { devices }, { merge: true });
                         }
                     } else {
                         await setDoc(userRef, { devices: [deviceId] });
                     }
 
                     document.getElementById('login-overlay').style.display = 'none';
-                    if (window.isExplicitLogin && window.confetti) {
+                    if (window.isExplicitLogin && window.confetti)
                         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                    }
                     window.isExplicitLogin = false;
 
-                    // start real-time sync THEN load questions
-                    startUserListener(user);
+                    startListener(user);      // real-time sync starts here
                     fetchQuestionsFromDB();
 
                 } catch (e) {
@@ -1938,7 +1927,7 @@
                     if (btn) { btn.innerHTML = "Login 🔓"; btn.disabled = false; }
                 }
             } else {
-                if (unsubscribeUserListener) { unsubscribeUserListener(); unsubscribeUserListener = null; }
+                if (unsubscribe) { unsubscribe(); unsubscribe = null; }
                 localStorage.removeItem('medStorm_isLoggedIn');
                 document.getElementById('login-overlay').style.display = 'flex';
                 const btn = document.querySelector('.action-btn');
@@ -1946,7 +1935,7 @@
             }
         });
 
-        // ─── login / logout ──────────────────────────────────────────
+        // ── login / logout ─────────────────────────────────────────────────
         window.handleLogin = async () => {
             const email = document.getElementById('user-email').value.trim().toLowerCase();
             const pass  = document.getElementById('user-password').value.trim();
@@ -1958,14 +1947,14 @@
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
                 localStorage.setItem('medStorm_isLoggedIn', 'true');
-            } catch (error) {
-                showError("❌ " + error.message);
+            } catch (err) {
+                showError("❌ " + err.message);
                 btn.innerHTML = "Login 🔓"; btn.disabled = false;
             }
         };
 
-        window.handleLogout = () => { document.getElementById('logout-modal').classList.add('active'); };
-        window.closeLogoutModal = () => { document.getElementById('logout-modal').classList.remove('active'); };
+        window.handleLogout    = () => document.getElementById('logout-modal').classList.add('active');
+        window.closeLogoutModal = () => document.getElementById('logout-modal').classList.remove('active');
 
         window.executeLogout = async () => {
             closeLogoutModal();
@@ -1973,17 +1962,17 @@
                 const user = auth.currentUser;
                 if (user) {
                     const deviceId = getDeviceId();
-                    const userRef = doc(db, "users", user.uid);
+                    const userRef  = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userRef);
                     if (userSnap.exists()) {
-                        let devices = (userSnap.data().devices || []).filter(id => id !== deviceId);
+                        const devices = (userSnap.data().devices || []).filter(id => id !== deviceId);
                         await setDoc(userRef, { devices }, { merge: true });
                     }
                 }
                 await signOut(auth);
                 ['medStorm_Blood','medStorm_Foundation','medStorm_Terminology','medStorm_MSK','medStorm_DB_Cache','medStorm_isLoggedIn']
                     .forEach(k => localStorage.removeItem(k));
-                window.DB = { 'Blood': [], 'Foundation': [], 'Terminology': [], 'MSK': { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] } };
+                window.DB = { Blood:[], Foundation:[], Terminology:[], MSK:{ ANATOMY:[], PHYSIOLOGY:[], HISTOLOGY:[] } };
                 document.getElementById('module-grid').innerHTML = '';
                 document.getElementById('login-overlay').style.display = 'flex';
                 window.currentUserId = null;
@@ -1991,26 +1980,25 @@
             } catch (e) { console.error("Logout Error:", e); }
         };
 
-        // ─── fetch questions ─────────────────────────────────────────
+        // ── fetch questions ────────────────────────────────────────────────
         async function fetchQuestionsFromDB() {
             if (typeof window.renderDashboard === "function") window.renderDashboard();
             try {
                 const modules = [
-                    { id: 'msk_questions',         key: 'MSK' },
-                    { id: 'blood_questions',        key: 'Blood' },
-                    { id: 'foundation_questions',   key: 'Foundation' },
-                    { id: 'terminology_questions',  key: 'Terminology' }
+                    { id: 'msk_questions',        key: 'MSK' },
+                    { id: 'blood_questions',       key: 'Blood' },
+                    { id: 'foundation_questions',  key: 'Foundation' },
+                    { id: 'terminology_questions', key: 'Terminology' }
                 ];
-                const snapshots = await Promise.all(modules.map(m => getDoc(doc(db, "content", m.id))));
+                const snaps = await Promise.all(modules.map(m => getDoc(doc(db, "content", m.id))));
                 let updated = false;
-                snapshots.forEach((docSnap, i) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        const finalData = data.questionsList ? data.questionsList : data;
-                        window.DB[modules[i].key] = finalData;
-                        try { localStorage.setItem('medStorm_' + modules[i].key, JSON.stringify(finalData)); } catch(e) {}
-                        updated = true;
-                    }
+                snaps.forEach((s, i) => {
+                    if (!s.exists()) return;
+                    const data = s.data();
+                    const final = data.questionsList ? data.questionsList : data;
+                    window.DB[modules[i].key] = final;
+                    try { localStorage.setItem('medStorm_' + modules[i].key, JSON.stringify(final)); } catch(_) {}
+                    updated = true;
                 });
                 if (updated && typeof window.renderDashboard === "function") window.renderDashboard();
             } catch (e) { console.error("Fetch Error:", e); }
@@ -2196,7 +2184,7 @@
 
 
 
-        // avatar functions defined in Firebase module above
+        // handleAvatarUpload and removeAvatar are defined in the Firebase module above
 
         function renderDashboard(mode = 'normal') {
             const grid = document.getElementById('module-grid');
@@ -2454,7 +2442,6 @@
             }
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
             if (window.saveUserData) window.saveUserData('progress', AppState.progress);
-
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => {
                     finishQuiz();
@@ -2582,7 +2569,9 @@
         function resetModule(modName, e) {
             e.stopPropagation(); if (!confirm(`Reset all progress for ${modName}?`)) return;
             extractAllQuestions(DB[modName]).forEach(q => delete AppState.progress[q.q]);
-            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); if (window.saveUserData) window.saveUserData('progress', AppState.progress); renderDashboard(Session.mode);
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+            if (window.saveUserData) window.saveUserData('progress', AppState.progress);
+            renderDashboard(Session.mode);
         }
 
         function renderFavorites() {
