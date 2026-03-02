@@ -1755,9 +1755,9 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <script type="module">
-        import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot }          from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref as storageRef, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -1769,9 +1769,9 @@
             appId: "1:857983887711:web:981274bfdd5038cc89aeea"
         };
 
-        const app  = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db   = getFirestore(app);
+        const app     = initializeApp(firebaseConfig);
+        const auth    = getAuth(app);
+        const db      = getFirestore(app);
         const storage = getStorage(app);
 
         // ── helpers ────────────────────────────────────────────────────────
@@ -1795,20 +1795,25 @@
         }
 
         // ── cloud save ─────────────────────────────────────────────────────
+        // localWriteFields: أي field بنكتبه إحنا، الـ listener بيتجاهله مرة واحدة
+        const localWriteFields = new Set();
+
         window.saveUserData = async function(field, value) {
             if (!window.currentUserId) return;
+            localWriteFields.add(field);
             try {
                 await setDoc(doc(db, "users", window.currentUserId), { [field]: value }, { merge: true });
-            } catch(e) { console.warn("saveUserData failed:", field, e); }
+            } catch(e) {
+                localWriteFields.delete(field);
+                console.warn("saveUserData failed:", field, e);
+            }
         };
 
         // ── real-time listener ─────────────────────────────────────────────
-        // القاعدة: دايماً حدّث AppState، بس مش renderDashboard لو في quiz
         let unsubscribe = null;
 
         function startListener(user) {
             if (unsubscribe) unsubscribe();
-            let firstFire = true;
 
             unsubscribe = onSnapshot(doc(db, "users", user.uid), (snap) => {
                 if (!snap.exists()) return;
@@ -1816,24 +1821,37 @@
                 const inQuiz = document.body.classList.contains('focus-mode');
 
                 if (data.progress !== undefined) {
-                    AppState.progress = data.progress;
-                    localStorage.setItem('medStormProgress', JSON.stringify(data.progress));
-                    if (!firstFire && !inQuiz && typeof renderDashboard === 'function')
-                        renderDashboard();
-                }
-                if (data.favorites !== undefined) { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
-                if (data.notes     !== undefined) { AppState.notes     = data.notes;     localStorage.setItem('medStormNotes',     JSON.stringify(data.notes)); }
-                if (data.stats     !== undefined) { AppState.stats     = data.stats;     localStorage.setItem('medStormStats',     JSON.stringify(data.stats)); }
-                if (data.avatarUrl !== undefined) {
-                    if (data.avatarUrl) {
-                        setAvatarUI(data.avatarUrl);
-                        localStorage.setItem('medStorm_avatar_' + user.uid, data.avatarUrl);
-                    } else if (data.avatarUrl === '') {
-                        localStorage.removeItem('medStorm_avatar_' + user.uid);
-                        setAvatarUI(defaultAvatar(user.email));
+                    if (localWriteFields.has('progress')) { localWriteFields.delete('progress'); }
+                    else {
+                        AppState.progress = data.progress;
+                        localStorage.setItem('medStormProgress', JSON.stringify(data.progress));
+                        if (!inQuiz && typeof renderDashboard === 'function') renderDashboard();
                     }
                 }
-                firstFire = false;
+                if (data.favorites !== undefined) {
+                    if (localWriteFields.has('favorites')) { localWriteFields.delete('favorites'); }
+                    else { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
+                }
+                if (data.notes !== undefined) {
+                    if (localWriteFields.has('notes')) { localWriteFields.delete('notes'); }
+                    else { AppState.notes = data.notes; localStorage.setItem('medStormNotes', JSON.stringify(data.notes)); }
+                }
+                if (data.stats !== undefined) {
+                    if (localWriteFields.has('stats')) { localWriteFields.delete('stats'); }
+                    else { AppState.stats = data.stats; localStorage.setItem('medStormStats', JSON.stringify(data.stats)); }
+                }
+                if (data.avatarUrl !== undefined) {
+                    if (localWriteFields.has('avatarUrl')) { localWriteFields.delete('avatarUrl'); }
+                    else {
+                        if (data.avatarUrl) {
+                            localStorage.setItem('medStorm_avatar_' + user.uid, data.avatarUrl);
+                            setAvatarUI(data.avatarUrl);
+                        } else {
+                            localStorage.removeItem('medStorm_avatar_' + user.uid);
+                            setAvatarUI(defaultAvatar(user.email));
+                        }
+                    }
+                }
             });
         }
 
@@ -1845,14 +1863,14 @@
             const reader = new FileReader();
             reader.onload = async function(e) {
                 const base64 = e.target.result;
-                setAvatarUI(base64);                            // instant local preview
+                setAvatarUI(base64);
                 if (!window.currentUserId) return;
                 try {
                     const aRef = storageRef(storage, `avatars/${window.currentUserId}`);
                     await uploadString(aRef, base64, 'data_url');
                     const url = await getDownloadURL(aRef);
                     localStorage.setItem('medStorm_avatar_' + window.currentUserId, url);
-                    await window.saveUserData('avatarUrl', url); // saves URL (not base64)
+                    await window.saveUserData('avatarUrl', url);
                 } catch(err) { console.warn("Avatar upload failed:", err); }
             };
             reader.readAsDataURL(file);
@@ -1862,8 +1880,7 @@
         window.removeAvatar = async function() {
             if (!window.currentUserId) return;
             const email = document.getElementById('profile-page-email')?.textContent || '';
-            const def = defaultAvatar(email);
-            setAvatarUI(def);
+            setAvatarUI(defaultAvatar(email));
             localStorage.removeItem('medStorm_avatar_' + window.currentUserId);
             try { await deleteObject(storageRef(storage, `avatars/${window.currentUserId}`)); } catch(_) {}
             await window.saveUserData('avatarUrl', '');
@@ -1880,7 +1897,6 @@
                 if (emailDisplay) emailDisplay.textContent = user.email;
                 window.currentUserId = user.uid;
 
-                // show cached avatar immediately (listener will update if needed)
                 const cached = localStorage.getItem('medStorm_avatar_' + user.uid);
                 setAvatarUI(cached || defaultAvatar(user.email));
 
@@ -1898,7 +1914,7 @@
                             if (devices.length >= 2) {
                                 await signOut(auth);
                                 localStorage.removeItem('medStorm_isLoggedIn');
-                                showError("❌ Maximum device limit reached. Please contact <a href='https://t.me/behonor' target='_blank' style='color:var(--primary-green);text-decoration:none;font-weight:bold;'>Dr. Mahmoud</a> to reset your account.");
+                                showError("❌ Maximum device limit reached. Please contact <a href='https://t.me/behonor' target='_blank' style='color: var(--primary-green); text-decoration: none; font-weight: bold;'>Dr. Mahmoud</a> to reset your account.");
                                 const btn = document.querySelector('.action-btn');
                                 if (btn) { btn.innerHTML = "Login 🔓"; btn.disabled = false; }
                                 isCheckingDevice = false;
@@ -1916,7 +1932,7 @@
                         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                     window.isExplicitLogin = false;
 
-                    startListener(user);      // real-time sync starts here
+                    startListener(user);
                     fetchQuestionsFromDB();
 
                 } catch (e) {
@@ -1953,7 +1969,7 @@
             }
         };
 
-        window.handleLogout    = () => document.getElementById('logout-modal').classList.add('active');
+        window.handleLogout     = () => document.getElementById('logout-modal').classList.add('active');
         window.closeLogoutModal = () => document.getElementById('logout-modal').classList.remove('active');
 
         window.executeLogout = async () => {
@@ -2442,6 +2458,7 @@
             }
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
             if (window.saveUserData) window.saveUserData('progress', AppState.progress);
+
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => {
                     finishQuiz();
