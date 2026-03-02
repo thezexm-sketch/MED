@@ -1718,6 +1718,20 @@
                 localStorage.setItem('medStorm_isLoggedIn', 'true');
                 const emailDisplay = document.getElementById('profile-page-email');
                 if (emailDisplay) emailDisplay.textContent = user.email;
+                window.currentUserId = user.uid;
+
+                const savedAvatar = localStorage.getItem('medStorm_avatar_' + user.uid);
+                const topAvatar = document.getElementById('top-bar-avatar');
+                const mainAvatar = document.getElementById('main-profile-avatar');
+
+                if (savedAvatar) {
+                    if (topAvatar) topAvatar.src = savedAvatar;
+                    if (mainAvatar) mainAvatar.src = savedAvatar;
+                } else {
+                    const defaultAvatar = `https://ui-avatars.com/api/?name=${user.email.charAt(0)}&background=10B981&color=fff`;
+                    if (topAvatar) topAvatar.src = defaultAvatar;
+                    if (mainAvatar) mainAvatar.src = defaultAvatar;
+                }
                 if (isCheckingDevice) return;
                 isCheckingDevice = true;
 
@@ -2046,14 +2060,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             const savedAvatar = localStorage.getItem('medStorm_avatar');
             if (savedAvatar) {
-                document.getElementById('top-bar-avatar').src = savedAvatar;
-                document.getElementById('modal-avatar').src = savedAvatar;
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedAvatar = localStorage.getItem('medStorm_avatar');
-            if (savedAvatar) {
                 const topAvatar = document.getElementById('top-bar-avatar');
                 const mainAvatar = document.getElementById('main-profile-avatar');
                 if (topAvatar) topAvatar.src = savedAvatar;
@@ -2079,7 +2085,9 @@
                     if (mainAvatar) mainAvatar.src = base64Image;
 
                     try {
-                        localStorage.setItem('medStorm_avatar', base64Image);
+                        if (window.currentUserId) {
+                            localStorage.setItem('medStorm_avatar_' + window.currentUserId, base64Image);
+                        }
                     } catch (err) {
                         alert("⚠️ Storage quota exceeded. Image too large to save.");
                     }
