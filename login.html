@@ -1719,6 +1719,8 @@
                 const emailDisplay = document.getElementById('profile-page-email');
                 if (emailDisplay) emailDisplay.textContent = user.email;
                 window.currentUserId = user.uid;
+                window.currentUserId = user.uid;
+                localStorage.removeItem('medStorm_avatar');
 
                 const savedAvatar = localStorage.getItem('medStorm_avatar_' + user.uid);
                 const topAvatar = document.getElementById('top-bar-avatar');
@@ -1830,12 +1832,16 @@
                     localStorage.removeItem('medStorm_Terminology');
                     localStorage.removeItem('medStorm_MSK');
                     localStorage.removeItem('medStorm_DB_Cache');
-                    localStorage.removeItem('medStorm_isLoggedIn'); // مسح حالة الدخول
+                    localStorage.removeItem('medStorm_isLoggedIn'); 
 
                     window.DB = { 'Blood': [], 'Foundation': [], 'Terminology': [], 'MSK': { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] } };
                     document.getElementById('module-grid').innerHTML = '';
 
                     document.getElementById('login-overlay').style.display = 'flex';
+                    window.currentUserId = null;
+                    const defaultEmpty = 'https://ui-avatars.com/api/?name=User&background=10B981&color=fff';
+                    document.getElementById('top-bar-avatar').src = defaultEmpty;
+                    document.getElementById('main-profile-avatar').src = defaultEmpty;
 
                 } catch (e) { console.error("Logout Error:", e); }
             }
@@ -2057,15 +2063,7 @@
             document.getElementById('profile-modal').classList.remove('active');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedAvatar = localStorage.getItem('medStorm_avatar');
-            if (savedAvatar) {
-                const topAvatar = document.getElementById('top-bar-avatar');
-                const mainAvatar = document.getElementById('main-profile-avatar');
-                if (topAvatar) topAvatar.src = savedAvatar;
-                if (mainAvatar) mainAvatar.src = savedAvatar;
-            }
-        });
+
 
         window.handleAvatarUpload = function (event) {
             const file = event.target.files[0];
