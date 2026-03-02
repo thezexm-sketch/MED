@@ -1757,7 +1757,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
@@ -1771,6 +1771,49 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // ===== CLOUD SYNC =====
+        window.saveUserData = async function (field, value) {
+            if (!window.currentUserId) return;
+            try {
+                const userRef = doc(db, "users", window.currentUserId);
+                await setDoc(userRef, { [field]: value }, { merge: true });
+            } catch (e) { console.warn("Cloud save failed:", e); }
+        };
+
+        async function loadUserData(user) {
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.progress) {
+                        AppState.progress = data.progress;
+                        localStorage.setItem('medStormProgress', JSON.stringify(data.progress));
+                    }
+                    if (data.favorites) {
+                        AppState.favorites = data.favorites;
+                        localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites));
+                    }
+                    if (data.notes) {
+                        AppState.notes = data.notes;
+                        localStorage.setItem('medStormNotes', JSON.stringify(data.notes));
+                    }
+                    if (data.stats) {
+                        AppState.stats = data.stats;
+                        localStorage.setItem('medStormStats', JSON.stringify(data.stats));
+                    }
+                    if (data.avatar) {
+                        localStorage.setItem('medStorm_avatar_' + user.uid, data.avatar);
+                        const topAvatar = document.getElementById('top-bar-avatar');
+                        const mainAvatar = document.getElementById('main-profile-avatar');
+                        if (topAvatar) topAvatar.src = data.avatar;
+                        if (mainAvatar) mainAvatar.src = data.avatar;
+                    }
+                }
+            } catch (e) { console.warn("Cloud load failed:", e); }
+        }
+        // ===== END CLOUD SYNC =====
 
         function showError(message) {
             const errDiv = document.getElementById('login-error');
@@ -1846,6 +1889,7 @@
                         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                     }
                     window.isExplicitLogin = false;
+                    await loadUserData(user);
                     fetchQuestionsFromDB();
 
                 } catch (e) {
@@ -2074,6 +2118,7 @@
             if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
             AppState.stats.dailyProgress[today].time += timeSpent;
             localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+            window.saveUserData('stats', AppState.stats);
             SessionStartTime = null;
         }
 
@@ -2192,6 +2237,7 @@
                     try {
                         if (window.currentUserId) {
                             localStorage.setItem('medStorm_avatar_' + window.currentUserId, base64Image);
+                            window.saveUserData('avatar', base64Image);
                         }
                     } catch (err) {
                         alert("⚠️ Storage quota exceeded. Image too large to save.");
@@ -2424,6 +2470,7 @@
                 else if (Session.answers[Session.index] === null && !Session.reviewing) {
                     AppState.progress[Session.queue[Session.index].q] = 'wrong';
                     localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+                    window.saveUserData('progress', AppState.progress);
                     document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
                     const opts = document.querySelectorAll('.option-btn');
                     if (opts[Session.queue[Session.index].a]) opts[Session.queue[Session.index].a].classList.add('correct');
@@ -2455,6 +2502,7 @@
                 AppState.progress[q.q] = 'wrong';
             }
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+            window.saveUserData('progress', AppState.progress);
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => {
@@ -2467,6 +2515,7 @@
             const qText = Session.queue[Session.index].q;
             if (AppState.favorites[qText]) delete AppState.favorites[qText]; else AppState.favorites[qText] = true;
             localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
+            window.saveUserData('favorites', AppState.favorites);
             document.getElementById('btn-favorite').classList.toggle('active', !!AppState.favorites[qText]);
             document.getElementById('btn-favorite').querySelector('i').className = AppState.favorites[qText] ? 'ri-star-fill' : 'ri-star-line';
         }
@@ -2477,6 +2526,7 @@
             const text = document.getElementById('note-text').value.trim(); const qText = Session.queue[Session.index].q;
             if (text) AppState.notes[qText] = text; else delete AppState.notes[qText];
             localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); closeNoteModal();
+            window.saveUserData('notes', AppState.notes);
             document.getElementById('btn-note').classList.toggle('active', !!text);
             document.getElementById('btn-note').querySelector('i').className = text ? 'ri-file-text-fill' : 'ri-file-text-line';
         }
@@ -2498,6 +2548,7 @@
             clearTimeout(Session.timer); if (typeof endSession === 'function') endSession();
             Session.queue.forEach((q, i) => { if (Session.answers[i] === null) AppState.progress[q.q] = 'wrong'; });
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+            window.saveUserData('progress', AppState.progress);
 
             document.body.classList.remove('focus-mode');
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
@@ -2580,7 +2631,7 @@
         function resetModule(modName, e) {
             e.stopPropagation(); if (!confirm(`Reset all progress for ${modName}?`)) return;
             extractAllQuestions(DB[modName]).forEach(q => delete AppState.progress[q.q]);
-            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); renderDashboard(Session.mode);
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); window.saveUserData('progress', AppState.progress); renderDashboard(Session.mode);
         }
 
         function renderFavorites() {
@@ -2620,8 +2671,8 @@
 
         function toggleNoteExpand(cardId) { const content = document.getElementById(cardId + '-content'); const icon = document.getElementById(cardId + '-icon'); if (content.style.display === 'none') { content.style.display = 'block'; icon.style.transform = 'rotate(180deg)'; } else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; } }
         function solveSingle(q, mod) { Session.queue = [q]; Session.module = mod; Session.index = 0; Session.score = 0; Session.answers = [null]; Session.mode = 'practice'; document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; }); document.body.classList.add('focus-mode'); const quizView = document.getElementById('view-quiz'); quizView.style.display = 'flex'; quizView.classList.add('active'); loadQuestion(); }
-        function removeFavorite(qText, e) { if (e) e.stopPropagation(); delete AppState.favorites[qText]; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); renderFavorites(); }
-        function removeNote(qText, e) { if (e) e.stopPropagation(); delete AppState.notes[qText]; localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); renderFavorites(); }
+        function removeFavorite(qText, e) { if (e) e.stopPropagation(); delete AppState.favorites[qText]; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); window.saveUserData('favorites', AppState.favorites); renderFavorites(); }
+        function removeNote(qText, e) { if (e) e.stopPropagation(); delete AppState.notes[qText]; localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); window.saveUserData('notes', AppState.notes); renderFavorites(); }
         function formatTime(s) { const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h > 0 ? `${h}h ${m}m` : `${m}m`; }
 
         function renderAnalytics() {
