@@ -1691,9 +1691,6 @@
         }
 
         window.fetchQuestionsFromDB = async function () {
-            const title = document.getElementById('page-title');
-            if (title) title.innerHTML = "⏳ جاري التحميل من السيرفر...";
-
             try {
                 const modules = [
                     { id: 'msk_questions', key: 'MSK' },
@@ -1721,6 +1718,14 @@
                         isUpdated = true;
                     }
                 });
+
+                if (isUpdated && typeof window.renderDashboard === "function") {
+                    window.renderDashboard();
+                }
+            } catch (e) {
+                console.error("Fetch Error:", e);
+            }
+        };
 
                 if (isUpdated && typeof window.renderDashboard === "function") {
                     window.renderDashboard();
