@@ -1798,7 +1798,6 @@
                     if (data.notes) { AppState.notes = data.notes; localStorage.setItem('medStormNotes', JSON.stringify(data.notes)); }
                     if (data.stats) { AppState.stats = data.stats; localStorage.setItem('medStormStats', JSON.stringify(data.stats)); }
 
-                    // التعديل هنا: غيرنا avatar لـ avatarUrl
                     if (data.avatarUrl) {
                         localStorage.setItem('medStorm_avatar_' + user.uid, data.avatarUrl);
                         const topAvatar = document.getElementById('top-bar-avatar');
@@ -1809,7 +1808,6 @@
                 }
             } catch (e) { console.warn("Cloud load failed:", e); }
         }
-        // ===== END CLOUD SYNC =====
 
         function showError(message) {
             const errDiv = document.getElementById('login-error');
@@ -2193,7 +2191,17 @@
         }
 
 
+        function setAvatarUI(url) {
+            const topAvatar = document.getElementById('top-bar-avatar');
+            const mainAvatar = document.getElementById('main-profile-avatar');
+            if (topAvatar) topAvatar.src = url;
+            if (mainAvatar) mainAvatar.src = url;
+        }
 
+        function defaultAvatar(email) {
+            const name = email && email !== 'Loading...' ? email.charAt(0).toUpperCase() : 'U';
+            return `https://ui-avatars.com/api/?name=${name}&background=10B981&color=fff`;
+        }
         window.removeAvatar = async function () {
             if (!window.currentUserId) return;
             const email = document.getElementById('profile-page-email')?.textContent || '';
@@ -2225,12 +2233,10 @@
 
                     const base64 = canvas.toDataURL('image/jpeg', 0.8);
 
-                    // تحديث الشكل فوراً
                     setAvatarUI(base64);
                     localStorage.setItem('medStorm_avatar_' + window.currentUserId, base64);
 
                     try {
-                        // الحفظ في السحابة
                         await window.saveUserData('avatarUrl', base64);
                         alert("✅ تم رفع الصورة بنجاح!");
                     } catch (err) {
@@ -2469,7 +2475,7 @@
                     const opts = document.querySelectorAll('.option-btn');
                     if (opts[Session.queue[Session.index].a]) opts[Session.queue[Session.index].a].classList.add('correct');
 
-                    Session.answers[Session.index] = -1; // تسجيل إنه ضاع وقته
+                    Session.answers[Session.index] = -1;
 
                     setTimeout(() => {
                         if (!Session.answers.includes(null)) {
