@@ -1840,12 +1840,14 @@
             const timeSpent = Math.floor((Date.now() - SessionStartTime) / 1000);
             const today = new Date().toISOString().split('T')[0];
             if (!AppState.stats.totalTime) AppState.stats.totalTime = 0;
-            AppState.stats.totalTime += timeSpent;
-            if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
+            AppState.stats.totalTime += timeSpent; if (!AppState.stats.moduleTime) AppState.stats.moduleTime = {};
+            if (!AppState.stats.moduleTime[Session.module]) AppState.stats.moduleTime[Session.module] = 0;
+            AppState.stats.moduleTime[Session.module] += timeSpent; if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
             if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
             AppState.stats.dailyProgress[today].time += timeSpent;
+
             localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            window.saveUserData('stats', AppState.stats);
+            if (window.saveUserData) window.saveUserData('stats', AppState.stats);
             SessionStartTime = null;
         }
 
@@ -2179,14 +2181,24 @@
             Session.timer = setTimeout(() => {
                 if (Session.quizMode === 'exam') finishQuiz();
                 else if (Session.answers[Session.index] === null && !Session.reviewing) {
-                    AppState.progress[Session.queue[Session.index].q] = 'wrong';
+                    const q = Session.queue[Session.index];
+                    AppState.progress[q.q] = 'wrong'; const today = new Date().toISOString().split('T')[0];
+                    if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
+                    if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
+                    AppState.stats.dailyProgress[today].wrong++;
+
                     localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-                    window.saveUserData('progress', AppState.progress);
+                    localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+                    if (window.saveUserData) {
+                        window.saveUserData('progress', AppState.progress);
+                        window.saveUserData('stats', AppState.stats);
+                    }
+
                     document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
                     const opts = document.querySelectorAll('.option-btn');
-                    if (opts[Session.queue[Session.index].a]) opts[Session.queue[Session.index].a].classList.add('correct');
+                    if (opts[q.a]) opts[q.a].classList.add('correct');
 
-                    Session.answers[Session.index] = -1; // تسجيل إنه ضاع وقته
+                    Session.answers[Session.index] = -1;
 
                     setTimeout(() => {
                         if (!Session.answers.includes(null)) {
@@ -2202,26 +2214,37 @@
             if (Session.reviewing || Session.answers[Session.index] !== null) return;
             clearTimeout(Session.timer);
             Session.answers[Session.index] = idx;
-            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true); const today = new Date().toISOString().split('T')[0];
+            if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
+            if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
+
             if (idx === q.a) {
-                btn.classList.add('correct'); Session.score++; AppState.progress[q.q] = 'correct';
+                btn.classList.add('correct');
+                Session.score++;
+                AppState.progress[q.q] = 'correct';
+                AppState.stats.dailyProgress[today].correct++;
                 if (window.confetti) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
             } else {
-                btn.classList.add('wrong'); btn.parentElement.classList.add('shake');
+                btn.classList.add('wrong');
+                btn.parentElement.classList.add('shake');
                 setTimeout(() => btn.parentElement.classList.remove('shake'), 400);
-                const opts = document.querySelectorAll('.option-btn'); if (opts[q.a]) opts[q.a].classList.add('correct');
+                const opts = document.querySelectorAll('.option-btn');
+                if (opts[q.a]) opts[q.a].classList.add('correct');
                 AppState.progress[q.q] = 'wrong';
+                AppState.stats.dailyProgress[today].wrong++;
             }
+
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            window.saveUserData('progress', AppState.progress);
+            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+            if (window.saveUserData) {
+                window.saveUserData('progress', AppState.progress);
+                window.saveUserData('stats', AppState.stats);
+            }
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
-                setTimeout(() => {
-                    finishQuiz();
-                }, 1000);
+                setTimeout(() => { finishQuiz(); }, 1000);
             }
         }
-
         function toggleFavorite() {
             const qText = Session.queue[Session.index].q;
             if (AppState.favorites[qText]) delete AppState.favorites[qText]; else AppState.favorites[qText] = true;
@@ -2402,25 +2425,157 @@
 
         function renderAnalytics() {
             let totalQs = 0, totalMastered = 0, totalWrong = 0;
-            const list = document.getElementById('analytics-list'); list.innerHTML = '';
+            const list = document.getElementById('analytics-list');
+            list.innerHTML = '';
+
             for (const [modName, modContent] of Object.entries(DB)) {
                 let qs = extractAllQuestions(modContent);
-                totalQs += qs.length; let m = 0, w = 0;
-                qs.forEach(q => { if (AppState.progress[q.q] === 'correct') m++; else if (AppState.progress[q.q] === 'wrong') w++; });
-                totalMastered += m; totalWrong += w;
-                list.innerHTML += `<div class="analytics-row"><div class="row-header"><span>${modName}</span><div style="display: flex; gap: 1rem; align-items: center;"><span style="font-size: 0.9rem; color: var(--text-gray);">${formatTime(AppState.stats.moduleTime?.[modName] || 0)}</span><span>${Math.round((m / qs.length) * 100 || 0)}%</span></div></div><div class="stacked-bar"><div class="bar-correct" style="width:${(m / qs.length) * 100 || 0}%"></div><div class="bar-wrong" style="width:${(w / qs.length) * 100 || 0}%"></div><div class="bar-remaining" style="width:${100 - ((m / qs.length) * 100 || 0) - ((w / qs.length) * 100 || 0)}%"></div></div></div>`;
+                const modTotal = qs.length || 1;
+                totalQs += qs.length;
+                let m = 0, w = 0;
+
+                qs.forEach(q => {
+                    if (AppState.progress[q.q] === 'correct') m++;
+                    else if (AppState.progress[q.q] === 'wrong') w++;
+                });
+
+                totalMastered += m;
+                totalWrong += w;
+
+                const correctPct = (m / modTotal) * 100;
+                const wrongPct = (w / modTotal) * 100;
+                const remainingPct = 100 - correctPct - wrongPct;
+
+                list.innerHTML += `
+        <div class="analytics-row">
+            <div class="row-header">
+                <span>${modName}</span>
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                    <span style="font-size: 0.85rem; color: var(--primary-green); font-weight: 700;">${m} Correct</span>
+                    <span style="font-size: 0.85rem; color: var(--primary-red); font-weight: 700;">${w} Wrong</span>
+                    <span style="font-size: 0.9rem; color: var(--text-gray);"><i class="ri-time-line"></i> ${formatTime(AppState.stats.moduleTime?.[modName] || 0)}</span>
+                    <span style="font-weight: 800; min-width: 40px; text-align: right;">${Math.round(correctPct)}%</span>
+                </div>
+            </div>
+            <div class="stacked-bar">
+                <div class="bar-correct" style="width:${correctPct}%"></div>
+                <div class="bar-wrong" style="width:${wrongPct}%"></div>
+                <div class="bar-remaining" style="width:${remainingPct}%"></div>
+            </div>
+        </div>`;
             }
+
             const gAcc = (totalMastered + totalWrong) === 0 ? 0 : Math.round((totalMastered / (totalMastered + totalWrong)) * 100);
-            document.querySelector('.analytics-grid').innerHTML = `<div class="stat-card"><div class="stat-value">${Math.round((totalMastered / (totalQs || 1)) * 100)}%</div><div class="stat-label">Mastery Rate</div></div><div class="stat-card"><div class="stat-value">${totalQs}</div><div class="stat-label">Total Questions</div></div><div class="stat-card"><div class="stat-value">${gAcc}%</div><div class="stat-label">Global Accuracy</div></div><div class="stat-card" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); border: none;"><div class="stat-value" style="color: white;">${AppState.stats.currentStreak || 0} 🔥</div><div class="stat-label" style="color: rgba(255,255,255,0.9);">Day Streak</div></div><div class="stat-card"><div class="stat-value">${formatTime(AppState.stats.totalTime || 0)}</div><div class="stat-label">Total Study Time</div></div><div class="stat-card"><div class="stat-value">${AppState.stats.longestStreak || 0}</div><div class="stat-label">Longest Streak</div></div>`;
+
+            document.querySelector('.analytics-grid').innerHTML = `
+        <div class="stat-card"><div class="stat-value">${Math.round((totalMastered / (totalQs || 1)) * 100)}%</div><div class="stat-label">Mastery Rate</div></div>
+        <div class="stat-card"><div class="stat-value">${totalQs}</div><div class="stat-label">Total Questions</div></div>
+        <div class="stat-card"><div class="stat-value">${gAcc}%</div><div class="stat-label">Global Accuracy</div></div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); border: none;"><div class="stat-value" style="color: white;">${AppState.stats.currentStreak || 0} 🔥</div><div class="stat-label" style="color: rgba(255,255,255,0.9);">Day Streak</div></div>
+        <div class="stat-card"><div class="stat-value">${formatTime(AppState.stats.totalTime || 0)}</div><div class="stat-label">Total Study Time</div></div>
+        <div class="stat-card"><div class="stat-value">${AppState.stats.longestStreak || 0}</div><div class="stat-label">Longest Streak</div></div>
+    `;
             renderProgressChart();
         }
 
         function renderProgressChart() {
-            const list = document.getElementById('analytics-list'), last7Days = [];
-            for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); last7Days.push(d.toISOString().split('T')[0]); }
-            const cData = last7Days.map(d => AppState.stats.dailyProgress?.[d]?.correct || 0), wData = last7Days.map(d => AppState.stats.dailyProgress?.[d]?.wrong || 0);
-            const maxVal = Math.max(...cData, ...wData, 10);
-            list.insertAdjacentHTML('afterbegin', `<div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem; border-radius: 20px; margin-bottom: 1.5rem;"><h3 style="margin-bottom: 1.5rem; font-weight: 800;">📊 7-Day Progress</h3><div style="display: flex; gap: 1rem; align-items: flex-end; height: 200px;">${last7Days.map((date, i) => `<div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;"><div style="display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%;"><div style="width: 100%; height: ${(cData[i] + wData[i] > 0) ? (cData[i] / maxVal * 180) : 0}px; background: var(--primary-green); border-radius: 8px 8px 0 0; transition: height 0.3s;"></div><div style="width: 100%; height: ${(cData[i] + wData[i] > 0) ? (wData[i] / maxVal * 180) : 0}px; background: var(--primary-red); border-radius: 0 0 8px 8px; transition: height 0.3s;"></div></div><div style="font-size: 0.75rem; color: var(--text-gray); font-weight: 600;">${new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}</div></div>`).join('')}</div></div>`);
+            const list = document.getElementById('analytics-list');
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                last7Days.push(d.toISOString().split('T')[0]);
+            }
+
+            const cData = last7Days.map(d => AppState.stats.dailyProgress?.[d]?.correct || 0);
+            const wData = last7Days.map(d => AppState.stats.dailyProgress?.[d]?.wrong || 0);
+
+            const maxVal = Math.max(...cData, ...wData, 5);
+
+            const chartHTML = `
+        <style>
+            .chart-bar-wrapper {
+                position: relative;
+                cursor: pointer;
+            }
+            .chart-custom-tooltip {
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                padding: 0.75rem;
+                border-radius: 12px;
+                font-size: 0.85rem;
+                color: var(--text-light);
+                white-space: nowrap;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 100;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                pointer-events: none;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .chart-bar-wrapper:hover .chart-custom-tooltip {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(-50%) translateY(-10px);
+            }
+            .tooltip-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 15px;
+            }
+        </style>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem; border-radius: 20px; margin-bottom: 1.5rem;">
+            <h3 style="margin-bottom: 1.5rem; font-weight: 800;">📊 7-Day Progress</h3>
+            <div style="display: flex; gap: 1rem; align-items: flex-end; height: 200px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                ${last7Days.map((date, i) => {
+                const correctH = (cData[i] / maxVal) * 150;
+                const wrongH = (wData[i] / maxVal) * 150;
+                const hasData = cData[i] + wData[i] > 0; const totalQs = cData[i] + wData[i];
+                const accuracy = totalQs > 0 ? Math.round((cData[i] / totalQs) * 100) : 0;
+                const displayDate = new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+                return `
+                    <div class="chart-bar-wrapper" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; height: 100%; justify-content: flex-end;">
+                        
+                        ${hasData ? `
+                        <div class="chart-custom-tooltip">
+                            <div style="font-weight: 700; color: var(--text-gray); margin-bottom: 4px; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">${displayDate}</div>
+                            <div class="tooltip-row"><span>Total:</span> <strong>${totalQs}</strong></div>
+                            <div class="tooltip-row"><span><span style="color:var(--primary-green)">●</span> Correct:</span> <strong>${cData[i]}</strong></div>
+                            <div class="tooltip-row"><span><span style="color:var(--primary-red)">●</span> Wrong:</span> <strong>${wData[i]}</strong></div>
+                            <div class="tooltip-row" style="margin-top: 4px; padding-top: 4px; border-top: 1px dashed var(--border-color);"><span>Accuracy:</span> <strong style="color: ${accuracy >= 50 ? 'var(--primary-green)' : 'var(--primary-red)'}">${accuracy}%</strong></div>
+                        </div>
+                        ` : `
+                        <div class="chart-custom-tooltip">
+                            <div style="font-weight: 700; color: var(--text-gray); text-align: center;">${displayDate}</div>
+                            <div style="margin-top: 4px; color: var(--text-gray);">No questions solved</div>
+                        </div>
+                        `}
+
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; max-width: 30px;">
+                            ${hasData ? `
+                                <div style="width: 100%; height: ${correctH}px; background: var(--primary-green); border-radius: 4px 4px 0 0; min-height: ${cData[i] > 0 ? '4px' : '0'};"></div>
+                                <div style="width: 100%; height: ${wrongH}px; background: var(--primary-red); border-radius: 0 0 4px 4px; min-height: ${wData[i] > 0 ? '4px' : '0'};"></div>
+                            ` : `
+                                <div style="width: 100%; height: 2px; background: var(--hover-bg); border-radius: 2px;"></div>
+                            `}
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-gray); font-weight: 600; margin-top: 5px;">
+                            ${new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
+                        </div>
+                    </div>`;
+            }).join('')}
+            </div>
+        </div>`;
+
+            list.insertAdjacentHTML('afterbegin', chartHTML);
         }
     </script>
 </body>
