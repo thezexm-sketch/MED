@@ -3035,27 +3035,29 @@
                 const loadingElement = document.getElementById(loadingId);
                 if (loadingElement) loadingElement.remove();
 
-                if (data.error) throw new Error(data.error.message || "API Error");
+                // لو جوجل بعتت رسالة خطأ صريحة
+                if (!response.ok) {
+                    throw new Error(data.error?.message || `HTTP Error: ${response.status}`);
+                }
 
                 if (data.candidates && data.candidates[0].content) {
                     let botReply = data.candidates[0].content.parts[0].text;
-                    botReply = botReply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); // الخط العريض
-                    botReply = botReply.replace(/\*(.*?)\*/g, '<i>$1</i>');     // الخط المائل
-                    botReply = botReply.replace(/\n/g, '<br>');                 // السطور الجديدة
+                    botReply = botReply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                    botReply = botReply.replace(/\*(.*?)\*/g, '<i>$1</i>');
+                    botReply = botReply.replace(/\n/g, '<br>');
 
                     msgsDiv.insertAdjacentHTML('beforeend', `<div class="ai-msg bot">${botReply}</div>`);
                 } else {
-                    throw new Error("Empty response");
+                    throw new Error("Empty response from Google");
                 }
 
                 msgsDiv.scrollTop = msgsDiv.scrollHeight;
             } catch (error) {
                 console.error("Chat Error:", error);
-
                 const loadingElement = document.getElementById(loadingId);
                 if (loadingElement) loadingElement.remove();
 
-                msgsDiv.insertAdjacentHTML('beforeend', `<div class="ai-msg bot" style="color:var(--primary-red);">Sorry, I couldn't connect. Please check your internet or API Key.</div>`);
+                msgsDiv.insertAdjacentHTML('beforeend', `<div class="ai-msg bot" style="color:var(--primary-red);"><b>Error Details:</b> ${error.message}</div>`);
                 msgsDiv.scrollTop = msgsDiv.scrollHeight;
             }
         }
