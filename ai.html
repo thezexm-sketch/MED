@@ -3022,20 +3022,18 @@
             msgsDiv.scrollTop = msgsDiv.scrollHeight;
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: "You are a helpful and expert medical tutor. Give a concise and accurate answer to this medical question: " + msg }] }]
                     })
                 });
-
                 const data = await response.json();
 
                 const loadingElement = document.getElementById(loadingId);
                 if (loadingElement) loadingElement.remove();
 
-                // لو جوجل بعتت رسالة خطأ صريحة
                 if (!response.ok) {
                     throw new Error(data.error?.message || `HTTP Error: ${response.status}`);
                 }
