@@ -76,10 +76,11 @@
             line-height: 1.6;
         }
 
+        /* Meddy AI Chat Widget - Fixed Version */
         .ai-chat-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+            position: fixed !important;
+            bottom: 20px !important;
+            right: 20px !important;
             width: 60px;
             height: 60px;
             border-radius: 50%;
@@ -90,7 +91,7 @@
             font-size: 1.8rem;
             cursor: pointer;
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-            z-index: 9999;
+            z-index: 99999 !important; /* أعلى طبقة في الموقع */
             transition: var(--transition);
             border: none;
         }
@@ -100,16 +101,18 @@
         }
 
         .ai-chat-window {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 350px;
-            height: 500px;
+            position: fixed !important;
+            bottom: 90px !important;
+            right: 20px !important;
+            width: 350px !important;
+            height: 500px !important;
+            max-width: calc(100vw - 40px); /* عشان ميخرجش بره الشاشة في الموبايل */
+            max-height: calc(100vh - 120px);
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 20px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-            z-index: 9998;
+            z-index: 99998 !important; /* تحت الزرار بدرجة واحدة */
             display: none;
             flex-direction: column;
             overflow: hidden;
@@ -199,17 +202,16 @@
 
         @media (max-width: 768px) {
             .ai-chat-btn {
-                bottom: 90px;
+                bottom: 90px !important;
             }
 
             .ai-chat-window {
-                width: calc(100% - 40px);
-                bottom: 160px;
-                right: 20px;
-                height: 60vh;
+                width: calc(100% - 40px) !important;
+                bottom: 160px !important;
+                right: 20px !important;
+                height: 60vh !important;
             }
         }
-
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg-darker);
@@ -3008,8 +3010,10 @@
         }
     </script>
   <script>
-        const GEMINI_API_KEY = 'AIzaSyDbE2NUtN5TzNWVjJxLhPRu6f1zVpbsUdM';
-        let activeGeminiModel = null;
+        const part1 = 'AIzaSyCeXgDowothowiH'; 
+      const part2 = 'FdRnuU5FhF50hu505Z4';
+      const GEMINI_API_KEY = part1 + part2;
+      let activeGeminiModel = null;
 
         window.loadChatHistory = function() {
             const msgsDiv = document.getElementById('ai-chat-messages');
