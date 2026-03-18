@@ -7,6 +7,12 @@
     <title>Meddy</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function () {
+            emailjs.init("NYa9RBYJO_wDRRYMK");
+        })();
+    </script>
     <style>
         :root {
             --primary-green: #10B981;
@@ -1656,19 +1662,27 @@
     </div>
 
     <div class="modal-overlay" id="logout-modal">
-        <div class="modal" style="text-align: center; max-width: 400px; padding: 2.5rem 2rem;">
-            <div style="font-size: 3.5rem; color: var(--primary-red); margin-bottom: 0.5rem;">
+        <div class="modal"
+            style="text-align: center; max-width: 420px; padding: 2.5rem 2rem; border-color: rgba(239, 68, 68, 0.3);">
+            <div
+                style="font-size: 4rem; color: var(--primary-red); margin-bottom: 0.5rem; animation: pulseRed 2s infinite;">
                 <i class="ri-logout-circle-r-line"></i>
             </div>
-            <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem;">Leaving already?</h2>
-            <p style="color: var(--text-gray); margin-bottom: 2rem; font-size: 0.95rem;">Are you sure you want to logout
-                of your account?</p>
+
+            <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-light);">Leaving
+                already?</h2>
+
+            <p style="color: var(--text-gray); margin-bottom: 2.5rem; font-size: 0.95rem; line-height: 1.6;">
+                Are you sure you want to logout of your account?
+            </p>
+
             <div style="display: flex; gap: 1rem; justify-content: center;">
                 <button class="quiz-btn btn-secondary" onclick="closeLogoutModal()"
-                    style="flex: 1; padding: 0.8rem;">Cancel</button>
-                <button class="quiz-btn" onclick="executeLogout()"
-                    style="flex: 1; padding: 0.8rem; background: var(--primary-red); color: white; border: none; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">Yes,
-                    Logout</button>
+                    style="flex: 1; padding: 0.8rem; font-weight: 600;">Cancel</button>
+                <button class="quiz-btn btn-primary" onclick="executeLogout()"
+                    style="flex: 1; padding: 0.8rem; background: var(--primary-red); color: white; border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
+                    Yes, Logout
+                </button>
             </div>
         </div>
     </div>
@@ -1818,9 +1832,17 @@
                 <button class="action-icon-btn" onclick="toggleMap()"><i class="ri-menu-line"></i></button>
                 <div id="text-timer" class="text-timer">00:00</div>
                 <div class="quiz-actions">
-                    <button class="action-icon-btn" onclick="exitQuiz()"><i class="ri-home-line"></i></button>
-                    <button class="action-icon-btn" onclick="toggleTheme()"><i class="ri-sun-fill"
-                            id="theme-icon-quiz"></i></button>
+                    <button onclick="openReportModal()" title="Report Error"
+                        style="display: flex; align-items: center; gap: 5px; background: rgba(239, 68, 68, 0.1); color: var(--primary-red); padding: 6px 14px; border-radius: 8px; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.2); cursor: pointer; font-size: 0.85rem; transition: 0.2s;">
+                        <i class="ri-flag-fill"></i> Report Question
+                    </button>
+
+                    <button class="action-icon-btn" onclick="exitQuiz()" title="Exit"><i
+                            class="ri-home-line"></i></button>
+                    <button class="action-icon-btn" onclick="toggleFullScreen()" title="Full Screen"><i
+                            class="ri-fullscreen-line" id="fullscreen-icon-quiz"></i></button>
+                    <button class="action-icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i
+                            class="ri-sun-fill" id="theme-icon-quiz"></i></button>
                 </div>
             </div>
 
@@ -1834,30 +1856,41 @@
                 <div>
                     <div class="options-container" id="options-box"></div>
 
-                    <div class="quiz-footer">
-                        <div class="action-buttons">
-                            <button class="icon-action-btn" id="btn-favorite" onclick="toggleFavorite()"><i
-                                    class="ri-star-line"></i></button>
-                            <button class="icon-action-btn" id="btn-note" onclick="openNoteModal()"><i
-                                    class="ri-file-text-line"></i></button>
-                            <button class="icon-action-btn" onclick="toggleMap()"><i class="ri-list-check"></i></button>
-                        </div>
-                        <button class="quiz-btn btn-secondary" id="btn-prev" onclick="prevQuestion()"><i
-                                class="ri-arrow-left-line"></i> Prev</button>
-                        <button class="quiz-btn btn-primary" id="btn-next" onclick="nextQuestion()">Next <i
-                                class="ri-arrow-right-line"></i></button>
-                        <button class="quiz-btn" id="btn-finish" onclick="finishQuiz()"
-                            style="background: linear-gradient(135deg, var(--primary-red), var(--dark-red)); color: white;">
-                            <i class="ri-check-double-line"></i> Finish
-                        </button>
-                    </div>
+                    <div class="quiz-footer" style="flex-wrap: nowrap; justify-content: space-between; width: 100%;">
 
-                    <button id="ai-explain-btn"
-                        style="background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); width: 100%; margin-top: 15px; transition: 0.3s;">
-                        <i class="ri-robot-2-fill" style="font-size: 1.2rem;"></i> Explain with AI
-                    </button>
+                        <div class="action-buttons" style="display: flex; gap: 8px; align-items: center;">
+                            <button id="btn-favorite" class="icon-action-btn" onclick="toggleFavorite()"
+                                title="Save Question">
+                                <i class="ri-star-line"></i>
+                            </button>
+                            <button id="btn-note" class="icon-action-btn" onclick="openNoteModal()" title="Add Note">
+                                <i class="ri-file-text-line"></i>
+                            </button>
+                            <button class="icon-action-btn" onclick="toggleMap()" title="Question Map">
+                                <i class="ri-list-unordered"></i>
+                            </button>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; flex: 1; justify-content: flex-end;">
+                            <button class="quiz-btn btn-secondary" id="btn-prev" onclick="prevQuestion()"
+                                style="min-width: 100px;"><i class="ri-arrow-left-line"></i> Prev</button>
+                            <button class="quiz-btn btn-primary" id="btn-next" onclick="nextQuestion()"
+                                style="min-width: 100px;">Next <i class="ri-arrow-right-line"></i></button>
+                            <button class="quiz-btn" id="btn-finish" onclick="finishQuiz()"
+                                style="min-width: 100px; background: linear-gradient(135deg, var(--primary-red), var(--dark-red)); color: white;">
+                                <i class="ri-check-double-line"></i> Finish
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
+
+                <button id="ai-explain-btn"
+                    style="background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); width: 100%; margin-top: 15px; transition: 0.3s;">
+                    <i class="ri-robot-2-fill" style="font-size: 1.2rem;"></i> Explain with AI
+                </button>
             </div>
+        </div>
         </div>
         <div id="view-results" class="view-section">
             <div class="results-container">
@@ -1949,7 +1982,26 @@
             <button class="action-btn" onclick="launchQuiz()">Start Solving ✏️</button>
         </div>
     </div>
+    <div class="modal-overlay" id="report-modal" style="z-index: 100000;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--primary-red);"><i class="ri-flag-fill"></i> Report Question
+                </h3>
+                <button class="close-btn" onclick="closeReportModal()"><i class="ri-close-line"></i></button>
+            </div>
+            <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px;">Please describe what is wrong
+                with this question (e.g., wrong answer, typo, out of context):</p>
+            <textarea class="note-textarea" id="report-text" placeholder="Type your reason here..." rows="4"></textarea>
 
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="quiz-btn btn-secondary" style="flex: 1;" onclick="closeReportModal()">Cancel</button>
+                <button class="quiz-btn" id="btn-send-report"
+                    style="flex: 1; background: var(--primary-red); color: white; border: none;" onclick="sendReport()">
+                    Send Report <i class="ri-send-plane-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
     <div class="modal-overlay" id="note-modal">
         <div class="modal">
             <div class="modal-header">
@@ -2350,9 +2402,23 @@
         }
 
         function handleKeyboard(e) {
+            const activeTag = document.activeElement.tagName.toLowerCase();
+            if (activeTag === 'input' || activeTag === 'textarea') return;
+
+            const anyModalActive = document.querySelector('.modal-overlay.active');
+            if (anyModalActive) return;
+
             if (!document.body.classList.contains('focus-mode')) return;
-            if (e.key === 'ArrowLeft') { e.preventDefault(); prevQuestion(); }
-            else if (e.key === 'ArrowRight') { e.preventDefault(); nextQuestion(); }
+
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevQuestion();
+            }
+            else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextQuestion();
+            }
+
             if (Session.answers[Session.index] === null && !Session.reviewing) {
                 const num = parseInt(e.key);
                 if (num >= 1 && num <= 4) {
@@ -2839,27 +2905,31 @@
             loadQuestion();
         }
         window.toggleFullScreen = function () {
-            const icon = document.getElementById('fullscreen-icon');
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => {
-                    icon.className = 'ri-fullscreen-exit-line';
+                    updateFullscreenIcons('ri-fullscreen-exit-line');
                 }).catch(err => {
                     console.log("Error attempting to enable fullscreen:", err);
                 });
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen().then(() => {
-                        icon.className = 'ri-fullscreen-line';
+                        updateFullscreenIcons('ri-fullscreen-line');
                     });
                 }
             }
         };
 
+        function updateFullscreenIcons(iconClass) {
+            const iconMain = document.getElementById('fullscreen-icon');
+            const iconQuiz = document.getElementById('fullscreen-icon-quiz');
+            if (iconMain) iconMain.className = iconClass;
+            if (iconQuiz) iconQuiz.className = iconClass;
+        }
+
         document.addEventListener('fullscreenchange', () => {
-            const icon = document.getElementById('fullscreen-icon');
-            if (icon) {
-                icon.className = document.fullscreenElement ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line';
-            }
+            const iconClass = document.fullscreenElement ? 'ri-fullscreen-exit-line' : 'ri-fullscreen-line';
+            updateFullscreenIcons(iconClass);
         });
         function exitQuiz() {
             document.getElementById('exit-quiz-modal').classList.add('active');
@@ -2888,14 +2958,34 @@
             });
         }
 
+        let targetResetModule = null;
+        let isResettingMistakes = false;
+
         function resetModule(modName, e) {
             e.stopPropagation();
-            const isMistakes = document.body.getAttribute('data-mode') === 'mistakes';
+            isResettingMistakes = document.body.getAttribute('data-mode') === 'mistakes';
+            targetResetModule = modName;
 
-            if (!confirm(`Are you sure you want to reset ${isMistakes ? 'MISTAKES only' : 'ALL progress'} for ${modName}?`)) return;
+            const modalText = document.getElementById('reset-modal-text');
+            if (isResettingMistakes) {
+                modalText.innerHTML = `Are you sure you want to reset <b>MISTAKES only</b> for <span style="color: var(--accent); font-weight: bold;">${modName}</span>?`;
+            } else {
+                modalText.innerHTML = `Are you sure you want to reset <b>ALL progress</b> for <span style="color: var(--accent); font-weight: bold;">${modName}</span>?<br><span style="color: var(--primary-red); font-weight: 600;"></span>`;
+            }
 
-            extractAllQuestions(DB[modName]).forEach(q => {
-                if (isMistakes) {
+            document.getElementById('reset-modal').classList.add('active');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-modal').classList.remove('active');
+            targetResetModule = null;
+        }
+
+        function confirmResetAction() {
+            if (!targetResetModule) return;
+
+            extractAllQuestions(DB[targetResetModule]).forEach(q => {
+                if (isResettingMistakes) {
                     if (AppState.progress[q.q] === 'wrong') delete AppState.progress[q.q];
                 } else {
                     delete AppState.progress[q.q];
@@ -2905,7 +2995,8 @@
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
             if (window.saveUserData) window.saveUserData('progress', AppState.progress);
 
-            renderDashboard(isMistakes ? 'mistakes' : 'normal');
+            renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
+            closeResetModal();
         }
 
         function renderFavorites() {
@@ -3203,12 +3294,63 @@
         }
 
         function clearChatHistory() {
-            if (!confirm("Are you sure you want to clear the chat history?")) return;
+            document.getElementById('clear-chat-modal').classList.add('active');
+        }
+        function openReportModal() {
+            document.getElementById('report-text').value = '';
+            document.getElementById('report-modal').style.display = 'flex';
+        }
+
+        function closeReportModal() {
+            document.getElementById('report-modal').style.display = 'none';
+        }
+
+        function sendReport() {
+            const reason = document.getElementById('report-text').value.trim();
+            if (!reason) {
+                alert("Please enter a reason for reporting. (يرجى كتابة سبب الإبلاغ)");
+                return;
+            }
+
+            const sendBtn = document.getElementById('btn-send-report');
+            sendBtn.innerHTML = "Sending... <i class='ri-loader-4-line ri-spin'></i>";
+            sendBtn.disabled = true;
+
+            const currentQ = Session.queue[Session.index];
+
+            const templateParams = {
+                module_name: Session.module,
+                question_text: currentQ.q,
+                report_reason: reason,
+                to_email: "meddyafm@gmail.com"
+            };
+
+            emailjs.send("service_au5e6vk", "template_kpeir7k", templateParams)
+                .then(function (response) {
+                    alert("Report sent successfully! Thank you. (تم إرسال الإبلاغ بنجاح، شكراً لك)");
+                    closeReportModal();
+                    sendBtn.innerHTML = "Send Report <i class='ri-send-plane-fill'></i>";
+                    sendBtn.disabled = false;
+                }, function (error) {
+                    alert("Failed to send report. Please try again. (فشل الإرسال، حاول مرة أخرى)");
+                    console.error("EmailJS Error:", error);
+                    sendBtn.innerHTML = "Send Report <i class='ri-send-plane-fill'></i>";
+                    sendBtn.disabled = false;
+                });
+        }
+
+        function closeClearChatModal() {
+            document.getElementById('clear-chat-modal').classList.remove('active');
+        }
+
+        function confirmClearChat() {
             const userId = window.currentUserId || 'guest';
             if (window.AppState) window.AppState.chatHistory = [];
             localStorage.setItem('medStormChat_' + userId, JSON.stringify([]));
             if (window.currentUserId && window.saveUserData) window.saveUserData('chatHistory', []);
             window.loadChatHistory();
+
+            closeClearChatModal();
         }
 
         function toggleAIChat() {
@@ -3324,7 +3466,60 @@
             }
         }
     </script>
+    <div class="modal-overlay" id="reset-modal" style="z-index: 9999;">
+        <div class="modal"
+            style="text-align: center; max-width: 420px; padding: 2.5rem 2rem; border-color: rgba(239, 68, 68, 0.3);">
+            <div
+                style="font-size: 4rem; color: var(--primary-red); margin-bottom: 0.5rem; animation: pulseRed 2s infinite;">
+                <i class="ri-restart-line"></i>
+            </div>
 
+            <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-light);">Are you
+                sure?</h2>
+
+            <p id="reset-modal-text"
+                style="color: var(--text-gray); margin-bottom: 2.5rem; font-size: 0.95rem; line-height: 1.6;">
+                Are you sure you want to reset this module?
+            </p>
+
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="quiz-btn btn-secondary" onclick="closeResetModal()"
+                    style="flex: 1; padding: 0.8rem; font-weight: 600;">Cancel</button>
+
+                <button class="quiz-btn btn-primary" onclick="confirmResetAction()"
+                    style="flex: 1; padding: 0.8rem; background: var(--primary-red); color: white; border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
+                    Yes, Reset
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="clear-chat-modal" style="z-index: 100000;">
+        <div class="modal"
+            style="text-align: center; max-width: 420px; padding: 2.5rem 2rem; border-color: rgba(239, 68, 68, 0.3);">
+            <div
+                style="font-size: 4rem; color: var(--primary-red); margin-bottom: 0.5rem; animation: pulseRed 2s infinite;">
+                <i class="ri-delete-bin-line"></i>
+            </div>
+
+            <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-light);">Clear Chat?
+            </h2>
+
+            <p style="color: var(--text-gray); margin-bottom: 2.5rem; font-size: 0.95rem; line-height: 1.6;">
+                Are you sure you want to delete the entire conversation history with Meddy AI?<br>
+                <span style="color: var(--primary-red); font-weight: 600;"></span>
+            </p>
+
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="quiz-btn btn-secondary" onclick="closeClearChatModal()"
+                    style="flex: 1; padding: 0.8rem; font-weight: 600;">Cancel</button>
+
+                <button class="quiz-btn btn-primary" onclick="confirmClearChat()"
+                    style="flex: 1; padding: 0.8rem; background: var(--primary-red); color: white; border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
