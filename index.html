@@ -99,6 +99,7 @@
             transform: scale(1.1);
         }
 
+        /* Telegram Custom Button */
         .telegram-btn {
             text-decoration: none;
             background: linear-gradient(135deg, #2AABEE, #229ED9);
@@ -1382,6 +1383,8 @@
             transition: var(--transition);
         }
 
+
+
         .q-box:hover {
             border-color: var(--accent);
             transform: translateX(5px);
@@ -1628,6 +1631,16 @@
             max-height: 90vh;
             padding: 1.25rem;
         }
+
+        #report-modal .note-textarea {
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        #report-modal .note-textarea:focus {
+            border-color: var(--primary-red) !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+            outline: none;
+        }
     </style>
 </head>
 
@@ -1825,13 +1838,15 @@
                 <button class="action-icon-btn" onclick="toggleMap()"><i class="ri-menu-line"></i></button>
                 <div id="text-timer" class="text-timer">00:00</div>
                 <div class="quiz-actions">
-                    <button class="action-icon-btn" onclick="exitQuiz()" title="Exit"><i
-                            class="ri-home-line"></i></button>
-
-                    <button class="action-icon-btn" onclick="toggleFullScreen()" title="Full Screen">
-                        <i class="ri-fullscreen-line" id="fullscreen-icon-quiz"></i>
+                    <button onclick="openReportModal(event)" title="Report Error"
+                        style="display: flex; align-items: center; gap: 5px; background: rgba(239, 68, 68, 0.1); color: var(--primary-red); padding: 6px 14px; border-radius: 8px; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.2); cursor: pointer; font-size: 0.85rem; transition: 0.2s;">
+                        <i class="ri-flag-fill"></i> Report Question
                     </button>
 
+                    <button class="action-icon-btn" onclick="exitQuiz()" title="Exit"><i
+                            class="ri-home-line"></i></button>
+                    <button class="action-icon-btn" onclick="toggleFullScreen()" title="Full Screen"><i
+                            class="ri-fullscreen-line" id="fullscreen-icon-quiz"></i></button>
                     <button class="action-icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i
                             class="ri-sun-fill" id="theme-icon-quiz"></i></button>
                 </div>
@@ -1847,30 +1862,41 @@
                 <div>
                     <div class="options-container" id="options-box"></div>
 
-                    <div class="quiz-footer">
-                        <div class="action-buttons">
-                            <button class="icon-action-btn" id="btn-favorite" onclick="toggleFavorite()"><i
-                                    class="ri-star-line"></i></button>
-                            <button class="icon-action-btn" id="btn-note" onclick="openNoteModal()"><i
-                                    class="ri-file-text-line"></i></button>
-                            <button class="icon-action-btn" onclick="toggleMap()"><i class="ri-list-check"></i></button>
-                        </div>
-                        <button class="quiz-btn btn-secondary" id="btn-prev" onclick="prevQuestion()"><i
-                                class="ri-arrow-left-line"></i> Prev</button>
-                        <button class="quiz-btn btn-primary" id="btn-next" onclick="nextQuestion()">Next <i
-                                class="ri-arrow-right-line"></i></button>
-                        <button class="quiz-btn" id="btn-finish" onclick="finishQuiz()"
-                            style="background: linear-gradient(135deg, var(--primary-red), var(--dark-red)); color: white;">
-                            <i class="ri-check-double-line"></i> Finish
-                        </button>
-                    </div>
+                    <div class="quiz-footer" style="flex-wrap: nowrap; justify-content: space-between; width: 100%;">
 
-                    <button id="ai-explain-btn"
-                        style="background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); width: 100%; margin-top: 15px; transition: 0.3s;">
-                        <i class="ri-robot-2-fill" style="font-size: 1.2rem;"></i> Explain with AI
-                    </button>
+                        <div class="action-buttons" style="display: flex; gap: 8px; align-items: center;">
+                            <button id="btn-favorite" class="icon-action-btn" onclick="toggleFavorite()"
+                                title="Save Question">
+                                <i class="ri-star-line"></i>
+                            </button>
+                            <button id="btn-note" class="icon-action-btn" onclick="openNoteModal()" title="Add Note">
+                                <i class="ri-file-text-line"></i>
+                            </button>
+                            <button class="icon-action-btn" onclick="toggleMap()" title="Question Map">
+                                <i class="ri-list-unordered"></i>
+                            </button>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; flex: 1; justify-content: flex-end;">
+                            <button class="quiz-btn btn-secondary" id="btn-prev" onclick="prevQuestion()"
+                                style="min-width: 100px;"><i class="ri-arrow-left-line"></i> Prev</button>
+                            <button class="quiz-btn btn-primary" id="btn-next" onclick="nextQuestion()"
+                                style="min-width: 100px;">Next <i class="ri-arrow-right-line"></i></button>
+                            <button class="quiz-btn" id="btn-finish" onclick="finishQuiz()"
+                                style="min-width: 100px; background: linear-gradient(135deg, var(--primary-red), var(--dark-red)); color: white;">
+                                <i class="ri-check-double-line"></i> Finish
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
+
+                <button id="ai-explain-btn"
+                    style="background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); width: 100%; margin-top: 15px; transition: 0.3s;">
+                    <i class="ri-robot-2-fill" style="font-size: 1.2rem;"></i> Explain with AI
+                </button>
             </div>
+        </div>
         </div>
         <div id="view-results" class="view-section">
             <div class="results-container">
@@ -1962,7 +1988,25 @@
             <button class="action-btn" onclick="launchQuiz()">Start Solving ✏️</button>
         </div>
     </div>
-
+    <div class="modal-overlay" id="report-modal" style="z-index: 100000;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--primary-red);"><i class="ri-flag-fill"></i> Report Question
+                </h3>
+                <button class="close-btn" onclick="closeReportModal()"><i class="ri-close-line"></i></button>
+            </div>
+            <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px;">Please describe what is wrong
+                with this question (e.g., wrong answer, typo, out of context):</p>
+            <textarea class="note-textarea" id="report-text" placeholder="Type your reason here..." rows="4"></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="quiz-btn btn-secondary" style="flex: 1;" onclick="closeReportModal()">Cancel</button>
+                <button class="quiz-btn" id="btn-send-report"
+                    style="flex: 1; background: var(--primary-red); color: white; border: none;" onclick="sendReport()">
+                    Send Report <i class="ri-send-plane-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
     <div class="modal-overlay" id="note-modal">
         <div class="modal">
             <div class="modal-header">
@@ -2363,9 +2407,23 @@
         }
 
         function handleKeyboard(e) {
+            const activeTag = document.activeElement.tagName.toLowerCase();
+            if (activeTag === 'input' || activeTag === 'textarea') return;
+
+            const anyModalActive = document.querySelector('.modal-overlay.active');
+            if (anyModalActive) return;
+
             if (!document.body.classList.contains('focus-mode')) return;
-            if (e.key === 'ArrowLeft') { e.preventDefault(); prevQuestion(); }
-            else if (e.key === 'ArrowRight') { e.preventDefault(); nextQuestion(); }
+
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevQuestion();
+            }
+            else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextQuestion();
+            }
+
             if (Session.answers[Session.index] === null && !Session.reviewing) {
                 const num = parseInt(e.key);
                 if (num >= 1 && num <= 4) {
@@ -3242,6 +3300,62 @@
 
         function clearChatHistory() {
             document.getElementById('clear-chat-modal').classList.add('active');
+        }
+        function openReportModal(event) {
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active', 'report-active');
+            }
+
+            document.getElementById('report-text').value = '';
+            document.getElementById('report-modal').style.display = 'flex';
+        }
+
+        function closeReportModal() {
+            document.getElementById('report-modal').style.display = 'none';
+            document.querySelectorAll('.report-active').forEach(btn => {
+                btn.classList.remove('active', 'report-active');
+            });
+        }
+
+        async function sendReport() {
+            const reason = document.getElementById('report-text').value.trim();
+            if (!reason) {
+                alert("Please enter a reason for reporting. ");
+                return;
+            }
+
+            const sendBtn = document.getElementById('btn-send-report');
+            sendBtn.innerHTML = "Sending... <i class='ri-loader-4-line ri-spin'></i>";
+            sendBtn.disabled = true;
+
+            const currentQ = Session.queue[Session.index];
+
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxNnNVdKu9Encehopo4VkAixnAXiRZhFJO9aHv0n1oSxLGo6ZRljpUSq3_loP-Cd_2KCQ/exec';
+
+            const requestBody = {
+                module_name: Session.module,
+                question_text: currentQ.q,
+                report_reason: reason
+            };
+
+            try {
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    body: JSON.stringify(requestBody),
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    }
+                });
+
+                alert("Report sent successfully! Thank you. ");
+                closeReportModal();
+            } catch (error) {
+                alert("Failed to send report. Please try again. ");
+                console.error("Error:", error);
+            } finally {
+                sendBtn.innerHTML = "Send Report <i class='ri-send-plane-fill'></i>";
+                sendBtn.disabled = false;
+            }
         }
 
         function closeClearChatModal() {
