@@ -244,7 +244,7 @@
         .ai-send-btn:hover {
             transform: scale(1.1);
         }
-                @media (max-width: 1024px) {
+                        @media (max-width: 1024px) {
             #quiz-section {
                 padding: 15px !important;
             }
@@ -255,7 +255,7 @@
             .question-text {
                 margin-bottom: 12px !important;
             }
-            .options-grid {
+            .options-container {
                 display: grid !important;
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 8px !important;
@@ -270,6 +270,12 @@
             }
             .meddy-btn-container {
                 margin-top: 10px !important;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .options-container {
+                grid-template-columns: 1fr !important;
             }
         }
 
