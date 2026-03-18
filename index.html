@@ -1641,6 +1641,69 @@
             box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
             outline: none;
         }
+
+        #toast-container {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+            align-items: center;
+        }
+
+        .meddy-toast {
+            min-width: 280px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+            animation: slideDownToast 0.4s cubic-bezier(0.4, 0, 0.2, 1), fadeOutToast 0.4s cubic-bezier(0.4, 0, 0.2, 1) 3.6s forwards;
+        }
+
+        .meddy-toast.success {
+            background: rgba(16, 185, 129, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .meddy-toast.error {
+            background: rgba(239, 68, 68, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideDownToast {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutToast {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
@@ -1951,6 +2014,9 @@
             <div class="modal-header">
                 <h2 class="modal-title" id="modal-title">Start Quiz</h2>
                 <button class="modal-close" onclick="closeModal()"><i class="ri-close-line"></i></button>
+            </div>
+            <div id="start-modal-error"
+                style="display: none; background: rgba(239, 68, 68, 0.1); color: var(--primary-red); padding: 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.5rem; border: 1px solid rgba(239, 68, 68, 0.3); text-align: center;">
             </div>
             <div id="subtopic-section" style="display: none; margin-bottom: 2rem;">
                 <div class="modal-label">Select Subjects</div>
@@ -2586,6 +2652,8 @@
         }
 
         function openStartModal(modName, isMistakes) {
+            const errDiv = document.getElementById('start-modal-error');
+            if (errDiv) errDiv.style.display = 'none';
             Session.module = modName; Session.mode = isMistakes ? 'mistakes' : 'normal'; Session.selectedSubtopics = [];
             document.getElementById('modal-title').textContent = isMistakes ? `Review ${modName}` : `Solve ${modName}`; document.getElementById('start-modal').classList.add('active');
             setQuizMode('practice', document.querySelector('.mode-btn'));
@@ -2671,8 +2739,12 @@
         function launchQuiz() {
             let pool = [];
             if (!Array.isArray(DB[Session.module])) {
-                if (Session.selectedSubtopics.length === 0) return alert("Select at least one subject!");
-                Session.selectedSubtopics.forEach(selection => {
+                if (Session.selectedSubtopics.length === 0) {
+                    const errDiv = document.getElementById('start-modal-error');
+                    errDiv.innerHTML = '<i class="ri-error-warning-line"></i> Please select at least one subject !';
+                    errDiv.style.display = 'block';
+                    return;
+                } Session.selectedSubtopics.forEach(selection => {
                     let subQs;
                     if (selection.includes('___')) {
                         const parts = selection.split('___');
@@ -2708,6 +2780,23 @@
             startSession(); loadQuestion();
             if (Session.settings.time > 0) startQuestionTimer();
         }
+        window.showToast = function (message, type = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `meddy-toast ${type}`;
+            const icon = type === 'success' ? 'ri-checkbox-circle-fill' : 'ri-error-warning-fill';
+
+            toast.innerHTML = `<i class="${icon}" style="font-size: 1.3rem;"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => { toast.remove(); }, 4000);
+        };
 
         function loadQuestion() {
             const q = Session.queue[Session.index];
@@ -3347,11 +3436,9 @@
                     }
                 });
 
-                alert("Report sent successfully! Thank you. ");
-                closeReportModal();
+                window.showToast("Report has been sent successfully!", "success"); closeReportModal();
             } catch (error) {
-                alert("Failed to send report. Please try again. ");
-                console.error("Error:", error);
+                window.showToast("Error! Try again later", "error"); console.error("Error:", error);
             } finally {
                 sendBtn.innerHTML = "Send Report <i class='ri-send-plane-fill'></i>";
                 sendBtn.disabled = false;
