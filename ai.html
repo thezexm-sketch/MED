@@ -5,14 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meddy</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#10B981">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        (function () {
-            emailjs.init("NYa9RBYJO_wDRRYMK");
-        })();
-    </script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#10B981">
     <style>
         :root {
             --primary-green: #10B981;
@@ -244,47 +242,6 @@
         .ai-send-btn:hover {
             transform: scale(1.1);
         }
-                        @media (max-width: 1024px) {
-            #quiz-section {
-                padding: 15px !important;
-            }
-            .quiz-header {
-                margin-bottom: 12px !important;
-                padding-bottom: 12px !important;
-            }
-            .question-text {
-                margin-bottom: 12px !important;
-            }
-            .options-container {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 8px !important;
-                margin-bottom: 12px !important;
-            }
-            .option-btn {
-                padding: 10px 12px !important;
-                min-height: auto !important;
-            }
-            .action-buttons {
-                margin-top: 8px !important;
-            }
-            .meddy-btn-container {
-                margin-top: 10px !important;
-            }
-        }
-
-        @media (max-width: 500px) {
-            .options-container {
-                grid-template-columns: 1fr !important;
-            }
-        }
-
-        @media (max-width: 500px) {
-            .options-grid {
-                grid-template-columns: 1fr !important;
-            }
-        }
-
 
         @media (max-width: 768px) {
             .ai-chat-btn {
@@ -1430,6 +1387,8 @@
             transition: var(--transition);
         }
 
+
+
         .q-box:hover {
             border-color: var(--accent);
             transform: translateX(5px);
@@ -1676,6 +1635,79 @@
             max-height: 90vh;
             padding: 1.25rem;
         }
+
+        #report-modal .note-textarea {
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        #report-modal .note-textarea:focus {
+            border-color: var(--primary-red) !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+            outline: none;
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+            align-items: center;
+        }
+
+        .meddy-toast {
+            min-width: 280px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+            animation: slideDownToast 0.4s cubic-bezier(0.4, 0, 0.2, 1), fadeOutToast 0.4s cubic-bezier(0.4, 0, 0.2, 1) 3.6s forwards;
+        }
+
+        .meddy-toast.success {
+            background: rgba(16, 185, 129, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .meddy-toast.error {
+            background: rgba(239, 68, 68, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideDownToast {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutToast {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
@@ -1873,7 +1905,7 @@
                 <button class="action-icon-btn" onclick="toggleMap()"><i class="ri-menu-line"></i></button>
                 <div id="text-timer" class="text-timer">00:00</div>
                 <div class="quiz-actions">
-                    <button onclick="openReportModal()" title="Report Error"
+                    <button onclick="openReportModal(event)" title="Report Error"
                         style="display: flex; align-items: center; gap: 5px; background: rgba(239, 68, 68, 0.1); color: var(--primary-red); padding: 6px 14px; border-radius: 8px; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.2); cursor: pointer; font-size: 0.85rem; transition: 0.2s;">
                         <i class="ri-flag-fill"></i> Report Question
                     </button>
@@ -1927,7 +1959,7 @@
                 </div>
 
                 <button id="ai-explain-btn"
-                    bottom: 20px; z-index: 100; background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 -5px 20px rgba(0,0,0,0.15), 0 4px 15px rgba(59, 130, 246, 0.4); width: 100%; margin-top: 20px; transition: 0.3s;">
+                    style="background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); width: 100%; margin-top: 15px; transition: 0.3s;">
                     <i class="ri-robot-2-fill" style="font-size: 1.2rem;"></i> Explain with AI
                 </button>
             </div>
@@ -1987,6 +2019,9 @@
                 <h2 class="modal-title" id="modal-title">Start Quiz</h2>
                 <button class="modal-close" onclick="closeModal()"><i class="ri-close-line"></i></button>
             </div>
+            <div id="start-modal-error"
+                style="display: none; background: rgba(239, 68, 68, 0.1); color: var(--primary-red); padding: 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.5rem; border: 1px solid rgba(239, 68, 68, 0.3); text-align: center;">
+            </div>
             <div id="subtopic-section" style="display: none; margin-bottom: 2rem;">
                 <div class="modal-label">Select Subjects</div>
                 <div class="subtopic-grid" id="subtopic-grid"></div>
@@ -2028,12 +2063,11 @@
             <div class="modal-header">
                 <h3 class="modal-title" style="color: var(--primary-red);"><i class="ri-flag-fill"></i> Report Question
                 </h3>
-                <button class="close-btn" onclick="closeReportModal()"><i class="ri-close-line"></i></button>
+                <button class="modal-close" onclick="closeReportModal()"><i class="ri-close-line"></i></button>
             </div>
             <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px;">Please describe what is wrong
                 with this question (e.g., wrong answer, typo, out of context):</p>
             <textarea class="note-textarea" id="report-text" placeholder="Type your reason here..." rows="4"></textarea>
-
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="quiz-btn btn-secondary" style="flex: 1;" onclick="closeReportModal()">Cancel</button>
                 <button class="quiz-btn" id="btn-send-report"
@@ -2622,6 +2656,8 @@
         }
 
         function openStartModal(modName, isMistakes) {
+            const errDiv = document.getElementById('start-modal-error');
+            if (errDiv) errDiv.style.display = 'none';
             Session.module = modName; Session.mode = isMistakes ? 'mistakes' : 'normal'; Session.selectedSubtopics = [];
             document.getElementById('modal-title').textContent = isMistakes ? `Review ${modName}` : `Solve ${modName}`; document.getElementById('start-modal').classList.add('active');
             setQuizMode('practice', document.querySelector('.mode-btn'));
@@ -2707,8 +2743,12 @@
         function launchQuiz() {
             let pool = [];
             if (!Array.isArray(DB[Session.module])) {
-                if (Session.selectedSubtopics.length === 0) return alert("Select at least one subject!");
-                Session.selectedSubtopics.forEach(selection => {
+                if (Session.selectedSubtopics.length === 0) {
+                    const errDiv = document.getElementById('start-modal-error');
+                    errDiv.innerHTML = '<i class="ri-error-warning-line"></i> Please select at least one subject !';
+                    errDiv.style.display = 'block';
+                    return;
+                } Session.selectedSubtopics.forEach(selection => {
                     let subQs;
                     if (selection.includes('___')) {
                         const parts = selection.split('___');
@@ -2744,6 +2784,23 @@
             startSession(); loadQuestion();
             if (Session.settings.time > 0) startQuestionTimer();
         }
+        window.showToast = function (message, type = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `meddy-toast ${type}`;
+            const icon = type === 'success' ? 'ri-checkbox-circle-fill' : 'ri-error-warning-fill';
+
+            toast.innerHTML = `<i class="${icon}" style="font-size: 1.3rem;"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => { toast.remove(); }, 4000);
+        };
 
         function loadQuestion() {
             const q = Session.queue[Session.index];
@@ -3337,19 +3394,26 @@
         function clearChatHistory() {
             document.getElementById('clear-chat-modal').classList.add('active');
         }
-        function openReportModal() {
+        function openReportModal(event) {
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active', 'report-active');
+            }
+
             document.getElementById('report-text').value = '';
             document.getElementById('report-modal').style.display = 'flex';
         }
 
         function closeReportModal() {
             document.getElementById('report-modal').style.display = 'none';
+            document.querySelectorAll('.report-active').forEach(btn => {
+                btn.classList.remove('active', 'report-active');
+            });
         }
 
-        function sendReport() {
+        async function sendReport() {
             const reason = document.getElementById('report-text').value.trim();
             if (!reason) {
-                alert("Please enter a reason for reporting. (يرجى كتابة سبب الإبلاغ)");
+                alert("Please enter a reason for reporting. ");
                 return;
             }
 
@@ -3359,25 +3423,30 @@
 
             const currentQ = Session.queue[Session.index];
 
-            const templateParams = {
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxNnNVdKu9Encehopo4VkAixnAXiRZhFJO9aHv0n1oSxLGo6ZRljpUSq3_loP-Cd_2KCQ/exec';
+
+            const requestBody = {
                 module_name: Session.module,
                 question_text: currentQ.q,
-                report_reason: reason,
-                to_email: "meddyafm@gmail.com"
+                report_reason: reason
             };
 
-            emailjs.send("service_ln5ajwb", "template_kpeir7k", templateParams)
-                .then(function (response) {
-                    alert("Report sent successfully! Thank you. (تم إرسال الإبلاغ بنجاح، شكراً لك)");
-                    closeReportModal();
-                    sendBtn.innerHTML = "Send Report <i class='ri-send-plane-fill'></i>";
-                    sendBtn.disabled = false;
-                }, function (error) {
-                    alert("Failed to send report. Please try again. (فشل الإرسال، حاول مرة أخرى)");
-                    console.error("EmailJS Error:", error);
-                    sendBtn.innerHTML = "Send Report <i class='ri-send-plane-fill'></i>";
-                    sendBtn.disabled = false;
+            try {
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    body: JSON.stringify(requestBody),
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    }
                 });
+
+                window.showToast("Report has been sent successfully!", "success"); closeReportModal();
+            } catch (error) {
+                window.showToast("Error! Try again later", "error"); console.error("Error:", error);
+            } finally {
+                sendBtn.innerHTML = "Send Report <i class='ri-send-plane-fill'></i>";
+                sendBtn.disabled = false;
+            }
         }
 
         function closeClearChatModal() {
@@ -3561,6 +3630,15 @@
             </div>
         </div>
     </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('ServiceWorker Ready!', reg))
+                    .catch(err => console.log('ServiceWorker Error', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
