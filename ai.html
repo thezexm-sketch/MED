@@ -3653,7 +3653,7 @@
 
 
         window.explainQuestionWithAI = function (questionText, optionsArr, correctIndex) {
-            const prompt = `Please explain this medical question to me:\n\n**Question:** ${questionText}\n**Options:** ${optionsArr.join(" | ")}\n**The correct answer is:** ${optionsArr[correctIndex]}\n\nWhy is this the correct answer? and briefly why are the others incorrect?`;
+            const prompt = `Please explain this medical question to me:\n\n**Question:** ${questionText}\n**Options:** ${optionsArr.join(" | ")};
             const chat = document.getElementById('ai-chat-window');
             if (chat.style.display !== 'flex') {
                 toggleAIChat();
