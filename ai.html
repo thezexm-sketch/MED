@@ -4327,7 +4327,9 @@
             const deck = window.FLASHCARDS_DECKS[0];
             const cardCount = deck.cards ? deck.cards.length : 0;
             container.innerHTML = `
-                <div class="fc-cover-wrap" style="width: 320px; flex: none;">
+                <div class="fc-cover-wrap" style="width: 320px; flex: none; position: relative;">
+                    <button class="reset-btn" onclick="fcResetSpecificDeck(event, 0)" title="Reset Progress" style="position: absolute; top: -10px; right: -15px; z-index: 20; background: rgba(239, 68, 68, 0.9); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: grid; place-items: center; transition: 0.3s;"><i class="ri-restart-line"></i></button>
+
                     <div class="fc-cover-deck" onclick="fcStartSession(0)">
                         <div class="fc-cover-shadow"></div>
                         <div class="fc-cover-shadow"></div>
@@ -4344,6 +4346,23 @@
                 </div>
             `;
         }
+        async function fcResetSpecificDeck(event, deckIndex) {
+            event.stopPropagation();
+            if (!confirm("Are you sure you want to reset all progress for this flashcard deck?")) return;
+
+            const deck = window.FLASHCARDS_DECKS[deckIndex];
+            const emptyScores = new Array(deck.cards ? deck.cards.length : 0).fill(null);
+            const storageKey = 'medStorm_fc_' + deck.id;
+            localStorage.setItem(storageKey, JSON.stringify(emptyScores));
+            if (window.currentUserId && typeof window.setDoc === 'function') {
+                try {
+                    const progressRef = window.doc(window.db, "users", window.currentUserId, "progress", deck.id);
+                    await window.setDoc(progressRef, { scores: emptyScores }, { merge: true });
+                } catch (e) { console.error("Error resetting progress:", e); }
+            }
+
+            if (window.showToast) window.showToast("Flashcards progress reset successfully!", "success");
+        }
         async function fcStartSession(deckIndex) {
             currentDeckObj = window.FLASHCARDS_DECKS[deckIndex];
             fcDeck = currentDeckObj.cards ? [...currentDeckObj.cards] : [];
@@ -4359,25 +4378,29 @@
 
             let savedScores = null;
             const storageKey = 'medStorm_fc_' + currentDeckObj.id;
-            const localData = localStorage.getItem(storageKey);
-            if (localData) {
-                try { savedScores = JSON.parse(localData); } catch (e) { }
-            }
-            if (!savedScores && window.currentUserId && typeof window.doc === 'function') {
+            if (window.currentUserId && typeof window.doc === 'function') {
                 try {
                     const progressRef = window.doc(window.db, "users", window.currentUserId, "progress", currentDeckObj.id);
                     const progressSnap = await window.getDoc(progressRef);
                     if (progressSnap.exists()) {
                         savedScores = progressSnap.data().scores;
+
                         localStorage.setItem(storageKey, JSON.stringify(savedScores));
                     }
                 } catch (e) { console.error("Error loading progress:", e); }
+            }
+            if (!savedScores) {
+                const localData = localStorage.getItem(storageKey);
+                if (localData) {
+                    try { savedScores = JSON.parse(localData); } catch (e) { }
+                }
             }
             if (savedScores && Array.isArray(savedScores) && savedScores.length === fcDeck.length) {
                 fcScores = savedScores;
             } else {
                 fcScores = new Array(fcDeck.length).fill(null);
             }
+
             fcIndex = fcScores.findIndex(s => s === null);
             if (fcIndex === -1) fcIndex = 0;
 
