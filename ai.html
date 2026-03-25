@@ -4328,7 +4328,7 @@
             const cardCount = deck.cards ? deck.cards.length : 0;
             container.innerHTML = `
                 <div class="fc-cover-wrap" style="width: 320px; flex: none; position: relative;">
-                    <button class="reset-btn" onclick="fcResetSpecificDeck(event, 0)" title="Reset Progress" style="position: absolute; top: -10px; right: -15px; z-index: 20; background: rgba(239, 68, 68, 0.9); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: grid; place-items: center; transition: 0.3s;"><i class="ri-restart-line"></i></button>
+                    <button class="reset-btn" onclick="fcResetSpecificDeck(event, 0)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
 
                     <div class="fc-cover-deck" onclick="fcStartSession(0)">
                         <div class="fc-cover-shadow"></div>
@@ -4354,11 +4354,8 @@
             const emptyScores = new Array(deck.cards ? deck.cards.length : 0).fill(null);
             const storageKey = 'medStorm_fc_' + deck.id;
             localStorage.setItem(storageKey, JSON.stringify(emptyScores));
-            if (window.currentUserId && typeof window.setDoc === 'function') {
-                try {
-                    const progressRef = window.doc(window.db, "users", window.currentUserId, "progress", deck.id);
-                    await window.setDoc(progressRef, { scores: emptyScores }, { merge: true });
-                } catch (e) { console.error("Error resetting progress:", e); }
+            if (window.currentUserId && typeof window.saveUserData === 'function') {
+                window.saveUserData('fcScores_' + deck.id, emptyScores);
             }
 
             if (window.showToast) window.showToast("Flashcards progress reset successfully!", "success");
@@ -4380,11 +4377,11 @@
             const storageKey = 'medStorm_fc_' + currentDeckObj.id;
             if (window.currentUserId && typeof window.doc === 'function') {
                 try {
-                    const progressRef = window.doc(window.db, "users", window.currentUserId, "progress", currentDeckObj.id);
-                    const progressSnap = await window.getDoc(progressRef);
-                    if (progressSnap.exists()) {
-                        savedScores = progressSnap.data().scores;
+                    const userRef = window.doc(window.db, "users", window.currentUserId);
+                    const userSnap = await window.getDoc(userRef);
 
+                    if (userSnap.exists() && userSnap.data()['fcScores_' + currentDeckObj.id]) {
+                        savedScores = userSnap.data()['fcScores_' + currentDeckObj.id];
                         localStorage.setItem(storageKey, JSON.stringify(savedScores));
                     }
                 } catch (e) { console.error("Error loading progress:", e); }
@@ -4395,6 +4392,7 @@
                     try { savedScores = JSON.parse(localData); } catch (e) { }
                 }
             }
+
             if (savedScores && Array.isArray(savedScores) && savedScores.length === fcDeck.length) {
                 fcScores = savedScores;
             } else {
@@ -4543,7 +4541,6 @@
         }
 
         async function fcJudge(result) {
-
             const deckEl = document.querySelector('#fc-deck-area .fc-deck');
             if (deckEl) {
                 deckEl.classList.add(result === 'correct' ? 'anim-fly-correct' : 'anim-fly-wrong');
@@ -4552,12 +4549,10 @@
             _fcUpdateProgressElements();
             const storageKey = 'medStorm_fc_' + currentDeckObj.id;
             localStorage.setItem(storageKey, JSON.stringify(fcScores));
-            if (window.currentUserId && typeof window.setDoc === 'function') {
-                try {
-                    const progressRef = window.doc(window.db, "users", window.currentUserId, "progress", currentDeckObj.id);
-                    window.setDoc(progressRef, { scores: fcScores }, { merge: true });
-                } catch (e) { console.error("Error saving progress:", e); }
+            if (window.currentUserId && typeof window.saveUserData === 'function') {
+                window.saveUserData('fcScores_' + currentDeckObj.id, fcScores);
             }
+
             setTimeout(() => {
                 const allDone = fcScores.every(s => s !== null);
                 if (allDone) {
@@ -4570,7 +4565,6 @@
                 if (next < fcDeck.length) {
                     fcNavigateTo(next);
                 } else {
-
                     let firstNull = fcScores.findIndex(s => s === null);
                     if (firstNull !== -1) fcNavigateTo(firstNull);
                 }
@@ -4653,11 +4647,9 @@
 
             const storageKey = 'medStorm_fc_' + currentDeckObj.id;
             localStorage.setItem(storageKey, JSON.stringify(fcScores));
-            if (window.currentUserId && typeof window.setDoc === 'function') {
-                try {
-                    const progressRef = window.doc(window.db, "users", window.currentUserId, "progress", currentDeckObj.id);
-                    await window.setDoc(progressRef, { scores: fcScores }, { merge: true });
-                } catch (e) { console.error("Error resetting progress:", e); }
+
+            if (window.currentUserId && typeof window.saveUserData === 'function') {
+                window.saveUserData('fcScores_' + currentDeckObj.id, fcScores);
             }
 
             const container = document.getElementById('flashcards-container');
