@@ -99,7 +99,7 @@
             transform: scale(1.1);
         }
 
-        /* Telegram Custom Button */
+        
         .telegram-btn {
             text-decoration: none;
             background: linear-gradient(135deg, #2AABEE, #229ED9);
@@ -125,7 +125,6 @@
         .telegram-btn i {
             font-size: 1.3rem;
         }
-
 
         @media (max-width: 768px) {
             .telegram-txt {
@@ -655,8 +654,6 @@
         body.focus-mode .quiz-header {
             display: flex;
         }
-
-
 
         .quiz-container {
             display: flex;
@@ -1389,8 +1386,6 @@
             transition: var(--transition);
         }
 
-
-
         .q-box:hover {
             border-color: var(--accent);
             transform: translateX(5px);
@@ -1512,7 +1507,83 @@
             }
 
             .quiz-container {
-                padding: 2.5rem 1rem 2rem;
+                padding: 0.5rem 0.85rem 5rem;
+                gap: 0.4rem;
+                max-width: 100%;
+            }
+
+            .quiz-header {
+                padding: 0.75rem 0.85rem 0;
+                margin-bottom: 0.25rem;
+            }
+
+            .quiz-actions {
+                gap: 0.4rem;
+            }
+
+            .action-icon-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+
+            .quiz-actions button[onclick="openReportModal(event)"] {
+                padding: 5px 8px;
+                font-size: 0.75rem;
+            }
+
+            #main-quiz-timer {
+                padding: 5px 10px;
+                font-size: 0.82rem;
+            }
+
+            .question-text {
+                font-size: 0.95rem !important;
+                line-height: 1.55;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                white-space: normal;
+                margin-bottom: 0.5rem;
+            }
+
+            .option-btn {
+                padding: 0.65rem 0.85rem;
+                font-size: 0.88rem;
+                word-break: break-word;
+                white-space: normal;
+                text-align: left;
+            }
+
+            .eliminate-btn {
+                width: 40px;
+                flex-shrink: 0;
+            }
+
+            .options-container {
+                gap: 0.4rem;
+            }
+
+            .quiz-footer {
+                gap: 0.4rem;
+                flex-wrap: nowrap;
+            }
+
+            .quiz-btn {
+                padding: 0.7rem 0.5rem;
+                font-size: 0.82rem;
+                min-width: 0;
+            }
+
+            .icon-action-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+            #ai-explain-btn {
+                padding: 10px;
+                font-size: 0.88rem;
             }
 
             .map-drawer {
@@ -1525,6 +1596,15 @@
 
             .subtopic-children {
                 grid-template-columns: 1fr;
+            }
+
+            .fc-deck {
+                height: 240px;
+            }
+
+            .fc-cover-deck {
+                width: 260px;
+                height: 170px;
             }
         }
 
@@ -1711,7 +1791,7 @@
             }
         }
 
-        /* Timer pill - rectangular with rounded corners */
+        
         .quiz-timer-pill {
             display: flex;
             align-items: center;
@@ -1744,7 +1824,7 @@
             display: none !important;
         }
 
-        /* Keep timer-circle for results page */
+        
         .timer-circle {
             display: flex;
             flex-direction: column;
@@ -1812,6 +1892,341 @@
             opacity: 0.4;
             pointer-events: none;
         }
+
+        
+        #view-flashcards.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2.5rem 2rem 6rem;
+            overflow-y: auto;
+        }
+
+        
+        .fc-cover-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex: 1;
+            gap: 2rem;
+        }
+        .fc-cover-deck {
+            position: relative;
+            width: 340px;
+            height: 220px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .fc-cover-deck:hover { transform: translateY(-6px); }
+        .fc-cover-shadow {
+            position: absolute;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+        }
+        .fc-cover-shadow:nth-child(1){width:88%;height:100%;bottom:-14px;left:6%;transform:rotate(3deg);opacity:.4;}
+        .fc-cover-shadow:nth-child(2){width:92%;height:100%;bottom:-7px;left:4%;transform:rotate(-2deg);opacity:.65;}
+        .fc-cover-front {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-darker) 100%);
+            border: 1.5px solid var(--accent);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.35), 0 0 0 1px rgba(16,185,129,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.5rem;
+        }
+        .fc-cover-icon {
+            font-size: 2.8rem;
+            line-height: 1;
+        }
+        .fc-cover-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-light);
+            text-align: center;
+        }
+        .fc-cover-sub {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            font-weight: 600;
+        }
+        .fc-cover-badge {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .fc-start-btn {
+            padding: 0.9rem 2.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 8px 20px rgba(16,185,129,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .fc-start-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(16,185,129,0.4); }
+
+        
+        .fc-session-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 1.5rem;
+        }
+        .fc-session-header {
+            width: 100%;
+            max-width: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .fc-session-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-gray);
+        }
+        .fc-session-count {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-gray);
+            background: var(--bg-darker);
+            padding: 0.4rem 0.9rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        
+        .fc-deck {
+            position: relative;
+            width: 100%;
+            max-width: 580px;
+            height: 300px;
+            cursor: pointer;
+        }
+        .fc-deck::before, .fc-deck::after {
+            content: '';
+            position: absolute;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+        }
+        .fc-deck::after  { width:88%;height:100%;bottom:-10px;left:6%;opacity:.45;transform:rotate(2deg);  }
+        .fc-deck::before { width:92%;height:100%;bottom:-5px; left:4%;opacity:.7; transform:rotate(-1.5deg);}
+        .fc-card {
+            position: absolute;
+            inset: 0;
+            perspective: 1200px;
+            z-index: 2;
+        }
+        .fc-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+            border-radius: 20px;
+        }
+        .fc-card.flipped .fc-inner { transform: rotateY(180deg); }
+        .fc-front, .fc-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            border: 1.5px solid var(--border-color);
+        }
+        .fc-front {
+            background: var(--bg-card);
+            box-shadow: 0 20px 55px rgba(0,0,0,0.3);
+        }
+        .fc-back {
+            background: linear-gradient(145deg, rgba(16,185,129,0.13) 0%, var(--bg-card) 100%);
+            border-color: var(--accent);
+            box-shadow: 0 20px 55px rgba(16,185,129,0.12);
+            transform: rotateY(180deg);
+        }
+        .fc-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.85rem;
+            color: var(--text-gray);
+            opacity: 0.55;
+        }
+        .fc-back .fc-label { color: var(--accent); opacity: 0.8; }
+        .fc-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.6;
+            color: var(--text-light);
+            overflow-y: auto;
+            max-height: 160px;
+        }
+        .fc-back .fc-text { color: var(--accent); }
+        .fc-tap-hint {
+            position: absolute;
+            bottom: 1rem;
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            opacity: 0.4;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        
+        .fc-judge {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            max-width: 580px;
+        }
+        .fc-judge-btn {
+            flex: 1;
+            padding: 0.85rem;
+            border-radius: 14px;
+            border: 2px solid;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .fc-judge-btn.wrong-btn {
+            background: rgba(239,68,68,0.08);
+            border-color: rgba(239,68,68,0.35);
+            color: var(--primary-red);
+        }
+        .fc-judge-btn.wrong-btn:hover {
+            background: rgba(239,68,68,0.18);
+            border-color: var(--primary-red);
+            transform: translateY(-2px);
+        }
+        .fc-judge-btn.correct-btn {
+            background: rgba(16,185,129,0.08);
+            border-color: rgba(16,185,129,0.35);
+            color: var(--primary-green);
+        }
+        .fc-judge-btn.correct-btn:hover {
+            background: rgba(16,185,129,0.18);
+            border-color: var(--primary-green);
+            transform: translateY(-2px);
+        }
+        .fc-judge-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        
+        .fc-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            max-width: 580px;
+        }
+        .fc-nav-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            color: var(--text-light);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .fc-nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); transform: scale(1.08); }
+        .fc-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .fc-progress-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .fc-progress-bar { width:100%; height:5px; background:var(--border-color); border-radius:10px; overflow:hidden; }
+        .fc-progress-fill { height:100%; background:var(--accent); border-radius:10px; transition:width .4s ease; }
+        .fc-progress-label { font-size:0.8rem; font-weight:700; color:var(--text-gray); }
+
+        
+        .fc-results-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .fc-results-ring {
+            position: relative;
+            width: 160px;
+            height: 160px;
+        }
+        .fc-results-ring svg { transform: rotate(-90deg); }
+        .fc-ring-bg   { fill: none; stroke: var(--border-color); stroke-width: 10; }
+        .fc-ring-fill { fill: none; stroke-width: 10; stroke-linecap: round;
+                        stroke-dasharray: 408; stroke-dashoffset: 408; transition: stroke-dashoffset 1.2s ease; }
+        .fc-results-text {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .fc-results-pct { font-size: 2.2rem; font-weight: 800; color: var(--text-light); }
+        .fc-results-sub { font-size: 0.8rem; color: var(--text-gray); margin-top: 2px; }
+        .fc-results-title { font-size: 1.8rem; font-weight: 800; }
+        .fc-results-stats {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+        }
+        .fc-stat-box {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 14px;
+            border: 1.5px solid;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .fc-stat-box.correct { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.3); }
+        .fc-stat-box.wrong   { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.3);  }
+        .fc-stat-num { font-size: 1.8rem; font-weight: 800; }
+        .fc-stat-box.correct .fc-stat-num { color: var(--primary-green); }
+        .fc-stat-box.wrong   .fc-stat-num { color: var(--primary-red);   }
+        .fc-stat-lbl { font-size: 0.78rem; font-weight: 600; color: var(--text-gray); }
+        .fc-results-btns { display: flex; gap: 1rem; width: 100%; }
     </style>
 </head>
 
@@ -1876,6 +2291,8 @@
                     class="ri-error-warning-line"></i><span>Mistakes</span></div>
             <div class="nav-item" onclick="switchMode('favorites')" id="nav-favorites"><i
                     class="ri-star-line"></i><span>Favorites</span></div>
+            <div class="nav-item" onclick="switchMode('flashcards')" id="nav-flashcards"><i
+                    class="ri-stack-line"></i><span>Flashcards</span></div>
             <div class="nav-item" onclick="switchMode('analytics')" id="nav-analytics"><i
                     class="ri-bar-chart-2-line"></i><span>Analytics</span></div>
             <div class="nav-item" onclick="switchMode('links')" id="nav-links"><i
@@ -1901,7 +2318,6 @@
                     <i class="ri-telegram-fill"></i>
                     <span class="telegram-txt">Join Telegram!</span>
                 </a>
-
 
                 <div class="profile-btn-container" onclick="switchMode('profile')" title="My Profile">
                     <img id="top-bar-avatar" src="https://ui-avatars.com/api/?name=User&background=10B981&color=fff"
@@ -1936,6 +2352,9 @@
             </div>
         </div>
 
+        <div id="view-flashcards" class="view-section">
+            <div id="flashcards-container"></div>
+        </div>
         <div id="view-analytics" class="view-section">
             <div style="max-width: 1200px; margin: 0 auto; width: 100%;">
                 <div class="analytics-grid"></div>
@@ -2013,20 +2432,13 @@
                             style="display: flex; align-items: center; gap: 5px; background: rgba(239, 68, 68, 0.1); color: var(--primary-red); padding: 6px 14px; border-radius: 8px; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.2); cursor: pointer; font-size: 0.85rem; transition: 0.2s;">
                             <i class="ri-flag-fill"></i> Report Question
                         </button>
-                        <button class="action-icon-btn" onclick="exitQuiz()" title="Exit"><i
-                                class="ri-home-line"></i></button>
-                        <button class="action-icon-btn" onclick="toggleFullScreen()" title="Full Screen"><i
-                                class="ri-fullscreen-line" id="fullscreen-icon-quiz"></i></button>
-                        <button class="action-icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i
-                                class="ri-sun-fill" id="theme-icon-quiz"></i></button>
+                        <button class="action-icon-btn" onclick="exitQuiz()" title="Exit"><i class="ri-home-line"></i></button>
+                        <button class="action-icon-btn" onclick="toggleFullScreen()" title="Full Screen"><i class="ri-fullscreen-line" id="fullscreen-icon-quiz"></i></button>
+                        <button class="action-icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i class="ri-sun-fill" id="theme-icon-quiz"></i></button>
                     </div>
                     <div id="main-quiz-timer" class="quiz-timer-pill hidden">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="13" r="8" />
-                            <path d="M12 9v4l2.5 2.5" />
-                            <path d="M9 3h6" />
-                            <path d="M12 3v2" />
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 3h6"/><path d="M12 3v2"/>
                         </svg>
                         <span id="timer-text">00:00</span>
                     </div>
@@ -2095,12 +2507,8 @@
                 <p class="results-subtitle" id="results-subtitle">Keep going!</p>
                 <div style="color: var(--text-gray); margin-bottom: 6px; margin-top: 6px;">You took</div>
                 <div id="time-taken-display" class="quiz-timer-pill" style="margin: 0 auto 30px auto;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="13" r="8" />
-                        <path d="M12 9v4l2.5 2.5" />
-                        <path d="M9 3h6" />
-                        <path d="M12 3v2" />
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 3h6"/><path d="M12 3v2"/>
                     </svg>
                     <span id="final-time-text">00:00</span>
                 </div>
@@ -2673,6 +3081,12 @@
                 document.getElementById('view-favorites').classList.add('active');
                 document.getElementById('view-favorites').style.display = 'block';
                 renderFavorites();
+            } else if (mode === 'flashcards') {
+                document.getElementById('nav-flashcards').classList.add('active');
+                document.getElementById('page-title').textContent = 'Flashcards';
+                document.getElementById('view-flashcards').classList.add('active');
+                document.getElementById('view-flashcards').style.display = 'block';
+                renderFlashcards();
             } else if (mode === 'analytics') {
                 document.getElementById('nav-analytics').classList.add('active');
                 document.getElementById('page-title').textContent = 'Analytics';
@@ -3418,7 +3832,6 @@
             renderProgressChart();
         }
 
-
         function renderProgressChart() {
             const list = document.getElementById('analytics-list');
             const last7Days = [];
@@ -3625,6 +4038,283 @@
             }
         }
 
+        const FLASHCARDS_DATA = [{"q": "What is the vertebral origin of the Psoas major muscle?", "a": "The $T12-L5$ vertebrae."}, {"q": "Where does the Iliopsoas muscle (Psoas major and Iliacus) insert?", "a": "The lesser trochanter of the femur."}, {"q": "Which nerve supply corresponds to the Psoas major muscle?", "a": "Ventral rami of $L1-L3$."}, {"q": "What is the primary action of the Psoas major muscle?", "a": "Flexion of the thigh."}, {"q": "The _____ originates from the anterior superior iliac spine.", "a": "Sartorius muscle"}, {"q": "Where is the insertion point for the Sartorius muscle?", "a": "The superior part of the medial surface of the tibia."}, {"q": "Which nerve supplies the Sartorius muscle?", "a": "The femoral nerve."}, {"q": "List the three primary actions of the Sartorius muscle.", "a": "Flexion of the knee, medial rotation of the leg, and adduction of the thigh."}, {"q": "What is the origin of the Pectineus muscle?", "a": "The superior ramus of the pubis."}, {"q": "Where does the Pectineus muscle insert on the femur?", "a": "The pectineal line."}, {"q": "Which two nerves provide the dual nerve supply to the Pectineus muscle?", "a": "The femoral nerve and the obturator nerve."}, {"q": "Identify the origin of the Rectus femoris muscle.", "a": "The anterior inferior iliac spine."}, {"q": "Where do the four heads of the Quadriceps femoris collectively insert via the patellar ligament?", "a": "The tibial tuberosity."}, {"q": "What is the primary action of the Quadriceps femoris at the knee joint?", "a": "Extension of the leg."}, {"q": "Which nerve supplies all heads of the Quadriceps femoris?", "a": "The femoral nerve."}, {"q": "What is the origin of the Adductor longus muscle?", "a": "The body of the pubis."}, {"q": "Where do the Adductor longus and Adductor brevis muscles primarily insert?", "a": "The linea aspera of the femur."}, {"q": "The _____ nerve supplies most muscles of the medial compartment of the thigh.", "a": "Obturator"}, {"q": "The Adductor magnus receives nerve supply from the obturator nerve and the _____ part of the sciatic nerve.", "a": "Tibial"}, {"q": "What is the action of the hamstring part of the Adductor magnus?", "a": "Extension of the thigh."}, {"q": "Where does the Gracilis muscle insert?", "a": "The superior part of the medial surface of the tibia."}, {"q": "What is the origin of the Obturator externus muscle?", "a": "The margins of the obturator foramen and the obturator membrane."}, {"q": "Which muscle of the medial thigh compartment is responsible for lateral rotation of the thigh?", "a": "The obturator externus."}, {"q": "What is the origin of the Gluteus maximus relative to the gluteal lines?", "a": "Posterior to the posterior gluteal line."}, {"q": "Identify the two insertion sites for the Gluteus maximus.", "a": "The ilio-tibial tract and the gluteal tuberosity of the femur."}, {"q": "Which nerve supplies the Gluteus maximus muscle?", "a": "The inferior gluteal nerve."}, {"q": "What are the two primary actions of the Gluteus maximus?", "a": "Extension and lateral rotation of the thigh."}, {"q": "The Gluteus medius originates between the _____ and anterior gluteal lines.", "a": "Posterior"}, {"q": "Where do the Gluteus medius and Gluteus minimus muscles insert?", "a": "The greater trochanter of the femur."}, {"q": "Which nerve supplies the Gluteus medius, Gluteus minimus, and Tensor fascia lata?", "a": "The superior gluteal nerve."}, {"q": "What is the origin of the Tensor fascia lata?", "a": "The iliac crest (anterior superior iliac spine)."}, {"q": "Where does the Piriformis muscle originate?", "a": "The anterior surface of the sacrum."}, {"q": "Identify the insertion site for the Piriformis muscle.", "a": "The superior border of the greater trochanter of the femur."}, {"q": "Which ventral rami supply the Piriformis muscle?", "a": "$S1$ and $S2$."}, {"q": "What is the common origin site for the hamstring muscles?", "a": "The ischial tuberosity."}, {"q": "Where does the Semitendinosus muscle insert?", "a": "The superior part of the medial surface of the tibia."}, {"q": "The short head of the Biceps femoris originates from the _____ and the lateral supracondylar line.", "a": "Linea aspera"}, {"q": "Which nerve supplies the anterior compartment of the leg?", "a": "The anterior tibial nerve (deep peroneal nerve)."}, {"q": "What is the primary action of the Tibialis anterior?", "a": "Dorsi flexion and inversion of the foot."}, {"q": "Where does the Tibialis anterior insert?", "a": "The medial cuneiform bone and the base of the 1st metatarsal bone."}, {"q": "What is the origin of the Peroneus longus muscle?", "a": "The upper 2/3 of the lateral surface of the fibula."}, {"q": "Which nerve supplies the lateral compartment of the leg (Peroneus longus and brevis)?", "a": "The musculocutaneous nerve (superficial peroneal nerve)."}, {"q": "What is the common insertion for the Gastrocnemius and Soleus muscles?", "a": "The posterior surface of the calcaneus via the tendo-calcaneus."}, {"q": "Which muscle is found in the first layer of the sole and is supplied by the medial plantar nerve?", "a": "The abductor hallucis."}, {"q": "Where is the origin of the Extensor digitorum brevis?", "a": "The calcaneus."}, {"q": "Where does the clavicular head of the Pectoralis major originate?", "a": "The front of the medial 1/2 of the clavicle."}, {"q": "Identify the insertion site for the Pectoralis major on the humerus.", "a": "The lateral lip of the bicipital groove."}, {"q": "What are the three primary actions of the Pectoralis major on the arm?", "a": "Flexion, adduction, and medial rotation."}, {"q": "What is the origin of the Pectoralis minor?", "a": "The front of the 3rd, 4th, and 5th ribs."}, {"q": "Where does the Pectoralis minor muscle insert?", "a": "The coracoid process of the scapula."}, {"q": "Which nerve supplies the Subclavius muscle?", "a": "The nerve to subclavius."}, {"q": "Which muscle originates from the supraspinous fossa of the scapula?", "a": "The supraspinatus."}, {"q": "Where does the Supraspinatus muscle insert?", "a": "The superior facet of the greater tuberosity of the humerus."}, {"q": "What is the action of the Supraspinatus during arm abduction?", "a": "It initiates abduction from $0^\\circ$ to $18^\\circ$."}, {"q": "Which muscle originates from the upper 2/3 of the lateral border of the scapula?", "a": "The teres minor."}, {"q": "Which nerve supplies the Teres minor muscle?", "a": "The axillary nerve."}, {"q": "Where does the Teres major muscle insert?", "a": "The medial lip of the bicipital groove of the humerus."}, {"q": "Identify the insertion site for the Subscapularis muscle.", "a": "The lesser tuberosity of the humerus."}, {"q": "Which nerve(s) provide supply to the Subscapularis muscle?", "a": "The upper and lower subscapular nerves."}, {"q": "Where does the middle fiber of the Deltoid muscle originate?", "a": "The lateral margin of the acromion."}, {"q": "What is the insertion point for the Deltoid muscle?", "a": "The deltoid tuberosity on the middle of the lateral aspect of the humerus."}, {"q": "Which nerve supplies the Deltoid muscle?", "a": "The axillary nerve."}, {"q": "The short head of the Biceps brachii originates from the tip of the _____.", "a": "Coracoid process"}, {"q": "Where is the origin of the long head of the Biceps brachii?", "a": "The supraglenoid tubercle."}, {"q": "Identify the primary insertion site (tendon) of the Biceps brachii.", "a": "The radial tuberosity."}, {"q": "Which muscle is the main flexor of the elbow?", "a": "The brachialis."}, {"q": "Where does the Coracobrachialis muscle insert?", "a": "The middle of the medial aspect of the humerus."}, {"q": "Which nerve supplies the Biceps brachii, Coracobrachialis, and Brachialis?", "a": "The musculocutaneous nerve."}, {"q": "Where does the Triceps muscle insert?", "a": "The olecranon process of the ulna."}, {"q": "Which nerve supplies the Triceps muscle?", "a": "The radial nerve."}, {"q": "What is the common origin for the superficial flexors of the forearm?", "a": "The common flexor origin (medial epicondyle of the humerus)."}, {"q": "Which forearm flexor is supplied by the ulnar nerve?", "a": "The flexor carpi ulnaris."}, {"q": "Where does the Pronator teres insert?", "a": "The middle of the lateral surface of the shaft of the radius."}, {"q": "Identify the action of the Brachioradialis muscle.", "a": "Flexion of the elbow at the midprone position."}, {"q": "The majority of the extensor muscles of the forearm are supplied by the _____ nerve.", "a": "Posterior interosseous"}, {"q": "Where does the Extensor carpi radialis longus insert?", "a": "The 2nd metacarpal bone."}, {"q": "Which Thenar muscle is responsible for thumb opposition?", "a": "The opponens pollicis."}, {"q": "Which nerve supplies the lateral two lumbrical muscles of the hand?", "a": "The median nerve."}, {"q": "What is the primary action of the lumbrical muscles?", "a": "Flexion of the metatarso-phalangeal joints and extension of the interphalangeal joints."}, {"q": "The deep terminal branch of the _____ nerve supplies all intrinsic muscles of the hand except for the thenar eminence and lateral two lumbricals.", "a": "Ulnar"}];
+
+        
+        let fcDeck    = [];
+        let fcIndex   = 0;
+        let fcScores  = [];   
+
+        function renderFlashcards() {
+            fcDeck   = [...FLASHCARDS_DATA];
+            fcIndex  = 0;
+            fcScores = new Array(fcDeck.length).fill(null);
+            _fcShowCover();
+        }
+
+        function _fcShowCover() {
+            const container = document.getElementById('flashcards-container');
+            container.innerHTML = `
+                <div class="fc-cover-wrap">
+                    <div class="fc-cover-deck" onclick="fcStartSession()">
+                        <div class="fc-cover-shadow"></div>
+                        <div class="fc-cover-shadow"></div>
+                        <div class="fc-cover-front">
+                            <div class="fc-cover-badge">${fcDeck.length} cards</div>
+                            <div class="fc-cover-icon">🦴</div>
+                            <div class="fc-cover-title">MSK Flashcards</div>
+                            <div class="fc-cover-sub">Musculoskeletal Anatomy</div>
+                        </div>
+                    </div>
+                    <button class="fc-start-btn" onclick="fcStartSession()">
+                        <i class="ri-play-fill"></i> Start Session
+                    </button>
+                </div>
+            `;
+        }
+
+        function fcStartSession() {
+            fcDeck   = [...FLASHCARDS_DATA];
+            fcIndex  = 0;
+            fcScores = new Array(fcDeck.length).fill(null);
+            _fcShowSession();
+        }
+
+        function _fcShowSession() {
+            const container = document.getElementById('flashcards-container');
+            container.innerHTML = `
+                <div class="fc-session-wrap" id="fc-session-wrap">
+                    <div class="fc-session-header">
+                        <span class="fc-session-title">🦴 MSK Flashcards</span>
+                        <span class="fc-session-count" id="fc-session-count"></span>
+                    </div>
+                    <div id="fc-deck-area" style="width:100%;max-width:580px;transition:opacity .2s,transform .2s;"></div>
+                    <div class="fc-judge" id="fc-judge">
+                        <button class="fc-judge-btn wrong-btn" id="fc-wrong-btn" onclick="fcJudge('wrong')" disabled>
+                            <i class="ri-close-line"></i> Didn't Know
+                        </button>
+                        <button class="fc-judge-btn correct-btn" id="fc-correct-btn" onclick="fcJudge('correct')" disabled>
+                            <i class="ri-check-line"></i> Got It!
+                        </button>
+                    </div>
+                    <nav class="fc-nav">
+                        <button class="fc-nav-btn" id="fc-prev-btn" onclick="fcNavigate(-1)">
+                            <i class="ri-arrow-left-line"></i>
+                        </button>
+                        <div class="fc-progress-wrap">
+                            <div class="fc-progress-bar">
+                                <div class="fc-progress-fill" id="fc-progress-fill" style="width:0%"></div>
+                            </div>
+                            <span class="fc-progress-label" id="fc-progress-label"></span>
+                        </div>
+                        <button class="fc-nav-btn" id="fc-next-btn" onclick="fcNavigate(1)">
+                            <i class="ri-arrow-right-line"></i>
+                        </button>
+                    </nav>
+                </div>
+            `;
+            _fcRenderCard();
+        }
+
+        function _fcRenderCard() {
+            const area = document.getElementById('fc-deck-area');
+            if (!area || fcDeck.length === 0) return;
+
+            const card = fcDeck[fcIndex];
+            const judged = fcScores[fcIndex];
+
+            area.innerHTML = `
+                <div class="fc-deck" onclick="fcFlip()">
+                    <div class="fc-card" id="fc-card-el">
+                        <div class="fc-inner">
+                            <div class="fc-front">
+                                <div class="fc-label">Question</div>
+                                <div class="fc-text">${card.q}</div>
+                                <div class="fc-tap-hint"><i class="ri-refresh-line"></i> Tap to reveal answer</div>
+                            </div>
+                            <div class="fc-back">
+                                <div class="fc-label">Answer ✓</div>
+                                <div class="fc-text">${card.a}</div>
+                                <div class="fc-tap-hint"><i class="ri-refresh-line"></i> Tap to flip back</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            
+            const wrongBtn   = document.getElementById('fc-wrong-btn');
+            const correctBtn = document.getElementById('fc-correct-btn');
+            
+            wrongBtn.disabled   = true;
+            correctBtn.disabled = true;
+            if (judged === 'correct') {
+                correctBtn.style.background = 'rgba(16,185,129,0.25)';
+                correctBtn.style.borderColor = 'var(--primary-green)';
+                wrongBtn.style.background = '';
+                wrongBtn.style.borderColor = '';
+            } else if (judged === 'wrong') {
+                wrongBtn.style.background = 'rgba(239,68,68,0.25)';
+                wrongBtn.style.borderColor = 'var(--primary-red)';
+                correctBtn.style.background = '';
+                correctBtn.style.borderColor = '';
+            } else {
+                wrongBtn.style.background = '';
+                wrongBtn.style.borderColor = '';
+                correctBtn.style.background = '';
+                correctBtn.style.borderColor = '';
+            }
+
+            
+            const done = fcScores.filter(s => s !== null).length;
+            const pct  = Math.round((done / fcDeck.length) * 100);
+            const fill = document.getElementById('fc-progress-fill');
+            const lbl  = document.getElementById('fc-progress-label');
+            if (fill) fill.style.width = pct + '%';
+            if (lbl)  lbl.textContent  = `${fcIndex + 1} / ${fcDeck.length}`;
+
+            const countEl = document.getElementById('fc-session-count');
+            if (countEl) countEl.textContent = `${done} / ${fcDeck.length} done`;
+
+            
+            const prev = document.getElementById('fc-prev-btn');
+            const next = document.getElementById('fc-next-btn');
+            if (prev) prev.disabled = fcIndex === 0;
+            if (next) next.disabled = fcIndex === fcDeck.length - 1;
+
+            
+            const cardEl = document.getElementById('fc-card-el');
+            if (cardEl) {
+                cardEl._flipped = false;
+                
+                if (fcScores[fcIndex] !== null) {
+                    wrongBtn.disabled   = false;
+                    correctBtn.disabled = false;
+                }
+            }
+        }
+
+        function fcFlip() {
+            const cardEl = document.getElementById('fc-card-el');
+            if (!cardEl) return;
+            cardEl.classList.toggle('flipped');
+            
+            const w = document.getElementById('fc-wrong-btn');
+            const c = document.getElementById('fc-correct-btn');
+            if (w) w.disabled   = false;
+            if (c) c.disabled   = false;
+        }
+
+        function fcJudge(result) {
+            fcScores[fcIndex] = result;
+            _fcRenderCard();
+
+            
+            const allDone = fcScores.every(s => s !== null);
+            if (allDone) {
+                
+                setTimeout(() => _fcShowResults(), 400);
+                return;
+            }
+            
+            let next = fcIndex + 1;
+            while (next < fcDeck.length && fcScores[next] !== null) next++;
+            if (next < fcDeck.length) {
+                setTimeout(() => fcNavigateTo(next), 300);
+            }
+        }
+
+        function fcNavigate(dir) {
+            const newIdx = fcIndex + dir;
+            if (newIdx < 0 || newIdx >= fcDeck.length) return;
+            const area = document.getElementById('fc-deck-area');
+            if (!area) return;
+            area.style.opacity   = '0';
+            area.style.transform = dir > 0 ? 'translateX(-40px)' : 'translateX(40px)';
+            setTimeout(() => {
+                fcIndex = newIdx;
+                _fcRenderCard();
+                area.style.transition = 'none';
+                area.style.opacity    = '0';
+                area.style.transform  = dir > 0 ? 'translateX(40px)' : 'translateX(-40px)';
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    area.style.transition = 'opacity .25s, transform .25s';
+                    area.style.opacity    = '1';
+                    area.style.transform  = 'translateX(0)';
+                }));
+            }, 200);
+        }
+
+        function fcNavigateTo(idx) {
+            const dir  = idx > fcIndex ? 1 : -1;
+            const area = document.getElementById('fc-deck-area');
+            if (!area) return;
+            area.style.opacity   = '0';
+            area.style.transform = dir > 0 ? 'translateX(-40px)' : 'translateX(40px)';
+            setTimeout(() => {
+                fcIndex = idx;
+                _fcRenderCard();
+                area.style.transition = 'none';
+                area.style.opacity    = '0';
+                area.style.transform  = dir > 0 ? 'translateX(40px)' : 'translateX(-40px)';
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    area.style.transition = 'opacity .25s, transform .25s';
+                    area.style.opacity    = '1';
+                    area.style.transform  = 'translateX(0)';
+                }));
+            }, 200);
+        }
+
+        function _fcShowResults() {
+            const correct = fcScores.filter(s => s === 'correct').length;
+            const wrong   = fcScores.filter(s => s === 'wrong').length;
+            const total   = fcDeck.length;
+            const pct     = Math.round((correct / total) * 100);
+            const stroke  = Math.round(408 * (1 - correct / total));
+            const strokeColor = pct >= 70 ? 'var(--primary-green)' : pct >= 40 ? '#F59E0B' : 'var(--primary-red)';
+            const emoji   = pct === 100 ? '🏆' : pct >= 70 ? '⭐' : pct >= 40 ? '💪' : '📖';
+            const title   = pct === 100 ? 'Perfect!' : pct >= 70 ? 'Great Job!' : pct >= 40 ? 'Keep Practicing!' : 'Keep Studying!';
+
+            const container = document.getElementById('flashcards-container');
+            container.innerHTML = `
+                <div class="fc-results-wrap">
+                    <div style="font-size:3rem">${emoji}</div>
+                    <div class="fc-results-ring">
+                        <svg width="160" height="160" viewBox="0 0 160 160">
+                            <circle class="fc-ring-bg"   cx="80" cy="80" r="65"/>
+                            <circle class="fc-ring-fill" id="fc-ring-fill" cx="80" cy="80" r="65"
+                                stroke="${strokeColor}" style="stroke-dashoffset:408"/>
+                        </svg>
+                        <div class="fc-results-text">
+                            <div class="fc-results-pct">${pct}%</div>
+                            <div class="fc-results-sub">${correct}/${total}</div>
+                        </div>
+                    </div>
+                    <div class="fc-results-title">${title}</div>
+                    <div class="fc-results-stats">
+                        <div class="fc-stat-box correct">
+                            <div class="fc-stat-num">${correct}</div>
+                            <div class="fc-stat-lbl">✓ Got It</div>
+                        </div>
+                        <div class="fc-stat-box wrong">
+                            <div class="fc-stat-num">${wrong}</div>
+                            <div class="fc-stat-lbl">✗ Missed</div>
+                        </div>
+                    </div>
+                    <div class="fc-results-btns">
+                        <button class="quiz-btn btn-secondary" onclick="_fcShowCover()">Back to Deck</button>
+                        <button class="quiz-btn btn-primary" onclick="fcStartSession()">Try Again</button>
+                    </div>
+                </div>
+            `;
+
+            
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                const ring = document.getElementById('fc-ring-fill');
+                if (ring) ring.style.strokeDashoffset = stroke;
+            }));
+        }
+
         function closeClearChatModal() {
             document.getElementById('clear-chat-modal').classList.remove('active');
         }
@@ -3651,9 +4341,9 @@
         let selectedAIImage = null;
         let selectedAIMimeType = null;
 
-
         window.explainQuestionWithAI = function (questionText, optionsArr, correctIndex) {
-            const prompt = `Please explain this medical question to me:\n\n**Question:** ${questionText}\n**Options:** ${optionsArr.join(" | ")}\n\nWhat is the correct answer and why? Please also briefly explain why the other options are incorrect.`; const chat = document.getElementById('ai-chat-window');
+            const prompt = `Please explain this medical question to me:\n\n**Question:** ${questionText}\n**Options:** ${optionsArr.join(" | ")}\n**The correct answer is:** ${optionsArr[correctIndex]}\n\nWhy is this the correct answer? and briefly why are the others incorrect?`;
+            const chat = document.getElementById('ai-chat-window');
             if (chat.style.display !== 'flex') {
                 toggleAIChat();
             }
@@ -3662,7 +4352,6 @@
             input.value = prompt;
             sendAIMessage();
         };
-
 
         async function sendAIMessage() {
             const input = document.getElementById('ai-input');
