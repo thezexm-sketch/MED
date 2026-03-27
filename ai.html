@@ -3141,7 +3141,8 @@
                     { id: 'msk_questions', key: 'MSK' },
                     { id: 'blood_questions', key: 'Blood' },
                     { id: 'foundation_questions', key: 'Foundation' },
-                    { id: 'terminology_questions', key: 'Terminology' }
+                    { id: 'terminology_questions', key: 'Terminology' },
+                    { id: 'cvs_questions', key: 'CVS' }
                 ];
                 const fetchPromises = modules.map(mod => getDoc(doc(db, "content", mod.id)));
                 const snapshots = await Promise.all(fetchPromises);
@@ -3183,11 +3184,12 @@
             'Terminology': getSafeData('medStorm_Terminology', []),
             'Foundation': getSafeData('medStorm_Foundation', []),
             'Blood': getSafeData('medStorm_Blood', []),
-            'MSK': getSafeData('medStorm_MSK', { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] })
+            'MSK': getSafeData('medStorm_MSK', { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] }),
+            'CVS': getSafeData('medStorm_CVS', [])
         };
 
-        const ICONS = { 'Blood': '🩸', 'Foundation': '🏥', 'Terminology': '📖', 'MSK': '🦴' };
-        const IMAGES = { 'Blood': 'blood.png', 'Foundation': 'found.png', 'Terminology': 'terminology.jpg', 'MSK': 'MSK.png' };
+        const ICONS = { 'Blood': '🩸', 'Foundation': '🏥', 'Terminology': '📖', 'MSK': '🦴', 'CVS': '❤️' };
+        const IMAGES = { 'Blood': 'blood.png', 'Foundation': 'found.png', 'Terminology': 'terminology.jpg', 'MSK': 'MSK.png', 'CVS': 'CVS.png' };
 
         let AppState = {
             theme: localStorage.getItem('medStormTheme') || 'dark',
@@ -3437,6 +3439,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'module-card';
+                if (modName === 'CVS') card.style.gridColumnStart = '1';
                 card.innerHTML = `
                     <button class="reset-btn" onclick="resetModule('${modName}', event)" title="Reset Progress"><i class="ri-restart-line"></i></button>
                     ${IMAGES[modName] ? `<img src="${IMAGES[modName]}" class="card-banner" onerror="this.style.display='none'">` : ''}
