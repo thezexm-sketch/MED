@@ -3431,7 +3431,7 @@
                     else if (!isMistakes && !status) availableCount++;
                 });
 
-                if (availableCount === 0 && isMistakes) continue;
+                if (availableCount === 0) continue;
                 const total = allQs.length;
                 let solved = allQs.filter(q => q && q.q && AppState.progress[q.q]).length;
                 const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
@@ -3778,6 +3778,25 @@
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => { finishQuiz(); }, 1000);
+            } else if (!Session.reviewing) {
+                // Auto-advance to next unanswered question after 1.5s
+                setTimeout(() => {
+                    // Find next unanswered question after current index
+                    let nextIdx = -1;
+                    for (let i = Session.index + 1; i < Session.queue.length; i++) {
+                        if (Session.answers[i] === null) { nextIdx = i; break; }
+                    }
+                    // If none found after, look from beginning
+                    if (nextIdx === -1) {
+                        for (let i = 0; i < Session.index; i++) {
+                            if (Session.answers[i] === null) { nextIdx = i; break; }
+                        }
+                    }
+                    if (nextIdx !== -1) {
+                        Session.index = nextIdx;
+                        loadQuestion();
+                    }
+                }, 1500);
             }
         }
         function toggleFavorite() {
