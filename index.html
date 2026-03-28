@@ -2883,7 +2883,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; const firebaseConfig = {
+
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
             authDomain: "medstorm-63475.firebaseapp.com",
             projectId: "medstorm-63475",
@@ -2901,6 +2904,7 @@
         window.doc = doc;
         window.getDoc = getDoc;
         window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
 
         window.defaultAvatar = function (email) {
             let initials = 'US';
@@ -3135,13 +3139,31 @@
                 return [];
             }
         };
+        window.FLASHCARDS_DATA = [];
+        window.loadAllFlashcards = async function () {
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, "flashcards"));
+                let combinedCards = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.cards && Array.isArray(data.cards)) {
+                        combinedCards = combinedCards.concat(data.cards);
+                    }
+                });
+                window.FLASHCARDS_DATA = combinedCards;
+            } catch (e) {
+                console.error("Error:", e);
+                window.FLASHCARDS_DATA = [];
+            }
+        };
         async function fetchQuestionsFromDB() {
             try {
                 const modules = [
                     { id: 'msk_questions', key: 'MSK' },
                     { id: 'blood_questions', key: 'Blood' },
                     { id: 'foundation_questions', key: 'Foundation' },
-                    { id: 'terminology_questions', key: 'Terminology' }
+                    { id: 'terminology_questions', key: 'Terminology' },
+                    { id: 'cvs_questions', key: 'CVS' }
                 ];
                 const fetchPromises = modules.map(mod => getDoc(doc(db, "content", mod.id)));
                 const snapshots = await Promise.all(fetchPromises);
@@ -3183,11 +3205,12 @@
             'Terminology': getSafeData('medStorm_Terminology', []),
             'Foundation': getSafeData('medStorm_Foundation', []),
             'Blood': getSafeData('medStorm_Blood', []),
-            'MSK': getSafeData('medStorm_MSK', { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] })
+            'MSK': getSafeData('medStorm_MSK', { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] }),
+            'CVS': getSafeData('medStorm_CVS', [])
         };
 
-        const ICONS = { 'Blood': '🩸', 'Foundation': '🏥', 'Terminology': '📖', 'MSK': '🦴' };
-        const IMAGES = { 'Blood': 'blood.png', 'Foundation': 'found.png', 'Terminology': 'terminology.jpg', 'MSK': 'MSK.png' };
+        const ICONS = { 'Blood': '🩸', 'Foundation': '🏥', 'Terminology': '📖', 'MSK': '🦴', 'CVS': '❤️' };
+        const IMAGES = { 'Blood': 'blood.png', 'Foundation': 'found.png', 'Terminology': 'terminology.jpg', 'MSK': 'MSK.png', 'CVS': 'CVS.png' };
 
         let AppState = {
             theme: localStorage.getItem('medStormTheme') || 'dark',
@@ -3412,11 +3435,14 @@
             };
             reader.readAsDataURL(file);
         };
-        function renderDashboard(mode = 'normal') {
+        window.renderDashboard = function (mode) {
+
+            if (!mode || typeof mode !== 'string') {
+                mode = document.body.getAttribute('data-mode') === 'mistakes' ? 'mistakes' : 'normal';
+            }
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
             const isMistakes = mode === 'mistakes';
-
             for (const modName in DB) {
                 let allQs = extractAllQuestions(DB[modName]);
 
@@ -3430,6 +3456,7 @@
                 });
 
                 if (availableCount === 0 && isMistakes) continue;
+                const allSolved = !isMistakes && availableCount === 0;
                 const total = allQs.length;
                 let solved = allQs.filter(q => q && q.q && AppState.progress[q.q]).length;
                 const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
@@ -3437,16 +3464,30 @@
 
                 const card = document.createElement('div');
                 card.className = 'module-card';
+                if (modName === 'CVS') card.style.gridColumnStart = '1';
+                if (allSolved) { card.style.opacity = '0.6'; card.style.cursor = 'default'; }
+
+                const badgeHTML = allSolved
+                    ? `<div class="card-badge" style="background: var(--primary-green);">✓ Done</div>`
+                    : `<div class="card-badge">${badgeText}</div>`;
+
+                const subtitleHTML = allSolved
+                    ? `<p class="card-subtitle" style="color: var(--primary-green); font-weight: 700;">✅ All Questions Solved!</p>`
+                    : `<p class="card-subtitle">${isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`}</p>`;
+
                 card.innerHTML = `
                     <button class="reset-btn" onclick="resetModule('${modName}', event)" title="Reset Progress"><i class="ri-restart-line"></i></button>
-                    ${IMAGES[modName] ? `<img src="${IMAGES[modName]}" class="card-banner" onerror="this.style.display='none'">` : ''}
+                    ${IMAGES[modName] ? `<img src="${IMAGES[modName]}" class="card-banner" onerror="this.style.display='none'" ${allSolved ? 'style="filter:grayscale(0.5) opacity(0.7);"' : ''}>` : ''}
                     <div class="card-content">
-                        <div class="card-header"><div class="card-icon">${ICONS[modName] || '📚'}</div><div class="card-badge">${badgeText}</div></div>
+                        <div class="card-header"><div class="card-icon">${ICONS[modName] || '📚'}</div>${badgeHTML}</div>
                         <h3 class="card-title">${modName}</h3>
-                        <p class="card-subtitle">${isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`}</p>
-                        <div class="progress-bar"><div class="progress-fill" style="width: ${isMistakes ? 100 : pct}%"></div></div>
+                        ${subtitleHTML}
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${isMistakes ? 100 : pct}%; ${allSolved ? 'background: var(--primary-green);' : ''}"></div></div>
                     </div>`;
-                card.onclick = (e) => { if (!e.target.closest('.reset-btn')) openStartModal(modName, isMistakes); };
+                card.onclick = (e) => {
+                    if (e.target.closest('.reset-btn')) return;
+                    if (!allSolved) openStartModal(modName, isMistakes);
+                };
                 grid.appendChild(card);
             }
             if (grid.innerHTML === '') grid.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-gray); grid-column: 1/-1;">🎉 No active modules found!</div>`;
@@ -4305,43 +4346,37 @@
             container.style.alignItems = 'center';
             container.style.justifyContent = 'center';
             container.style.minHeight = '300px';
-            container.innerHTML = '';
-            if (window.FLASHCARDS_DECKS.length === 0 && typeof window.loadAllFlashcards === 'function') {
+            container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;color:var(--text-gray);"><div style="font-size:2rem;">⏳</div><div style="font-weight:600;">Loading Flashcards...</div></div>';
+
+            if (window.FLASHCARDS_DATA.length === 0 && typeof window.loadAllFlashcards === 'function') {
                 await window.loadAllFlashcards();
             }
-            if (!window.FLASHCARDS_DECKS || window.FLASHCARDS_DECKS.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-gray);">No flashcards found. Check Firestore or upload some!</div>';
+
+            if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-gray);">No flashcards found in database. Upload some first!</div>';
                 return;
             }
-            _fcShowDecksList();
+            _fcShowCover();
         }
 
-        function _fcShowDecksList() {
+        function _fcShowCover() {
             const container = document.getElementById('flashcards-container');
-
-            container.style.display = 'flex';
-            container.style.alignItems = 'center';
-            container.style.justifyContent = 'center';
-            container.style.height = '65vh';
-
-            const deck = window.FLASHCARDS_DECKS[0];
-            const cardCount = deck.cards ? deck.cards.length : 0;
             container.innerHTML = `
-                <div class="fc-cover-wrap" style="width: 320px; flex: none; position: relative;">
-                    <button class="reset-btn" onclick="fcResetSpecificDeck(event, 0)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                <div class="fc-cover-wrap" style="width: 320px; position: relative;">
+                    <button class="reset-btn" onclick="fcResetSession(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
 
-                    <div class="fc-cover-deck" onclick="fcStartSession(0)">
+                    <div class="fc-cover-deck" onclick="fcStartSession()">
                         <div class="fc-cover-shadow"></div>
                         <div class="fc-cover-shadow"></div>
                         <div class="fc-cover-front">
-                            <div class="fc-cover-badge">${cardCount} cards</div>
-                            <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">${deck.icon}</div>
-                            <div class="fc-cover-title">${deck.name}</div>
-                            <div class="fc-cover-sub">${deck.subject}</div>
+                            <div class="fc-cover-badge">${window.FLASHCARDS_DATA.length} cards</div>
+                            <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦴</div>
+                            <div class="fc-cover-title">MSK Flashcards</div>
+                            <div class="fc-cover-sub">All Topics Combined</div>
                         </div>
                     </div>
-                    <button class="fc-start-btn" onclick="fcStartSession(0)" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10;">
-                        <i class="ri-play-fill"></i> Start / Continue Session
+                    <button class="fc-start-btn" onclick="fcStartSession()" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10;">
+                        <i class="ri-play-fill"></i> Start Session
                     </button>
                 </div>
             `;
@@ -4360,9 +4395,8 @@
 
             if (window.showToast) window.showToast("Flashcards progress reset successfully!", "success");
         }
-        async function fcStartSession(deckIndex) {
-            currentDeckObj = window.FLASHCARDS_DECKS[deckIndex];
-            fcDeck = currentDeckObj.cards ? [...currentDeckObj.cards] : [];
+        async function fcStartSession() {
+            fcDeck = [...window.FLASHCARDS_DATA];
 
             if (fcDeck.length === 0) {
                 alert("This deck is empty!");
@@ -4371,38 +4405,31 @@
 
             const container = document.getElementById('flashcards-container');
             container.style.display = 'block';
-            _fcRenderSessionSkeleton();
 
-            let savedScores = null;
-            const storageKey = 'medStorm_fc_' + currentDeckObj.id;
-            if (window.currentUserId && typeof window.doc === 'function') {
+            fcScores = new Array(fcDeck.length).fill(null);
+            const storageKey = 'medStorm_fc_msk_combined';
+            const localData = localStorage.getItem(storageKey);
+            if (localData) {
                 try {
-                    const userRef = window.doc(window.db, "users", window.currentUserId);
-                    const userSnap = await window.getDoc(userRef);
-
-                    if (userSnap.exists() && userSnap.data()['fcScores_' + currentDeckObj.id]) {
-                        savedScores = userSnap.data()['fcScores_' + currentDeckObj.id];
-                        localStorage.setItem(storageKey, JSON.stringify(savedScores));
-                    }
-                } catch (e) { console.error("Error loading progress:", e); }
-            }
-            if (!savedScores) {
-                const localData = localStorage.getItem(storageKey);
-                if (localData) {
-                    try { savedScores = JSON.parse(localData); } catch (e) { }
-                }
-            }
-
-            if (savedScores && Array.isArray(savedScores) && savedScores.length === fcDeck.length) {
-                fcScores = savedScores;
-            } else {
-                fcScores = new Array(fcDeck.length).fill(null);
+                    let saved = JSON.parse(localData);
+                    if (saved.length === fcDeck.length) fcScores = saved;
+                } catch (e) { }
             }
 
             fcIndex = fcScores.findIndex(s => s === null);
             if (fcIndex === -1) fcIndex = 0;
 
+            currentDeckObj = { id: 'msk_combined', icon: '🦴', name: 'MSK Flashcards' };
+            _fcRenderSessionSkeleton();
             _fcUpdateSessionData();
+        }
+
+        async function fcResetSession(e) {
+            if (e) e.stopPropagation();
+            if (!confirm("Are you sure you want to reset all progress for MSK Flashcards?")) return;
+            fcScores = new Array(window.FLASHCARDS_DATA.length).fill(null);
+            localStorage.setItem('medStorm_fc_msk_combined', JSON.stringify(fcScores));
+            if (window.showToast) window.showToast("Flashcards progress reset successfully!", "success");
         }
         function _fcRenderSessionSkeleton() {
             const container = document.getElementById('flashcards-container');
@@ -4833,9 +4860,6 @@
                     style="flex: 1; padding: 0.8rem; background: var(--primary-red); color: white; border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
                     Yes, Delete
                 </button>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
