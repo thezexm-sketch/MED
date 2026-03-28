@@ -3431,25 +3431,43 @@
                     else if (!isMistakes && !status) availableCount++;
                 });
 
-                if (availableCount === 0) continue;
+                if (availableCount === 0 && isMistakes) continue;
                 const total = allQs.length;
                 let solved = allQs.filter(q => q && q.q && AppState.progress[q.q]).length;
                 const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
                 const badgeText = isMistakes ? `${mistakesCount}` : `${availableCount}`;
 
+                const allSolved = !isMistakes && availableCount === 0;
+
                 const card = document.createElement('div');
-                card.className = 'module-card';
+                card.className = 'module-card' + (allSolved ? ' all-solved' : '');
                 if (modName === 'CVS') card.style.gridColumnStart = '1';
+
+                const subtitleText = allSolved
+                    ? 'All Questions Solved!'
+                    : isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`;
+
+                const badgeDisplay = allSolved
+                    ? `<div class="card-badge" style="background: var(--primary-green);">Done</div>`
+                    : `<div class="card-badge">${badgeText}</div>`;
+
                 card.innerHTML = `
                     <button class="reset-btn" onclick="resetModule('${modName}', event)" title="Reset Progress"><i class="ri-restart-line"></i></button>
-                    ${IMAGES[modName] ? `<img src="${IMAGES[modName]}" class="card-banner" onerror="this.style.display='none'">` : ''}
+                    ${IMAGES[modName] ? `<img src="${IMAGES[modName]}" class="card-banner" onerror="this.style.display='none'" ${allSolved ? 'style="filter: grayscale(0.4) opacity(0.7);"' : ''}>` : ''}
                     <div class="card-content">
-                        <div class="card-header"><div class="card-icon">${ICONS[modName] || '📚'}</div><div class="card-badge">${badgeText}</div></div>
+                        <div class="card-header"><div class="card-icon">${ICONS[modName] || '📚'}</div>${badgeDisplay}</div>
                         <h3 class="card-title">${modName}</h3>
-                        <p class="card-subtitle">${isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`}</p>
-                        <div class="progress-bar"><div class="progress-fill" style="width: ${isMistakes ? 100 : pct}%"></div></div>
+                        <p class="card-subtitle" style="${allSolved ? 'color: var(--primary-green); font-weight: 600;' : ''}">${allSolved ? '✅ ' : ''}${subtitleText}</p>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${isMistakes ? 100 : pct}%; ${allSolved ? 'background: var(--primary-green);' : ''}"></div></div>
                     </div>`;
-                card.onclick = (e) => { if (!e.target.closest('.reset-btn')) openStartModal(modName, isMistakes); };
+
+                if (allSolved) {
+                    card.style.opacity = '0.65';
+                    card.style.cursor = 'default';
+                    card.onclick = (e) => { if (e.target.closest('.reset-btn')) return; };
+                } else {
+                    card.onclick = (e) => { if (!e.target.closest('.reset-btn')) openStartModal(modName, isMistakes); };
+                }
                 grid.appendChild(card);
             }
             if (grid.innerHTML === '') grid.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-gray); grid-column: 1/-1;">🎉 No active modules found!</div>`;
