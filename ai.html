@@ -2883,7 +2883,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; const firebaseConfig = {
+
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
             authDomain: "medstorm-63475.firebaseapp.com",
             projectId: "medstorm-63475",
@@ -2901,6 +2904,7 @@
         window.doc = doc;
         window.getDoc = getDoc;
         window.setDoc = setDoc;
+        window.updateDoc = updateDoc; // تأكيد إضافتها هنا
 
         window.defaultAvatar = function (email) {
             let initials = 'US';
@@ -4850,9 +4854,6 @@
                     style="flex: 1; padding: 0.8rem; background: var(--primary-red); color: white; border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
                     Yes, Delete
                 </button>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
