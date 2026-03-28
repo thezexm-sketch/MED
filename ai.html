@@ -3432,42 +3432,38 @@
                 });
 
                 if (availableCount === 0 && isMistakes) continue;
+                const allSolved = !isMistakes && availableCount === 0;
                 const total = allQs.length;
                 let solved = allQs.filter(q => q && q.q && AppState.progress[q.q]).length;
                 const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
                 const badgeText = isMistakes ? `${mistakesCount}` : `${availableCount}`;
 
-                const allSolved = !isMistakes && availableCount === 0;
-
                 const card = document.createElement('div');
-                card.className = 'module-card' + (allSolved ? ' all-solved' : '');
+                card.className = 'module-card';
                 if (modName === 'CVS') card.style.gridColumnStart = '1';
+                if (allSolved) { card.style.opacity = '0.6'; card.style.cursor = 'default'; }
 
-                const subtitleText = allSolved
-                    ? 'All Questions Solved!'
-                    : isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`;
-
-                const badgeDisplay = allSolved
-                    ? `<div class="card-badge" style="background: var(--primary-green);">Done</div>`
+                const badgeHTML = allSolved
+                    ? `<div class="card-badge" style="background: var(--primary-green);">✓ Done</div>`
                     : `<div class="card-badge">${badgeText}</div>`;
+
+                const subtitleHTML = allSolved
+                    ? `<p class="card-subtitle" style="color: var(--primary-green); font-weight: 700;">✅ All Questions Solved!</p>`
+                    : `<p class="card-subtitle">${isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`}</p>`;
 
                 card.innerHTML = `
                     <button class="reset-btn" onclick="resetModule('${modName}', event)" title="Reset Progress"><i class="ri-restart-line"></i></button>
-                    ${IMAGES[modName] ? `<img src="${IMAGES[modName]}" class="card-banner" onerror="this.style.display='none'" ${allSolved ? 'style="filter: grayscale(0.4) opacity(0.7);"' : ''}>` : ''}
+                    ${IMAGES[modName] ? `<img src="${IMAGES[modName]}" class="card-banner" onerror="this.style.display='none'" ${allSolved ? 'style="filter:grayscale(0.5) opacity(0.7);"' : ''}>` : ''}
                     <div class="card-content">
-                        <div class="card-header"><div class="card-icon">${ICONS[modName] || '📚'}</div>${badgeDisplay}</div>
+                        <div class="card-header"><div class="card-icon">${ICONS[modName] || '📚'}</div>${badgeHTML}</div>
                         <h3 class="card-title">${modName}</h3>
-                        <p class="card-subtitle" style="${allSolved ? 'color: var(--primary-green); font-weight: 600;' : ''}">${allSolved ? '✅ ' : ''}${subtitleText}</p>
+                        ${subtitleHTML}
                         <div class="progress-bar"><div class="progress-fill" style="width: ${isMistakes ? 100 : pct}%; ${allSolved ? 'background: var(--primary-green);' : ''}"></div></div>
                     </div>`;
-
-                if (allSolved) {
-                    card.style.opacity = '0.65';
-                    card.style.cursor = 'default';
-                    card.onclick = (e) => { if (e.target.closest('.reset-btn')) return; };
-                } else {
-                    card.onclick = (e) => { if (!e.target.closest('.reset-btn')) openStartModal(modName, isMistakes); };
-                }
+                card.onclick = (e) => {
+                    if (e.target.closest('.reset-btn')) return;
+                    if (!allSolved) openStartModal(modName, isMistakes);
+                };
                 grid.appendChild(card);
             }
             if (grid.innerHTML === '') grid.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-gray); grid-column: 1/-1;">🎉 No active modules found!</div>`;
@@ -3796,25 +3792,6 @@
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => { finishQuiz(); }, 1000);
-            } else if (!Session.reviewing) {
-                // Auto-advance to next unanswered question after 1.5s
-                setTimeout(() => {
-                    // Find next unanswered question after current index
-                    let nextIdx = -1;
-                    for (let i = Session.index + 1; i < Session.queue.length; i++) {
-                        if (Session.answers[i] === null) { nextIdx = i; break; }
-                    }
-                    // If none found after, look from beginning
-                    if (nextIdx === -1) {
-                        for (let i = 0; i < Session.index; i++) {
-                            if (Session.answers[i] === null) { nextIdx = i; break; }
-                        }
-                    }
-                    if (nextIdx !== -1) {
-                        Session.index = nextIdx;
-                        loadQuestion();
-                    }
-                }, 1500);
             }
         }
         function toggleFavorite() {
