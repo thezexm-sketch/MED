@@ -638,6 +638,9 @@
             width: 100%;
             padding: 1.5rem 2.5rem 0;
             margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1005;
+
         }
 
         body.focus-mode .quiz-header {
@@ -668,6 +671,7 @@
         .question-header {
             text-align: center;
             margin-bottom: 0.75rem;
+            position: relative;
         }
 
         .question-tag {
@@ -706,13 +710,13 @@
         }
 
         .option-btn {
-            padding: 0.85rem 1rem;
+            padding: 0.55rem 0.75rem;
+            font-size: 1.15rem;
             background: var(--bg-card);
             border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
             color: var(--text-light);
-            font-size: 0.95rem;
-            font-weight: 500;
+            font-weight: 600;
             text-align: left;
             cursor: pointer;
             transition: var(--transition);
@@ -1546,8 +1550,8 @@
             }
 
             .option-btn {
-                padding: 0.65rem 0.85rem;
-                font-size: 0.88rem;
+                padding: 0.4rem 0.6rem;
+                font-size: 1.05rem;
                 word-break: break-word;
                 white-space: normal;
                 text-align: left;
@@ -2643,10 +2647,13 @@
                                 class="ri-fullscreen-line" id="fullscreen-icon-quiz"></i></button>
                         <button class="action-icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i
                                 class="ri-sun-fill" id="theme-icon-quiz"></i></button>
+                        <button id="toggle-draw-btn-quiz" class="action-icon-btn" title="Draw & Notes"><i
+                                class="ri-pen-nib-line"></i></button>
                     </div>
-                    <div id="main-quiz-timer" class="quiz-timer-pill hidden">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <div id="main-quiz-timer" class="quiz-timer-pill hidden"
+                        style="align-self: center; margin-right: 40px;"> <svg width="18" height="18" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                            stroke-linejoin="round">
                             <circle cx="12" cy="13" r="8" />
                             <path d="M12 9v4l2.5 2.5" />
                             <path d="M9 3h6" />
@@ -2662,6 +2669,43 @@
                     <span class="question-tag" id="q-tag">Loading...</span>
                     <img id="q-image" class="question-image" src="" alt="Question" style="display: none;">
                     <div class="question-text" id="q-text">Loading question...</div>
+                    <div id="drawing-toolbar"
+                        style="display: none; position: fixed; top: 90px; right: 20px; background: var(--bg-darker); border: 1px solid var(--border-color); padding: 14px; border-radius: 14px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); z-index: 1000; flex-direction: column; gap: 12px; align-items: center; min-width: 130px;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: bold; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; width: 100%; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+                            TOOLS</div>
+                        <!-- Color circles -->
+                        <div style="display: flex; gap: 8px; justify-content: center;">
+                            <div onclick="setDrawColor('#EF4444', this)" title="Red"
+                                style="width: 28px; height: 28px; border-radius: 50%; background: #EF4444; cursor: pointer; border: 3px solid white; box-shadow: 0 0 0 2px #EF4444; transition: 0.2s;">
+                            </div>
+                            <div onclick="setDrawColor('#FACC15', this)" title="Yellow"
+                                style="width: 28px; height: 28px; border-radius: 50%; background: #FACC15; cursor: pointer; border: 3px solid transparent; box-shadow: 0 0 0 2px #FACC15; transition: 0.2s;">
+                            </div>
+                            <div onclick="setDrawColor('#3B82F6', this)" title="Blue"
+                                style="width: 28px; height: 28px; border-radius: 50%; background: #3B82F6; cursor: pointer; border: 3px solid transparent; box-shadow: 0 0 0 2px #3B82F6; transition: 0.2s;">
+                            </div>
+                            <div onclick="setDrawColor('#FFFFFF', this)" title="White"
+                                style="width: 28px; height: 28px; border-radius: 50%; background: #FFFFFF; cursor: pointer; border: 3px solid transparent; box-shadow: 0 0 0 2px #aaaaaa; transition: 0.2s;">
+                            </div>
+                        </div>
+                        <!-- Hidden color input to keep JS compatibility -->
+                        <input type="hidden" id="draw-color" value="#EF4444">
+                        <!-- Font size label + slider -->
+                        <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; align-items: center;">
+                            <div
+                                style="font-size: 0.7rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px;">
+                                Font Size</div>
+                            <input type="range" id="draw-size" min="1" max="20" value="3" title="Pen Size"
+                                style="width: 100px; accent-color: var(--accent);">
+                        </div>
+                        <button id="clear-draw-btn"
+                            style="width: 100%; background: rgba(239, 68, 68, 0.15); color: var(--primary-red); font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s;"><i
+                                class="ri-delete-bin-line"></i> Clear</button>
+                    </div>
+
+                    <canvas id="drawing-canvas"
+                        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 998; pointer-events: none;"></canvas>
                 </div>
 
                 <div>
@@ -2687,19 +2731,24 @@
                                 style="min-width: 100px;"><i class="ri-arrow-left-line"></i> Prev</button>
                             <button class="quiz-btn btn-primary" id="btn-next" onclick="nextQuestion()"
                                 style="min-width: 100px;">Next <i class="ri-arrow-right-line"></i></button>
-                            <button class="quiz-btn" id="btn-finish" onclick="finishQuiz()"
-                                style="min-width: 100px; background: linear-gradient(135deg, var(--primary-red), var(--dark-red)); color: white;">
-                                <i class="ri-check-double-line"></i> Finish
-                            </button>
                         </div>
 
                     </div>
                 </div>
 
-                <button id="ai-explain-btn"
-                    style="background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); width: 100%; margin-top: 15px; transition: 0.3s;">
-                    <i class="ri-robot-2-fill" style="font-size: 1.2rem;"></i> Explain with AI
-                </button>
+                <div
+                    style="display: flex; gap: 10px; margin-top: 15px; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <button id="ai-explain-btn" class="quiz-btn"
+                        style="flex: 1; padding: 10px; background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
+                        <i class="ri-robot-2-fill"></i> Explain With AI
+                    </button>
+                    <button id="btn-finish-new" onclick="finishQuiz()" class="quiz-btn"
+                        style="flex: 1; padding: 10px; background: linear-gradient(135deg, var(--primary-red), var(--dark-red)); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
+                        <span style="display:inline-flex; align-items:center;"><i class="ri-check-line"
+                                style="font-size:1rem;"></i><i class="ri-check-line"
+                                style="font-size:1rem; margin-left:-8px;"></i></span> Finish
+                    </button>
+                </div>
             </div>
         </div>
         </div>
@@ -2904,7 +2953,7 @@
         window.doc = doc;
         window.getDoc = getDoc;
         window.setDoc = setDoc;
-        window.updateDoc = updateDoc; // تأكيد إضافتها هنا
+        window.updateDoc = updateDoc;
 
         window.defaultAvatar = function (email) {
             let initials = 'US';
@@ -3139,6 +3188,23 @@
                 return [];
             }
         };
+        window.FLASHCARDS_DATA = [];
+        window.loadAllFlashcards = async function () {
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, "flashcards"));
+                let combinedCards = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.cards && Array.isArray(data.cards)) {
+                        combinedCards = combinedCards.concat(data.cards);
+                    }
+                });
+                window.FLASHCARDS_DATA = combinedCards;
+            } catch (e) {
+                console.error("Error:", e);
+                window.FLASHCARDS_DATA = [];
+            }
+        };
         async function fetchQuestionsFromDB() {
             try {
                 const modules = [
@@ -3164,6 +3230,47 @@
                 if (isUpdated && typeof window.renderDashboard === "function") window.renderDashboard();
             } catch (e) { console.error("Fetch Error:", e); }
         }
+
+        function highlightSelection() {
+            const selection = window.getSelection();
+
+            if (!selection.isCollapsed && selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const qTextNode = document.getElementById('q-text');
+                if (qTextNode.contains(range.commonAncestorContainer)) {
+                    const span = document.createElement('span');
+                    span.className = 'q-highlight';
+
+                    span.style.backgroundColor = 'rgba(250, 204, 21, 0.3)';
+                    span.style.borderBottom = '2px solid #FACC15';
+                    span.style.borderRadius = '3px';
+                    span.style.padding = '0 2px';
+                    span.style.cursor = 'pointer';
+
+                    try {
+                        range.surroundContents(span);
+                        selection.removeAllRanges();
+                        if (!Session.highlights) Session.highlights = {};
+                        Session.highlights[Session.index] = qTextNode.innerHTML;
+                    } catch (e) {
+
+                    }
+                }
+            }
+        }
+        document.getElementById('q-text').addEventListener('mouseup', highlightSelection);
+        document.getElementById('q-text').addEventListener('touchend', highlightSelection);
+        document.getElementById('q-text').addEventListener('click', function (e) {
+            if (e.target.classList.contains('q-highlight')) {
+                const parent = e.target.parentNode;
+                while (e.target.firstChild) {
+                    parent.insertBefore(e.target.firstChild, e.target);
+                }
+                parent.removeChild(e.target);
+
+                Session.highlights[Session.index] = this.innerHTML;
+            }
+        });
     </script>
     <script>
         window.addEventListener('popstate', (e) => {
@@ -3418,11 +3525,14 @@
             };
             reader.readAsDataURL(file);
         };
-        function renderDashboard(mode = 'normal') {
+        window.renderDashboard = function (mode) {
+
+            if (!mode || typeof mode !== 'string') {
+                mode = document.body.getAttribute('data-mode') === 'mistakes' ? 'mistakes' : 'normal';
+            }
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
             const isMistakes = mode === 'mistakes';
-
             for (const modName in DB) {
                 let allQs = extractAllQuestions(DB[modName]);
 
@@ -3476,7 +3586,9 @@
         function createSubtopicBtn(label, count, value) {
             const btn = document.createElement('div');
             btn.className = 'subtopic-btn';
-            btn.innerHTML = `<span>${label}</span> <span>${count}</span>`;
+            const displayLabel = label.replace(/^\d+\.\s*/, "");
+
+            btn.innerHTML = `<span>${displayLabel}</span> <span>${count}</span>`;
             btn.onclick = () => {
                 btn.classList.toggle('active');
                 if (Session.selectedSubtopics.includes(value)) {
@@ -3501,9 +3613,10 @@
 
             if (!Array.isArray(DB[modName])) {
                 subContainer.style.display = 'block';
-                for (const key in DB[modName]) {
-                    const data = DB[modName][key];
+                const sortedKeys = Object.keys(DB[modName]).sort();
 
+                for (const key of sortedKeys) {
+                    const data = DB[modName][key];
                     if (Array.isArray(data)) {
                         const pool = isMistakes ? data.filter(q => AppState.progress[q.q] === 'wrong') : data.filter(q => !AppState.progress[q.q]);
                         if (pool.length > 0) {
@@ -3513,7 +3626,8 @@
                         let groupPoolCount = 0;
                         const childrenElements = [];
 
-                        for (const childKey in data) {
+                        const sortedChildKeys = Object.keys(data).sort();
+                        for (const childKey of sortedChildKeys) {
                             const childData = data[childKey];
                             const pool = isMistakes ? childData.filter(q => AppState.progress[q.q] === 'wrong') : childData.filter(q => !AppState.progress[q.q]);
                             if (pool.length > 0) {
@@ -3528,7 +3642,9 @@
 
                             const header = document.createElement('div');
                             header.className = 'subtopic-header';
-                            header.innerHTML = `<span>${key}</span> <span>${groupPoolCount} <i class="ri-arrow-down-s-line"></i></span>`;
+
+                            const displayKey = key.replace(/^\d+\.\s*/, "");
+                            header.innerHTML = `<span>${displayKey}</span> <span>${groupPoolCount} <i class="ri-arrow-down-s-line"></i></span>`;
 
                             const childrenContainer = document.createElement('div');
                             childrenContainer.className = 'subtopic-children';
@@ -3618,6 +3734,9 @@
 
             startSession(); loadQuestion();
             if (Session.settings.time > 0) startQuestionTimer();
+            Session.drawings = {};
+            Session.highlights = {};
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
         window.showToast = function (message, type = 'success') {
             let container = document.getElementById('toast-container');
@@ -3639,8 +3758,24 @@
 
         function loadQuestion() {
             const q = Session.queue[Session.index];
-            document.getElementById('q-tag').textContent = `${Session.module} • ${Session.index + 1}/${Session.queue.length}`;
-            document.getElementById('q-text').textContent = q.q;
+            let subtopicName = "General";
+            const modData = DB[Session.module];
+            if (modData && !Array.isArray(modData)) {
+                for (const key in modData) {
+                    if (Array.isArray(modData[key]) && modData[key].find(item => item.q === q.q)) {
+                        subtopicName = key;
+                        break;
+                    }
+                }
+            }
+            const displaySubtopic = subtopicName.replace(/^\d+\.\s*/, "");
+            document.getElementById('q-tag').textContent = `${Session.module} • ${displaySubtopic} • ${Session.index + 1}/${Session.queue.length}`;
+
+            if (Session.highlights && Session.highlights[q.q]) {
+                document.getElementById('q-text').innerHTML = Session.highlights[q.q];
+            } else {
+                document.getElementById('q-text').textContent = q.q;
+            }
             const qImg = document.getElementById('q-image');
             if (q.img) { qImg.src = q.img; qImg.style.display = 'block'; } else qImg.style.display = 'none';
 
@@ -3707,6 +3842,7 @@
             noteBtn.classList.toggle('active', !!AppState.notes[q.q]); noteBtn.querySelector('i').className = AppState.notes[q.q] ? 'ri-file-text-fill' : 'ri-file-text-line';
 
             if (Session.quizMode === 'practice' && Session.settings.time > 0 && !Session.reviewing && ans === null) startQuestionTimer();
+            loadCurrentDrawing();
         }
         function startQuestionTimer() {
             clearInterval(Session.timer);
@@ -3818,8 +3954,14 @@
             document.getElementById('btn-note').querySelector('i').className = text ? 'ri-file-text-fill' : 'ri-file-text-line';
         }
 
-        function prevQuestion() { if (Session.index > 0) { Session.index--; loadQuestion(); } }
-        function nextQuestion() {
+        function prevQuestion() {
+            saveCurrentDrawing();
+            if (Session.index > 0) {
+                Session.index--;
+                loadQuestion();
+            }
+        } function nextQuestion() {
+            saveCurrentDrawing();
             if (Session.index < Session.queue.length - 1) {
                 Session.index++;
                 loadQuestion();
@@ -3832,6 +3974,7 @@
             }
         }
         function finishQuiz() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             clearInterval(globalStopwatch);
             document.getElementById('main-quiz-timer').classList.add('hidden');
             const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
@@ -4214,7 +4357,11 @@
         const keysParts = [
             { p1: 'AIzaSyCeXgDowothowiH', p2: 'FdRnuU5FhF50hu505Z4' },
             { p1: 'AIzaSyDrTeapifF2WUJs', p2: '-oyuUtNvKBFjvNCvmlg' },
-            { p1: 'AIzaSyCISLJSe8c6EYC6NR', p2: 'Q8hcpbmm5jOgBNAi8' }
+            { p1: 'AIzaSyCISLJSe8c6EYC6NR', p2: 'Q8hcpbmm5jOgBNAi8' },
+            { p1: 'AIzaSyDgOV0g2I1u8', p2: 'XpRD3aZdGL_GVa-7f7kliM' },
+            { p1: 'AIzaSyBBp3cMrjfa4Y', p2: 'whSGUuVjPKg0zQ5k_yUkY' },
+            { p1: 'AIzaSyDV6sapk1dZqgd', p2: 'bmKFAhvfi1Y7ydPij620' },
+            { p1: 'AIzaSyDjbE4vS7pIDTcm9CM', p2: 'iUPDvGYwwVwerCUY' }
         ];
 
         const API_KEYS_POOL = keysParts.map(k => k.p1 + k.p2);
@@ -4276,6 +4423,91 @@
                 btn.classList.remove('active', 'report-active');
             });
         }
+        function createSubtopicBtn(label, count, value) {
+            const btn = document.createElement('div');
+            btn.className = 'subtopic-btn';
+            const displayLabel = label.replace(/^\d+\.\s*/, "");
+
+            btn.innerHTML = `<span>${displayLabel}</span> <span>${count}</span>`;
+            btn.onclick = () => {
+                btn.classList.toggle('active');
+                if (Session.selectedSubtopics.includes(value)) {
+                    Session.selectedSubtopics = Session.selectedSubtopics.filter(s => s !== value);
+                } else {
+                    Session.selectedSubtopics.push(value);
+                }
+            };
+            return btn;
+        }
+
+        function openStartModal(modName, isMistakes) {
+            const errDiv = document.getElementById('start-modal-error');
+            if (errDiv) errDiv.style.display = 'none';
+            Session.module = modName; Session.mode = isMistakes ? 'mistakes' : 'normal'; Session.selectedSubtopics = [];
+            document.getElementById('modal-title').textContent = isMistakes ? `Review ${modName}` : `Solve ${modName}`;
+            document.getElementById('start-modal').classList.add('active');
+            setQuizMode('practice', document.querySelector('.mode-btn'));
+
+            const subContainer = document.getElementById('subtopic-section');
+            const subGrid = document.getElementById('subtopic-grid');
+            subGrid.innerHTML = '';
+
+            if (!Array.isArray(DB[modName])) {
+                subContainer.style.display = 'block';
+                const sortedKeys = Object.keys(DB[modName]).sort();
+
+                for (const key of sortedKeys) {
+                    const data = DB[modName][key];
+
+                    if (Array.isArray(data)) {
+                        const pool = isMistakes ? data.filter(q => AppState.progress[q.q] === 'wrong') : data.filter(q => !AppState.progress[q.q]);
+                        if (pool.length > 0) {
+                            subGrid.appendChild(createSubtopicBtn(key, pool.length, key));
+                        }
+                    } else {
+                        let groupPoolCount = 0;
+                        const childrenElements = [];
+
+                        const sortedChildKeys = Object.keys(data).sort();
+                        for (const childKey of sortedChildKeys) {
+                            const childData = data[childKey];
+                            const pool = isMistakes ? childData.filter(q => AppState.progress[q.q] === 'wrong') : childData.filter(q => !AppState.progress[q.q]);
+                            if (pool.length > 0) {
+                                groupPoolCount += pool.length;
+                                childrenElements.push(createSubtopicBtn(childKey, pool.length, `${key}___${childKey}`));
+                            }
+                        }
+
+                        if (groupPoolCount > 0) {
+                            const groupDiv = document.createElement('div');
+                            groupDiv.className = 'subtopic-group';
+
+                            const header = document.createElement('div');
+                            header.className = 'subtopic-header';
+                            const displayKey = key.replace(/^\d+\.\s*/, "");
+                            header.innerHTML = `<span>${displayKey}</span> <span>${groupPoolCount} <i class="ri-arrow-down-s-line"></i></span>`;
+
+                            const childrenContainer = document.createElement('div');
+                            childrenContainer.className = 'subtopic-children';
+                            childrenContainer.style.display = 'none';
+
+                            childrenElements.forEach(el => childrenContainer.appendChild(el));
+
+                            header.onclick = () => {
+                                const isHidden = childrenContainer.style.display === 'none';
+                                childrenContainer.style.display = isHidden ? 'grid' : 'none';
+                                header.querySelector('i').style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+                            };
+
+                            groupDiv.appendChild(header);
+                            groupDiv.appendChild(childrenContainer);
+                            subGrid.appendChild(groupDiv);
+                        }
+                    }
+                }
+                if (subGrid.innerHTML === '') subGrid.innerHTML = '<div style="text-align:center; color:var(--text-gray)">No questions available.</div>';
+            } else { subContainer.style.display = 'none'; }
+        }
 
         async function sendReport() {
             const reason = document.getElementById('report-text').value.trim();
@@ -4326,43 +4558,36 @@
             container.style.alignItems = 'center';
             container.style.justifyContent = 'center';
             container.style.minHeight = '300px';
-            container.innerHTML = '';
-            if (window.FLASHCARDS_DECKS.length === 0 && typeof window.loadAllFlashcards === 'function') {
+            container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;color:var(--text-gray);"><div style="font-size:2rem;">⏳</div><div style="font-weight:600;">Loading Flashcards...</div></div>';
+
+            if (window.FLASHCARDS_DATA.length === 0 && typeof window.loadAllFlashcards === 'function') {
                 await window.loadAllFlashcards();
             }
-            if (!window.FLASHCARDS_DECKS || window.FLASHCARDS_DECKS.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-gray);">No flashcards found. Check Firestore or upload some!</div>';
+
+            if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-gray);">No flashcards found in database. Upload some first!</div>';
                 return;
             }
-            _fcShowDecksList();
+            _fcShowCover();
         }
 
-        function _fcShowDecksList() {
+        function _fcShowCover() {
             const container = document.getElementById('flashcards-container');
-
-            container.style.display = 'flex';
-            container.style.alignItems = 'center';
-            container.style.justifyContent = 'center';
-            container.style.height = '65vh';
-
-            const deck = window.FLASHCARDS_DECKS[0];
-            const cardCount = deck.cards ? deck.cards.length : 0;
             container.innerHTML = `
-                <div class="fc-cover-wrap" style="width: 320px; flex: none; position: relative;">
-                    <button class="reset-btn" onclick="fcResetSpecificDeck(event, 0)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                <div class="fc-cover-wrap" style="width: 320px; position: relative;">
+                    <button class="reset-btn" onclick="fcResetSession(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
 
-                    <div class="fc-cover-deck" onclick="fcStartSession(0)">
+                    <div class="fc-cover-deck" onclick="fcStartSession()">
                         <div class="fc-cover-shadow"></div>
                         <div class="fc-cover-shadow"></div>
                         <div class="fc-cover-front">
-                            <div class="fc-cover-badge">${cardCount} cards</div>
-                            <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">${deck.icon}</div>
-                            <div class="fc-cover-title">${deck.name}</div>
-                            <div class="fc-cover-sub">${deck.subject}</div>
+                            <div class="fc-cover-badge">${window.FLASHCARDS_DATA.length} cards</div>
+                            <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦴</div>
+                            <div class="fc-cover-title">MSK Flashcards</div>
                         </div>
                     </div>
-                    <button class="fc-start-btn" onclick="fcStartSession(0)" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10;">
-                        <i class="ri-play-fill"></i> Start / Continue Session
+                    <button class="fc-start-btn" onclick="fcStartSession()" style="width: 30%; justify-content: center; margin-top: -15px; position: relative; z-index: 10;">
+                        <i class="ri-play-fill"></i> Start Session
                     </button>
                 </div>
             `;
@@ -4381,9 +4606,8 @@
 
             if (window.showToast) window.showToast("Flashcards progress reset successfully!", "success");
         }
-        async function fcStartSession(deckIndex) {
-            currentDeckObj = window.FLASHCARDS_DECKS[deckIndex];
-            fcDeck = currentDeckObj.cards ? [...currentDeckObj.cards] : [];
+        async function fcStartSession() {
+            fcDeck = [...window.FLASHCARDS_DATA];
 
             if (fcDeck.length === 0) {
                 alert("This deck is empty!");
@@ -4392,38 +4616,31 @@
 
             const container = document.getElementById('flashcards-container');
             container.style.display = 'block';
-            _fcRenderSessionSkeleton();
 
-            let savedScores = null;
-            const storageKey = 'medStorm_fc_' + currentDeckObj.id;
-            if (window.currentUserId && typeof window.doc === 'function') {
+            fcScores = new Array(fcDeck.length).fill(null);
+            const storageKey = 'medStorm_fc_msk_combined';
+            const localData = localStorage.getItem(storageKey);
+            if (localData) {
                 try {
-                    const userRef = window.doc(window.db, "users", window.currentUserId);
-                    const userSnap = await window.getDoc(userRef);
-
-                    if (userSnap.exists() && userSnap.data()['fcScores_' + currentDeckObj.id]) {
-                        savedScores = userSnap.data()['fcScores_' + currentDeckObj.id];
-                        localStorage.setItem(storageKey, JSON.stringify(savedScores));
-                    }
-                } catch (e) { console.error("Error loading progress:", e); }
-            }
-            if (!savedScores) {
-                const localData = localStorage.getItem(storageKey);
-                if (localData) {
-                    try { savedScores = JSON.parse(localData); } catch (e) { }
-                }
-            }
-
-            if (savedScores && Array.isArray(savedScores) && savedScores.length === fcDeck.length) {
-                fcScores = savedScores;
-            } else {
-                fcScores = new Array(fcDeck.length).fill(null);
+                    let saved = JSON.parse(localData);
+                    if (saved.length === fcDeck.length) fcScores = saved;
+                } catch (e) { }
             }
 
             fcIndex = fcScores.findIndex(s => s === null);
             if (fcIndex === -1) fcIndex = 0;
 
+            currentDeckObj = { id: 'msk_combined', icon: '🦴', name: 'MSK Flashcards' };
+            _fcRenderSessionSkeleton();
             _fcUpdateSessionData();
+        }
+
+        async function fcResetSession(e) {
+            if (e) e.stopPropagation();
+            if (!confirm("Are you sure you want to reset all progress for MSK Flashcards?")) return;
+            fcScores = new Array(window.FLASHCARDS_DATA.length).fill(null);
+            localStorage.setItem('medStorm_fc_msk_combined', JSON.stringify(fcScores));
+            if (window.showToast) window.showToast("Flashcards progress reset successfully!", "success");
         }
         function _fcRenderSessionSkeleton() {
             const container = document.getElementById('flashcards-container');
@@ -4802,6 +5019,128 @@
                 msgsDiv.scrollTop = msgsDiv.scrollHeight;
             }
         }
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        const drawingToolbar = document.getElementById('drawing-toolbar');
+        let isDrawingMode = false;
+        let isDrawing = false;
+
+        let currentDrawColor = '#EF4444';
+
+        window.setDrawColor = function (color, el) {
+            currentDrawColor = color;
+            document.getElementById('draw-color').value = color;
+
+            document.querySelectorAll('#drawing-toolbar [onclick^="setDrawColor"]').forEach(d => {
+                d.style.border = '3px solid transparent';
+            });
+            if (el) el.style.border = '3px solid white';
+        };
+
+        function saveCurrentDrawing() {
+            if (!canvas || !ctx) return;
+            if (!Session.drawings) Session.drawings = {};
+            Session.drawings[Session.index] = canvas.toDataURL();
+        }
+        function loadCurrentDrawing() {
+            if (!canvas || !ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (Session.drawings && Session.drawings[Session.index]) {
+                const img = new Image();
+                img.onload = function () {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = Session.drawings[Session.index];
+            }
+        }
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+
+            let imageData = null;
+            if (canvas.width > 0 && canvas.height > 0) {
+                imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            }
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+
+            ctx.scale(dpr, dpr);
+
+            if (imageData) {
+                ctx.putImageData(imageData, 0, 0);
+            }
+        }
+        function toggleDrawMode() {
+            isDrawingMode = !isDrawingMode;
+            const quizBtn = document.getElementById('toggle-draw-btn-quiz');
+            if (isDrawingMode) {
+                resizeCanvas();
+                canvas.style.pointerEvents = 'auto';
+                drawingToolbar.style.display = 'flex';
+                if (quizBtn) quizBtn.style.color = 'var(--primary-red)';
+            } else {
+                canvas.style.pointerEvents = 'none';
+                drawingToolbar.style.display = 'none';
+                if (quizBtn) quizBtn.style.color = '';
+            }
+        }
+
+        const toggleDrawBtnQuiz = document.getElementById('toggle-draw-btn-quiz');
+        if (toggleDrawBtnQuiz) toggleDrawBtnQuiz.addEventListener('click', toggleDrawMode);
+
+        function getPos(e) {
+
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX,
+                y: clientY
+            };
+        }
+        function startPosition(e) {
+            if (!isDrawingMode) return;
+            isDrawing = true;
+            const pos = getPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            e.preventDefault();
+        }
+
+        function endPosition(e) {
+            if (!isDrawing) return;
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing || !isDrawingMode) return;
+            e.preventDefault();
+            const pos = getPos(e);
+
+            ctx.lineWidth = document.getElementById('draw-size').value;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = currentDrawColor;
+
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseleave', endPosition);
+        canvas.addEventListener('touchstart', startPosition, { passive: false });
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchcancel', endPosition);
+        canvas.addEventListener('touchmove', draw, { passive: false });
+
+        document.getElementById('clear-draw-btn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
     </script>
     <div class="modal-overlay" id="reset-modal" style="z-index: 9999;">
         <div class="modal"
@@ -4854,6 +5193,7 @@
                     style="flex: 1; padding: 0.8rem; background: var(--primary-red); color: white; border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
                     Yes, Delete
                 </button>
+
 </body>
 
 </html>
