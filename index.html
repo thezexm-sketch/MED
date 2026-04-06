@@ -1027,25 +1027,42 @@
         }
 
         .subtopic-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
             margin-bottom: 1rem;
+            max-height: 40vh;
+
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .subtopic-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .subtopic-grid::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
         }
 
         .subtopic-btn {
-            display: flex;
+            display: inline-flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.6rem 0.8rem;
+            padding: 0.4rem 0.75rem;
             background: var(--bg-darker);
             border: 2px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 20px;
+
             cursor: pointer;
             transition: var(--transition);
             color: var(--text-gray);
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            flex-grow: 1;
+
+            gap: 10px;
         }
 
         .subtopic-btn:hover {
@@ -1068,16 +1085,18 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            width: 100%;
+
         }
 
         .subtopic-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 1rem;
             background: var(--bg-darker);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 700;
             font-size: 0.9rem;
@@ -1095,12 +1114,15 @@
         }
 
         .subtopic-children {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
-            padding-left: 0.75rem;
-            border-left: 2px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border-left: 3px solid var(--accent);
             margin-left: 0.5rem;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 0 8px 8px 8px;
+            margin-top: 2px;
         }
 
         .custom-input {
