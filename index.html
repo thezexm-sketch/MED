@@ -3335,6 +3335,14 @@
                     if (docSnap.exists()) {
                         let data = docSnap.data();
                         let finalData = data.questionsList ? data.questionsList : data;
+
+                        if (modules[index].key === 'CVS' && typeof CVS_QUESTIONS !== 'undefined') {
+                            if (typeof finalData === 'object' && !Array.isArray(finalData)) {
+                                finalData = Object.assign({}, CVS_QUESTIONS, finalData);
+                            } else {
+                                finalData = CVS_QUESTIONS;
+                            }
+                        }
                         window.DB[modules[index].key] = finalData;
                         try { localStorage.setItem('medStorm_' + modules[index].key, JSON.stringify(finalData)); } catch (e) { }
                         isUpdated = true;
@@ -3409,7 +3417,7 @@
             'Foundation': getSafeData('medStorm_Foundation', []),
             'Blood': getSafeData('medStorm_Blood', []),
             'MSK': getSafeData('medStorm_MSK', { ANATOMY: [], PHYSIOLOGY: [], HISTOLOGY: [] }),
-            'CVS': getSafeData('medStorm_CVS', [])
+            'CVS': (function () { let c = getSafeData('medStorm_CVS', null); if (c && typeof c === 'object' && !Array.isArray(c) && Object.keys(c).length > 0) { return typeof CVS_QUESTIONS !== 'undefined' ? Object.assign({}, CVS_QUESTIONS, c) : c; } return typeof CVS_QUESTIONS !== 'undefined' ? CVS_QUESTIONS : {}; })()
         };
 
         const ICONS = { 'Blood': '🩸', 'Foundation': '🏥', 'Terminology': '📖', 'MSK': '🦴', 'CVS': '❤️' };
@@ -3468,6 +3476,57 @@
             const iconClass = AppState.theme === 'light' ? 'ri-moon-fill' : 'ri-sun-fill';
             document.getElementById('theme-icon').className = iconClass;
             document.getElementById('theme-icon-quiz').className = iconClass;
+        }
+
+        function updateFlashcard() {
+            if (flashcards.length === 0) return;
+
+            const card = flashcards[currentCardIndex];
+            const container = document.getElementById('flashcard-container');
+            const bookmarkBtn = document.getElementById('bookmark-btn');
+            const icon = bookmarkBtn.querySelector('i');
+            const prevBtn = document.getElementById('prev-card-btn');
+            const nextBtn = document.getElementById('next-card-btn');
+            container.classList.remove('flipped');
+            setTimeout(() => {
+                document.getElementById('flashcard-front').innerHTML = formatText(card.q);
+                document.getElementById('flashcard-back').innerHTML = formatText(card.a);
+                document.getElementById('current-card-num').textContent = currentCardIndex + 1;
+                document.getElementById('total-cards-num').textContent = flashcards.length;
+                if (currentCardIndex === 0) {
+                    prevBtn.style.opacity = '0.5';
+                    prevBtn.style.pointerEvents = 'none';
+                } else {
+                    prevBtn.style.opacity = '1';
+                    prevBtn.style.pointerEvents = 'auto';
+                    prevBtn.style.cursor = 'pointer';
+                }
+
+                if (currentCardIndex === flashcards.length - 1) {
+                    nextBtn.style.opacity = '0.5';
+                    nextBtn.style.pointerEvents = 'none';
+                } else {
+                    nextBtn.style.opacity = '1';
+                    nextBtn.style.pointerEvents = 'auto';
+                    nextBtn.style.cursor = 'pointer';
+                }
+                const key = getCardKey(card);
+                const isBookmarked = flashcardBookmarks.has(key);
+
+                if (isBookmarked) {
+                    bookmarkBtn.classList.add('active');
+                    bookmarkBtn.style.color = 'var(--primary-blue)';
+                    bookmarkBtn.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+                    bookmarkBtn.style.background = 'rgba(59, 130, 246, 0.1)';
+                    icon.className = 'ri-bookmark-fill';
+                } else {
+                    bookmarkBtn.classList.remove('active');
+                    bookmarkBtn.style.color = 'var(--text-gray)';
+                    bookmarkBtn.style.borderColor = 'rgba(255,255,255,0.1)';
+                    bookmarkBtn.style.background = 'var(--bg-darker)';
+                    icon.className = 'ri-bookmark-line';
+                }
+            }, 150);
         }
 
         function toggleTheme() {
@@ -4750,20 +4809,26 @@
 
         function _fcShowCover() {
             const container = document.getElementById('flashcards-container');
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+            container.style.width = '100%';
+
             container.innerHTML = `
-                <div class="fc-cover-wrap" style="width: 320px; position: relative;">
+                <div class="fc-cover-wrap" style="width: 320px; position: relative; margin: 0 auto;">
                     <button class="reset-btn" onclick="fcResetSession(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
 
                     <div class="fc-cover-deck" onclick="fcStartSession()">
                         <div class="fc-cover-shadow"></div>
                         <div class="fc-cover-shadow"></div>
                         <div class="fc-cover-front">
-                            <div class="fc-cover-badge">${window.FLASHCARDS_DATA.length} cards</div>
+                            <div class="fc-cover-badge">${window.FLASHCARDS_DATA ? window.FLASHCARDS_DATA.length : 0} cards</div>
                             <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦴</div>
                             <div class="fc-cover-title">MSK Flashcards</div>
                         </div>
                     </div>
-                    <button class="fc-start-btn" onclick="fcStartSession()" style="width: 30%; justify-content: center; margin-top: -15px; position: relative; z-index: 10;">
+                    <button class="fc-start-btn" onclick="fcStartSession()" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10;">
                         <i class="ri-play-fill"></i> Start Session
                     </button>
                 </div>
@@ -4833,7 +4898,7 @@
                     </div>
 
                     <div style="display:flex; justify-content:center; width:100%; margin-bottom: 30px;">
-                        <div id="fc-deck-area" style="width:100%; max-width:580px; transition:opacity .2s,transform .2s; min-height:300px;">
+                        <div id="fc-deck-area" style="width:100%; max-width:580px; transition:opacity .2s,transform .2s; min-height:360px;">
                             </div>
                     </div>
 
@@ -4885,11 +4950,19 @@
                              </div>`;
             }
             area.innerHTML = `
-                <div class="fc-deck" onclick="fcFlip()" style="width:100%; height:300px;">
-                    <div class="fc-card" id="fc-card-el" style="width:100%; height:100%;">
+                <div class="fc-deck" onclick="fcFlip()" style="width:100%; height:auto; min-height:360px;">
+                    <div class="fc-card" id="fc-card-el" style="width:100%; height:auto;">
                         <div class="fc-inner">
-                            <div class="fc-front" style="padding:2rem;">
-                                ${labelHTML} <div class="fc-text" style="font-size:1.4rem;">${card.q}</div>
+                            <div class="fc-front" style="padding:1.5rem; position:relative; min-height:340px;">
+                                ${labelHTML}
+                                ${(() => {
+                    if (!card.img) return '';
+                    const imgs = card.img.split('|').map(u => u.trim()).filter(Boolean);
+                    const imgStyle = 'max-height:180px;max-width:100%;border-radius:10px;object-fit:contain;border:1px solid rgba(148,163,184,0.25);background:#0f172a;';
+                    if (imgs.length === 1) return `<div style="text-align:center;margin-bottom:0.75rem;"><img src="${imgs[0]}" style="${imgStyle}" onerror="this.style.display='none'" /></div>`;
+                    return `<div style="display:flex;gap:8px;justify-content:center;margin-bottom:0.75rem;">${imgs.map(u => `<img src="${u}" style="${imgStyle.replace('max-width:100%', 'max-width:49%')}" onerror="this.style.display='none'">`).join('')}</div>`;
+                })()}
+                                <div class="fc-text" style="font-size:${card.img ? '1.1rem' : '1.4rem'};">${card.q}</div>
                                 <div class="fc-tap-hint"><i class="ri-refresh-line"></i> Tap to reveal answer</div>
                             </div>
                             <div class="fc-back" style="padding:2rem;">
@@ -5290,6 +5363,9 @@
             isDrawing = false;
             ctx.beginPath();
         }
+        window._fcShowDecksList = function () {
+            _fcShowCover();
+        };
 
         function draw(e) {
             if (!isDrawing || !isDrawingMode) return;
@@ -5370,6 +5446,23 @@
                     style="flex: 1; padding: 0.8rem; background: var(--primary-red); color: white; border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
                     Yes, Delete
                 </button>
+                <div class="flashcard-controls"
+                    style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center; align-items: center;">
+                    <button id="prev-card-btn" onclick="prevCard()"
+                        style="padding: 0.8rem 1.5rem; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: var(--bg-darker); color: var(--text-light); border: 1px solid rgba(255,255,255,0.1);">
+                        <i class="ri-arrow-left-s-line"></i> Previous
+                    </button>
+
+                    <button id="bookmark-btn" onclick="toggleBookmark(event)"
+                        style="padding: 0.8rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; background: var(--bg-darker); color: var(--text-gray); border: 1px solid rgba(255,255,255,0.1); font-size: 1.2rem;">
+                        <i class="ri-bookmark-line"></i>
+                    </button>
+
+                    <button id="next-card-btn" onclick="nextCard()"
+                        style="padding: 0.8rem 1.5rem; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: var(--primary-blue); color: white; border: none;">
+                        Next <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                </div>
 
 </body>
 
