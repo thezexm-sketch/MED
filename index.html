@@ -271,6 +271,11 @@
         @media (max-width: 768px) {
             .ai-chat-btn {
                 bottom: 90px !important;
+                display: none !important;
+            }
+
+            body.focus-mode .ai-chat-btn {
+                display: grid !important;
             }
 
             .ai-chat-window {
@@ -1680,7 +1685,8 @@
             }
 
             .fc-deck {
-                height: 240px;
+                height: auto;
+                min-height: 220px;
             }
 
             .fc-cover-deck {
@@ -2133,7 +2139,8 @@
             position: relative;
             width: 100%;
             max-width: 580px;
-            height: 300px;
+            height: auto;
+            min-height: 300px;
             cursor: pointer;
         }
 
@@ -2165,8 +2172,8 @@
         }
 
         .fc-card {
-            position: absolute;
-            inset: 0;
+            position: relative;
+            width: 100%;
             perspective: 1200px;
             z-index: 2;
         }
@@ -2174,7 +2181,6 @@
         .fc-inner {
             position: relative;
             width: 100%;
-            height: 100%;
             transform-style: preserve-3d;
             transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 20px;
@@ -2212,6 +2218,18 @@
             transform: rotateY(180deg);
         }
 
+        .fc-spacer {
+            visibility: hidden;
+            pointer-events: none;
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.85rem;
+            min-height: 260px;
+        }
+
         .fc-label {
             font-size: 0.68rem;
             font-weight: 700;
@@ -2232,8 +2250,8 @@
             font-weight: 600;
             line-height: 1.6;
             color: var(--text-light);
-            overflow-y: auto;
-            max-height: 160px;
+            overflow-y: visible;
+            max-height: none;
         }
 
         .fc-back .fc-text {
@@ -2579,7 +2597,7 @@
             <div class="nav-item" onclick="switchMode('favorites')" id="nav-favorites"><i
                     class="ri-star-line"></i><span>Favorites</span></div>
             <div class="nav-item" onclick="switchMode('flashcards')" id="nav-flashcards"><i
-                    class="ri-stack-line"></i><span>Flashcards</span></div>
+                    class="ri-stack-line"></i><span>Practical</span></div>
             <div class="nav-item" onclick="switchMode('analytics')" id="nav-analytics"><i
                     class="ri-bar-chart-2-line"></i><span>Analytics</span></div>
             <div class="nav-item" onclick="switchMode('links')" id="nav-links"><i
@@ -2657,14 +2675,13 @@
                         style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
                         <h3
                             style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                            <span style="font-size: 1.75rem;">📝</span> MCQs
+                            <span style="font-size: 1.75rem;">📁</span> Resources
                         </h3>
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSesP1grcIBAX82df_yCcJXa16F7p8Q0jl1XKK1I9ViJfgiZCg/viewform?vc=0&c=0&w=1&flr=0&hl=en"
+                            <a href="https://drive.google.com/drive/folders/1iW-_AdhCpNj6YwJOJobRDeT-4wXvCxCz?usp=sharing"
                                 target="_blank"
                                 style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%); border: none; border-radius: var(--radius-md); color: white; font-weight: 600; font-size: 1rem; text-decoration: none; transition: var(--transition); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
-                                <span>Iman Nabil MSK MCQ</span><i class="ri-external-link-line"
-                                    style="font-size: 1.25rem;"></i>
+                                <span>CVS Data</span><i class="ri-external-link-line" style="font-size: 1.25rem;"></i>
                             </a>
                         </div>
                     </div>
@@ -4825,7 +4842,7 @@
                         <div class="fc-cover-front">
                             <div class="fc-cover-badge">${window.FLASHCARDS_DATA ? window.FLASHCARDS_DATA.length : 0} cards</div>
                             <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦴</div>
-                            <div class="fc-cover-title">MSK Flashcards</div>
+                            <div class="fc-cover-title">🦴 MSK Practical Flashcards</div>
                         </div>
                     </div>
                     <button class="fc-start-btn" onclick="fcStartSession()" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10;">
@@ -4872,7 +4889,7 @@
             fcIndex = fcScores.findIndex(s => s === null);
             if (fcIndex === -1) fcIndex = 0;
 
-            currentDeckObj = { id: 'msk_combined', icon: '🦴', name: 'MSK Flashcards' };
+            currentDeckObj = { id: 'msk_combined', icon: '🦴', name: '🦴 MSK Practical Flashcards' };
             _fcRenderSessionSkeleton();
             _fcUpdateSessionData();
         }
@@ -4950,10 +4967,10 @@
                              </div>`;
             }
             area.innerHTML = `
-                <div class="fc-deck" onclick="fcFlip()" style="width:100%; height:auto; min-height:360px;">
-                    <div class="fc-card" id="fc-card-el" style="width:100%; height:auto;">
+                <div class="fc-deck" onclick="fcFlip()" style="width:100%;">
+                    <div class="fc-card" id="fc-card-el" style="width:100%;">
                         <div class="fc-inner">
-                            <div class="fc-front" style="padding:1.5rem; position:relative; min-height:340px;">
+                            <div class="fc-front" style="padding:2rem;">
                                 ${labelHTML}
                                 ${(() => {
                     if (!card.img) return '';
@@ -4962,13 +4979,15 @@
                     if (imgs.length === 1) return `<div style="text-align:center;margin-bottom:0.75rem;"><img src="${imgs[0]}" style="${imgStyle}" onerror="this.style.display='none'" /></div>`;
                     return `<div style="display:flex;gap:8px;justify-content:center;margin-bottom:0.75rem;">${imgs.map(u => `<img src="${u}" style="${imgStyle.replace('max-width:100%', 'max-width:49%')}" onerror="this.style.display='none'">`).join('')}</div>`;
                 })()}
-                                <div class="fc-text" style="font-size:${card.img ? '1.1rem' : '1.4rem'};">${card.q}</div>
-                                <div class="fc-tap-hint"><i class="ri-refresh-line"></i> Tap to reveal answer</div>
+                                <div class="fc-text" style="font-size:${card.img ? '1.2rem' : '1.45rem'};">${card.q}</div>
                             </div>
                             <div class="fc-back" style="padding:2rem;">
                                 <div class="fc-label">Answer ✓</div>
-                                <div class="fc-text" style="font-size:1.4rem;">${card.a}</div>
-                                <div class="fc-tap-hint"><i class="ri-refresh-line"></i> Tap to flip back</div>
+                                <div class="fc-text" style="font-size:1.45rem;">${card.a}</div>
+                            </div>
+                            <div class="fc-spacer">
+                                ${card.img ? `<div style="height:180px;"></div>` : ''}
+                                <div style="font-size:${card.img ? '1.2rem' : '1.45rem'}; font-weight:600; line-height:1.6; opacity:0;">${card.q.length > card.a.length ? card.q : card.a}</div>
                             </div>
                         </div>
                     </div>
