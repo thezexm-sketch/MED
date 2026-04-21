@@ -2847,105 +2847,235 @@
             <div id="flashcards-container"></div>
         </div>
         <div id="view-game" class="view-section">
-            <div id="game-start-screen"
-                style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
-                <i class="ri-gamepad-line"
-                    style="font-size: 5rem; color: #F59E0B; margin-bottom: 1rem; animation: pulse 2s infinite;"></i>
-                <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; color: var(--text-light);">
-                    CARDIAC SURVIVAL</h2>
-                <p style="color: var(--text-gray); font-size: 1.1rem; max-width: 500px; margin-bottom: 2rem;">Challenge
-                    your CVS information. 3 Lives. 15 seconds per question. Build your combo
-                    multiplier and survive!</p>
 
-                <div id="game-leaderboard-preview"
-                    style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 2rem; width: 100%; max-width: 400px;">
-                    <h3
-                        style="font-size: 1rem; color: var(--text-gray); margin-bottom: 1rem; text-transform: uppercase;">
-                        Top Players</h3>
-                    <div id="game-leaderboard-list"
-                        style="display: flex; flex-direction: column; gap: 0.5rem; text-align: left;">
-                        <div style="text-align: center; color: var(--text-gray); font-size: 0.9rem;">Loading
-                            leaderboard...</div>
-                    </div>
-                </div>
-
-                <button class="quiz-btn btn-primary" onclick="checkUsernamePrompt()"
-                    style="font-size: 1rem; padding: 0.8rem 4rem; border-radius: 4px; width: 100%; max-width: 300px; margin: 0 auto;">
-                    <i class="ri-play-fill"></i> START GAME
-                </button>
-            </div>
-
-            <div id="game-active-screen"
-                style="display: none; flex-direction: column; height: 100%; max-width: 800px; margin: 0 auto; padding-top: 1rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <div id="game-lives" style="font-size: 1.8rem; color: #EF4444; letter-spacing: 5px;">❤️❤️❤️</div>
-                    <div style="text-align: center;">
-                        <div
-                            style="font-size: 0.9rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 2px;">
-                            Score</div>
-                        <div id="game-score"
-                            style="font-size: 2rem; font-weight: 900; color: var(--accent); font-family: monospace;">0
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div
-                            style="font-size: 0.9rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 2px;">
-                            Combo</div>
-                        <div id="game-combo" style="font-size: 1.5rem; font-weight: 800; color: #F59E0B;">x1</div>
-                    </div>
-                </div>
+            <!-- ===== GAME HUB ===== -->
+            <div id="game-hub-screen"
+                style="display:flex; flex-direction:column; align-items:center; padding: 2rem 1rem;">
+                <h2 style="font-size:2rem; font-weight:900; margin-bottom:0.5rem;">🎮 Arcade</h2>
+                <p style="color:var(--text-gray); margin-bottom:2rem;">Choose your challenge</p>
 
                 <div
-                    style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 2rem;">
-                    <div id="game-timer-bar"
-                        style="width: 100%; height: 100%; background: #10B981; transition: width 0.1s linear, background-color 0.3s ease;">
+                    style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.5rem; width:100%; max-width:700px; margin-bottom:3rem;">
+                    <!-- Cardiac Survival Card -->
+                    <div onclick="checkUsernamePrompt('survival')"
+                        style="background:linear-gradient(135deg,#1a2e22,#0f1a12); border:2px solid rgba(239,68,68,0.4); border-radius:20px; padding:2rem; cursor:pointer; transition:all 0.3s; text-align:center;"
+                        onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#EF4444'"
+                        onmouseout="this.style.transform=''; this.style.borderColor='rgba(239,68,68,0.4)'">
+                        <div style="font-size:3.5rem; margin-bottom:1rem;">❤️</div>
+                        <h3 style="font-size:1.4rem; font-weight:900; color:#EF4444; margin-bottom:0.5rem;">CARDIAC
+                            SURVIVAL</h3>
+                        <p style="color:var(--text-gray); font-size:0.9rem; margin-bottom:1.5rem;">3 Lives · 15s per
+                            question · Combo multiplier</p>
+                        <div style="display:flex; gap:0.5rem; justify-content:center;">
+                            <span
+                                style="background:rgba(239,68,68,0.15); color:#EF4444; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">MCQ</span>
+                            <span
+                                style="background:rgba(239,68,68,0.15); color:#EF4444; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Survival</span>
+                        </div>
+                    </div>
+
+                    <!-- Lightning Round Card -->
+                    <div onclick="checkUsernamePrompt('lightning')"
+                        style="background:linear-gradient(135deg,#1a1a2e,#0f0f1a); border:2px solid rgba(245,158,11,0.4); border-radius:20px; padding:2rem; cursor:pointer; transition:all 0.3s; text-align:center;"
+                        onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#F59E0B'"
+                        onmouseout="this.style.transform=''; this.style.borderColor='rgba(245,158,11,0.4)'">
+                        <div style="font-size:3.5rem; margin-bottom:1rem;">⚡</div>
+                        <h3 style="font-size:1.4rem; font-weight:900; color:#F59E0B; margin-bottom:0.5rem;">LIGHTNING
+                            ROUND</h3>
+                        <p style="color:var(--text-gray); font-size:0.9rem; margin-bottom:1.5rem;">60 seconds · True or
+                            False · Build your streak</p>
+                        <div style="display:flex; gap:0.5rem; justify-content:center;">
+                            <span
+                                style="background:rgba(245,158,11,0.15); color:#F59E0B; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">True/False</span>
+                            <span
+                                style="background:rgba(245,158,11,0.15); color:#F59E0B; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">Speed</span>
+                        </div>
                     </div>
                 </div>
 
-                <div id="game-question-container" class="question-container"
-                    style="margin-bottom: 2rem; border-color: rgba(239, 68, 68, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                    <h2 id="game-question-text" class="question-text" style="font-size: 1.3rem;"></h2>
-                    <img id="game-question-image" class="question-image" src="" alt="Question"
-                        style="display: none; max-width: 100%; max-height: 25vh; border-radius: 12px; margin: 0.5rem auto 1rem; border: 1px solid var(--border-color); object-fit: contain;">
+                <!-- Shared Leaderboard -->
+                <div
+                    style="width:100%; max-width:700px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:1.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h3 style="font-weight:800; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">🏆
+                            Top Players</h3>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button id="lb-tab-survival" onclick="switchLeaderboard('survival')"
+                                style="padding:5px 14px; border-radius:20px; border:none; cursor:pointer; font-weight:700; font-size:0.8rem; background:#EF4444; color:white;">❤️
+                                Survival</button>
+                            <button id="lb-tab-lightning" onclick="switchLeaderboard('lightning')"
+                                style="padding:5px 14px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-weight:700; font-size:0.8rem; background:transparent; color:var(--text-gray);">⚡
+                                Lightning</button>
+                        </div>
+                    </div>
+                    <div id="game-leaderboard-list" style="display:flex; flex-direction:column; gap:0.5rem;">
+                        <div style="text-align:center; color:var(--text-gray); font-size:0.9rem;">Loading leaderboard...
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div id="game-options-container" class="options-container">
-                    <!-- Game options go here -->
+            <!-- ===== CARDIAC SURVIVAL SCREENS ===== -->
+            <div id="game-active-screen"
+                style="display:none; flex-direction:column; height:100%; max-width:800px; margin:0 auto; padding-top:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div id="game-lives" style="font-size:1.8rem; color:#EF4444; letter-spacing:5px;">❤️❤️❤️</div>
+                    <div style="text-align:center;">
+                        <div
+                            style="font-size:0.9rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:2px;">
+                            Score</div>
+                        <div id="game-score"
+                            style="font-size:2rem; font-weight:900; color:var(--accent); font-family:monospace;">0</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div
+                            style="font-size:0.9rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:2px;">
+                            Combo</div>
+                        <div id="game-combo" style="font-size:1.5rem; font-weight:800; color:#F59E0B;">x1</div>
+                    </div>
                 </div>
+                <div
+                    style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin-bottom:2rem;">
+                    <div id="game-timer-bar"
+                        style="width:100%; height:100%; background:#10B981; transition:width 0.1s linear,background-color 0.3s ease;">
+                    </div>
+                </div>
+                <div id="game-question-container" class="question-container"
+                    style="margin-bottom:2rem; border-color:rgba(239,68,68,0.2); box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+                    <h2 id="game-question-text" class="question-text" style="font-size:1.3rem;"></h2>
+                    <img id="game-question-image" class="question-image" src="" alt="Question"
+                        style="display:none; max-width:100%; max-height:25vh; border-radius:12px; margin:0.5rem auto 1rem; border:1px solid var(--border-color); object-fit:contain;">
+                </div>
+                <div id="game-options-container" class="options-container"></div>
+                <button onclick="initGameScreen()"
+                    style="margin-top:1rem; background:transparent; border:1px solid var(--border-color); color:var(--text-gray); padding:8px 20px; border-radius:10px; cursor:pointer; font-weight:600;">←
+                    Back to Arcade</button>
             </div>
 
             <div id="game-over-screen"
-                style="display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center;">
+                style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
                 <h2
-                    style="font-size: 4rem; font-weight: 900; color: #EF4444; margin-bottom: 0; text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);">
+                    style="font-size:4rem; font-weight:900; color:#EF4444; margin-bottom:0; text-shadow:0 0 20px rgba(239,68,68,0.5);">
                     GAME OVER</h2>
-                <div style="font-size: 1.2rem; color: var(--text-gray); margin-bottom: 2rem;">Your heart stopped
-                    beating.</div>
-
+                <div style="font-size:1.2rem; color:var(--text-gray); margin-bottom:2rem;">Your heart stopped beating.
+                </div>
                 <div
-                    style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border-color); width: 100%; max-width: 400px; margin-bottom: 2rem;">
-                    <div style="font-size: 1rem; color: var(--text-gray); text-transform: uppercase;">Final Score</div>
+                    style="background:var(--bg-card); padding:2rem; border-radius:20px; border:1px solid var(--border-color); width:100%; max-width:400px; margin-bottom:2rem;">
+                    <div style="font-size:1rem; color:var(--text-gray); text-transform:uppercase;">Final Score</div>
                     <div id="game-final-score"
-                        style="font-size: 3rem; font-weight: 900; color: var(--accent); margin-bottom: 1rem;">0</div>
+                        style="font-size:3rem; font-weight:900; color:var(--accent); margin-bottom:1rem;">0</div>
                     <div
-                        style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                        <div style="text-align: left;">
-                            <div style="font-size: 0.8rem; color: var(--text-gray);">Questions Solved</div>
-                            <div id="game-final-solved" style="font-weight: bold; font-size: 1.2rem;">0</div>
+                        style="display:flex; justify-content:space-between; border-top:1px solid var(--border-color); padding-top:1rem;">
+                        <div style="text-align:left;">
+                            <div style="font-size:0.8rem; color:var(--text-gray);">Questions</div>
+                            <div id="game-final-solved" style="font-weight:bold; font-size:1.2rem;">0</div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 0.8rem; color: var(--text-gray);">Max Combo</div>
-                            <div id="game-final-combo" style="font-weight: bold; font-size: 1.2rem; color: #F59E0B;">x1
+                        <div style="text-align:right;">
+                            <div style="font-size:0.8rem; color:var(--text-gray);">Max Combo</div>
+                            <div id="game-final-combo" style="font-weight:bold; font-size:1.2rem; color:#F59E0B;">x1
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <button class="quiz-btn btn-primary" onclick="startGame()"
-                    style="font-size: 1.1rem; padding: 0.8rem 2.5rem; border-radius: 30px;">
-                    <i class="ri-refresh-line"></i> PLAY AGAIN
-                </button>
+                <div style="display:flex; gap:1rem;">
+                    <button class="quiz-btn btn-primary" onclick="startGame()"
+                        style="font-size:1rem; padding:0.8rem 2rem; border-radius:30px;"><i class="ri-refresh-line"></i>
+                        Play Again</button>
+                    <button onclick="initGameScreen()"
+                        style="font-size:1rem; padding:0.8rem 2rem; border-radius:30px; background:transparent; border:1px solid var(--border-color); color:var(--text-light); cursor:pointer; font-weight:700;">←
+                        Arcade</button>
+                </div>
             </div>
+
+            <!-- ===== LIGHTNING ROUND SCREENS ===== -->
+            <div id="lr-active-screen"
+                style="display:none; flex-direction:column; align-items:center; max-width:700px; margin:0 auto; padding:1.5rem 1rem; width:100%;">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:1.5rem;">
+                    <div style="text-align:center;">
+                        <div
+                            style="font-size:0.8rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:1px;">
+                            Time</div>
+                        <div id="lr-timer"
+                            style="font-size:2.5rem; font-weight:900; color:#F59E0B; font-family:monospace;">60</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div
+                            style="font-size:0.8rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:1px;">
+                            Score</div>
+                        <div id="lr-score"
+                            style="font-size:2.5rem; font-weight:900; color:var(--accent); font-family:monospace;">0
+                        </div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div
+                            style="font-size:0.8rem; color:var(--text-gray); text-transform:uppercase; letter-spacing:1px;">
+                            Streak</div>
+                        <div id="lr-streak"
+                            style="font-size:2.5rem; font-weight:900; color:#A78BFA; font-family:monospace;">0</div>
+                    </div>
+                </div>
+                <div
+                    style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:4px; margin-bottom:1.5rem; overflow:hidden;">
+                    <div id="lr-timer-bar"
+                        style="height:100%; width:100%; background:#F59E0B; transition:width 1s linear;"></div>
+                </div>
+                <div id="lr-question-box"
+                    style="background:var(--bg-card); border:2px solid rgba(245,158,11,0.3); border-radius:20px; padding:2rem; width:100%; text-align:center; margin-bottom:2rem; min-height:140px; display:flex; align-items:center; justify-content:center;">
+                    <p id="lr-statement"
+                        style="font-size:1.25rem; font-weight:700; line-height:1.5; color:var(--text-light);">Loading...
+                    </p>
+                </div>
+                <div style="display:flex; gap:1.5rem; width:100%; max-width:500px;">
+                    <button id="lr-false-btn" onclick="answerLR(false)"
+                        style="flex:1; padding:1.2rem; font-size:1.3rem; font-weight:900; border-radius:16px; border:none; cursor:pointer; background:linear-gradient(135deg,#EF4444,#DC2626); color:white; transition:all 0.15s; letter-spacing:1px;">❌
+                        FALSE</button>
+                    <button id="lr-true-btn" onclick="answerLR(true)"
+                        style="flex:1; padding:1.2rem; font-size:1.3rem; font-weight:900; border-radius:16px; border:none; cursor:pointer; background:linear-gradient(135deg,#10B981,#059669); color:white; transition:all 0.15s; letter-spacing:1px;">✅
+                        TRUE</button>
+                </div>
+                <button onclick="endLightningRound()"
+                    style="margin-top:1.5rem; background:transparent; border:1px solid var(--border-color); color:var(--text-gray); padding:8px 20px; border-radius:10px; cursor:pointer; font-size:0.85rem;">Give
+                    up</button>
+            </div>
+
+            <div id="lr-over-screen"
+                style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center;">
+                <div style="font-size:5rem; margin-bottom:0.5rem;">⚡</div>
+                <h2 style="font-size:3rem; font-weight:900; color:#F59E0B; margin-bottom:0.5rem;">TIME'S UP!</h2>
+                <div style="font-size:1.1rem; color:var(--text-gray); margin-bottom:2rem;">Lightning Round Complete
+                </div>
+                <div
+                    style="background:var(--bg-card); padding:2rem; border-radius:20px; border:1px solid var(--border-color); width:100%; max-width:400px; margin-bottom:2rem;">
+                    <div style="font-size:0.9rem; color:var(--text-gray); text-transform:uppercase;">Final Score</div>
+                    <div id="lr-final-score"
+                        style="font-size:3.5rem; font-weight:900; color:#F59E0B; margin-bottom:1rem;">0</div>
+                    <div
+                        style="display:flex; justify-content:space-around; border-top:1px solid var(--border-color); padding-top:1rem;">
+                        <div>
+                            <div style="font-size:0.75rem; color:var(--text-gray);">Correct</div>
+                            <div id="lr-final-correct" style="font-weight:900; font-size:1.3rem; color:#10B981;">0</div>
+                        </div>
+                        <div>
+                            <div style="font-size:0.75rem; color:var(--text-gray);">Wrong</div>
+                            <div id="lr-final-wrong" style="font-weight:900; font-size:1.3rem; color:#EF4444;">0</div>
+                        </div>
+                        <div>
+                            <div style="font-size:0.75rem; color:var(--text-gray);">Best Streak</div>
+                            <div id="lr-final-streak" style="font-weight:900; font-size:1.3rem; color:#A78BFA;">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <button class="quiz-btn btn-primary" onclick="startLightningRound()"
+                        style="font-size:1rem; padding:0.8rem 2rem; border-radius:30px; background:#F59E0B; border:none;"><i
+                            class="ri-refresh-line"></i> Play Again</button>
+                    <button onclick="initGameScreen()"
+                        style="font-size:1rem; padding:0.8rem 2rem; border-radius:30px; background:transparent; border:1px solid var(--border-color); color:var(--text-light); cursor:pointer; font-weight:700;">←
+                        Arcade</button>
+                </div>
+            </div>
+
         </div>
 
         <div id="view-analytics" class="view-section">
@@ -3044,6 +3174,29 @@
                         <div id="profile-page-email"
                             style="font-size: 1.1rem; font-weight: 800; color: var(--text-light); word-break: break-all;">
                             Loading...
+                        </div>
+                    </div>
+                    <div
+                        style="margin-top:1rem; text-align:left; background:var(--bg-darker); padding:1.5rem; border-radius:16px; border:1px solid var(--border-color);">
+                        <div
+                            style="color:var(--text-gray); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem; font-weight:700;">
+                            <i class="ri-shield-user-line" style="margin-right:5px;"></i> Privacy</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-weight:700; font-size:0.95rem;">Hide from Leaderboard</div>
+                                <div style="color:var(--text-gray); font-size:0.8rem; margin-top:2px;">Your score won't
+                                    appear in public rankings</div>
+                            </div>
+                            <label
+                                style="position:relative; display:inline-block; width:48px; height:26px; cursor:pointer;">
+                                <input type="checkbox" id="leaderboard-hidden-toggle"
+                                    onchange="toggleLeaderboardPrivacy(this.checked)"
+                                    style="opacity:0; width:0; height:0;">
+                                <span id="lb-toggle-slider"
+                                    style="position:absolute; inset:0; background:var(--border-color); border-radius:26px; transition:0.3s;"></span>
+                                <span id="lb-toggle-knob"
+                                    style="position:absolute; top:3px; left:3px; width:20px; height:20px; background:white; border-radius:50%; transition:0.3s;"></span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -3546,6 +3699,7 @@
 
                 fetchQuestionsFromDB();
                 await loadUserData(user);
+                if (typeof loadPrivacySetting === 'function') loadPrivacySetting();
 
             } else {
                 document.getElementById('login-overlay').style.display = 'flex';
@@ -3566,7 +3720,7 @@
             document.getElementById('auth-btn').innerText = window.isSignupMode ? "Sign Up ✨" : "Login 🔓";
             document.getElementById('auth-toggle-text').innerHTML = window.isSignupMode ? "Already have an account? <b>Login</b>" : "Don't have an account? <b>Sign Up</b>";
             document.getElementById('login-error').style.display = 'none';
-
+            // Show username field only in signup mode
             const unameField = document.getElementById('signup-username');
             if (unameField) unameField.style.display = window.isSignupMode ? 'block' : 'none';
         };
@@ -3588,7 +3742,7 @@
             try {
                 if (window.isSignupMode) {
                     const cred = await createUserWithEmailAndPassword(auth, email, pass);
-
+                    // Save username immediately for new accounts
                     if (uname && cred.user) {
                         AppState.username = uname;
                         localStorage.setItem('medStorm_username', uname);
@@ -5405,85 +5559,88 @@
             isPlaying: false
         };
 
+        let currentLbTab = 'survival';
+
         function initGameScreen() {
-            document.getElementById('game-start-screen').style.display = 'flex';
+            document.getElementById('game-hub-screen').style.display = 'flex';
             document.getElementById('game-active-screen').style.display = 'none';
             document.getElementById('game-over-screen').style.display = 'none';
-            fetchLeaderboard();
+            document.getElementById('lr-active-screen').style.display = 'none';
+            document.getElementById('lr-over-screen').style.display = 'none';
+            fetchLeaderboard(currentLbTab);
         }
 
-        async function fetchLeaderboard() {
+        function switchLeaderboard(type) {
+            currentLbTab = type;
+            const btnS = document.getElementById('lb-tab-survival');
+            const btnL = document.getElementById('lb-tab-lightning');
+            if (type === 'survival') {
+                btnS.style.background = '#EF4444'; btnS.style.color = 'white'; btnS.style.border = 'none';
+                btnL.style.background = 'transparent'; btnL.style.color = 'var(--text-gray)'; btnL.style.border = '1px solid var(--border-color)';
+            } else {
+                btnL.style.background = '#F59E0B'; btnL.style.color = 'white'; btnL.style.border = 'none';
+                btnS.style.background = 'transparent'; btnS.style.color = 'var(--text-gray)'; btnS.style.border = '1px solid var(--border-color)';
+            }
+            fetchLeaderboard(type);
+        }
+
+        async function fetchLeaderboard(type) {
+            type = type || 'survival';
+            const scoreField = type === 'survival' ? 'gameHighScore' : 'lrHighScore';
+            const accentColor = type === 'survival' ? 'var(--accent)' : '#F59E0B';
             const list = document.getElementById('game-leaderboard-list');
+            list.innerHTML = '<div style="text-align:center;color:var(--text-gray);font-size:0.9rem;">Loading...</div>';
             if (!window.getDocs || !window.collection || !window.db) return;
             try {
                 const querySnapshot = await window.getDocs(window.collection(window.db, "users"));
                 let players = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    if (data.gameHighScore !== undefined && data.username) {
-                        players.push({
-                            username: data.username,
-                            score: data.gameHighScore,
-                            avatarUrl: data.avatarUrl || 'img/default_avatar.png'
-                        });
+                    if (data[scoreField] !== undefined && data.username && !data.leaderboardHidden) {
+                        players.push({ username: data.username, score: data[scoreField], avatarUrl: data.avatarUrl || 'img/default_avatar.png', isSelf: doc.id === window.currentUserId });
                     }
                 });
-
                 players.sort((a, b) => b.score - a.score);
-                const topPlayers = players.slice(0, 5);
-
-                if (topPlayers.length === 0) {
-                    list.innerHTML = '<div style="text-align: center; color: var(--text-gray); font-size: 0.9rem;">No high scores yet!</div>';
+                const top = players.slice(0, 10);
+                if (top.length === 0) {
+                    list.innerHTML = '<div style="text-align:center;color:var(--text-gray);font-size:0.9rem;">No scores yet — be the first!</div>';
                 } else {
-                    list.innerHTML = topPlayers.map((p, idx) => `
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <div style="font-weight: bold; color: ${idx === 0 ? '#F59E0B' : 'var(--text-gray)'}; width: 20px;">#${idx + 1}</div>
-                                <img src="${p.avatarUrl}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color);" onerror="this.src='img/default_avatar.png'">
-                                <span style="font-weight: 600; color: var(--text-light);">${p.username}</span>
+                    list.innerHTML = top.map((p, idx) => `
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.75rem;background:${p.isSelf ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.02)'};border-radius:8px;${p.isSelf ? 'border:1px solid rgba(255,255,255,0.1);' : ''}">
+                            <div style="display:flex;align-items:center;gap:0.6rem;">
+                                <div style="font-weight:bold;color:${idx === 0 ? '#F59E0B' : idx === 1 ? '#9CA3AF' : idx === 2 ? '#CD7F32' : 'var(--text-gray)'};width:24px;font-size:0.95rem;">#${idx + 1}</div>
+                                <img src="${p.avatarUrl}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--border-color);" onerror="this.src='img/default_avatar.png'">
+                                <span style="font-weight:600;color:var(--text-light);">${p.username}${p.isSelf ? ' <span style=\'font-size:0.7rem;color:var(--text-gray);\'>YOU</span>' : ''}</span>
                             </div>
-                            <div style="font-weight: 800; color: var(--accent);">${p.score}</div>
-                        </div>
-                    `).join('');
+                            <div style="font-weight:800;color:${accentColor};">${p.score}</div>
+                        </div>`).join('');
                 }
             } catch (e) {
-                console.error("Leaderboard fetch error:", e);
-
+                console.error('Leaderboard fetch error:', e);
+                // Fallback: show own score
                 if (window.currentUserId && window.getDoc && window.doc) {
                     try {
-                        const snap = await window.getDoc(window.doc(window.db, "users", window.currentUserId));
-                        if (snap.exists() && snap.data().gameHighScore !== undefined) {
-                            const p = {
-                                username: AppState.username || 'You',
-                                score: snap.data().gameHighScore,
-                                avatarUrl: localStorage.getItem('medStorm_avatar_' + window.currentUserId) || 'img/default_avatar.png'
-                            };
-                            list.innerHTML = `
-                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <div style="font-weight: bold; color: #F59E0B; width: 20px;">#1</div>
-                                        <img src="${p.avatarUrl}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color);" onerror="this.src='img/default_avatar.png'">
-                                        <span style="font-weight: 600; color: var(--text-light);">${p.username} (You)</span>
-                                    </div>
-                                    <div style="font-weight: 800; color: var(--accent);">${p.score}</div>
-                                </div>
-                            `;
+                        const snap = await window.getDoc(window.doc(window.db, 'users', window.currentUserId));
+                        const data = snap.exists() ? snap.data() : {};
+                        if (data[scoreField] !== undefined) {
+                            const avatar = localStorage.getItem('medStorm_avatar_' + window.currentUserId) || 'img/default_avatar.png';
+                            list.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem;background:rgba(255,255,255,0.04);border-radius:8px;"><div style="display:flex;align-items:center;gap:0.5rem;"><div style="color:#F59E0B;font-weight:bold;width:24px;">#1</div><img src="${avatar}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;" onerror="this.src='img/default_avatar.png'"><span style="font-weight:600;">${AppState.username || 'You'} <span style="font-size:0.7rem;color:var(--text-gray);">YOU</span></span></div><div style="font-weight:800;color:${accentColor};">${data[scoreField]}</div></div>`;
                             return;
                         }
-                    } catch (err) {
-                        console.error("Fallback fetch failed:", err);
-                    }
+                    } catch (err) { }
                 }
-                list.innerHTML = '<div style="text-align: center; color: var(--text-gray); font-size: 0.9rem;">Play a game to appear on the leaderboard!</div>';
+                list.innerHTML = '<div style="text-align:center;color:var(--text-gray);font-size:0.9rem;">Play a game to appear here!</div>';
             }
         }
 
-        async function checkUsernamePrompt() {
+        let _pendingGameType = 'survival';
+
+        async function checkUsernamePrompt(gameType) {
+            _pendingGameType = gameType || 'survival';
             if (!window.currentUserId) {
                 window.showToast("Please sign in first!", "error");
                 return;
             }
-
             if (!AppState.username && window.getDoc && window.doc && window.db) {
                 try {
                     const snap = await window.getDoc(window.doc(window.db, 'users', window.currentUserId));
@@ -5491,10 +5648,10 @@
                         AppState.username = snap.data().username;
                         localStorage.setItem('medStorm_username', snap.data().username);
                     }
-                } catch (e) {  }
+                } catch (e) { }
             }
             if (AppState.username) {
-                startGame();
+                _pendingGameType === 'lightning' ? startLightningRound() : startGame();
             } else {
                 document.getElementById('username-modal').classList.add('active');
             }
@@ -5526,7 +5683,7 @@
                 }
             }
 
-            startGame();
+            _pendingGameType === 'lightning' ? startLightningRound() : startGame();
         }
 
         function startGame() {
@@ -5699,6 +5856,141 @@
                 });
             }
         }
+
+        // ===== LIGHTNING ROUND =====
+        let lrState = { score: 0, streak: 0, maxStreak: 0, correct: 0, wrong: 0, timer: null, timeLeft: 60, questions: [], currentQ: null, correctAnswer: true, isPlaying: false };
+
+        function startLightningRound() {
+            lrState = { score: 0, streak: 0, maxStreak: 0, correct: 0, wrong: 0, timer: null, timeLeft: 60, questions: [], currentQ: null, correctAnswer: true, isPlaying: true };
+
+            // Build pool from all available questions in all modules
+            let pool = [];
+            const db = window.DB || {};
+            for (const mod in db) {
+                for (const sub in db[mod]) {
+                    db[mod][sub].forEach(q => { if (q.o && q.o.length > 0) pool.push(q); });
+                }
+            }
+            if (window.TERMINOLOGY_QUESTIONS) window.TERMINOLOGY_QUESTIONS.forEach(q => { if (q.o && q.o.length > 0) pool.push(q); });
+            pool.sort(() => Math.random() - 0.5);
+            lrState.questions = pool;
+
+            document.getElementById('game-hub-screen').style.display = 'none';
+            document.getElementById('lr-active-screen').style.display = 'flex';
+            document.getElementById('lr-over-screen').style.display = 'none';
+
+            document.getElementById('lr-score').textContent = '0';
+            document.getElementById('lr-streak').textContent = '0';
+            document.getElementById('lr-timer').textContent = '60';
+            document.getElementById('lr-timer-bar').style.width = '100%';
+
+            loadLRQuestion();
+            lrState.timer = setInterval(() => {
+                if (!lrState.isPlaying) return;
+                lrState.timeLeft--;
+                document.getElementById('lr-timer').textContent = lrState.timeLeft;
+                document.getElementById('lr-timer-bar').style.width = (lrState.timeLeft / 60 * 100) + '%';
+                if (lrState.timeLeft <= 10) document.getElementById('lr-timer').style.color = '#EF4444';
+                if (lrState.timeLeft <= 0) endLightningRound();
+            }, 1000);
+        }
+
+        function loadLRQuestion() {
+            if (!lrState.questions.length) { endLightningRound(); return; }
+            lrState.currentQ = lrState.questions.pop();
+            // 50/50: show the correct answer phrased as TRUE, or a wrong option phrased as TRUE
+            const useCorrect = Math.random() > 0.5;
+            lrState.correctAnswer = useCorrect;
+            let statement;
+            if (useCorrect) {
+                statement = lrState.currentQ.q + '\n\nANSWER: ' + lrState.currentQ.o[lrState.currentQ.a].replace(/^[a-dA-D][\.\)]\s*/, '');
+            } else {
+                const wrongOpts = lrState.currentQ.o.filter((_, i) => i !== lrState.currentQ.a);
+                const wrongOpt = wrongOpts[Math.floor(Math.random() * wrongOpts.length)] || lrState.currentQ.o[0];
+                statement = lrState.currentQ.q + '\n\nANSWER: ' + wrongOpt.replace(/^[a-dA-D][\.\)]\s*/, '');
+            }
+            const el = document.getElementById('lr-statement');
+            el.style.opacity = '0';
+            el.textContent = statement;
+            setTimeout(() => { el.style.transition = 'opacity 0.2s'; el.style.opacity = '1'; }, 50);
+            document.getElementById('lr-true-btn').disabled = false;
+            document.getElementById('lr-false-btn').disabled = false;
+            document.getElementById('lr-question-box').style.borderColor = 'rgba(245,158,11,0.3)';
+        }
+
+        function answerLR(userSaidTrue) {
+            if (!lrState.isPlaying || !lrState.currentQ) return;
+            document.getElementById('lr-true-btn').disabled = true;
+            document.getElementById('lr-false-btn').disabled = true;
+            const correct = (userSaidTrue === lrState.correctAnswer);
+            const box = document.getElementById('lr-question-box');
+            if (correct) {
+                lrState.streak++; lrState.correct++;
+                if (lrState.streak > lrState.maxStreak) lrState.maxStreak = lrState.streak;
+                const bonus = Math.floor(lrState.streak / 3);
+                lrState.score += 10 + bonus * 5;
+                box.style.borderColor = '#10B981';
+            } else {
+                lrState.streak = 0; lrState.wrong++;
+                lrState.score = Math.max(0, lrState.score - 5);
+                box.style.borderColor = '#EF4444';
+            }
+            document.getElementById('lr-score').textContent = lrState.score;
+            document.getElementById('lr-streak').textContent = lrState.streak;
+            setTimeout(loadLRQuestion, 600);
+        }
+
+        function endLightningRound() {
+            lrState.isPlaying = false;
+            clearInterval(lrState.timer);
+            document.getElementById('lr-active-screen').style.display = 'none';
+            document.getElementById('lr-over-screen').style.display = 'flex';
+            document.getElementById('lr-final-score').textContent = lrState.score;
+            document.getElementById('lr-final-correct').textContent = lrState.correct;
+            document.getElementById('lr-final-wrong').textContent = lrState.wrong;
+            document.getElementById('lr-final-streak').textContent = lrState.maxStreak;
+            document.getElementById('lr-timer').style.color = '#F59E0B';
+            // Save high score
+            if (window.currentUserId && window.setDoc && window.db) {
+                const docRef = window.doc(window.db, 'users', window.currentUserId);
+                window.getDoc(docRef).then(snap => {
+                    const currentHigh = snap.exists() && snap.data().lrHighScore !== undefined ? snap.data().lrHighScore : -1;
+                    if (lrState.score > currentHigh) {
+                        window.setDoc(docRef, { lrHighScore: lrState.score }, { merge: true }).then(() => fetchLeaderboard('lightning'));
+                    }
+                });
+            }
+        }
+
+        // ===== PRIVACY TOGGLE =====
+        function toggleLeaderboardPrivacy(hidden) {
+            const slider = document.getElementById('lb-toggle-slider');
+            const knob = document.getElementById('lb-toggle-knob');
+            if (hidden) {
+                slider.style.background = 'var(--accent)';
+                knob.style.transform = 'translateX(22px)';
+            } else {
+                slider.style.background = 'var(--border-color)';
+                knob.style.transform = 'translateX(0)';
+            }
+            if (window.currentUserId && window.setDoc && window.db) {
+                window.setDoc(window.doc(window.db, 'users', window.currentUserId), { leaderboardHidden: hidden }, { merge: true })
+                    .then(() => fetchLeaderboard(currentLbTab))
+                    .catch(e => console.warn('Privacy save failed:', e));
+            }
+        }
+
+        // Load privacy setting on profile load
+        function loadPrivacySetting() {
+            if (!window.currentUserId || !window.getDoc || !window.db) return;
+            window.getDoc(window.doc(window.db, 'users', window.currentUserId)).then(snap => {
+                if (snap.exists() && snap.data().leaderboardHidden) {
+                    const tog = document.getElementById('leaderboard-hidden-toggle');
+                    if (tog) { tog.checked = true; toggleLeaderboardPrivacy(true); }
+                }
+            }).catch(() => { });
+        }
+
         window.FLASHCARDS_DECKS = [];
         let currentDeckObj = null;
         let fcDeck = [];
