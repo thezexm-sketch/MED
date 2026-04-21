@@ -3180,7 +3180,8 @@
                         style="margin-top:1rem; text-align:left; background:var(--bg-darker); padding:1.5rem; border-radius:16px; border:1px solid var(--border-color);">
                         <div
                             style="color:var(--text-gray); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem; font-weight:700;">
-                            <i class="ri-shield-user-line" style="margin-right:5px;"></i> Privacy</div>
+                            <i class="ri-shield-user-line" style="margin-right:5px;"></i> Privacy
+                        </div>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <div>
                                 <div style="font-weight:700; font-size:0.95rem;">Hide from Leaderboard</div>
@@ -3720,7 +3721,7 @@
             document.getElementById('auth-btn').innerText = window.isSignupMode ? "Sign Up ✨" : "Login 🔓";
             document.getElementById('auth-toggle-text').innerHTML = window.isSignupMode ? "Already have an account? <b>Login</b>" : "Don't have an account? <b>Sign Up</b>";
             document.getElementById('login-error').style.display = 'none';
-            // Show username field only in signup mode
+
             const unameField = document.getElementById('signup-username');
             if (unameField) unameField.style.display = window.isSignupMode ? 'block' : 'none';
         };
@@ -3742,7 +3743,7 @@
             try {
                 if (window.isSignupMode) {
                     const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                    // Save username immediately for new accounts
+
                     if (uname && cred.user) {
                         AppState.username = uname;
                         localStorage.setItem('medStorm_username', uname);
@@ -5560,7 +5561,6 @@
         };
 
         let currentLbTab = 'survival';
-
         function initGameScreen() {
             document.getElementById('game-hub-screen').style.display = 'flex';
             document.getElementById('game-active-screen').style.display = 'none';
@@ -5617,7 +5617,7 @@
                 }
             } catch (e) {
                 console.error('Leaderboard fetch error:', e);
-                // Fallback: show own score
+
                 if (window.currentUserId && window.getDoc && window.doc) {
                     try {
                         const snap = await window.getDoc(window.doc(window.db, 'users', window.currentUserId));
@@ -5856,14 +5856,10 @@
                 });
             }
         }
-
-        // ===== LIGHTNING ROUND =====
         let lrState = { score: 0, streak: 0, maxStreak: 0, correct: 0, wrong: 0, timer: null, timeLeft: 60, questions: [], currentQ: null, correctAnswer: true, isPlaying: false };
 
         function startLightningRound() {
             lrState = { score: 0, streak: 0, maxStreak: 0, correct: 0, wrong: 0, timer: null, timeLeft: 60, questions: [], currentQ: null, correctAnswer: true, isPlaying: true };
-
-            // Build pool from all available questions in all modules
             let pool = [];
             const db = window.DB || {};
             for (const mod in db) {
@@ -5898,7 +5894,7 @@
         function loadLRQuestion() {
             if (!lrState.questions.length) { endLightningRound(); return; }
             lrState.currentQ = lrState.questions.pop();
-            // 50/50: show the correct answer phrased as TRUE, or a wrong option phrased as TRUE
+
             const useCorrect = Math.random() > 0.5;
             lrState.correctAnswer = useCorrect;
             let statement;
@@ -5950,7 +5946,7 @@
             document.getElementById('lr-final-wrong').textContent = lrState.wrong;
             document.getElementById('lr-final-streak').textContent = lrState.maxStreak;
             document.getElementById('lr-timer').style.color = '#F59E0B';
-            // Save high score
+
             if (window.currentUserId && window.setDoc && window.db) {
                 const docRef = window.doc(window.db, 'users', window.currentUserId);
                 window.getDoc(docRef).then(snap => {
@@ -5961,8 +5957,6 @@
                 });
             }
         }
-
-        // ===== PRIVACY TOGGLE =====
         function toggleLeaderboardPrivacy(hidden) {
             const slider = document.getElementById('lb-toggle-slider');
             const knob = document.getElementById('lb-toggle-knob');
@@ -5979,8 +5973,6 @@
                     .catch(e => console.warn('Privacy save failed:', e));
             }
         }
-
-        // Load privacy setting on profile load
         function loadPrivacySetting() {
             if (!window.currentUserId || !window.getDoc || !window.db) return;
             window.getDoc(window.doc(window.db, 'users', window.currentUserId)).then(snap => {
@@ -5990,6 +5982,17 @@
                 }
             }).catch(() => { });
         }
+        window.initGameScreen = initGameScreen;
+        window.switchLeaderboard = switchLeaderboard;
+        window.checkUsernamePrompt = checkUsernamePrompt;
+        window.saveUsernameAndStart = saveUsernameAndStart;
+        window.startGame = startGame;
+        window.startLightningRound = startLightningRound;
+        window.answerLR = answerLR;
+        window.endLightningRound = endLightningRound;
+        window.toggleLeaderboardPrivacy = toggleLeaderboardPrivacy;
+        window.loadPrivacySetting = loadPrivacySetting;
+        window.fetchLeaderboard = fetchLeaderboard;
 
         window.FLASHCARDS_DECKS = [];
         let currentDeckObj = null;
