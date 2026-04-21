@@ -5862,12 +5862,19 @@
             lrState = { score: 0, streak: 0, maxStreak: 0, correct: 0, wrong: 0, timer: null, timeLeft: 60, questions: [], currentQ: null, correctAnswer: true, isPlaying: true };
             let pool = [];
             const db = window.DB || {};
+            const addQ = q => { if (q && q.o && q.o.length > 0) pool.push(q); };
             for (const mod in db) {
                 for (const sub in db[mod]) {
-                    db[mod][sub].forEach(q => { if (q.o && q.o.length > 0) pool.push(q); });
+                    if (Array.isArray(db[mod][sub])) {
+                        db[mod][sub].forEach(addQ);
+                    } else if (typeof db[mod][sub] === 'object') {
+                        for (const inner in db[mod][sub]) {
+                            if (Array.isArray(db[mod][sub][inner])) db[mod][sub][inner].forEach(addQ);
+                        }
+                    }
                 }
             }
-            if (window.TERMINOLOGY_QUESTIONS) window.TERMINOLOGY_QUESTIONS.forEach(q => { if (q.o && q.o.length > 0) pool.push(q); });
+            if (window.TERMINOLOGY_QUESTIONS) window.TERMINOLOGY_QUESTIONS.forEach(addQ);
             pool.sort(() => Math.random() - 0.5);
             lrState.questions = pool;
 
