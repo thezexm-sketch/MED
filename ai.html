@@ -10,9 +10,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary-green: #10B981;
-            --dark-green: #059669;
-            --light-green: #34D399;
+            --primary-green: #22c55e;
+            --dark-green: #15803d;
+            --light-green: #4ade80;
             --primary-red: #EF4444;
             --dark-red: #DC2626;
             --light-red: #F87171;
@@ -64,6 +64,44 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        .question-card {
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-darker));
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--accent);
+
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .question-text {
+            font-size: clamp(1.1rem, 3vw, 1.25rem);
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        [data-theme='light'] .question-card {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+            background: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            .question-card {
+                padding: 1.25rem;
+                border-radius: 16px;
+            }
+
+            .question-text {
+                font-size: 0.95rem !important;
+                margin-bottom: 1rem;
+            }
         }
 
         body {
@@ -289,7 +327,8 @@
 
         .sidebar {
             width: var(--sidebar-width);
-            background: rgba(31, 41, 36, 0.7);
+            background: rgba(14, 20, 18, 0.9);
+            /* Dark Emerald Green Tint */
 
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -310,6 +349,57 @@
             padding: 0;
             border: none;
             opacity: 0;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 280px !important;
+                z-index: 2000;
+                transform: translateX(0);
+                opacity: 1 !important;
+                padding: 2.25rem 1.75rem 5rem 1.75rem !important;
+                border-right: 1px solid var(--border-color);
+            }
+
+            body.sidebar-collapsed .sidebar {
+                transform: translateX(-100%);
+                width: 280px !important;
+                opacity: 1 !important;
+            }
+
+            body:not(.sidebar-collapsed) .sidebar-overlay {
+                display: block;
+                opacity: 1;
+            }
+
+            .top-bar {
+                padding: 0 1.25rem !important;
+                height: 70px !important;
+            }
+
+            .page-title {
+                font-size: 1.3rem !important;
+            }
+
+            .view-section {
+                padding: 1.5rem 1.25rem 8rem 1.25rem !important;
+            }
         }
 
         [data-theme='light'] .sidebar {
@@ -356,12 +446,57 @@
         }
 
         .nav-label {
-            font-size: 0.7rem;
-            font-weight: 700;
+            font-size: 0.75rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             color: var(--text-gray);
+            margin-top: 0.75rem;
             margin-bottom: 0.5rem;
+            padding: 0 10px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .nav-label:hover,
+        .nav-label.active {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .nav-label i {
+            transition: transform 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .nav-label.collapsed i {
+            transform: rotate(-90deg);
+        }
+
+        .nav-sub-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 500px;
+            margin-bottom: 1.25rem;
+        }
+
+        .nav-label.collapsed+.nav-sub-items {
+            max-height: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            opacity: 0;
+        }
+
+        .nav-label:first-of-type {
+            margin-top: 0;
         }
 
         .nav-item {
@@ -729,10 +864,23 @@
         }
 
         .question-text {
-            font-size: clamp(1.1rem, 3vw, 1.25rem);
+            font-size: clamp(1.05rem, 3vw, 1.2rem);
             font-weight: 600;
-            line-height: 1.5;
-            margin-bottom: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-darker));
+            padding: 1.25rem 1.5rem;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent);
+            position: relative;
+        }
+
+        [data-theme='light'] .question-text {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
+            background: #ffffff;
         }
 
         .question-image {
@@ -808,7 +956,7 @@
         }
 
         .shake {
-            animation: shake 0.4s ease;
+            animation: shake 0.8s ease;
         }
 
         .quiz-footer {
@@ -1641,7 +1789,8 @@
                 word-break: break-word;
                 overflow-wrap: break-word;
                 white-space: normal;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
+                padding: 1rem 1.2rem;
             }
 
             .option-btn {
@@ -2695,7 +2844,8 @@
     </style>
 </head>
 
-<body data-theme="dark">
+    <body data-theme="dark">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="modal-overlay" id="username-modal">
         <div class="modal-container" style="max-width: 400px; text-align: center; padding: 2.5rem;">
             <div class="modal-header" style="justify-content: center; margin-bottom: 1.5rem;">
@@ -2772,22 +2922,55 @@
                 style="width: 200px; max-width: 100%; height: auto; filter: drop-shadow(0 8px 20px rgba(16, 185, 129, 0.3)); display: inline-block;">
         </div>
         <div class="nav-section">
-            <div class="nav-label">Navigate</div>
-            <div class="nav-item active" onclick="switchMode('dashboard')" id="nav-dash"><i
-                    class="ri-grid-line"></i><span>Modules</span></div>
-            <div class="nav-item" onclick="switchMode('mistakes')" id="nav-mistakes"><i
-                    class="ri-error-warning-line"></i><span>Mistakes</span></div>
-            <div class="nav-item" onclick="switchMode('favorites')" id="nav-favorites"><i
-                    class="ri-star-line"></i><span>Favorites</span></div>
-            <div class="nav-item" onclick="switchMode('flashcards')" id="nav-flashcards"><i
-                    class="ri-stack-line"></i><span>Practical</span></div>
-            <div class="nav-item" onclick="switchMode('game')" id="nav-game"><i class="ri-gamepad-line"
-                    style="color: #F59E0B; text-shadow: 0 0 10px rgba(245,158,11,0.5);"></i><span
-                    style="color: #F59E0B; font-weight: 800;">Games</span></div>
-            <div class="nav-item" onclick="switchMode('analytics')" id="nav-analytics"><i
-                    class="ri-bar-chart-2-line"></i><span>Analytics</span></div>
-            <div class="nav-item" onclick="switchMode('links')" id="nav-links"><i
-                    class="ri-links-line"></i><span>Links</span></div>
+            <div class="nav-label" id="label-quiz" onclick="toggleNavSection(this)">Quiz <i
+                    class="ri-arrow-down-s-line"></i></div>
+            <div class="nav-sub-items">
+                <div class="nav-item" onclick="switchMode('dashboard')" id="nav-create-quiz">
+                    <i class="ri-add-circle-line"></i><span>Create Quiz</span>
+                </div>
+                <div class="nav-item" onclick="switchMode('flashcards')" id="nav-flashcards">
+                    <i class="ri-stack-line"></i><span>Practical</span>
+                </div>
+                <div class="nav-item" onclick="switchMode('history')" id="nav-history">
+                    <i class="ri-history-line"></i><span>Previous Quizzes</span>
+                </div>
+            </div>
+
+            <div class="nav-label" id="label-collections" onclick="toggleNavSection(this)">Collections <i
+                    class="ri-arrow-down-s-line"></i></div>
+            <div class="nav-sub-items">
+                <div class="nav-item" onclick="switchMode('mistakes')" id="nav-mistakes">
+                    <i class="ri-error-warning-line"></i><span>My Mistakes</span>
+                </div>
+                <div class="nav-item" onclick="switchMode('favorites')" id="nav-favorites">
+                    <i class="ri-star-line"></i><span>My Favorites</span>
+                </div>
+            </div>
+
+            <div class="nav-label" id="label-performance" onclick="toggleNavSection(this)">Performance <i
+                    class="ri-arrow-down-s-line"></i></div>
+            <div class="nav-sub-items">
+                <div class="nav-item" onclick="switchMode('analytics')" id="nav-analytics">
+                    <i class="ri-bar-chart-box-line"></i><span>Analysis</span>
+                </div>
+                <div class="nav-item" onclick="switchMode('leaderboard')" id="nav-leaderboard">
+                    <i class="ri-trophy-line"></i><span>Leaderboard</span>
+                </div>
+            </div>
+
+            <div class="nav-label" id="label-features" onclick="toggleNavSection(this)">More Features <i
+                    class="ri-arrow-down-s-line"></i></div>
+            <div class="nav-sub-items">
+                <div class="nav-item" onclick="switchMode('game')" id="nav-game">
+                    <i class="ri-gamepad-line"></i><span>Meddy Arcade</span>
+                </div>
+                <div class="nav-item" onclick="switchMode('links')" id="nav-links">
+                    <i class="ri-links-line"></i><span>Resources</span>
+                </div>
+                <div class="nav-item" onclick="openFeedbackModal()">
+                    <i class="ri-chat-smile-3-line"></i><span>Feedback</span>
+                </div>
+            </div>
         </div>
         <div class="directors-card">
             <div class="directors-label">Directed by:</div>
@@ -2830,7 +3013,7 @@
             </div>
         </div>
 
-        <div id="view-dashboard" class="view-section active">
+        <div id="view-dashboard" class="view-section">
             <div class="module-grid" id="module-grid"></div>
         </div>
 
@@ -3140,6 +3323,60 @@
                 </div>
             </div>
         </div>
+        <div id="view-leaderboard" class="view-section">
+            <div style="max-width: 900px; margin: 0 auto; width: 100%;">
+                <h2 style="margin-bottom: 0.5rem; font-weight: 800; font-size: 2rem;">🏆 Global Leaderboard</h2>
+                <p style="color:var(--text-gray); margin-bottom: 2rem;">Top students ranked by questions solved across
+                    all modules</p>
+
+                <div style="display:flex; gap:0.5rem; margin-bottom:2rem;">
+                    <button id="glb-tab-answered" onclick="switchGlobalLb('answered')"
+                        style="padding:8px 20px; border-radius:20px; border:none; cursor:pointer; font-weight:700; font-size:0.85rem; background:var(--accent); color:white; transition:0.2s;">
+                        📊 Most Answered
+                    </button>
+                    <button id="glb-tab-accuracy" onclick="switchGlobalLb('accuracy')"
+                        style="padding:8px 20px; border-radius:20px; border:1px solid var(--border-color); cursor:pointer; font-weight:700; font-size:0.85rem; background:transparent; color:var(--text-gray); transition:0.2s;">
+                        🎯 Highest Accuracy
+                    </button>
+                </div>
+
+                <div id="global-leaderboard-content" style="display:flex; flex-direction:column; gap:0.75rem;">
+                    <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading leaderboard...</div>
+                </div>
+            </div>
+        </div>
+        <div id="view-history" class="view-section">
+            <div style="max-width: 1200px; margin: 0 auto; width: 100%;">
+                <h2 style="margin-bottom: 2rem; font-weight: 800; font-size: 2rem;">🏆 Exam History</h2>
+
+                <div id="pending-exams-container" style="margin-bottom: 3rem; display: none;">
+                    <h3
+                        style="margin-bottom: 1.5rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 10px;">
+                        <i class="ri-time-line"></i> Unfinished Exams
+                    </h3>
+                    <div id="pending-exams-list"
+                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+
+                    </div>
+                </div>
+
+                <div id="completed-exams-container">
+                    <h3 style="margin-bottom: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                        <i class="ri-checkbox-circle-line"></i> Completed Exams
+                    </h3>
+                    <div id="completed-exams-list"
+                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+
+                    </div>
+                    <div id="no-exams-msg"
+                        style="text-align: center; padding: 4rem; color: var(--text-gray); display: none;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📄</div>
+                        <p>No exam history found yet. Start an exam to see your results here!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="view-profile" class="view-section">
             <div
                 style="max-width: 1200px; margin: 0 auto; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 60vh;">
@@ -3242,16 +3479,14 @@
                 </div>
             </div>
             <div class="quiz-container">
-                <div class="question-header">
+                <div class="question-header" style="margin-bottom: 0.5rem;">
                     <span class="question-tag" id="q-tag">Loading...</span>
-                    <img id="q-image" class="question-image" src="" alt="Question" style="display: none;">
-                    <div class="question-text" id="q-text">Loading question...</div>
+
                     <div id="drawing-toolbar"
                         style="display: none; position: fixed; top: 90px; right: 20px; background: var(--bg-darker); border: 1px solid var(--border-color); padding: 14px; border-radius: 14px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); z-index: 1000; flex-direction: column; gap: 12px; align-items: center; min-width: 130px;">
                         <div
                             style="font-size: 0.75rem; font-weight: bold; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; width: 100%; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
                             TOOLS</div>
-                        <!-- Color circles -->
                         <div style="display: flex; gap: 8px; justify-content: center;">
                             <div onclick="setDrawColor('#EF4444', this)" title="Red"
                                 style="width: 28px; height: 28px; border-radius: 50%; background: #EF4444; cursor: pointer; border: 3px solid white; box-shadow: 0 0 0 2px #EF4444; transition: 0.2s;">
@@ -3266,9 +3501,7 @@
                                 style="width: 28px; height: 28px; border-radius: 50%; background: #FFFFFF; cursor: pointer; border: 3px solid transparent; box-shadow: 0 0 0 2px #aaaaaa; transition: 0.2s;">
                             </div>
                         </div>
-                        <!-- Hidden color input to keep JS compatibility -->
                         <input type="hidden" id="draw-color" value="#EF4444">
-                        <!-- Font size label + slider -->
                         <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; align-items: center;">
                             <div
                                 style="font-size: 0.7rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px;">
@@ -3285,11 +3518,16 @@
                         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 998; pointer-events: none;"></canvas>
                 </div>
 
-                <div>
+                <div class="question-card">
+                    <img id="q-image" class="question-image" src="" alt="Question" style="display: none;">
+                    <div class="question-text" id="q-text"
+                        style="background: transparent; border: none; box-shadow: none; padding: 0; text-align: center;">
+                        Loading question...
+                    </div>
                     <div class="options-container" id="options-box"></div>
 
-                    <div class="quiz-footer" style="flex-wrap: nowrap; justify-content: space-between; width: 100%;">
-
+                    <div class="quiz-footer"
+                        style="flex-wrap: nowrap; justify-content: space-between; width: 100%; margin-top: 1.5rem;">
                         <div class="action-buttons" style="display: flex; gap: 8px; align-items: center;">
                             <button id="btn-favorite" class="icon-action-btn" onclick="toggleFavorite()"
                                 title="Save Question">
@@ -3302,14 +3540,12 @@
                                 <i class="ri-list-unordered"></i>
                             </button>
                         </div>
-
                         <div style="display: flex; gap: 8px; flex: 1; justify-content: flex-end;">
                             <button class="quiz-btn btn-secondary" id="btn-prev" onclick="prevQuestion()"
                                 style="min-width: 100px;"><i class="ri-arrow-left-line"></i> Prev</button>
                             <button class="quiz-btn btn-primary" id="btn-next" onclick="nextQuestion()"
                                 style="min-width: 100px;">Next <i class="ri-arrow-right-line"></i></button>
                         </div>
-
                     </div>
                 </div>
 
@@ -3492,6 +3728,28 @@
             </div>
         </div>
     </div>
+
+    <div class="modal-overlay" id="feedback-modal" style="z-index: 100000;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--accent);"><i class="ri-chat-smile-3-fill"></i> Send Feedback
+                </h3>
+                <button class="modal-close" onclick="closeFeedbackModal()"><i class="ri-close-line"></i></button>
+            </div>
+            <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px;">
+                Don't worry, your feedback is completely anonymous. Feel free to speak your mind.
+            </p>
+            <textarea class="note-textarea" id="feedback-text"
+                placeholder="Tell us what you think or suggest a feature..." rows="5"></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="quiz-btn btn-secondary" style="flex: 1;" onclick="closeFeedbackModal()">Cancel</button>
+                <button class="quiz-btn" id="btn-send-feedback"
+                    style="flex: 1; background: var(--accent); color: white; border: none;" onclick="sendFeedback()">
+                    Send Feedback <i class="ri-send-plane-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
     <div class="modal-overlay" id="note-modal">
         <div class="modal">
             <div class="modal-header">
@@ -3548,7 +3806,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
@@ -3569,6 +3827,10 @@
         window.getDoc = getDoc;
         window.setDoc = setDoc;
         window.updateDoc = updateDoc;
+        window.query = query;
+        window.where = where;
+        window.orderBy = orderBy;
+        window.limit = limit;
 
         window.defaultAvatar = function (email) {
             let initials = 'US';
@@ -3664,6 +3926,8 @@
                     if (data.favorites) { AppState.favorites = data.favorites; localStorage.setItem('medStormFavorites', JSON.stringify(data.favorites)); }
                     if (data.notes) { AppState.notes = data.notes; localStorage.setItem('medStormNotes', JSON.stringify(data.notes)); }
                     if (data.stats) { AppState.stats = data.stats; localStorage.setItem('medStormStats', JSON.stringify(data.stats)); }
+                    if (data.examsHistory) { AppState.examsHistory = data.examsHistory; localStorage.setItem('medStormExamsHistory', JSON.stringify(data.examsHistory)); }
+                    if (data.pendingExams) { AppState.pendingExams = data.pendingExams; localStorage.setItem('medStormPendingExams', JSON.stringify(data.pendingExams)); }
                     if (data.chatHistory) { AppState.chatHistory = data.chatHistory; localStorage.setItem('medStormChat_' + user.uid, JSON.stringify(data.chatHistory)); if (window.loadChatHistory) window.loadChatHistory(); }
 
                     if (data.avatarUrl) {
@@ -3698,10 +3962,13 @@
                 const savedAvatar = localStorage.getItem('medStorm_avatar_' + user.uid);
                 window.setAvatarUI(savedAvatar ? savedAvatar : defAvatar);
 
-                fetchQuestionsFromDB();
-                await loadUserData(user);
+                await Promise.all([
+                    fetchQuestionsFromDB(),
+                    loadUserData(user)
+                ]);
+                const lastMode = localStorage.getItem('medStormLastMode') || 'dashboard';
+                switchMode(lastMode);
                 if (typeof loadPrivacySetting === 'function') loadPrivacySetting();
-
             } else {
                 document.getElementById('login-overlay').style.display = 'flex';
                 const btn = document.getElementById('auth-btn');
@@ -3780,8 +4047,17 @@
                 localStorage.removeItem('medStormFavorites');
                 localStorage.removeItem('medStormNotes');
                 localStorage.removeItem('medStormStats');
+                localStorage.removeItem('medStormExamsHistory');
+                localStorage.removeItem('medStormPendingExams');
 
-                window.AppState = { progress: {}, favorites: {}, notes: {}, stats: {} };
+                window.AppState = {
+                    progress: {},
+                    favorites: {},
+                    notes: {},
+                    stats: { dailyProgress: {}, moduleTime: {}, totalTime: 0 },
+                    examsHistory: [],
+                    pendingExams: []
+                };
                 document.getElementById('module-grid').innerHTML = '';
                 document.getElementById('login-overlay').style.display = 'flex';
                 window.currentUserId = null;
@@ -3953,7 +4229,9 @@
             progress: JSON.parse(localStorage.getItem('medStormProgress')) || {},
             favorites: JSON.parse(localStorage.getItem('medStormFavorites')) || {},
             notes: JSON.parse(localStorage.getItem('medStormNotes')) || {},
-            stats: JSON.parse(localStorage.getItem('medStormStats')) || { dailyProgress: {}, moduleTime: {}, totalTime: 0 }
+            stats: JSON.parse(localStorage.getItem('medStormStats')) || { dailyProgress: {}, moduleTime: {}, totalTime: 0 },
+            examsHistory: JSON.parse(localStorage.getItem('medStormExamsHistory')) || [],
+            pendingExams: JSON.parse(localStorage.getItem('medStormPendingExams')) || []
         };
 
         let Session = {
@@ -3990,12 +4268,38 @@
         window.onload = function () {
             document.body.setAttribute('data-theme', AppState.theme);
             updateThemeIcons();
-            renderDashboard();
             document.addEventListener('keydown', handleKeyboard);
-            history.replaceState({ mode: 'dashboard' }, '', '#dashboard');
-        };
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
 
-        function toggleSidebar() { document.body.classList.toggle('sidebar-collapsed'); }
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                switchMode(hash, true);
+            } else {
+                const lastMode = localStorage.getItem('medStormLastMode') || 'dashboard';
+                switchMode(lastMode, true);
+            }
+        };
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-collapsed');
+        }
+
+        // Auto-close sidebar on mobile after navigation
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                const navItem = e.target.closest('.nav-item');
+                if (navItem && !document.body.classList.contains('sidebar-collapsed')) {
+                    toggleSidebar();
+                }
+            }
+        });
+
+        // Initialize sidebar state for mobile
+        if (window.innerWidth <= 768) {
+            document.body.classList.add('sidebar-collapsed');
+        }
 
         function updateThemeIcons() {
             const iconClass = AppState.theme === 'light' ? 'ri-moon-fill' : 'ri-sun-fill';
@@ -4120,6 +4424,10 @@
             }
         }
 
+        function toggleNavSection(el) {
+            el.classList.toggle('collapsed');
+        }
+
         function switchMode(mode, fromHistory = false) {
             clearTimeout(Session.timer);
             if (SessionStartTime) endSession();
@@ -4127,10 +4435,27 @@
             document.getElementById('view-results').style.cssText = "display: none !important;";
             document.body.classList.remove('focus-mode');
             document.body.removeAttribute('data-mode');
+
             document.querySelectorAll('.view-section').forEach(el => {
                 if (el.id !== 'view-results') { el.classList.remove('active'); el.style.display = 'none'; }
             });
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-label').forEach(lbl => lbl.classList.remove('active'));
+
+            // Section Highlighting Logic
+            if (['dashboard', 'flashcards', 'history'].includes(mode)) {
+                const quizLabel = document.getElementById('label-quiz');
+                if (quizLabel) quizLabel.classList.add('active');
+            } else if (['mistakes', 'favorites'].includes(mode)) {
+                const collLabel = document.getElementById('label-collections');
+                if (collLabel) collLabel.classList.add('active');
+            } else if (['analytics', 'leaderboard'].includes(mode)) {
+                const perfLabel = document.getElementById('label-performance');
+                if (perfLabel) perfLabel.classList.add('active');
+            } else if (['game', 'links'].includes(mode)) {
+                const featLabel = document.getElementById('label-features');
+                if (featLabel) featLabel.classList.add('active');
+            }
 
             if (mode === 'mistakes') {
                 document.body.setAttribute('data-mode', 'mistakes');
@@ -4149,7 +4474,7 @@
             } else if (mode === 'game') {
                 document.body.setAttribute('data-mode', 'game');
                 document.getElementById('nav-game').classList.add('active');
-                document.getElementById('page-title').textContent = 'Games 🎮';
+                document.getElementById('page-title').textContent = 'Survival Mode';
                 document.getElementById('view-game').classList.add('active');
                 document.getElementById('view-game').style.display = 'block';
                 initGameScreen();
@@ -4165,6 +4490,12 @@
                 document.getElementById('view-analytics').classList.add('active');
                 document.getElementById('view-analytics').style.display = 'block';
                 renderAnalytics();
+            } else if (mode === 'history') {
+                document.getElementById('nav-history').classList.add('active');
+                document.getElementById('page-title').textContent = 'Exam History';
+                document.getElementById('view-history').classList.add('active');
+                document.getElementById('view-history').style.display = 'block';
+                renderExamHistory();
             } else if (mode === 'links') {
                 document.getElementById('nav-links').classList.add('active');
                 document.getElementById('page-title').textContent = 'Important Links';
@@ -4174,13 +4505,24 @@
                 document.getElementById('page-title').textContent = 'My Profile';
                 document.getElementById('view-profile').classList.add('active');
                 document.getElementById('view-profile').style.display = 'block';
+            } else if (mode === 'leaderboard') {
+                document.getElementById('nav-leaderboard').classList.add('active');
+                document.getElementById('page-title').textContent = 'Global Leaderboard';
+                document.getElementById('view-leaderboard').classList.add('active');
+                document.getElementById('view-leaderboard').style.display = 'block';
+                fetchGlobalLeaderboard('answered');
             } else {
-                document.getElementById('nav-dash').classList.add('active');
+                const dashNav = document.getElementById('nav-dash');
+                const createNav = document.getElementById('nav-create-quiz');
+                if (dashNav) dashNav.classList.add('active');
+                if (createNav) createNav.classList.add('active');
+
                 document.getElementById('page-title').textContent = 'Modules';
                 document.getElementById('view-dashboard').classList.add('active');
                 document.getElementById('view-dashboard').style.display = 'block';
                 renderDashboard('normal');
             }
+            localStorage.setItem('medStormLastMode', mode);
             if (!fromHistory) {
                 history.pushState({ mode: mode }, '', '#' + mode);
             }
@@ -4772,7 +5114,7 @@
                 } else {
                     btn.classList.add('wrong');
                     btn.parentElement.classList.add('shake');
-                    setTimeout(() => btn.parentElement.classList.remove('shake'), 400);
+                    setTimeout(() => btn.parentElement.classList.remove('shake'), 800);
                     const opts = document.querySelectorAll('.option-btn');
                     if (opts[q.a]) opts[q.a].classList.add('correct');
                 }
@@ -4787,6 +5129,13 @@
             if (window.saveUserData) {
                 window.saveUserData('progress', AppState.progress);
                 window.saveUserData('stats', AppState.stats);
+
+                const totalAnswered = Object.keys(AppState.progress).length;
+                const totalCorrect = Object.values(AppState.progress).filter(v => v === 'correct').length;
+                const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+                window.saveUserData('totalAnswered', totalAnswered);
+                window.saveUserData('totalCorrect', totalCorrect);
+                window.saveUserData('accuracy', accuracy);
             }
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
@@ -4838,11 +5187,46 @@
             document.getElementById('main-quiz-timer').classList.add('hidden');
             const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
             const s = (secondsElapsed % 60).toString().padStart(2, '0');
-            document.getElementById('final-time-text').innerText = `${m}:${s}`;
+            const timeStr = `${m}:${s}`;
+            document.getElementById('final-time-text').innerText = timeStr;
             clearTimeout(Session.timer); if (typeof endSession === 'function') endSession();
             Session.queue.forEach((q, i) => { if (Session.answers[i] === null) AppState.progress[q.q] = 'wrong'; });
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
             window.saveUserData('progress', AppState.progress);
+
+            const totalAnswered = Object.keys(AppState.progress).length;
+            const totalCorrect = Object.values(AppState.progress).filter(v => v === 'correct').length;
+            const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+            window.saveUserData('totalAnswered', totalAnswered);
+            window.saveUserData('totalCorrect', totalCorrect);
+            window.saveUserData('accuracy', accuracy);
+
+            if (!Session.reviewing && Session.queue.length > 0) {
+                const result = {
+                    id: Date.now(),
+                    module: Session.module,
+                    mode: Session.quizMode,
+                    quizType: Session.mode,
+                    score: Session.score,
+                    total: Session.queue.length,
+                    settings: JSON.parse(JSON.stringify(Session.settings)),
+                    selectedSubtopics: JSON.parse(JSON.stringify(Session.selectedSubtopics)),
+                    time: timeStr,
+                    date: new Date().toLocaleDateString(),
+                    timestamp: new Date().getTime()
+                };
+                AppState.examsHistory.unshift(result);
+                if (AppState.examsHistory.length > 50) AppState.examsHistory.pop();
+                localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory));
+                window.saveUserData('examsHistory', AppState.examsHistory);
+
+                if (Session.resumingId) {
+                    AppState.pendingExams = AppState.pendingExams.filter(e => e.id !== Session.resumingId);
+                    localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams));
+                    window.saveUserData('pendingExams', AppState.pendingExams);
+                    delete Session.resumingId;
+                }
+            }
 
             document.body.classList.remove('focus-mode');
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
@@ -4907,11 +5291,43 @@
             document.getElementById('exit-quiz-modal').classList.remove('active');
         }
 
+        function saveSessionProgress() {
+            if (Session.queue && Session.queue.length > 0 && !Session.reviewing && document.getElementById('view-quiz').classList.contains('active')) {
+                const unanswered = Session.answers.filter(a => a === null).length;
+                if (unanswered > 0) {
+                    const pending = {
+                        id: Session.resumingId || Date.now(),
+                        module: Session.module,
+                        mode: Session.mode,
+                        quizMode: Session.quizMode,
+                        queue: Session.queue,
+                        answers: Session.answers,
+                        index: Session.index,
+                        score: Session.score,
+                        settings: Session.settings,
+                        selectedSubtopics: Session.selectedSubtopics,
+                        timestamp: new Date().getTime(),
+                        date: new Date().toLocaleDateString(),
+                        unanswered: unanswered
+                    };
+                    if (Session.resumingId) {
+                        const idx = AppState.pendingExams.findIndex(e => e.id === Session.resumingId);
+                        if (idx !== -1) AppState.pendingExams[idx] = pending;
+                    } else {
+                        AppState.pendingExams.unshift(pending);
+                    }
+                    localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams));
+                    if (window.saveUserData) window.saveUserData('pendingExams', AppState.pendingExams);
+                }
+            }
+        }
+        window.onbeforeunload = saveSessionProgress;
+
         function confirmExitQuiz() {
             closeExitModal();
+            saveSessionProgress();
             clearTimeout(Session.timer);
-            if (typeof endSession === 'function') endSession();
-            switchMode(Session.mode === 'mistakes' ? 'mistakes' : 'dashboard');
+            switchMode('dashboard');
         }
 
         function toggleMap() { const overlay = document.getElementById('map-overlay'); if (overlay.classList.contains('active')) overlay.classList.remove('active'); else { renderMap(); overlay.classList.add('active'); } }
@@ -5123,7 +5539,14 @@
                 { id: 'sharpshooter', title: 'Sharpshooter', desc: '80%+ accuracy (min 50Qs)', icon: 'ri-crosshair-2-fill', color: '#EF4444', condition: () => (totalMastered + totalWrong) >= 50 && (totalMastered / (totalMastered + totalWrong)) >= 0.8 },
                 { id: 'marathoner', title: 'Marathoner', desc: 'Solve 100+ questions', icon: 'ri-run-fill', color: '#3B82F6', condition: () => (totalMastered + totalWrong) >= 100 },
                 { id: 'streak_master', title: 'Streak Master', desc: '3-day study streak', icon: 'ri-fire-fill', color: '#F59E0B', condition: () => (AppState.stats.longestStreak || 0) >= 3 },
-                { id: 'night_owl', title: 'Dedicated', desc: '2+ hours total study time', icon: 'ri-time-fill', color: '#8B5CF6', condition: () => (AppState.stats.totalTime || 0) >= 7200 }
+                { id: 'dedicated', title: 'Dedicated', desc: '2+ hours total study time', icon: 'ri-time-fill', color: '#8B5CF6', condition: () => (AppState.stats.totalTime || 0) >= 7200 },
+                { id: 'perfectionist', title: 'Perfectionist', desc: '100% accuracy on 20+ questions', icon: 'ri-medal-fill', color: '#F59E0B', condition: () => (totalMastered + totalWrong) >= 20 && totalWrong === 0 },
+                { id: 'centurion', title: 'Centurion', desc: 'Master 200+ questions', icon: 'ri-shield-star-fill', color: '#EF4444', condition: () => totalMastered >= 200 },
+                { id: 'week_warrior', title: 'Week Warrior', desc: '7-day study streak', icon: 'ri-sword-fill', color: '#EC4899', condition: () => (AppState.stats.longestStreak || 0) >= 7 },
+                { id: 'iron_will', title: 'Iron Will', desc: '5+ hours total study time', icon: 'ri-cpu-fill', color: '#06B6D4', condition: () => (AppState.stats.totalTime || 0) >= 18000 },
+                { id: 'legend', title: 'Legend', desc: 'Master 500+ questions', icon: 'ri-vip-crown-fill', color: '#FBBF24', condition: () => totalMastered >= 500 },
+                { id: 'speed_demon', title: 'Speed Demon', desc: 'Solve 50 questions in one session', icon: 'ri-flashlight-fill', color: '#A78BFA', condition: () => Object.values(AppState.stats.dailyProgress || {}).some(d => (d.correct + d.wrong) >= 50) },
+                { id: 'comeback_kid', title: 'Comeback Kid', desc: 'Fix 50+ previously wrong questions', icon: 'ri-recycle-fill', color: '#34D399', condition: () => totalMastered >= 50 && totalWrong < totalMastered * 0.5 }
             ];
 
             grid.innerHTML = trophies.map(t => {
@@ -5136,6 +5559,132 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        function renderExamHistory() {
+            const completedList = document.getElementById('completed-exams-list');
+            const pendingList = document.getElementById('pending-exams-list');
+            const pendingContainer = document.getElementById('pending-exams-container');
+            const noExamsMsg = document.getElementById('no-exams-msg');
+
+            completedList.innerHTML = '';
+            pendingList.innerHTML = '';
+
+            if (AppState.pendingExams && AppState.pendingExams.length > 0) {
+                pendingContainer.style.display = 'block';
+                AppState.pendingExams.forEach(exam => {
+                    const card = document.createElement('div');
+                    card.className = 'module-card';
+                    card.style.borderLeft = '4px solid var(--accent)';
+                    card.innerHTML = `
+                        <div class="card-content">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                                <span style="background:rgba(16,185,129,0.1); color:var(--accent); padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;">Pending</span>
+                                <span style="color:var(--text-gray); font-size:0.85rem;">${exam.date}</span>
+                            </div>
+                            <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">${exam.module}</h3>
+                            <p style="color:var(--text-gray); font-size:0.9rem; margin-bottom:1.5rem;">${exam.unanswered} questions remaining</p>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="quiz-btn btn-primary" style="flex:2;" onclick="resumeExam('${exam.id}')">Resume <i class="ri-play-fill"></i></button>
+                                <button class="icon-btn" style="flex:0.5;" onclick="deletePendingExam('${exam.id}')"><i class="ri-delete-bin-line"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    pendingList.appendChild(card);
+                });
+            } else {
+                pendingContainer.style.display = 'none';
+            }
+
+            if (AppState.examsHistory && AppState.examsHistory.length > 0) {
+                noExamsMsg.style.display = 'none';
+                AppState.examsHistory.forEach(result => {
+                    const pct = Math.round((result.score / result.total) * 100);
+                    const color = pct >= 50 ? 'var(--primary-green)' : 'var(--primary-red)';
+                    const modeLabel = result.mode === 'exam' ? 'Exam' : 'Practice';
+                    const modeColor = result.mode === 'exam' ? 'var(--primary-blue)' : 'var(--accent)';
+                    const card = document.createElement('div');
+                    card.className = 'module-card';
+                    card.innerHTML = `
+                        <div class="card-content">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                                <div style="display:flex; gap:8px;">
+                                    <span style="background:var(--accent); color:white; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;">${result.module}</span>
+                                    <span style="background:${modeColor}22; color:${modeColor}; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700; border:1px solid ${modeColor}44;">${modeLabel}</span>
+                                </div>
+                                <span style="color:var(--text-gray); font-size:0.85rem;">${result.date}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:15px; margin-bottom:1.5rem;">
+                                <div style="font-size:1.8rem; font-weight:800; color:${color}">${pct}%</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:0.9rem; font-weight:600;">Score: ${result.score}/${result.total}</div>
+                                    <div style="font-size:0.8rem; color:var(--text-gray);">Time: ${result.time}</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="quiz-btn btn-primary" style="flex:2;" onclick="retakeExam('${result.id}')">Retake <i class="ri-refresh-line"></i></button>
+                                <button class="icon-btn" style="flex:0.5;" onclick="deleteExamResult('${result.id}')"><i class="ri-delete-bin-line"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    completedList.appendChild(card);
+                });
+            } else {
+                if (!AppState.pendingExams || AppState.pendingExams.length === 0) {
+                    noExamsMsg.style.display = 'block';
+                }
+            }
+        }
+
+        function retakeExam(id) {
+            const result = AppState.examsHistory.find(r => r.id == id);
+            if (!result) return;
+            Session.module = result.module;
+            Session.mode = result.quizType || 'normal';
+            Session.quizMode = result.mode || 'exam';
+            Session.settings = result.settings || { count: result.total, time: 0 };
+            Session.selectedSubtopics = result.selectedSubtopics || [];
+            launchQuiz();
+        }
+
+        function resumeExam(id) {
+            const exam = AppState.pendingExams.find(e => e.id == id);
+            if (!exam) return;
+
+            Session.module = exam.module;
+            Session.mode = exam.mode;
+            Session.quizMode = exam.quizMode;
+            Session.queue = exam.queue;
+            Session.answers = exam.answers;
+            Session.index = exam.index;
+            Session.score = exam.score;
+            Session.settings = exam.settings;
+            Session.selectedSubtopics = exam.selectedSubtopics;
+            Session.resumingId = exam.id;
+            Session.reviewing = false;
+
+            document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
+            document.body.classList.add('focus-mode');
+            const quizView = document.getElementById('view-quiz');
+            quizView.style.display = 'flex';
+            quizView.classList.add('active');
+
+            startSession();
+            loadQuestion();
+        }
+
+        function deleteExamResult(id) {
+            AppState.examsHistory = AppState.examsHistory.filter(e => e.id != id);
+            localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory));
+            window.saveUserData('examsHistory', AppState.examsHistory);
+            renderExamHistory();
+        }
+
+        function deletePendingExam(id) {
+            AppState.pendingExams = AppState.pendingExams.filter(e => e.id != id);
+            localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams));
+            window.saveUserData('pendingExams', AppState.pendingExams);
+            renderExamHistory();
         }
 
         function renderAdvancedCharts() {
@@ -5268,7 +5817,7 @@
 
             const chartHTML = `
             <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: var(--radius-lg); margin-bottom: 2rem; position: relative; overflow: hidden;">
-                <!-- Decorative background glows -->
+
                 <div style="position: absolute; top: -100px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
                 <div style="position: absolute; bottom: -100px; left: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(239,68,68,0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
 
@@ -5516,6 +6065,54 @@
             }
         }
 
+        window.openFeedbackModal = function () {
+            document.getElementById('feedback-text').value = '';
+            document.getElementById('feedback-modal').style.display = 'flex';
+        };
+
+        window.closeFeedbackModal = function () {
+            document.getElementById('feedback-modal').style.display = 'none';
+        };
+
+        window.sendFeedback = async function () {
+            const msg = document.getElementById('feedback-text').value.trim();
+            if (!msg) {
+                alert("Please type something before sending. ");
+                return;
+            }
+
+            const sendBtn = document.getElementById('btn-send-feedback');
+            sendBtn.innerHTML = "Sending... <i class='ri-loader-4-line ri-spin'></i>";
+            sendBtn.disabled = true;
+
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxNnNVdKu9Encehopo4VkAixnAXiRZhFJO9aHv0n1oSxLGo6ZRljpUSq3_loP-Cd_2KCQ/exec';
+
+            const requestBody = {
+                module_name: "GENERAL_FEEDBACK",
+                question_text: "N/A",
+                report_reason: msg
+            };
+
+            try {
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    body: JSON.stringify(requestBody),
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    }
+                });
+
+                window.showToast("Thank you! Your feedback has been sent anonymously.", "success");
+                closeFeedbackModal();
+            } catch (error) {
+                window.showToast("Error sending feedback. Try again later.", "error");
+                console.error("Error:", error);
+            } finally {
+                sendBtn.innerHTML = "Send Feedback <i class='ri-send-plane-fill'></i>";
+                sendBtn.disabled = false;
+            }
+        };
+
         function showConfetti() {
             const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
             for (let i = 0; i < 50; i++) {
@@ -5590,9 +6187,14 @@
             const accentColor = type === 'survival' ? 'var(--accent)' : '#F59E0B';
             const list = document.getElementById('game-leaderboard-list');
             list.innerHTML = '<div style="text-align:center;color:var(--text-gray);font-size:0.9rem;">Loading...</div>';
-            if (!window.getDocs || !window.collection || !window.db) return;
+            if (!window.getDocs || !window.collection || !window.db || !window.query || !window.orderBy || !window.limit) return;
             try {
-                const querySnapshot = await window.getDocs(window.collection(window.db, "users"));
+                const q = window.query(
+                    window.collection(window.db, "users"),
+                    window.orderBy(scoreField, "desc"),
+                    window.limit(10)
+                );
+                const querySnapshot = await window.getDocs(q);
                 let players = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
@@ -6001,8 +6603,6 @@
         window.loadPrivacySetting = loadPrivacySetting;
         window.fetchLeaderboard = fetchLeaderboard;
 
-        window.FLASHCARDS_DECKS = [];
-        let currentDeckObj = null;
         let fcDeck = [];
         let fcIndex = 0;
         let fcScores = [];
@@ -6586,7 +7186,123 @@
         window._fcShowDecksList = function () {
             _fcShowCover();
         };
+        let currentGlbTab = 'answered';
 
+        function switchGlobalLb(type) {
+            currentGlbTab = type;
+            const btnA = document.getElementById('glb-tab-answered');
+            const btnAcc = document.getElementById('glb-tab-accuracy');
+            if (type === 'answered') {
+                btnA.style.background = 'var(--accent)'; btnA.style.color = 'white'; btnA.style.border = 'none';
+                btnAcc.style.background = 'transparent'; btnAcc.style.color = 'var(--text-gray)'; btnAcc.style.border = '1px solid var(--border-color)';
+            } else {
+                btnAcc.style.background = 'var(--accent)'; btnAcc.style.color = 'white'; btnAcc.style.border = 'none';
+                btnA.style.background = 'transparent'; btnA.style.color = 'var(--text-gray)'; btnA.style.border = '1px solid var(--border-color)';
+            }
+            fetchGlobalLeaderboard(type);
+        }
+
+        async function fetchGlobalLeaderboard(type) {
+            const container = document.getElementById('global-leaderboard-content');
+            container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading...</div>';
+            if (!window.getDocs || !window.collection || !window.db || !window.query || !window.orderBy || !window.limit) return;
+            try {
+                // Use pre-calculated stats if available, otherwise fetch more users to find top ones
+                const sortField = type === 'answered' ? 'totalAnswered' : 'accuracy';
+                const q = window.query(
+                    window.collection(window.db, "users"),
+                    window.orderBy(sortField, "desc"),
+                    window.limit(20)
+                );
+
+                let querySnapshot;
+                try {
+                    querySnapshot = await window.getDocs(q);
+                } catch (idxErr) {
+                    // Fallback if index is not yet created
+                    console.warn("Leaderboard index not ready, falling back to limited fetch.");
+                    querySnapshot = await window.getDocs(window.query(window.collection(window.db, "users"), window.limit(50)));
+                }
+
+                let players = [];
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    if (!data.username || data.leaderboardHidden) return;
+
+                    let totalAnswered, totalCorrect, accuracy;
+
+                    if (data.totalAnswered !== undefined) {
+                        totalAnswered = data.totalAnswered;
+                        totalCorrect = data.totalCorrect || 0;
+                        accuracy = data.accuracy || 0;
+                    } else {
+                        const progress = data.progress || {};
+                        totalAnswered = 0; totalCorrect = 0;
+                        Object.values(progress).forEach(val => {
+                            totalAnswered++;
+                            if (val === 'correct') totalCorrect++;
+                        });
+                        accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+                    }
+
+                    if (totalAnswered === 0) return;
+                    players.push({
+                        username: data.username,
+                        avatarUrl: data.avatarUrl || '',
+                        totalAnswered,
+                        totalCorrect,
+                        accuracy,
+                        isSelf: docSnap.id === window.currentUserId
+                    });
+                });
+
+                if (type === 'answered') {
+                    players.sort((a, b) => b.totalAnswered - a.totalAnswered);
+                } else {
+                    players.sort((a, b) => b.accuracy - a.accuracy || b.totalAnswered - a.totalAnswered);
+                }
+
+                const top = players.slice(0, 10);
+                if (top.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">No data yet — start solving modules!</div>';
+                    return;
+                }
+
+                const medals = ['🥇', '🥈', '🥉'];
+                container.innerHTML = top.map((p, idx) => {
+                    const defAvatar = `https://ui-avatars.com/api/?name=${p.username.substring(0, 2).toUpperCase()}&background=10B981&color=fff&font-size=0.4&bold=true`;
+                    const avatarSrc = p.avatarUrl || defAvatar;
+                    const mainStat = type === 'answered'
+                        ? `<div style="font-size:1.5rem; font-weight:900; color:var(--accent);">${p.totalAnswered}</div><div style="font-size:0.75rem; color:var(--text-gray);">answered</div>`
+                        : `<div style="font-size:1.5rem; font-weight:900; color:var(--accent);">${p.accuracy}%</div><div style="font-size:0.75rem; color:var(--text-gray);">accuracy</div>`;
+
+                    return `
+            <div style="display:flex; align-items:center; gap:1rem; padding:1rem 1.25rem; 
+                background:${p.isSelf ? 'rgba(16,185,129,0.08)' : 'var(--bg-card)'}; 
+                border:1px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'}; 
+                border-radius:14px; transition:0.2s;">
+                <div style="font-size:${idx < 3 ? '1.8rem' : '1rem'}; font-weight:800; min-width:36px; text-align:center; color:${idx === 0 ? '#F59E0B' : idx === 1 ? '#9CA3AF' : idx === 2 ? '#CD7F32' : 'var(--text-gray)'};">
+                    ${idx < 3 ? medals[idx] : '#' + (idx + 1)}
+                </div>
+                <img src="${avatarSrc}" style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'};" onerror="this.src='${defAvatar}'">
+                <div style="flex:1;">
+                    <div style="font-weight:700; font-size:1rem; color:var(--text-light);">
+                        ${p.username} ${p.isSelf ? '<span style="font-size:0.7rem; color:var(--accent); font-weight:600;">YOU</span>' : ''}
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-gray); margin-top:2px;">
+                        ✅ ${p.totalCorrect} correct &nbsp;·&nbsp; 📊 ${p.accuracy}% accuracy
+                    </div>
+                </div>
+                <div style="text-align:right;">${mainStat}</div>
+            </div>`;
+                }).join('');
+            } catch (e) {
+                console.error('Global leaderboard error:', e);
+                container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">Failed to load leaderboard.</div>';
+            }
+        }
+        window.switchGlobalLb = switchGlobalLb;
+        window.fetchGlobalLeaderboard = fetchGlobalLeaderboard;
         function draw(e) {
             if (!isDrawing || !isDrawingMode) return;
             e.preventDefault();
@@ -6683,6 +7399,7 @@
                         Next <i class="ri-arrow-right-s-line"></i>
                     </button>
                 </div>
+
 
 </body>
 
