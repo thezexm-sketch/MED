@@ -51,13 +51,20 @@
         }
 
         [data-theme='light'] {
-            --bg-dark: #FFFFFF;
-            --bg-darker: #F8FAFC;
+            --bg-dark: #F1F5F9;
+            --bg-darker: #FFFFFF;
             --bg-card: #FFFFFF;
+            --bg-sidebar: #FFFFFF;
+            --bg-topbar: rgba(255, 255, 255, 0.8);
             --text-light: #0F172A;
-            --text-gray: #64748B;
-            --border-color: rgba(15, 23, 42, 0.15);
+            --text-gray: #475569;
+            --border-color: rgba(15, 23, 42, 0.1);
             --hover-bg: rgba(15, 23, 42, 0.05);
+        }
+
+        :root {
+            --bg-sidebar: rgba(14, 20, 18, 0.95);
+            --bg-topbar: rgba(31, 41, 36, 0.7);
         }
 
         * {
@@ -327,8 +334,7 @@
 
         .sidebar {
             width: var(--sidebar-width);
-            background: rgba(14, 20, 18, 0.9);
-            /* Dark Emerald Green Tint */
+            background: var(--bg-sidebar);
 
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -526,12 +532,16 @@
 
         .directors-card {
             margin-top: auto;
-            background: var(--bg-card);
+            background: var(--bg-darker);
             border: 1px solid var(--border-color);
             padding: 1rem;
             border-radius: 16px;
             text-align: center;
             white-space: normal;
+        }
+
+        [data-theme='light'] .directors-card {
+            background: #f8fafc;
         }
 
         .directors-label {
@@ -572,7 +582,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 3rem;
-            background: rgba(31, 41, 36, 0.7);
+            background: var(--bg-topbar);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
@@ -661,6 +671,10 @@
             transition: var(--transition);
             position: relative;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme='light'] .module-card {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
         }
 
         .text-timer {
