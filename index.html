@@ -568,6 +568,25 @@
             }
         }
 
+        .admin-badge {
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: goldShine 3s linear infinite;
+            font-weight: 900;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(191, 149, 63, 0.4);
+            background-color: rgba(191, 149, 63, 0.1);
+            display: inline-block;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
         .main-content {
             flex: 1;
             display: flex;
@@ -1680,9 +1699,6 @@
             body {
                 flex-direction: column;
             }
-
-            /* Removed old bottom-sidebar override to allow new drawer system */
-
             .main-content {
                 padding-bottom: 0;
                 height: 100vh;
@@ -2784,7 +2800,7 @@
     </style>
 </head>
 
-    <body data-theme="dark">
+<body data-theme="dark">
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="modal-overlay" id="username-modal">
         <div class="modal-container" style="max-width: 400px; text-align: center; padding: 2.5rem;">
@@ -3956,8 +3972,10 @@
                         localStorage.setItem('medStorm_username', uname);
                         if (window.setDoc && window.db) {
                             try {
-                                await window.setDoc(window.doc(window.db, 'users', cred.user.uid), { username: uname }, { merge: true });
-                            } catch (e) { console.warn('Could not save username to DB:', e); }
+                                await window.setDoc(window.doc(window.db, 'users', cred.user.uid), {
+                                    username: uname
+                                }, { merge: true });
+                            } catch (e) { console.warn('Could not save user data to DB:', e); }
                         }
                     }
                 } else {
@@ -4225,8 +4243,6 @@
         function toggleSidebar() {
             document.body.classList.toggle('sidebar-collapsed');
         }
-
-        // Auto-close sidebar on mobile after navigation
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
                 const navItem = e.target.closest('.nav-item');
@@ -4235,8 +4251,6 @@
                 }
             }
         });
-
-        // Initialize sidebar state for mobile
         if (window.innerWidth <= 768) {
             document.body.classList.add('sidebar-collapsed');
         }
@@ -4381,8 +4395,6 @@
             });
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-label').forEach(lbl => lbl.classList.remove('active'));
-
-            // Section Highlighting Logic
             if (['dashboard', 'flashcards', 'history'].includes(mode)) {
                 const quizLabel = document.getElementById('label-quiz');
                 if (quizLabel) quizLabel.classList.add('active');
@@ -6152,7 +6164,11 @@
                             <div style="display:flex;align-items:center;gap:0.6rem;">
                                 <div style="font-weight:bold;color:${idx === 0 ? '#F59E0B' : idx === 1 ? '#9CA3AF' : idx === 2 ? '#CD7F32' : 'var(--text-gray)'};width:24px;font-size:0.95rem;">#${idx + 1}</div>
                                 <img src="${p.avatarUrl}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--border-color);" onerror="this.src='img/default_avatar.png'">
-                                <span style="font-weight:600;color:var(--text-light);">${p.username}${p.isSelf ? ' <span style=\'font-size:0.7rem;color:var(--text-gray);\'>YOU</span>' : ''}</span>
+                                <span style="font-weight:600;color:var(--text-light);">
+                                    ${p.username}
+                                    ${p.isSelf ? ' <span style=\'font-size:0.7rem;color:var(--text-gray);\'>YOU</span>' : ''}
+                                    ${(p.role === 'admin' || (p.username && p.username.toLowerCase() === 'mahmoud')) ? ' <span class="admin-badge">ADMIN</span>' : ''}
+                                </span>
                             </div>
                             <div style="font-weight:800;color:${accentColor};">${p.score}</div>
                         </div>`).join('');
@@ -6185,7 +6201,7 @@
             }
             if (!AppState.username && window.getDoc && window.doc && window.db) {
                 try {
-                    const snap = await window.getDoc(window.doc(window.db, 'users', window.currentUserId));
+                    const snap = await window.getDoc(window.doc(window.db, "users", window.currentUserId));
                     if (snap.exists() && snap.data().username) {
                         AppState.username = snap.data().username;
                         localStorage.setItem('medStorm_username', snap.data().username);
@@ -6679,7 +6695,7 @@
                             <span class="fc-progress-label" id="fc-progress-label" style="display:block; text-align:center; margin-top:5px; color:var(--text-gray);">-- / --</span>
                         </div>
                         <button class="fc-nav-btn" id="fc-next-btn" onclick="fcNavigate(1)" style="width:45px; height:45px; font-size:1.2rem;">
-                            <i class="ri-arrow-right-line"></i>
+                            <i class="ri-arrow-right-s-line"></i>
                         </button>
                     </nav>
                 </div>
@@ -7147,7 +7163,7 @@
             container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading...</div>';
             if (!window.getDocs || !window.collection || !window.db || !window.query || !window.orderBy || !window.limit) return;
             try {
-                // Use pre-calculated stats if available, otherwise fetch more users to find top ones
+
                 const sortField = type === 'answered' ? 'totalAnswered' : 'accuracy';
                 const q = window.query(
                     window.collection(window.db, "users"),
@@ -7159,7 +7175,7 @@
                 try {
                     querySnapshot = await window.getDocs(q);
                 } catch (idxErr) {
-                    // Fallback if index is not yet created
+
                     console.warn("Leaderboard index not ready, falling back to limited fetch.");
                     querySnapshot = await window.getDocs(window.query(window.collection(window.db, "users"), window.limit(50)));
                 }
@@ -7192,7 +7208,8 @@
                         totalAnswered,
                         totalCorrect,
                         accuracy,
-                        isSelf: docSnap.id === window.currentUserId
+                        isSelf: docSnap.id === window.currentUserId,
+                        role: data.role
                     });
                 });
 
@@ -7217,17 +7234,19 @@
                         : `<div style="font-size:1.5rem; font-weight:900; color:var(--accent);">${p.accuracy}%</div><div style="font-size:0.75rem; color:var(--text-gray);">accuracy</div>`;
 
                     return `
-            <div style="display:flex; align-items:center; gap:1rem; padding:1rem 1.25rem; 
-                background:${p.isSelf ? 'rgba(16,185,129,0.08)' : 'var(--bg-card)'}; 
-                border:1px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'}; 
+            <div style="display:flex; align-items:center; gap:1rem; padding:1rem 1.25rem;
+                background:${p.isSelf ? 'rgba(16,185,129,0.08)' : 'var(--bg-card)'};
+                border:1px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'};
                 border-radius:14px; transition:0.2s;">
                 <div style="font-size:${idx < 3 ? '1.8rem' : '1rem'}; font-weight:800; min-width:36px; text-align:center; color:${idx === 0 ? '#F59E0B' : idx === 1 ? '#9CA3AF' : idx === 2 ? '#CD7F32' : 'var(--text-gray)'};">
                     ${idx < 3 ? medals[idx] : '#' + (idx + 1)}
                 </div>
                 <img src="${avatarSrc}" style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'};" onerror="this.src='${defAvatar}'">
                 <div style="flex:1;">
-                    <div style="font-weight:700; font-size:1rem; color:var(--text-light);">
-                        ${p.username} ${p.isSelf ? '<span style="font-size:0.7rem; color:var(--accent); font-weight:600;">YOU</span>' : ''}
+                    <div style="font-weight:700; font-size:1rem; color:var(--text-light); display:flex; align-items:center;">
+                        ${p.username}
+                        ${p.isSelf ? '<span style="font-size:0.7rem; color:var(--accent); font-weight:600; margin-left:6px;">YOU</span>' : ''}
+                        ${(p.role === 'admin' || (p.username && p.username.toLowerCase() === 'mahmoud')) ? '<span class="admin-badge">ADMIN</span>' : ''}
                     </div>
                     <div style="font-size:0.8rem; color:var(--text-gray); margin-top:2px;">
                         ✅ ${p.totalCorrect} correct &nbsp;·&nbsp; 📊 ${p.accuracy}% accuracy
@@ -7339,8 +7358,6 @@
                         Next <i class="ri-arrow-right-s-line"></i>
                     </button>
                 </div>
-
-
 </body>
 
 </html>
