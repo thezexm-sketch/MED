@@ -568,6 +568,25 @@
             }
         }
 
+        .admin-badge {
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: goldShine 3s linear infinite;
+            font-weight: 900;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(191, 149, 63, 0.4);
+            background-color: rgba(191, 149, 63, 0.1);
+            display: inline-block;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
         .main-content {
             flex: 1;
             display: flex;
@@ -2784,7 +2803,7 @@
     </style>
 </head>
 
-    <body data-theme="dark">
+<body data-theme="dark">
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="modal-overlay" id="username-modal">
         <div class="modal-container" style="max-width: 400px; text-align: center; padding: 2.5rem;">
@@ -3746,7 +3765,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
@@ -3761,6 +3780,37 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         window.db = db;
+
+        // Enable offline persistence so students can study without internet
+        enableIndexedDbPersistence(db).catch((err) => {
+            if (err.code === 'failed-precondition') {
+                console.warn('Offline persistence unavailable: multiple tabs open.');
+            } else if (err.code === 'unimplemented') {
+                console.warn('Offline persistence not supported in this browser.');
+            }
+        });
+
+        // Offline/online banner
+        function updateOnlineStatus() {
+            let banner = document.getElementById('offline-banner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'offline-banner';
+                banner.style.cssText = [
+                    'position:fixed', 'bottom:16px', 'left:50%', 'transform:translateX(-50%)',
+                    'background:#1f2937', 'color:#f9fafb', 'font-size:13px', 'font-weight:500',
+                    'padding:8px 18px', 'border-radius:999px', 'z-index:99999',
+                    'box-shadow:0 2px 12px rgba(0,0,0,0.3)', 'display:none',
+                    'align-items:center', 'gap:8px', 'white-space:nowrap'
+                ].join(';');
+                banner.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;flex-shrink:0"></span>&nbsp; Offline — showing cached questions';
+                document.body.appendChild(banner);
+            }
+            banner.style.display = navigator.onLine ? 'none' : 'flex';
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        document.addEventListener('DOMContentLoaded', updateOnlineStatus);
         window.collection = collection;
         window.getDocs = getDocs;
         window.doc = doc;
@@ -3956,8 +4006,10 @@
                         localStorage.setItem('medStorm_username', uname);
                         if (window.setDoc && window.db) {
                             try {
-                                await window.setDoc(window.doc(window.db, 'users', cred.user.uid), { username: uname }, { merge: true });
-                            } catch (e) { console.warn('Could not save username to DB:', e); }
+                                await window.setDoc(window.doc(window.db, 'users', cred.user.uid), {
+                                    username: uname
+                                }, { merge: true });
+                            } catch (e) { console.warn('Could not save user data to DB:', e); }
                         }
                     }
                 } else {
@@ -4059,14 +4111,29 @@
             }
         };
         async function fetchQuestionsFromDB() {
+            const modules = [
+                { id: 'msk_questions', key: 'MSK' },
+                { id: 'blood_questions', key: 'Blood' },
+                { id: 'foundation_questions', key: 'Foundation' },
+                { id: 'terminology_questions', key: 'Terminology' },
+                { id: 'cvs_questions', key: 'CVS' }
+            ];
+
+            // Load from localStorage cache immediately so UI is never blank
+            let loadedFromCache = false;
+            modules.forEach(mod => {
+                try {
+                    const cached = localStorage.getItem('medStorm_' + mod.key);
+                    if (cached && !window.DB[mod.key]) {
+                        window.DB[mod.key] = JSON.parse(cached);
+                        loadedFromCache = true;
+                    }
+                } catch (e) {}
+            });
+            if (loadedFromCache && typeof window.renderDashboard === "function") window.renderDashboard();
+
+            // Then fetch fresh from Firestore (works online; uses IndexedDB cache offline)
             try {
-                const modules = [
-                    { id: 'msk_questions', key: 'MSK' },
-                    { id: 'blood_questions', key: 'Blood' },
-                    { id: 'foundation_questions', key: 'Foundation' },
-                    { id: 'terminology_questions', key: 'Terminology' },
-                    { id: 'cvs_questions', key: 'CVS' }
-                ];
                 const fetchPromises = modules.map(mod => getDoc(doc(db, "content", mod.id)));
                 const snapshots = await Promise.all(fetchPromises);
                 let isUpdated = false;
@@ -4089,7 +4156,10 @@
                     }
                 });
                 if (isUpdated && typeof window.renderDashboard === "function") window.renderDashboard();
-            } catch (e) { console.error("Fetch Error:", e); }
+            } catch (e) {
+                console.warn("Firestore fetch failed, using cached data:", e);
+                // If we already loaded from cache above, the UI is already populated — no action needed
+            }
         }
 
         function highlightSelection() {
@@ -6152,7 +6222,11 @@
                             <div style="display:flex;align-items:center;gap:0.6rem;">
                                 <div style="font-weight:bold;color:${idx === 0 ? '#F59E0B' : idx === 1 ? '#9CA3AF' : idx === 2 ? '#CD7F32' : 'var(--text-gray)'};width:24px;font-size:0.95rem;">#${idx + 1}</div>
                                 <img src="${p.avatarUrl}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--border-color);" onerror="this.src='img/default_avatar.png'">
-                                <span style="font-weight:600;color:var(--text-light);">${p.username}${p.isSelf ? ' <span style=\'font-size:0.7rem;color:var(--text-gray);\'>YOU</span>' : ''}</span>
+                                <span style="font-weight:600;color:var(--text-light);">
+                                    ${p.username}
+                                    ${p.isSelf ? ' <span style=\'font-size:0.7rem;color:var(--text-gray);\'>YOU</span>' : ''}
+                                    ${(p.role === 'admin' || (p.username && p.username.toLowerCase() === 'mahmoud')) ? ' <span class="admin-badge">ADMIN</span>' : ''}
+                                </span>
                             </div>
                             <div style="font-weight:800;color:${accentColor};">${p.score}</div>
                         </div>`).join('');
@@ -6185,7 +6259,7 @@
             }
             if (!AppState.username && window.getDoc && window.doc && window.db) {
                 try {
-                    const snap = await window.getDoc(window.doc(window.db, 'users', window.currentUserId));
+                    const snap = await window.getDoc(window.doc(window.db, "users", window.currentUserId));
                     if (snap.exists() && snap.data().username) {
                         AppState.username = snap.data().username;
                         localStorage.setItem('medStorm_username', snap.data().username);
@@ -6679,7 +6753,7 @@
                             <span class="fc-progress-label" id="fc-progress-label" style="display:block; text-align:center; margin-top:5px; color:var(--text-gray);">-- / --</span>
                         </div>
                         <button class="fc-nav-btn" id="fc-next-btn" onclick="fcNavigate(1)" style="width:45px; height:45px; font-size:1.2rem;">
-                            <i class="ri-arrow-right-line"></i>
+                            <i class="ri-arrow-right-s-line"></i>
                         </button>
                     </nav>
                 </div>
@@ -7192,7 +7266,8 @@
                         totalAnswered,
                         totalCorrect,
                         accuracy,
-                        isSelf: docSnap.id === window.currentUserId
+                        isSelf: docSnap.id === window.currentUserId,
+                        role: data.role
                     });
                 });
 
@@ -7226,8 +7301,10 @@
                 </div>
                 <img src="${avatarSrc}" style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'};" onerror="this.src='${defAvatar}'">
                 <div style="flex:1;">
-                    <div style="font-weight:700; font-size:1rem; color:var(--text-light);">
-                        ${p.username} ${p.isSelf ? '<span style="font-size:0.7rem; color:var(--accent); font-weight:600;">YOU</span>' : ''}
+                    <div style="font-weight:700; font-size:1rem; color:var(--text-light); display:flex; align-items:center;">
+                        ${p.username} 
+                        ${p.isSelf ? '<span style="font-size:0.7rem; color:var(--accent); font-weight:600; margin-left:6px;">YOU</span>' : ''}
+                        ${(p.role === 'admin' || (p.username && p.username.toLowerCase() === 'mahmoud')) ? '<span class="admin-badge">ADMIN</span>' : ''}
                     </div>
                     <div style="font-size:0.8rem; color:var(--text-gray); margin-top:2px;">
                         ✅ ${p.totalCorrect} correct &nbsp;·&nbsp; 📊 ${p.accuracy}% accuracy
