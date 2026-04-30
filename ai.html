@@ -3565,7 +3565,7 @@
                 </div>
 
                 <!-- Tabs -->
-                <div style="display:flex; gap:8px; margin-bottom:1.25rem; flex-wrap:wrap;">
+                <div style="display:flex; gap:8px; margin-bottom:1.25rem; flex-wrap:wrap; align-items:center;">
                     <button onclick="adminTab('users')" id="admin-tab-users"
                         style="padding:7px 18px; border-radius:999px; border:1.5px solid var(--accent); background:var(--accent); color:#fff; font-weight:600; font-size:0.85rem; cursor:pointer;">
                         Users
@@ -3578,6 +3578,14 @@
                         style="padding:7px 18px; border-radius:999px; border:1.5px solid var(--border-color); background:transparent; color:var(--text-gray); font-weight:600; font-size:0.85rem; cursor:pointer;">
                         Feedback
                     </button>
+                    <button onclick="adminTab('reports')" id="admin-tab-reports"
+                        style="padding:7px 18px; border-radius:999px; border:1.5px solid var(--border-color); background:transparent; color:var(--text-gray); font-weight:600; font-size:0.85rem; cursor:pointer;">
+                        Reports
+                    </button>
+                    <a href="change_answers.html" target="_blank"
+                        style="margin-left:auto; padding:7px 18px; border-radius:999px; border:1.5px solid #8b5cf6; background:#8b5cf6; color:#fff; font-weight:600; font-size:0.85rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                        <i class="ri-edit-2-line"></i> Edit Questions
+                    </a>
                 </div>
 
                 <!-- Users Panel -->
@@ -3620,6 +3628,23 @@
                 <div id="admin-panel-feedback" style="display:none;">
                     <div id="admin-feedback-list" style="display:flex; flex-direction:column; gap:10px;">
                         <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading feedback...</div>
+                    </div>
+                </div>
+
+                <!-- Reports Panel -->
+                <div id="admin-panel-reports" style="display:none;">
+                    <div style="display:flex; gap:8px; margin-bottom:1rem;">
+                        <button onclick="adminReportsFilter('pending')" id="admin-rep-pending"
+                            style="padding:6px 14px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; font-size:0.85rem; cursor:pointer; font-weight:600;">
+                            Pending
+                        </button>
+                        <button onclick="adminReportsFilter('all')" id="admin-rep-all"
+                            style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600;">
+                            All
+                        </button>
+                    </div>
+                    <div id="admin-reports-list" style="display:flex; flex-direction:column; gap:10px;">
+                        <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading reports...</div>
                     </div>
                 </div>
 
@@ -4023,13 +4048,18 @@
                 const savedAvatar = localStorage.getItem('medStorm_avatar_' + user.uid);
                 window.setAvatarUI(savedAvatar ? savedAvatar : defAvatar);
                 try {
-                    await updateDoc(doc(db, 'users', user.uid), {
-                        lastSeen: Date.now(),
-                        email: user.email || ''
-                    });
-                } catch (e) {
+                    const userRef = doc(db, 'users', user.uid);
+                    const userSnap = await getDoc(userRef);
+                    const updateData = { lastSeen: Date.now(), email: user.email || '' };
+                    if (!userSnap.exists() || !userSnap.data().createdAt) {
 
-                }
+                        const authCreated = user.metadata && user.metadata.creationTime
+                            ? new Date(user.metadata.creationTime).getTime()
+                            : Date.now();
+                        updateData.createdAt = authCreated;
+                    }
+                    await setDoc(userRef, updateData, { merge: true });
+                } catch (e) { console.warn('lastSeen update failed:', e); }
 
                 await Promise.all([
                     fetchQuestionsFromDB(),
@@ -6128,23 +6158,18 @@
 
             const currentQ = Session.queue[Session.index];
 
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxNnNVdKu9Encehopo4VkAixnAXiRZhFJO9aHv0n1oSxLGo6ZRljpUSq3_loP-Cd_2KCQ/exec';
-
-            const requestBody = {
-                module_name: Session.module,
-                question_text: currentQ.q,
-                report_reason: reason
-            };
-
             try {
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    body: JSON.stringify(requestBody),
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    }
+                const reportRef = window.doc(window.collection(window.db, 'reports'), Date.now().toString() + '_' + Math.random().toString(36).slice(2, 7));
+                await window.setDoc(reportRef, {
+                    module: Session.module || '',
+                    question: currentQ ? currentQ.q : '',
+                    correctAnswer: currentQ ? currentQ.a : '',
+                    reason: reason,
+                    reportedBy: window.currentUserId || 'anonymous',
+                    username: (window.AppState && window.AppState.username) || 'anonymous',
+                    createdAt: Date.now(),
+                    status: 'pending'
                 });
-
                 window.showToast("Report has been sent successfully!", "success"); closeReportModal();
             } catch (error) {
                 window.showToast("Error! Try again later", "error"); console.error("Error:", error);
@@ -6174,23 +6199,12 @@
             sendBtn.innerHTML = "Sending... <i class='ri-loader-4-line ri-spin'></i>";
             sendBtn.disabled = true;
 
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxNnNVdKu9Encehopo4VkAixnAXiRZhFJO9aHv0n1oSxLGo6ZRljpUSq3_loP-Cd_2KCQ/exec';
-
-            const requestBody = {
-                module_name: "GENERAL_FEEDBACK",
-                question_text: "N/A",
-                report_reason: msg
-            };
-
             try {
-                await fetch(scriptURL, {
-                    method: 'POST',
-                    body: JSON.stringify(requestBody),
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    }
+                const fbRef = window.doc(window.collection(window.db, 'feedback'), Date.now().toString() + '_' + Math.random().toString(36).slice(2, 7));
+                await window.setDoc(fbRef, {
+                    message: msg,
+                    createdAt: Date.now()
                 });
-
                 window.showToast("Thank you! Your feedback has been sent anonymously.", "success");
                 closeFeedbackModal();
             } catch (error) {
@@ -7405,7 +7419,7 @@
 
         async function loadAdminPanel() {
             if (window.currentUserId !== ADMIN_UID) return;
-            await Promise.all([loadAdminUsers(), loadAdminFeedback()]);
+            await Promise.all([loadAdminUsers(), loadAdminFeedback(), loadAdminReports()]);
         }
 
         async function loadAdminUsers() {
@@ -7471,14 +7485,89 @@
                     const date = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown date';
                     return `<div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1rem 1.25rem;">
                         <div style="font-size:0.78rem; color:var(--text-gray); margin-bottom:6px;">${date}</div>
-                        <div style="color:var(--text-light); font-size:0.95rem; line-height:1.6;">${item.message || item.text || JSON.stringify(item)}</div>
+                        <div style="color:var(--text-light); font-size:0.95rem; line-height:1.6;">${item.message || item.text || ''}</div>
                     </div>`;
                 }).join('');
             } catch (e) {
                 const list = document.getElementById('admin-feedback-list');
-                if (list) list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">No feedback collection found.</div>';
+                if (list) list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">No feedback yet.</div>';
             }
         }
+
+        let allAdminReports = [];
+        let currentReportsFilter = 'pending';
+
+        async function loadAdminReports() {
+            try {
+                const snap = await window.getDocs(window.collection(window.db, 'reports'));
+                allAdminReports = [];
+                snap.forEach(d => allAdminReports.push({ id: d.id, ...d.data() }));
+                allAdminReports.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                adminRenderReports();
+            } catch (e) {
+                const list = document.getElementById('admin-reports-list');
+                if (list) list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">No reports yet.</div>';
+            }
+        }
+
+        function adminReportsFilter(filter) {
+            currentReportsFilter = filter;
+            ['pending', 'all'].forEach(f => {
+                const btn = document.getElementById('admin-rep-' + f);
+                if (btn) {
+                    btn.style.background = f === filter ? 'var(--accent)' : 'transparent';
+                    btn.style.color = f === filter ? '#fff' : 'var(--text-gray)';
+                    btn.style.borderColor = f === filter ? 'var(--accent)' : 'var(--border-color)';
+                }
+            });
+            adminRenderReports();
+        }
+
+        function adminRenderReports() {
+            const list = document.getElementById('admin-reports-list');
+            if (!list) return;
+            let reports = currentReportsFilter === 'pending'
+                ? allAdminReports.filter(r => r.status === 'pending')
+                : allAdminReports;
+            if (reports.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">No ' + currentReportsFilter + ' reports.</div>';
+                return;
+            }
+            list.innerHTML = reports.map(r => {
+                const date = r.createdAt ? new Date(r.createdAt).toLocaleString() : 'Unknown';
+                const statusColor = r.status === 'resolved' ? '#10b981' : '#f59e0b';
+                return `<div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; padding:1rem 1.25rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                            <span style="font-size:0.75rem; background:rgba(59,130,246,0.15); color:#3b82f6; padding:2px 8px; border-radius:999px; font-weight:600;">${r.module || 'Unknown module'}</span>
+                            <span style="font-size:0.75rem; background:rgba(${r.status === 'resolved' ? '16,185,129' : '245,158,11'},0.15); color:${statusColor}; padding:2px 8px; border-radius:999px; font-weight:600;">${r.status || 'pending'}</span>
+                        </div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span style="font-size:0.72rem; color:var(--text-gray);">by ${r.username || 'anon'} · ${date}</span>
+                            ${r.status !== 'resolved' ? `<button onclick="markReportResolved('${r.id}')" style="padding:3px 10px; border-radius:8px; border:1px solid #10b981; background:transparent; color:#10b981; font-size:0.75rem; cursor:pointer; font-weight:600;">Mark resolved</button>` : ''}
+                        </div>
+                    </div>
+                    <div style="font-size:0.82rem; color:var(--text-gray); margin-bottom:6px; font-weight:600;">Question:</div>
+                    <div style="font-size:0.9rem; color:var(--text-light); margin-bottom:8px; line-height:1.5;">${r.question || ''}</div>
+                    <div style="font-size:0.82rem; color:var(--text-gray); font-weight:600; margin-bottom:4px;">Report reason:</div>
+                    <div style="font-size:0.9rem; color:#f59e0b; line-height:1.5;">${r.reason || ''}</div>
+                    ${r.correctAnswer ? `<div style="font-size:0.78rem; color:var(--text-gray); margin-top:6px;">Correct answer: <span style="color:#10b981;">${r.correctAnswer}</span></div>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        window.markReportResolved = async function (reportId) {
+            try {
+                await window.updateDoc(window.doc(window.db, 'reports', reportId), { status: 'resolved' });
+                const report = allAdminReports.find(r => r.id === reportId);
+                if (report) report.status = 'resolved';
+                adminRenderReports();
+                window.showToast('Report marked as resolved', 'success');
+            } catch (e) {
+                window.showToast('Error updating report', 'error');
+            }
+        };
+        window.adminReportsFilter = adminReportsFilter;
 
         function adminFilterUsers() {
             const search = (document.getElementById('admin-search')?.value || '').toLowerCase();
@@ -7568,7 +7657,7 @@
         }
 
         function adminTab(tab) {
-            ['users', 'leaderboard', 'feedback'].forEach(t => {
+            ['users', 'leaderboard', 'feedback', 'reports'].forEach(t => {
                 document.getElementById('admin-panel-' + t).style.display = t === tab ? 'block' : 'none';
                 const btn = document.getElementById('admin-tab-' + t);
                 if (btn) {
@@ -7578,6 +7667,8 @@
                 }
             });
             if (tab === 'leaderboard') adminRenderLeaderboard(currentAdminLbType);
+            if (tab === 'reports' && allAdminReports.length === 0) loadAdminReports();
+            if (tab === 'feedback') loadAdminFeedback();
         }
 
         function adminLbTab(type) {
