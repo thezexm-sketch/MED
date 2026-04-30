@@ -1700,8 +1700,6 @@
                 flex-direction: column;
             }
 
-            /* Removed old bottom-sidebar override to allow new drawer system */
-
             .main-content {
                 padding-bottom: 0;
                 height: 100vh;
@@ -2915,6 +2913,9 @@
                 <div class="nav-item" onclick="switchMode('leaderboard')" id="nav-leaderboard">
                     <i class="ri-trophy-line"></i><span>Leaderboard</span>
                 </div>
+                <div class="nav-item" onclick="switchMode('admin')" id="nav-admin" style="display:none;">
+                    <i class="ri-shield-user-line"></i><span>Admin Panel</span>
+                </div>
             </div>
 
             <div class="nav-label" id="label-features" onclick="toggleNavSection(this)">More Features <i
@@ -3555,6 +3556,75 @@
                 </div>
             </div>
         </div>
+        <div id="view-admin" class="view-section">
+            <div style="max-width:1100px; margin:0 auto; padding:1.5rem 1rem;">
+
+                <!-- Stats Row -->
+                <div id="admin-stats-row"
+                    style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:1.5rem;">
+                </div>
+
+                <!-- Tabs -->
+                <div style="display:flex; gap:8px; margin-bottom:1.25rem; flex-wrap:wrap;">
+                    <button onclick="adminTab('users')" id="admin-tab-users"
+                        style="padding:7px 18px; border-radius:999px; border:1.5px solid var(--accent); background:var(--accent); color:#fff; font-weight:600; font-size:0.85rem; cursor:pointer;">
+                        Users
+                    </button>
+                    <button onclick="adminTab('leaderboard')" id="admin-tab-leaderboard"
+                        style="padding:7px 18px; border-radius:999px; border:1.5px solid var(--border-color); background:transparent; color:var(--text-gray); font-weight:600; font-size:0.85rem; cursor:pointer;">
+                        Full Leaderboard
+                    </button>
+                    <button onclick="adminTab('feedback')" id="admin-tab-feedback"
+                        style="padding:7px 18px; border-radius:999px; border:1.5px solid var(--border-color); background:transparent; color:var(--text-gray); font-weight:600; font-size:0.85rem; cursor:pointer;">
+                        Feedback
+                    </button>
+                </div>
+
+                <!-- Users Panel -->
+                <div id="admin-panel-users">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:1rem; flex-wrap:wrap;">
+                        <input id="admin-search" type="text" placeholder="Search by username or email..."
+                            oninput="adminFilterUsers()"
+                            style="flex:1; min-width:200px; padding:8px 14px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.9rem;">
+                        <select id="admin-sort" onchange="adminFilterUsers()"
+                            style="padding:8px 12px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.9rem;">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                            <option value="most_answered">Most answered</option>
+                            <option value="accuracy">Best accuracy</option>
+                        </select>
+                    </div>
+                    <div id="admin-users-list" style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading users...</div>
+                    </div>
+                </div>
+
+                <!-- Full Leaderboard Panel -->
+                <div id="admin-panel-leaderboard" style="display:none;">
+                    <div style="display:flex; gap:8px; margin-bottom:1rem;">
+                        <button onclick="adminLbTab('answered')" id="admin-lb-answered"
+                            style="padding:6px 14px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; font-size:0.85rem; cursor:pointer; font-weight:600;">
+                            Most Answered
+                        </button>
+                        <button onclick="adminLbTab('accuracy')" id="admin-lb-accuracy"
+                            style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600;">
+                            Best Accuracy
+                        </button>
+                    </div>
+                    <div id="admin-lb-list" style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Feedback Panel -->
+                <div id="admin-panel-feedback" style="display:none;">
+                    <div id="admin-feedback-list" style="display:flex; flex-direction:column; gap:10px;">
+                        <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading feedback...</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </main>
 
     <button class="ai-chat-btn" onclick="toggleAIChat()" title="Ask Meddy AI">
@@ -3780,8 +3850,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         window.db = db;
-
-        // Enable offline persistence so students can study without internet
         enableIndexedDbPersistence(db).catch((err) => {
             if (err.code === 'failed-precondition') {
                 console.warn('Offline persistence unavailable: multiple tabs open.');
@@ -3789,8 +3857,6 @@
                 console.warn('Offline persistence not supported in this browser.');
             }
         });
-
-        // Offline/online banner
         function updateOnlineStatus() {
             let banner = document.getElementById('offline-banner');
             if (!banner) {
@@ -3944,6 +4010,11 @@
             if (user) {
                 document.getElementById('login-overlay').style.display = 'none';
                 window.currentUserId = user.uid;
+
+                if (user.uid === '6fkQvfQYN4WvOIbcbBuWivqVvtd2') {
+                    const adminNav = document.getElementById('nav-admin');
+                    if (adminNav) adminNav.style.display = 'flex';
+                }
 
                 const emailDisplay = document.getElementById('profile-page-email');
                 if (emailDisplay) emailDisplay.textContent = user.email;
@@ -4118,8 +4189,6 @@
                 { id: 'terminology_questions', key: 'Terminology' },
                 { id: 'cvs_questions', key: 'CVS' }
             ];
-
-            // Load from localStorage cache immediately so UI is never blank
             let loadedFromCache = false;
             modules.forEach(mod => {
                 try {
@@ -4128,11 +4197,9 @@
                         window.DB[mod.key] = JSON.parse(cached);
                         loadedFromCache = true;
                     }
-                } catch (e) {}
+                } catch (e) { }
             });
             if (loadedFromCache && typeof window.renderDashboard === "function") window.renderDashboard();
-
-            // Then fetch fresh from Firestore (works online; uses IndexedDB cache offline)
             try {
                 const fetchPromises = modules.map(mod => getDoc(doc(db, "content", mod.id)));
                 const snapshots = await Promise.all(fetchPromises);
@@ -4158,7 +4225,7 @@
                 if (isUpdated && typeof window.renderDashboard === "function") window.renderDashboard();
             } catch (e) {
                 console.warn("Firestore fetch failed, using cached data:", e);
-                // If we already loaded from cache above, the UI is already populated — no action needed
+
             }
         }
 
@@ -4295,8 +4362,6 @@
         function toggleSidebar() {
             document.body.classList.toggle('sidebar-collapsed');
         }
-
-        // Auto-close sidebar on mobile after navigation
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
                 const navItem = e.target.closest('.nav-item');
@@ -4305,8 +4370,6 @@
                 }
             }
         });
-
-        // Initialize sidebar state for mobile
         if (window.innerWidth <= 768) {
             document.body.classList.add('sidebar-collapsed');
         }
@@ -4451,8 +4514,6 @@
             });
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-label').forEach(lbl => lbl.classList.remove('active'));
-
-            // Section Highlighting Logic
             if (['dashboard', 'flashcards', 'history'].includes(mode)) {
                 const quizLabel = document.getElementById('label-quiz');
                 if (quizLabel) quizLabel.classList.add('active');
@@ -4521,6 +4582,13 @@
                 document.getElementById('view-leaderboard').classList.add('active');
                 document.getElementById('view-leaderboard').style.display = 'block';
                 fetchGlobalLeaderboard('answered');
+            } else if (mode === 'admin') {
+                if (window.currentUserId !== '6fkQvfQYN4WvOIbcbBuWivqVvtd2') return;
+                document.getElementById('nav-admin').classList.add('active');
+                document.getElementById('page-title').textContent = 'Admin Panel';
+                document.getElementById('view-admin').classList.add('active');
+                document.getElementById('view-admin').style.display = 'block';
+                loadAdminPanel();
             } else {
                 const dashNav = document.getElementById('nav-dash');
                 const createNav = document.getElementById('nav-create-quiz');
@@ -7221,7 +7289,7 @@
             container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading...</div>';
             if (!window.getDocs || !window.collection || !window.db || !window.query || !window.orderBy || !window.limit) return;
             try {
-                // Use pre-calculated stats if available, otherwise fetch more users to find top ones
+
                 const sortField = type === 'answered' ? 'totalAnswered' : 'accuracy';
                 const q = window.query(
                     window.collection(window.db, "users"),
@@ -7233,7 +7301,7 @@
                 try {
                     querySnapshot = await window.getDocs(q);
                 } catch (idxErr) {
-                    // Fallback if index is not yet created
+
                     console.warn("Leaderboard index not ready, falling back to limited fetch.");
                     querySnapshot = await window.getDocs(window.query(window.collection(window.db, "users"), window.limit(50)));
                 }
@@ -7292,9 +7360,9 @@
                         : `<div style="font-size:1.5rem; font-weight:900; color:var(--accent);">${p.accuracy}%</div><div style="font-size:0.75rem; color:var(--text-gray);">accuracy</div>`;
 
                     return `
-            <div style="display:flex; align-items:center; gap:1rem; padding:1rem 1.25rem; 
-                background:${p.isSelf ? 'rgba(16,185,129,0.08)' : 'var(--bg-card)'}; 
-                border:1px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'}; 
+            <div style="display:flex; align-items:center; gap:1rem; padding:1rem 1.25rem;
+                background:${p.isSelf ? 'rgba(16,185,129,0.08)' : 'var(--bg-card)'};
+                border:1px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'};
                 border-radius:14px; transition:0.2s;">
                 <div style="font-size:${idx < 3 ? '1.8rem' : '1rem'}; font-weight:800; min-width:36px; text-align:center; color:${idx === 0 ? '#F59E0B' : idx === 1 ? '#9CA3AF' : idx === 2 ? '#CD7F32' : 'var(--text-gray)'};">
                     ${idx < 3 ? medals[idx] : '#' + (idx + 1)}
@@ -7302,7 +7370,7 @@
                 <img src="${avatarSrc}" style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'};" onerror="this.src='${defAvatar}'">
                 <div style="flex:1;">
                     <div style="font-weight:700; font-size:1rem; color:var(--text-light); display:flex; align-items:center;">
-                        ${p.username} 
+                        ${p.username}
                         ${p.isSelf ? '<span style="font-size:0.7rem; color:var(--accent); font-weight:600; margin-left:6px;">YOU</span>' : ''}
                         ${(p.role === 'admin' || (p.username && p.username.toLowerCase() === 'mahmoud')) ? '<span class="admin-badge">ADMIN</span>' : ''}
                     </div>
@@ -7320,6 +7388,216 @@
         }
         window.switchGlobalLb = switchGlobalLb;
         window.fetchGlobalLeaderboard = fetchGlobalLeaderboard;
+        const ADMIN_UID = '6fkQvfQYN4WvOIbcbBuWivqVvtd2';
+        let allAdminUsers = [];
+        let currentAdminLbType = 'answered';
+
+        async function loadAdminPanel() {
+            if (window.currentUserId !== ADMIN_UID) return;
+            await Promise.all([loadAdminUsers(), loadAdminFeedback()]);
+        }
+
+        async function loadAdminUsers() {
+            try {
+                const snap = await window.getDocs(window.collection(window.db, 'users'));
+                allAdminUsers = [];
+                snap.forEach(d => {
+                    const data = d.data();
+                    allAdminUsers.push({
+                        uid: d.id,
+                        username: data.username || '(no username)',
+                        email: data.email || '',
+                        createdAt: data.createdAt || null,
+                        lastSeen: data.lastSeen || null,
+                        totalAnswered: data.totalAnswered || 0,
+                        totalCorrect: data.totalCorrect || 0,
+                        accuracy: data.accuracy || 0,
+                        leaderboardHidden: data.leaderboardHidden || false,
+                        avatarUrl: data.avatarUrl || '',
+                        role: data.role || ''
+                    });
+                });
+                const now = Date.now();
+                const oneDayMs = 86400000;
+                const activeToday = allAdminUsers.filter(u => u.lastSeen && (now - u.lastSeen) < oneDayMs).length;
+                const activeWeek = allAdminUsers.filter(u => u.lastSeen && (now - u.lastSeen) < oneDayMs * 7).length;
+                const totalQ = allAdminUsers.reduce((s, u) => s + u.totalAnswered, 0);
+                const statRow = document.getElementById('admin-stats-row');
+                if (statRow) {
+                    statRow.innerHTML = [
+                        ['Total Users', allAdminUsers.length, '#10b981'],
+                        ['Active Today', activeToday, '#3b82f6'],
+                        ['Active This Week', activeWeek, '#8b5cf6'],
+                        ['Questions Solved', totalQ.toLocaleString(), '#f59e0b']
+                    ].map(([label, val, color]) => `
+                        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; padding:1rem 1.25rem; text-align:center;">
+                            <div style="font-size:1.6rem; font-weight:900; color:${color};">${val}</div>
+                            <div style="font-size:0.78rem; color:var(--text-gray); margin-top:3px;">${label}</div>
+                        </div>`).join('');
+                }
+
+                adminFilterUsers();
+                adminRenderLeaderboard('answered');
+            } catch (e) {
+                console.error('Admin load error:', e);
+                document.getElementById('admin-users-list').innerHTML = '<div style="color:red;padding:2rem;">Error loading users: ' + e.message + '</div>';
+            }
+        }
+
+        async function loadAdminFeedback() {
+            try {
+                const snap = await window.getDocs(window.collection(window.db, 'feedback'));
+                const list = document.getElementById('admin-feedback-list');
+                if (!list) return;
+                if (snap.empty) {
+                    list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">No feedback yet.</div>';
+                    return;
+                }
+                const items = [];
+                snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+                items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                list.innerHTML = items.map(item => {
+                    const date = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown date';
+                    return `<div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1rem 1.25rem;">
+                        <div style="font-size:0.78rem; color:var(--text-gray); margin-bottom:6px;">${date}</div>
+                        <div style="color:var(--text-light); font-size:0.95rem; line-height:1.6;">${item.message || item.text || JSON.stringify(item)}</div>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                const list = document.getElementById('admin-feedback-list');
+                if (list) list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">No feedback collection found.</div>';
+            }
+        }
+
+        function adminFilterUsers() {
+            const search = (document.getElementById('admin-search')?.value || '').toLowerCase();
+            const sort = document.getElementById('admin-sort')?.value || 'newest';
+            let users = allAdminUsers.filter(u =>
+                u.username.toLowerCase().includes(search) || u.email.toLowerCase().includes(search)
+            );
+            if (sort === 'newest') users.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            else if (sort === 'oldest') users.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+            else if (sort === 'most_answered') users.sort((a, b) => b.totalAnswered - a.totalAnswered);
+            else if (sort === 'accuracy') users.sort((a, b) => b.accuracy - a.accuracy);
+            adminRenderUsers(users);
+        }
+
+        function adminRenderUsers(users) {
+            const list = document.getElementById('admin-users-list');
+            if (!list) return;
+            if (users.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:2rem;">No users found.</div>';
+                return;
+            }
+            list.innerHTML = users.map(u => {
+                const joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Unknown';
+                const lastSeen = u.lastSeen ? timeAgo(u.lastSeen) : 'Never';
+                const defAvatar = `https://ui-avatars.com/api/?name=${u.username.substring(0, 2).toUpperCase()}&background=10B981&color=fff&font-size=0.4&bold=true`;
+                const avatar = u.avatarUrl || defAvatar;
+                return `<div style="display:flex; align-items:center; gap:12px; padding:0.9rem 1.25rem;
+                    background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; flex-wrap:wrap;">
+                    <img src="${avatar}" style="width:42px; height:42px; border-radius:50%; object-fit:cover; flex-shrink:0;" onerror="this.src='${defAvatar}'">
+                    <div style="flex:1; min-width:140px;">
+                        <div style="font-weight:700; color:var(--text-light); font-size:0.95rem;">
+                            ${u.username}
+                            ${u.leaderboardHidden ? '<span style="font-size:0.7rem; background:rgba(239,68,68,0.15); color:#ef4444; padding:1px 7px; border-radius:999px; margin-left:6px;">Private</span>' : ''}
+                            ${u.role === 'admin' ? '<span style="font-size:0.7rem; background:rgba(16,185,129,0.15); color:#10b981; padding:1px 7px; border-radius:999px; margin-left:4px;">Admin</span>' : ''}
+                        </div>
+                        <div style="font-size:0.78rem; color:var(--text-gray); margin-top:2px;">${u.email || 'No email'}</div>
+                    </div>
+                    <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+                        <div style="text-align:center;">
+                            <div style="font-size:1rem; font-weight:800; color:var(--accent);">${u.totalAnswered}</div>
+                            <div style="font-size:0.7rem; color:var(--text-gray);">answered</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:1rem; font-weight:800; color:#3b82f6;">${u.accuracy}%</div>
+                            <div style="font-size:0.7rem; color:var(--text-gray);">accuracy</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.75rem; color:var(--text-gray);">Joined: ${joined}</div>
+                            <div style="font-size:0.75rem; color:var(--text-gray);">Last seen: ${lastSeen}</div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function adminRenderLeaderboard(type) {
+            currentAdminLbType = type;
+            const list = document.getElementById('admin-lb-list');
+            if (!list || allAdminUsers.length === 0) return;
+            let users = allAdminUsers.filter(u => u.totalAnswered > 0);
+            if (type === 'answered') users.sort((a, b) => b.totalAnswered - a.totalAnswered);
+            else users.sort((a, b) => b.accuracy - a.accuracy || b.totalAnswered - a.totalAnswered);
+            const medals = ['🥇', '🥈', '🥉'];
+            list.innerHTML = users.slice(0, 50).map((u, idx) => {
+                const defAvatar = `https://ui-avatars.com/api/?name=${u.username.substring(0, 2).toUpperCase()}&background=10B981&color=fff&font-size=0.4&bold=true`;
+                const avatar = u.avatarUrl || defAvatar;
+                return `<div style="display:flex; align-items:center; gap:12px; padding:0.9rem 1.25rem;
+                    background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px;">
+                    <div style="font-size:${idx < 3 ? '1.6rem' : '0.95rem'}; font-weight:800; min-width:32px; text-align:center;
+                        color:${idx === 0 ? '#F59E0B' : idx === 1 ? '#9CA3AF' : idx === 2 ? '#CD7F32' : 'var(--text-gray)'};">
+                        ${idx < 3 ? medals[idx] : '#' + (idx + 1)}
+                    </div>
+                    <img src="${avatar}" style="width:38px; height:38px; border-radius:50%; object-fit:cover;" onerror="this.src='${defAvatar}'">
+                    <div style="flex:1;">
+                        <div style="font-weight:700; color:var(--text-light); font-size:0.9rem;">
+                            ${u.username}
+                            ${u.leaderboardHidden ? '<span style="font-size:0.68rem; background:rgba(239,68,68,0.15); color:#ef4444; padding:1px 6px; border-radius:999px; margin-left:5px;">Private</span>' : ''}
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-gray);">${u.email || ''}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:1.1rem; font-weight:900; color:var(--accent);">${type === 'answered' ? u.totalAnswered : u.accuracy + '%'}</div>
+                        <div style="font-size:0.7rem; color:var(--text-gray);">${type === 'answered' ? 'answered' : 'accuracy'}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function adminTab(tab) {
+            ['users', 'leaderboard', 'feedback'].forEach(t => {
+                document.getElementById('admin-panel-' + t).style.display = t === tab ? 'block' : 'none';
+                const btn = document.getElementById('admin-tab-' + t);
+                if (btn) {
+                    btn.style.background = t === tab ? 'var(--accent)' : 'transparent';
+                    btn.style.color = t === tab ? '#fff' : 'var(--text-gray)';
+                    btn.style.borderColor = t === tab ? 'var(--accent)' : 'var(--border-color)';
+                }
+            });
+            if (tab === 'leaderboard') adminRenderLeaderboard(currentAdminLbType);
+        }
+
+        function adminLbTab(type) {
+            currentAdminLbType = type;
+            ['answered', 'accuracy'].forEach(t => {
+                const btn = document.getElementById('admin-lb-' + t);
+                if (btn) {
+                    btn.style.background = t === type ? 'var(--accent)' : 'transparent';
+                    btn.style.color = t === type ? '#fff' : 'var(--text-gray)';
+                    btn.style.borderColor = t === type ? 'var(--accent)' : 'var(--border-color)';
+                }
+            });
+            adminRenderLeaderboard(type);
+        }
+
+        function timeAgo(ts) {
+            const diff = Date.now() - ts;
+            const m = Math.floor(diff / 60000);
+            if (m < 1) return 'Just now';
+            if (m < 60) return m + 'm ago';
+            const h = Math.floor(m / 60);
+            if (h < 24) return h + 'h ago';
+            const d = Math.floor(h / 24);
+            if (d < 7) return d + 'd ago';
+            return new Date(ts).toLocaleDateString();
+        }
+
+        window.adminTab = adminTab;
+        window.adminLbTab = adminLbTab;
+        window.adminFilterUsers = adminFilterUsers;
+
         function draw(e) {
             if (!isDrawing || !isDrawingMode) return;
             e.preventDefault();
@@ -7416,8 +7694,6 @@
                         Next <i class="ri-arrow-right-s-line"></i>
                     </button>
                 </div>
-
-
 </body>
 
 </html>
