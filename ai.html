@@ -3962,10 +3962,10 @@
         window.saveUserData = async function (field, value) {
             if (!window.currentUserId) return;
             try {
-                await updateDoc(doc(db, "users", window.currentUserId), { [field]: value });
+                await updateDoc(doc(db, "users", window.currentUserId), { [field]: value, lastSeen: Date.now() });
             } catch (e) {
                 if (e.code === 'not-found') {
-                    await setDoc(doc(db, "users", window.currentUserId), { [field]: value }, { merge: true });
+                    await setDoc(doc(db, "users", window.currentUserId), { [field]: value, lastSeen: Date.now() }, { merge: true });
                 } else {
                     console.error("Firebase Sync Error:", e);
                 }
@@ -4022,6 +4022,14 @@
                 const defAvatar = window.defaultAvatar(user.email);
                 const savedAvatar = localStorage.getItem('medStorm_avatar_' + user.uid);
                 window.setAvatarUI(savedAvatar ? savedAvatar : defAvatar);
+                try {
+                    await updateDoc(doc(db, 'users', user.uid), {
+                        lastSeen: Date.now(),
+                        email: user.email || ''
+                    });
+                } catch (e) {
+
+                }
 
                 await Promise.all([
                     fetchQuestionsFromDB(),
@@ -4078,7 +4086,10 @@
                         if (window.setDoc && window.db) {
                             try {
                                 await window.setDoc(window.doc(window.db, 'users', cred.user.uid), {
-                                    username: uname
+                                    username: uname,
+                                    email: cred.user.email || '',
+                                    createdAt: Date.now(),
+                                    lastSeen: Date.now()
                                 }, { merge: true });
                             } catch (e) { console.warn('Could not save user data to DB:', e); }
                         }
