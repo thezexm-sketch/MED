@@ -2798,6 +2798,284 @@
         .game-flash-green {
             animation: flashGreen 0.5s ease-out forwards;
         }
+
+        #admin-panel-editor .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #admin-panel-editor .q-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+
+        #admin-panel-editor .edit-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 15px;
+            outline: none;
+            direction: ltr;
+            text-align: left;
+            transition: 0.3s;
+        }
+
+        #admin-panel-editor .edit-input:focus {
+            border-color: var(--primary-green);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        #admin-panel-editor textarea.edit-input {
+            min-height: 80px;
+            resize: vertical;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        #admin-panel-editor .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        #admin-panel-editor .option-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: background 0.15s, border-color 0.15s, opacity 0.15s, transform 0.15s;
+        }
+
+        #admin-panel-editor .option-row:has(input[type="radio"]:checked) {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--primary-green);
+        }
+
+        #admin-panel-editor .option-row.dragging {
+            opacity: 0.4;
+            transform: scale(0.97);
+        }
+
+        #admin-panel-editor .option-row.drag-over {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        #admin-panel-editor .option-row input[type="radio"] {
+            transform: scale(1.3);
+            cursor: pointer;
+            accent-color: var(--primary-green);
+        }
+
+        #admin-panel-editor .drag-handle {
+            cursor: grab;
+            color: var(--text-gray);
+            font-size: 16px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            opacity: 0.5;
+            transition: 0.2s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #admin-panel-editor .drag-handle:hover {
+            opacity: 1;
+            color: #3b82f6;
+        }
+
+        #admin-panel-editor .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        #admin-panel-editor .remove-opt-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--primary-red);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+
+        #admin-panel-editor .remove-opt-btn:hover {
+            background: rgba(239, 68, 68, 0.35);
+        }
+
+        #admin-panel-editor .add-choice-btn {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-gray);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.25s;
+            margin-top: 4px;
+        }
+
+        #admin-panel-editor .add-choice-btn:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        #admin-panel-editor .move-section {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.06);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 10px;
+        }
+
+        #admin-panel-editor .move-section select {
+            flex: 1;
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #admin-panel-editor .move-section select:focus {
+            border-color: #3b82f6;
+        }
+
+        #admin-panel-editor .move-btn {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 9px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        #admin-panel-editor .move-btn:hover {
+            background: rgba(168, 85, 247, 0.3);
+        }
+
+        #admin-panel-editor .move-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #admin-panel-editor .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        #admin-panel-editor .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        #admin-panel-editor .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #admin-panel-editor .save-btn {
+            background: var(--primary-green);
+            color: white;
+            flex: 2;
+        }
+
+        #admin-panel-editor .upload-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        #admin-panel-editor .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--primary-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        #admin-panel-editor .doc-badge {
+            display: inline-block;
+            background: #3b82f6;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: white;
+        }
+
+        #admin-panel-editor .path-badge {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.2);
+            color: #c084fc;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin-bottom: 12px;
+            font-weight: bold;
+            margin-right: 4px;
+            direction: ltr;
+        }
+
+        #admin-panel-editor .path-badge i {
+            margin: 0 3px;
+            font-size: 10px;
+            opacity: 0.6;
+        }
     </style>
 </head>
 
@@ -3582,10 +3860,10 @@
                         style="padding:7px 18px; border-radius:999px; border:1.5px solid var(--border-color); background:transparent; color:var(--text-gray); font-weight:600; font-size:0.85rem; cursor:pointer;">
                         Reports
                     </button>
-                    <a href="change_answers.html" target="_blank"
-                        style="margin-left:auto; padding:7px 18px; border-radius:999px; border:1.5px solid #8b5cf6; background:#8b5cf6; color:#fff; font-weight:600; font-size:0.85rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    <button onclick="adminTab('editor')" id="admin-tab-editor"
+                        style="margin-left:auto; padding:7px 18px; border-radius:999px; border:1.5px solid #8b5cf6; background:#8b5cf6; color:#fff; font-weight:600; font-size:0.85rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
                         <i class="ri-edit-2-line"></i> Edit Questions
-                    </a>
+                    </button>
                 </div>
 
                 <!-- Users Panel -->
@@ -3646,6 +3924,26 @@
                     <div id="admin-reports-list" style="display:flex; flex-direction:column; gap:10px;">
                         <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading reports...</div>
                     </div>
+                </div>
+
+                <!-- Editor Panel -->
+                <div id="admin-panel-editor" style="display:none;" dir="rtl">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h2 style="color: var(--primary-green); font-weight: 800;">Meddy Super Admin ⚡</h2>
+                        <p style="color: var(--text-gray); margin-top: 5px;">تعديل شامل للأسئلة والصور والاختيارات</p>
+                    </div>
+
+                    <div style="text-align: center; margin-bottom: 15px; color: var(--primary-green); font-weight: bold;"
+                        id="editor-status-msg">جاري تحميل الأسئلة من السيرفر... ⏳</div>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; display: none;"
+                        id="editor-search-container">
+                        <input type="text" id="editor-search-input" placeholder="ابحث بجزء من السؤال..."
+                            oninput="handleEditorSearch()"
+                            style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-darker); color: white; font-size: 16px; outline: none;">
+                    </div>
+
+                    <div id="editor-results-container"></div>
                 </div>
 
             </div>
@@ -3861,6 +4159,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
@@ -3875,6 +4174,8 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         window.db = db;
+        const storage = getStorage(app);
+        window.storage = storage;
         enableIndexedDbPersistence(db).catch((err) => {
             if (err.code === 'failed-precondition') {
                 console.warn('Offline persistence unavailable: multiple tabs open.');
@@ -6159,7 +6460,7 @@
             const currentQ = Session.queue[Session.index];
 
             try {
-                const reportRef = window.doc(window.collection(window.db, 'reports'), Date.now().toString() + '_' + Math.random().toString(36).slice(2, 7));
+                const reportRef = window.doc(window.db, 'reports', Date.now().toString() + '_' + Math.random().toString(36).slice(2, 7));
                 await window.setDoc(reportRef, {
                     module: Session.module || '',
                     question: currentQ ? currentQ.q : '',
@@ -6200,7 +6501,7 @@
             sendBtn.disabled = true;
 
             try {
-                const fbRef = window.doc(window.collection(window.db, 'feedback'), Date.now().toString() + '_' + Math.random().toString(36).slice(2, 7));
+                const fbRef = window.doc(window.db, 'feedback', Date.now().toString() + '_' + Math.random().toString(36).slice(2, 7));
                 await window.setDoc(fbRef, {
                     message: msg,
                     createdAt: Date.now()
@@ -7657,7 +7958,7 @@
         }
 
         function adminTab(tab) {
-            ['users', 'leaderboard', 'feedback', 'reports'].forEach(t => {
+            ['users', 'leaderboard', 'feedback', 'reports', 'editor'].forEach(t => {
                 document.getElementById('admin-panel-' + t).style.display = t === tab ? 'block' : 'none';
                 const btn = document.getElementById('admin-tab-' + t);
                 if (btn) {
@@ -7669,6 +7970,7 @@
             if (tab === 'leaderboard') adminRenderLeaderboard(currentAdminLbType);
             if (tab === 'reports' && allAdminReports.length === 0) loadAdminReports();
             if (tab === 'feedback') loadAdminFeedback();
+            if (tab === 'editor' && !window.editorLoaded) { window.editorLoaded = true; loadEditorData(); }
         }
 
         function adminLbTab(type) {
@@ -7699,7 +8001,346 @@
         window.adminTab = adminTab;
         window.adminLbTab = adminLbTab;
         window.adminFilterUsers = adminFilterUsers;
+        const editorDocIds = ['msk_questions', 'blood_questions', 'foundation_questions', 'terminology_questions', 'cvs_questions'];
+        let editorAllData = {};
+        let editorAllQuestionsFlat = [];
+        let editorDocChaptersMap = {};
 
+        function extractQuestionsWithRefs(dataObj, docId, subject, chapter) {
+            let qs = [];
+            if (!dataObj) return qs;
+            if (Array.isArray(dataObj)) {
+                dataObj.forEach(q => { if (q && q.q) qs.push({ docId, qRef: q, dataObj, subject: subject || '', chapter: chapter || '' }); });
+                return qs;
+            }
+            if (typeof dataObj === 'object') {
+                for (let key in dataObj) {
+                    const val = dataObj[key];
+                    if (Array.isArray(val)) {
+                        const chapterName = chapter ? key : (subject ? key : key);
+                        const subjectName = subject || '';
+                        if (!editorDocChaptersMap[docId]) editorDocChaptersMap[docId] = [];
+                        editorDocChaptersMap[docId].push({ subject: subjectName, chapter: chapterName, arr: val });
+                        val.forEach(q => { if (q && q.q) qs.push({ docId, qRef: q, dataObj: val, subject: subjectName, chapter: chapterName }); });
+                    } else if (typeof val === 'object' && !Array.isArray(val)) {
+                        qs.push(...extractQuestionsWithRefs(val, docId, key, ''));
+                    }
+                }
+            }
+            return qs;
+        }
+
+        async function loadEditorData() {
+            try {
+                for (let id of editorDocIds) {
+                    const snap = await window.getDoc(window.doc(window.db, "content", id));
+                    if (snap.exists()) {
+                        editorAllData[id] = snap.data();
+                        let list = editorAllData[id].questionsList || editorAllData[id];
+                        editorAllQuestionsFlat.push(...extractQuestionsWithRefs(list, id));
+                    }
+                }
+                document.getElementById('editor-status-msg').style.display = 'none';
+                document.getElementById('editor-search-container').style.display = 'flex';
+            } catch (error) {
+                document.getElementById('editor-status-msg').innerText = "❌ حدث خطأ في التحميل!";
+                document.getElementById('editor-status-msg').style.color = "red";
+                console.error(error);
+            }
+        }
+
+        const escapeHTML = (str) => str.replace(/"/g, '&quot;');
+
+        window.handleEditorSearch = function () {
+            const term = document.getElementById('editor-search-input').value.toLowerCase();
+            const resultsContainer = document.getElementById('editor-results-container');
+            resultsContainer.innerHTML = '';
+
+            if (term.length < 3) return;
+
+            const results = editorAllQuestionsFlat.filter(item => item.qRef.q.toLowerCase().includes(term)).slice(0, 10);
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<div style="text-align:center; color:gray;">لا توجد نتائج تطابق بحثك.</div>';
+                return;
+            }
+
+            results.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+
+                let optionsHtml = '';
+                item.qRef.o.forEach((opt, optIndex) => {
+                    const isChecked = item.qRef.a === optIndex ? 'checked' : '';
+                    optionsHtml += `
+                    <div class="option-row" id="opt_row_${index}_${optIndex}" data-qidx="${index}" data-oidx="${optIndex}">
+                        <span class="drag-handle" title="اسحب لترتيب"><i class="ri-draggable"></i></span>
+                        <input type="radio" name="correct_ans_${index}" value="${optIndex}" ${isChecked} title="تعيين كإجابة صحيحة">
+                        <input type="text" class="edit-input" id="opt_text_${index}_${optIndex}" value="${escapeHTML(opt)}" style="margin-bottom:0; padding:8px;">
+                        <button class="remove-opt-btn" onclick="window.removeChoice(${index}, ${optIndex})" title="حذف هذا الاختيار"><i class="ri-close-line"></i></button>
+                    </div>`;
+                });
+
+                let moveOptionsHtml = '';
+                const chapters = editorDocChaptersMap[item.docId] || [];
+                const sortableChapters = chapters.map((ch, chIdx) => ({ ...ch, origIdx: chIdx }))
+                    .filter(ch => ch.arr !== item.dataObj)
+                    .sort((a, b) => {
+                        const subjCmp = (a.subject || '').localeCompare(b.subject || '');
+                        if (subjCmp !== 0) return subjCmp;
+                        const numA = parseInt((a.chapter.match(/^(\d+)/) || [0, '999'])[1]);
+                        const numB = parseInt((b.chapter.match(/^(\d+)/) || [0, '999'])[1]);
+                        if (numA !== numB) return numA - numB;
+                        return a.chapter.localeCompare(b.chapter);
+                    });
+                sortableChapters.forEach(ch => {
+                    const label = ch.subject ? `${ch.subject} ▸ ${ch.chapter}` : ch.chapter;
+                    moveOptionsHtml += `<option value="${ch.origIdx}">${label}</option>`;
+                });
+
+                const hasChapters = moveOptionsHtml.length > 0;
+
+                const imgHtml = item.qRef.img ? `
+                <div style="position:relative; display:inline-block;">
+                    <img src="${item.qRef.img}" class="q-image" alt="Question Image">
+                    <button onclick="window.removeImage(${index}, '${item.docId}')" style="position:absolute; top:5px; left:5px; background:rgba(239,68,68,0.9); color:white; border:none; padding:5px 8px; border-radius:5px; cursor:pointer; font-size:12px;"><i class="ri-delete-bin-line"></i> مسح</button>
+                </div>` : '';
+
+                const moduleName = item.docId.replace('_questions', '').replace(/_/g, ' ').toUpperCase();
+                let pathHtml = `<span class="doc-badge">${moduleName}</span>`;
+                if (item.subject || item.chapter) {
+                    let pathParts = [];
+                    if (item.subject) pathParts.push(item.subject);
+                    if (item.chapter) pathParts.push(item.chapter);
+                    pathHtml += ` <span class="path-badge">${pathParts.join(' <i class="ri-arrow-right-s-line"></i> ')}</span>`;
+                }
+
+                const moveSectionHtml = hasChapters ? `
+                <div class="move-section">
+                    <i class="ri-arrow-left-right-line" style="color: #a855f7; font-size: 18px;"></i>
+                    <select id="move_target_${index}">
+                        ${moveOptionsHtml}
+                    </select>
+                    <button class="move-btn" id="btn_move_${index}" onclick="window.moveQuestion(${index}, '${item.docId}')">
+                        <i class="ri-swap-box-line"></i> نقل لشابتر ثاني
+                    </button>
+                </div>` : '';
+
+                card.innerHTML = `
+                ${pathHtml}
+                ${imgHtml}
+
+                <div style="color: var(--text-gray); font-size: 12px; margin-bottom: 5px;">نص السؤال:</div>
+                <textarea class="edit-input" id="q_text_${index}">${item.qRef.q}</textarea>
+
+                <div style="color: var(--text-gray); font-size: 12px; margin-bottom: 5px;">الاختيارات (اختر الدائرة للإجابة الصحيحة):</div>
+                <div class="option-group" id="opt_group_${index}">${optionsHtml}
+                    <button class="add-choice-btn" onclick="window.addChoice(${index})">
+                        <i class="ri-add-line"></i> إضافة اختيار جديد
+                    </button>
+                </div>
+
+                ${moveSectionHtml}
+
+                <div class="action-buttons">
+                    <button class="btn save-btn" id="btn_save_${index}" onclick="window.saveEdits(${index}, '${item.docId}')">
+                        <i class="ri-save-line"></i> حفظ التعديلات
+                    </button>
+
+                    <button class="btn upload-btn" id="btn_upload_${index}" onclick="document.getElementById('file_${index}').click()">
+                        <i class="ri-image-add-line"></i> ${item.qRef.img ? 'تغيير الصورة' : 'إضافة صورة'}
+                    </button>
+                    <input type="file" id="file_${index}" accept="image/*" style="display: none;" onchange="window.uploadImage(event, ${index}, '${item.docId}')">
+
+                    <button class="btn delete-btn" id="btn_delete_${index}" onclick="window.deleteQuestion(${index}, '${item.docId}')">
+                        <i class="ri-delete-bin-line"></i> حذف
+                    </button>
+                </div>
+            `;
+                resultsContainer.appendChild(card);
+                window[`editRef_${index}`] = item;
+
+                const group = card.querySelector(`#opt_group_${index}`);
+                if (group) window.setupDragDrop(group, index);
+            });
+        };
+
+        window.setupDragDrop = function (group, qIndex) {
+            let dragSrcEl = null;
+
+            const rows = group.querySelectorAll('.option-row');
+            rows.forEach(row => {
+                const handle = row.querySelector('.drag-handle');
+                if (handle) {
+                    handle.setAttribute('draggable', true);
+                    handle.addEventListener('dragstart', function (e) {
+                        dragSrcEl = row;
+                        row.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', row.dataset.oidx);
+                        if (e.dataTransfer.setDragImage) e.dataTransfer.setDragImage(row, 20, 20);
+                    });
+                    handle.addEventListener('dragend', function () {
+                        row.classList.remove('dragging');
+                        group.querySelectorAll('.option-row').forEach(r => r.classList.remove('drag-over'));
+                    });
+                }
+                row.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (row !== dragSrcEl && dragSrcEl) {
+                        const allChildren = Array.from(group.children).filter(c => c.classList.contains('option-row'));
+                        const draggingIdx = allChildren.indexOf(dragSrcEl);
+                        const targetIdx = allChildren.indexOf(row);
+                        if (draggingIdx < targetIdx) row.after(dragSrcEl);
+                        else row.before(dragSrcEl);
+                    }
+                });
+                row.addEventListener('drop', function (e) {
+                    e.preventDefault(); e.stopPropagation();
+                    if (!dragSrcEl) return;
+                    const item = window[`editRef_${qIndex}`];
+                    const currentRows = group.querySelectorAll('.option-row');
+                    const newOptions = [];
+                    let newAnswer = 0;
+                    currentRows.forEach((r, i) => {
+                        const input = r.querySelector('input[type="text"]');
+                        newOptions.push(input.value);
+                        const radio = r.querySelector('input[type="radio"]');
+                        if (radio.checked) newAnswer = i;
+                        r.dataset.oidx = i; r.id = `opt_row_${qIndex}_${i}`; radio.value = i; input.id = `opt_text_${qIndex}_${i}`;
+                    });
+                    item.qRef.o = newOptions; item.qRef.a = newAnswer;
+                });
+            });
+        };
+
+        window.addChoice = function (index) {
+            const item = window[`editRef_${index}`];
+            const newOptIndex = item.qRef.o.length;
+            item.qRef.o.push('');
+            const group = document.getElementById(`opt_group_${index}`);
+            const addBtn = group.querySelector('.add-choice-btn');
+            const row = document.createElement('div');
+            row.className = 'option-row'; row.id = `opt_row_${index}_${newOptIndex}`; row.dataset.qidx = index; row.dataset.oidx = newOptIndex;
+            row.innerHTML = `<span class="drag-handle" title="اسحب لترتيب"><i class="ri-draggable"></i></span><input type="radio" name="correct_ans_${index}" value="${newOptIndex}" title="تعيين كإجابة صحيحة"><input type="text" class="edit-input" id="opt_text_${index}_${newOptIndex}" value="" placeholder="اكتب الاختيار الجديد..." style="margin-bottom:0; padding:8px;"><button class="remove-opt-btn" onclick="window.removeChoice(${index}, ${newOptIndex})" title="حذف هذا الاختيار"><i class="ri-close-line"></i></button>`;
+            group.insertBefore(row, addBtn);
+            window.setupDragDrop(group, index);
+            document.getElementById(`opt_text_${index}_${newOptIndex}`).focus();
+        };
+
+        window.removeChoice = function (index, optIndex) {
+            const item = window[`editRef_${index}`];
+            if (item.qRef.o.length <= 2) { alert('لا يمكن أن يقل عدد الاختيارات عن 2!'); return; }
+            if (!confirm('هل تريد حذف هذا الاختيار؟')) return;
+            item.qRef.o.splice(optIndex, 1);
+            if (item.qRef.a === optIndex) item.qRef.a = 0;
+            else if (item.qRef.a > optIndex) item.qRef.a--;
+            handleEditorSearch();
+        };
+
+        window.moveQuestion = async function (index, docId) {
+            const item = window[`editRef_${index}`];
+            const targetChapterIdx = parseInt(document.getElementById(`move_target_${index}`).value);
+            const btn = document.getElementById(`btn_move_${index}`);
+            const chapters = editorDocChaptersMap[docId] || [];
+            const targetChapter = chapters[targetChapterIdx];
+            if (!targetChapter) { alert('اختر شابتر للنقل!'); return; }
+            if (!confirm("⚠️ هل تريد نقل هذا السؤال؟")) return;
+            btn.innerHTML = '<i class="ri-loader-4-line"></i> جاري النقل...'; btn.disabled = true;
+            try {
+                const srcArr = item.dataObj;
+                const qIndex = srcArr.indexOf(item.qRef);
+                if (qIndex > -1) srcArr.splice(qIndex, 1);
+                targetChapter.arr.push(item.qRef);
+                await window.setDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                const flatEntry = editorAllQuestionsFlat.find(q => q.qRef === item.qRef);
+                if (flatEntry) { flatEntry.dataObj = targetChapter.arr; flatEntry.subject = targetChapter.subject; flatEntry.chapter = targetChapter.chapter; }
+                btn.innerHTML = '<i class="ri-check-line"></i> تم النقل بنجاح!'; btn.style.background = 'rgba(16,185,129,0.2)'; btn.style.color = '#10B981'; btn.style.borderColor = '#10B981';
+                setTimeout(() => { handleEditorSearch(); }, 1500);
+            } catch (error) {
+                console.error('Move error:', error); alert('حدث خطأ أثناء نقل السؤال!');
+                btn.innerHTML = '<i class="ri-swap-box-line"></i> نقل لشابتر ثاني'; btn.disabled = false;
+            }
+        };
+
+        window.saveEdits = async function (index, docId) {
+            const item = window[`editRef_${index}`];
+            const btn = document.getElementById(`btn_save_${index}`);
+            const newQText = document.getElementById(`q_text_${index}`).value.trim();
+            const selectedRadio = document.querySelector(`input[name="correct_ans_${index}"]:checked`);
+            if (!newQText || !selectedRadio) { alert("تأكد من كتابة السؤال واختيار الإجابة الصحيحة!"); return; }
+            const newAnswerIndex = parseInt(selectedRadio.value);
+            let newOptions = [];
+            for (let i = 0; i < item.qRef.o.length; i++) {
+                const optEl = document.getElementById(`opt_text_${index}_${i}`);
+                if (!optEl) continue;
+                const optVal = optEl.value.trim();
+                if (!optVal) { alert("لا يمكن ترك اختيار فارغ!"); return; }
+                newOptions.push(optVal);
+            }
+            if (newOptions.length < 2) { alert('يجب أن يكون هناك اختياران على الأقل!'); return; }
+            btn.innerHTML = "جاري الحفظ... ⏳"; btn.disabled = true;
+            try {
+                item.qRef.q = newQText; item.qRef.o = newOptions; item.qRef.a = newAnswerIndex >= newOptions.length ? 0 : newAnswerIndex;
+                await window.setDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                btn.innerHTML = "<i class='ri-check-line'></i> تم الحفظ بنجاح"; btn.style.backgroundColor = "#10B981";
+                setTimeout(() => { btn.innerHTML = "<i class='ri-save-line'></i> حفظ التعديلات"; btn.disabled = false; btn.style.backgroundColor = ""; }, 2000);
+            } catch (error) {
+                console.error(error); alert("حدث خطأ أثناء الحفظ!");
+                btn.innerHTML = "<i class='ri-save-line'></i> حفظ التعديلات"; btn.disabled = false;
+            }
+        };
+
+        window.uploadImage = async function (event, index, docId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const item = window[`editRef_${index}`];
+            const btn = document.getElementById(`btn_upload_${index}`);
+            btn.innerHTML = "جاري الرفع... ⏳"; btn.disabled = true;
+            try {
+                const storageReference = ref(window.storage, 'questions_images/' + Date.now() + '_' + file.name);
+                await uploadBytes(storageReference, file);
+                const downloadURL = await getDownloadURL(storageReference);
+                item.qRef.img = downloadURL;
+                await window.setDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                btn.innerHTML = "<i class='ri-check-line'></i> تم الرفع"; btn.style.backgroundColor = "#10B981";
+                setTimeout(() => { handleEditorSearch(); }, 1000);
+            } catch (error) {
+                console.error("Upload error:", error); alert("حدث خطأ أثناء الرفع!");
+                btn.innerHTML = "<i class='ri-image-add-line'></i> صورة"; btn.disabled = false;
+            }
+        };
+
+        window.removeImage = async function (index, docId) {
+            if (!confirm("هل تريد إزالة الصورة من هذا السؤال؟")) return;
+            const item = window[`editRef_${index}`];
+            try {
+                delete item.qRef.img;
+                await window.setDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                handleEditorSearch();
+            } catch (error) {
+                console.error(error); alert("خطأ في إزالة الصورة!");
+            }
+        };
+
+        window.deleteQuestion = async function (index, docId) {
+            if (!confirm("⚠️ هل أنت متأكد من حذف هذا السؤال نهائياً من قاعدة البيانات؟")) return;
+            const item = window[`editRef_${index}`];
+            const btn = document.getElementById(`btn_delete_${index}`);
+            btn.innerHTML = "جاري الحذف... ⏳"; btn.disabled = true;
+            try {
+                const arr = item.dataObj;
+                const qIndex = arr.indexOf(item.qRef);
+                if (qIndex > -1) { arr.splice(qIndex, 1); }
+                await window.setDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                editorAllQuestionsFlat = editorAllQuestionsFlat.filter(q => q.qRef !== item.qRef);
+                handleEditorSearch();
+            } catch (error) {
+                console.error(error); alert("حدث خطأ أثناء الحذف!");
+                btn.innerHTML = "<i class='ri-delete-bin-line'></i> حذف"; btn.disabled = false;
+            }
+        };
         function draw(e) {
             if (!isDrawing || !isDrawingMode) return;
             e.preventDefault();
