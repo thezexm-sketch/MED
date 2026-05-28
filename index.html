@@ -2091,6 +2091,33 @@
             cursor: not-allowed;
         }
 
+        .vote-pct {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            opacity: 0;
+            min-width: 38px;
+            text-align: center;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: voteFadeIn 0.4s ease forwards;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes voteFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+
+            to {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+        }
+
         .opt-eliminated {
             text-decoration: line-through;
             opacity: 0.4;
@@ -4267,7 +4294,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence, addDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        window.firestoreIncrement = increment;
         import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -5829,6 +5857,8 @@
             quizView.style.display = 'flex'; quizView.classList.add('active');
 
             startSession(); loadQuestion();
+
+            Session.queue.forEach(q => { if (q.img) { const img = new Image(); img.src = q.img; } });
             if (Session.settings.time > 0) startQuestionTimer();
             Session.drawings = {};
             Session.highlights = {};
@@ -5949,6 +5979,9 @@
                 wrapper.appendChild(eliminateBtn);
                 box.appendChild(wrapper);
             });
+            if (ans !== null || Session.reviewing) {
+                showVotePercentages(q.q, q.o.length);
+            }
 
             const aiBtn = document.getElementById('ai-explain-btn');
             if (aiBtn) {
@@ -6066,9 +6099,71 @@
                 window.saveUserData('totalCorrect', totalCorrect);
                 window.saveUserData('accuracy', accuracy);
             }
+            recordVote(q.q, idx, q.o.length);
+            showVotePercentages(q.q, q.o.length);
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => { finishQuiz(); }, 1000);
+            }
+        }
+
+        function hashQuestion(text) {
+            let hash = 0;
+            for (let i = 0; i < text.length; i++) {
+                const ch = text.charCodeAt(i);
+                hash = ((hash << 5) - hash) + ch;
+                hash |= 0;
+            }
+            return 'v_' + Math.abs(hash).toString(36);
+        }
+
+        async function recordVote(questionText, optionIndex, optionCount) {
+            try {
+                const voteDocId = hashQuestion(questionText);
+                const voteRef = window.doc(window.db, 'votes', voteDocId);
+                const inc = window.firestoreIncrement;
+                const updateData = {
+                    total: inc(1),
+                    ['o' + optionIndex]: inc(1)
+                };
+                for (let i = 0; i < optionCount; i++) {
+                    if (i !== optionIndex) {
+                        updateData['o' + i] = inc(0);
+                    }
+                }
+                await window.setDoc(voteRef, updateData, { merge: true });
+            } catch (e) {
+                console.warn('Vote recording failed:', e);
+            }
+        }
+
+        async function showVotePercentages(questionText, optionCount) {
+            try {
+                const voteDocId = hashQuestion(questionText);
+                const voteRef = window.doc(window.db, 'votes', voteDocId);
+                const snap = await window.getDoc(voteRef);
+                if (!snap.exists()) return;
+                const data = snap.data();
+                const total = data.total || 0;
+                if (total === 0) return;
+
+                const wrappers = document.querySelectorAll('#options-box .option-wrapper');
+                wrappers.forEach((wrapper, i) => {
+                    if (wrapper.querySelector('.vote-pct')) return;
+                    const votes = data['o' + i] || 0;
+                    const pct = Math.round((votes / total) * 100);
+                    const span = document.createElement('span');
+                    span.className = 'vote-pct';
+                    span.textContent = pct + '%';
+                    const eliminateBtn = wrapper.querySelector('.eliminate-btn');
+                    if (eliminateBtn) {
+                        wrapper.insertBefore(span, eliminateBtn);
+                    } else {
+                        wrapper.appendChild(span);
+                    }
+                });
+            } catch (e) {
+                console.warn('Vote percentages fetch failed:', e);
             }
         }
         function toggleFavorite() {
@@ -7654,6 +7749,8 @@
             if (fcIndex === -1) fcIndex = 0;
 
             currentDeckObj = { id: 'msk_combined', icon: '🦴', name: '🦴 MSK Practical Flashcards' };
+
+            fcDeck.forEach(card => { if (card.img) card.img.split('|').forEach(u => { const img = new Image(); img.src = u.trim(); }); });
             _fcRenderSessionSkeleton();
             _fcUpdateSessionData();
         }
