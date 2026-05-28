@@ -5980,7 +5980,7 @@
                 box.appendChild(wrapper);
             });
             if (ans !== null || Session.reviewing) {
-                showVotePercentages(q.q, q.o.length);
+                showVotePercentages(q.q, q.o.length, Session.index);
             }
 
             const aiBtn = document.getElementById('ai-explain-btn');
@@ -6100,7 +6100,7 @@
                 window.saveUserData('accuracy', accuracy);
             }
             recordVote(q.q, idx, q.o.length);
-            showVotePercentages(q.q, q.o.length);
+            showVotePercentages(q.q, q.o.length, Session.index);
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => { finishQuiz(); }, 1000);
@@ -6137,15 +6137,18 @@
             }
         }
 
-        async function showVotePercentages(questionText, optionCount) {
+        async function showVotePercentages(questionText, optionCount, callerIndex) {
             try {
                 const voteDocId = hashQuestion(questionText);
                 const voteRef = window.doc(window.db, 'votes', voteDocId);
                 const snap = await window.getDoc(voteRef);
+
+                if (callerIndex !== undefined && Session.index !== callerIndex) return;
                 if (!snap.exists()) return;
                 const data = snap.data();
                 const total = data.total || 0;
                 if (total === 0) return;
+                if (callerIndex !== undefined && Session.index !== callerIndex) return;
 
                 const wrappers = document.querySelectorAll('#options-box .option-wrapper');
                 wrappers.forEach((wrapper, i) => {
