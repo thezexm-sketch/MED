@@ -4436,6 +4436,20 @@
             }
         };
 
+        window.saveBatchUserData = async function (fields) {
+            if (!window.currentUserId || !fields) return;
+            try {
+                const data = Object.assign({}, fields, { lastSeen: Date.now() });
+                await updateDoc(doc(db, "users", window.currentUserId), data);
+            } catch (e) {
+                if (e.code === 'not-found') {
+                    await setDoc(doc(db, "users", window.currentUserId), Object.assign({}, fields, { lastSeen: Date.now() }), { merge: true });
+                } else {
+                    console.error("Firebase Batch Sync Error:", e);
+                }
+            }
+        };
+
         async function loadUserData(user) {
             try {
                 const userRef = doc(db, "users", user.uid);
@@ -5237,7 +5251,7 @@
             AppState.stats.dailyProgress[today].time += timeSpent;
 
             localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveUserData) window.saveUserData('stats', AppState.stats);
+            if (window.saveBatchUserData) window.saveBatchUserData({ stats: AppState.stats });
             SessionStartTime = null;
         }
 
@@ -6034,9 +6048,8 @@
 
                         localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
                         localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-                        if (window.saveUserData) {
-                            window.saveUserData('progress', AppState.progress);
-                            window.saveUserData('stats', AppState.stats);
+                        if (window.saveBatchUserData) {
+                            window.saveBatchUserData({ progress: AppState.progress, stats: AppState.stats });
                         }
 
                         document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
@@ -6093,16 +6106,8 @@
 
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
             localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveUserData) {
-                window.saveUserData('progress', AppState.progress);
-                window.saveUserData('stats', AppState.stats);
-
-                const totalAnswered = Object.keys(AppState.progress).length;
-                const totalCorrect = Object.values(AppState.progress).filter(v => v === 'correct').length;
-                const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
-                window.saveUserData('totalAnswered', totalAnswered);
-                window.saveUserData('totalCorrect', totalCorrect);
-                window.saveUserData('accuracy', accuracy);
+            if (window.saveBatchUserData) {
+                window.saveBatchUserData({ progress: AppState.progress, stats: AppState.stats });
             }
             recordVote(q.q, idx, q.o.length);
             showVotePercentages(q.q, q.o.length, Session.index);
@@ -6224,14 +6229,12 @@
             clearTimeout(Session.timer); if (typeof endSession === 'function') endSession();
             Session.queue.forEach((q, i) => { if (Session.answers[i] === null) AppState.progress[q.q] = 'wrong'; });
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            window.saveUserData('progress', AppState.progress);
 
             const totalAnswered = Object.keys(AppState.progress).length;
             const totalCorrect = Object.values(AppState.progress).filter(v => v === 'correct').length;
             const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
-            window.saveUserData('totalAnswered', totalAnswered);
-            window.saveUserData('totalCorrect', totalCorrect);
-            window.saveUserData('accuracy', accuracy);
+
+            const batchData = { progress: AppState.progress, totalAnswered, totalCorrect, accuracy };
 
             if (!Session.reviewing && Session.queue.length > 0) {
                 const result = {
@@ -6250,15 +6253,16 @@
                 AppState.examsHistory.unshift(result);
                 if (AppState.examsHistory.length > 50) AppState.examsHistory.pop();
                 localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory));
-                window.saveUserData('examsHistory', AppState.examsHistory);
+                batchData.examsHistory = AppState.examsHistory;
 
                 if (Session.resumingId) {
                     AppState.pendingExams = AppState.pendingExams.filter(e => e.id !== Session.resumingId);
                     localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams));
-                    window.saveUserData('pendingExams', AppState.pendingExams);
+                    batchData.pendingExams = AppState.pendingExams;
                     delete Session.resumingId;
                 }
             }
+            if (window.saveBatchUserData) window.saveBatchUserData(batchData);
 
             document.body.classList.remove('focus-mode');
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
