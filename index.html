@@ -5507,8 +5507,9 @@
                 });
 
                 if (availableCount === 0 && isMistakes) continue;
-                const allSolved = !isMistakes && availableCount === 0;
                 const total = allQs.length;
+                const isLoading = total === 0;
+                const allSolved = !isMistakes && availableCount === 0 && total > 0;
                 let solved = allQs.filter(q => q && q.q && AppState.progress[q.q]).length;
                 const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
                 const badgeText = isMistakes ? `${mistakesCount}` : `${availableCount}`;
@@ -5519,11 +5520,15 @@
 
                 const badgeHTML = allSolved
                     ? `<div class="card-badge" style="background: var(--primary-green);">✓ Done</div>`
-                    : `<div class="card-badge">${badgeText}</div>`;
+                    : isLoading
+                        ? `<div class="card-badge" style="background: var(--text-gray); opacity: 0.7;">⏳</div>`
+                        : `<div class="card-badge">${badgeText}</div>`;
 
                 const subtitleHTML = allSolved
                     ? `<p class="card-subtitle" style="color: var(--primary-green); font-weight: 700;">✅ All Questions Solved!</p>`
-                    : `<p class="card-subtitle">${isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`}</p>`;
+                    : isLoading
+                        ? `<p class="card-subtitle" style="color: var(--text-gray); opacity: 0.7;">Loading questions...</p>`
+                        : `<p class="card-subtitle">${isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`}</p>`;
 
                 card.innerHTML = `
                     <button class="reset-btn" onclick="resetModule('${modName}', event)" title="Reset Progress"><i class="ri-restart-line"></i></button>
@@ -5536,7 +5541,7 @@
                     </div>`;
                 card.onclick = (e) => {
                     if (e.target.closest('.reset-btn')) return;
-                    if (!allSolved) openStartModal(modName, isMistakes);
+                    if (!allSolved && !isLoading) openStartModal(modName, isMistakes);
                 };
                 grid.appendChild(card);
             }
