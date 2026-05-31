@@ -6244,6 +6244,8 @@
                     quizType: Session.mode,
                     score: Session.score,
                     total: Session.queue.length,
+                    queue: JSON.parse(JSON.stringify(Session.queue)),
+                    answers: JSON.parse(JSON.stringify(Session.answers)),
                     settings: JSON.parse(JSON.stringify(Session.settings)),
                     selectedSubtopics: JSON.parse(JSON.stringify(Session.selectedSubtopics)),
                     time: timeStr,
@@ -6659,6 +6661,7 @@
                             </div>
                             <div style="display:flex; gap:0.5rem;">
                                 <button class="quiz-btn btn-primary" style="flex:2;" onclick="retakeExam('${result.id}')">Retake <i class="ri-refresh-line"></i></button>
+                                <button class="quiz-btn btn-secondary" style="flex:2;" onclick="reviewExamFromHistory('${result.id}')">Review <i class="ri-eye-line"></i></button>
                                 <button class="icon-btn" style="flex:0.5;" onclick="deleteExamResult('${result.id}')"><i class="ri-delete-bin-line"></i></button>
                             </div>
                         </div>
@@ -6680,7 +6683,76 @@
             Session.quizMode = result.mode || 'exam';
             Session.settings = result.settings || { count: result.total, time: 0 };
             Session.selectedSubtopics = result.selectedSubtopics || [];
-            launchQuiz();
+            let pool = [];
+            if (result.queue && result.queue.length > 0) {
+
+                pool = JSON.parse(JSON.stringify(result.queue));
+            } else {
+
+                if (!Array.isArray(DB[Session.module])) {
+                    (result.selectedSubtopics || []).forEach(selection => {
+                        let subQs;
+                        if (selection.includes('___')) {
+                            const parts = selection.split('___');
+                            subQs = DB[Session.module][parts[0]][parts[1]];
+                        } else {
+                            subQs = DB[Session.module][selection];
+                        }
+                        if (subQs) pool.push(...subQs);
+                    });
+                } else {
+                    pool = [...DB[Session.module]];
+                }
+            }
+
+            if (pool.length === 0) return alert('No questions found for this exam.');
+
+            let count = Session.settings.count;
+            if (count === 'max' || count > pool.length) count = pool.length;
+
+            Session.queue = pool.sort(() => 0.5 - Math.random()).slice(0, count);
+            Session.answers = new Array(Session.queue.length).fill(null);
+            Session.index = 0;
+            Session.score = 0;
+            Session.reviewing = false;
+
+            document.body.classList.add('focus-mode');
+            document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
+            const quizView = document.getElementById('view-quiz');
+            quizView.style.display = 'flex'; quizView.classList.add('active');
+
+            startSession(); loadQuestion();
+            Session.queue.forEach(q => { if (q.img) { const img = new Image(); img.src = q.img; } });
+            if (Session.settings.time > 0) startQuestionTimer();
+            Session.drawings = {};
+            Session.highlights = {};
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function reviewExamFromHistory(id) {
+            const result = AppState.examsHistory.find(r => r.id == id);
+            if (!result) return;
+
+            if (!result.queue || result.queue.length === 0) {
+                return alert('No review data available for this exam. Only exams taken after this update can be reviewed.');
+            }
+
+            Session.module = result.module;
+            Session.mode = result.quizType || 'normal';
+            Session.quizMode = result.mode || 'exam';
+            Session.queue = JSON.parse(JSON.stringify(result.queue));
+            Session.answers = JSON.parse(JSON.stringify(result.answers));
+            Session.score = result.score;
+            Session.index = 0;
+            Session.reviewing = true;
+            Session.settings = result.settings || { count: result.total, time: 0 };
+
+            document.body.classList.add('focus-mode');
+            document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
+            const quizView = document.getElementById('view-quiz');
+            quizView.style.display = 'flex'; quizView.classList.add('active');
+
+            loadQuestion();
         }
 
         function resumeExam(id) {
