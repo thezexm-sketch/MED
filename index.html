@@ -804,6 +804,201 @@
             color: white;
             transform: rotate(180deg);
         }
+        .card-menu-wrapper {
+            position: absolute;
+            bottom: 2.8rem;
+            right: 1.25rem;
+            z-index: 15;
+        }
+
+        .card-menu-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-gray);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .card-menu-btn:hover {
+            background: var(--hover-bg);
+            color: var(--text-light);
+            border-color: var(--text-gray);
+        }
+
+        .card-menu-dropdown {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 6px;
+            min-width: 160px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+            display: none;
+            z-index: 20;
+            animation: menuSlideUp 0.2s ease;
+        }
+
+        @keyframes menuSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-menu-dropdown.show {
+            display: block;
+        }
+
+        .card-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: 0.15s;
+            white-space: nowrap;
+        }
+
+        .card-menu-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .card-menu-item.danger {
+            color: var(--primary-red);
+        }
+
+        .card-menu-item.danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .image-lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100001;
+            display: none;
+            place-items: center;
+            cursor: zoom-out;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .image-lightbox.active {
+            display: grid;
+        }
+
+        .image-lightbox img {
+            max-width: 92vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .image-lightbox .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.4rem;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .image-lightbox .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .subject-reset-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--primary-red);
+            border: 1px solid var(--primary-red);
+            color: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+        .subject-reset-btn i {
+            color: white !important;
+        }
+
+        .subject-reset-btn:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+        .weak-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+            color: #f59e0b;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.12);
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            animation: weakPulse 2s ease-in-out infinite;
+            white-space: nowrap;
+        }
+
+        .weak-indicator i {
+            font-size: 0.85rem;
+        }
+
+        @keyframes weakPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
 
         .card-title {
             font-size: 1.2rem;
@@ -923,6 +1118,13 @@
             display: none;
             border: 1px solid var(--border-color);
             object-fit: contain;
+            cursor: zoom-in;
+            transition: 0.2s;
+        }
+
+        .question-image:hover {
+            opacity: 0.85;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
         .options-container {
@@ -4162,9 +4364,9 @@
                             <div class="chip" onclick="setOption('count', 10, this)">10</div>
                             <div class="chip" onclick="setOption('count', 20, this)">20</div>
                             <div class="chip" onclick="setOption('count', 50, this)">50</div>
-                            <div class="chip" onclick="setOption('count', 'max', this)">Max</div>
+                            <div class="chip" onclick="setOption('count', 100, this)">100</div>
                         </div>
-                        <input type="number" class="custom-input" id="custom-count" placeholder="Custom amount..."
+                        <input type="number" class="custom-input" id="custom-count" placeholder="Max 100Q only"
                             style="margin-top: 1rem;">
                     </div>
 
@@ -5545,16 +5747,21 @@
                         : `<p class="card-subtitle">${isMistakes ? 'Mistakes available' : `${availableCount} Questions Left`}</p>`;
 
                 card.innerHTML = `
-                    <button class="reset-btn" onclick="resetModule('${modName}', event)" title="Reset Progress"><i class="ri-restart-line"></i></button>
                     ${IMAGES[modName] ? `<img src="${IMAGES[modName]}" class="card-banner" onerror="this.style.display='none'" ${allSolved ? 'style="filter:grayscale(0.5) opacity(0.7);"' : ''}>` : ''}
                     <div class="card-content">
                         <div class="card-header"><div class="card-icon">${ICONS[modName] || '📚'}</div>${badgeHTML}</div>
                         <h3 class="card-title">${modName}</h3>
                         ${subtitleHTML}
                         <div class="progress-bar"><div class="progress-fill" style="width: ${isMistakes ? 100 : pct}%; ${allSolved ? 'background: var(--primary-green);' : ''}"></div></div>
+                    </div>
+                    <div class="card-menu-wrapper">
+                        <button class="card-menu-btn" onclick="toggleCardMenu(event, this)" title="More options"><i class="ri-more-2-fill"></i></button>
+                        <div class="card-menu-dropdown">
+                            <div class="card-menu-item danger" onclick="resetModule('${modName}', event)"><i class="ri-restart-line"></i> Reset Progress</div>
+                        </div>
                     </div>`;
                 card.onclick = (e) => {
-                    if (e.target.closest('.reset-btn')) return;
+                    if (e.target.closest('.card-menu-wrapper')) return;
                     if (!allSolved && !isLoading) openStartModal(modName, isMistakes);
                 };
                 grid.appendChild(card);
@@ -5562,14 +5769,19 @@
             if (grid.innerHTML === '') grid.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-gray); grid-column: 1/-1;">🎉 No active modules found!</div>`;
         }
 
-        function createSubtopicBtn(label, count, value) {
+        function createSubtopicBtn(label, count, value, weakInfo) {
             const btn = document.createElement('div');
             btn.className = 'subtopic-btn';
             btn.dataset.count = count;
 
             const displayLabel = label.replace(/^\d+\.\s*/, "");
 
-            btn.innerHTML = `<span style="flex:1; text-align:left; line-height: 1.4; padding-right:8px;">${displayLabel}</span>
+            let weakHTML = '';
+            if (weakInfo && weakInfo.isWeak) {
+                weakHTML = `<span class="weak-indicator" title="Your accuracy here is ${weakInfo.accuracy}% — below your average of ${weakInfo.avg}%"><i class="ri-error-warning-fill"></i> Weak</span>`;
+            }
+
+            btn.innerHTML = `<span style="flex:1; text-align:left; line-height: 1.4; padding-right:8px;">${displayLabel}${weakHTML}</span>
                      <span style="color: var(--text-gray); font-size: 0.85rem;">${count}</span>`;
 
             btn.onclick = () => {
@@ -5607,6 +5819,55 @@
             });
         };
 
+        function getWeakSections(modName) {
+            const modData = DB[modName];
+            if (!modData || Array.isArray(modData)) return {};
+            const sectionStats = {};
+
+            function analyzeQuestions(questions, sectionPath) {
+                let correct = 0, wrong = 0;
+                questions.forEach(q => {
+                    if (!q || !q.q) return;
+                    const status = AppState.progress[q.q];
+                    if (status === 'correct') correct++;
+                    else if (status === 'wrong') wrong++;
+                });
+                const total = correct + wrong;
+                if (total >= 3) {
+                    sectionStats[sectionPath] = { correct, wrong, total, accuracy: Math.round((correct / total) * 100) };
+                }
+            }
+
+            for (const key in modData) {
+                const data = modData[key];
+                if (Array.isArray(data)) {
+                    analyzeQuestions(data, key);
+                } else if (typeof data === 'object') {
+                    for (const childKey in data) {
+                        if (Array.isArray(data[childKey])) {
+                            analyzeQuestions(data[childKey], `${key}___${childKey}`);
+                        }
+                    }
+                }
+            }
+
+            const accuracies = Object.values(sectionStats).map(s => s.accuracy);
+            if (accuracies.length < 2) return {};
+            const avg = Math.round(accuracies.reduce((a, b) => a + b, 0) / accuracies.length);
+            const threshold = Math.max(avg - 15, 30);
+
+            const result = {};
+            for (const path in sectionStats) {
+                const s = sectionStats[path];
+                result[path] = {
+                    accuracy: s.accuracy,
+                    avg,
+                    isWeak: s.accuracy < threshold && s.accuracy < avg
+                };
+            }
+            return result;
+        }
+
         function openStartModal(modName, isMistakes) {
             const errDiv = document.getElementById('start-modal-error');
             if (errDiv) errDiv.style.display = 'none';
@@ -5633,6 +5894,8 @@
                 selectAllBtn.style.color = 'var(--accent)';
             }
 
+            const weakSections = !isMistakes ? getWeakSections(modName) : {};
+
             if (!Array.isArray(DB[modName])) {
 
                 if (subContainer) subContainer.style.display = 'flex';
@@ -5644,7 +5907,7 @@
                     if (Array.isArray(data)) {
                         const pool = isMistakes ? data.filter(q => AppState.progress[q.q] === 'wrong') : data.filter(q => !AppState.progress[q.q]);
                         if (pool.length > 0) {
-                            subGrid.appendChild(createSubtopicBtn(key, pool.length, key));
+                            subGrid.appendChild(createSubtopicBtn(key, pool.length, key, weakSections[key]));
                         }
                     } else {
                         let groupPoolCount = 0;
@@ -5656,7 +5919,8 @@
                             const pool = isMistakes ? childData.filter(q => AppState.progress[q.q] === 'wrong') : childData.filter(q => !AppState.progress[q.q]);
                             if (pool.length > 0) {
                                 groupPoolCount += pool.length;
-                                childrenElements.push(createSubtopicBtn(childKey, pool.length, `${key}___${childKey}`));
+                                const weakKey = `${key}___${childKey}`;
+                                childrenElements.push(createSubtopicBtn(childKey, pool.length, weakKey, weakSections[weakKey]));
                             }
                         }
 
@@ -5675,10 +5939,23 @@
 
                             const headerContent = document.createElement('div');
                             headerContent.style.cssText = 'display:flex; align-items:center; flex: 1;';
+
+                            const hasWeakChild = childrenElements.some(el => el.querySelector('.weak-indicator'));
+                            const weakGroupHTML = hasWeakChild ? ' <span class="weak-indicator" style="font-size:0.65rem; padding:1px 6px;"><i class="ri-error-warning-fill"></i></span>' : '';
+
                             headerContent.innerHTML = `
-                                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px; text-transform: uppercase;">${displayKey}</span>
+                                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px; text-transform: uppercase;">${displayKey}${weakGroupHTML}</span>
                                 <span style="font-weight: 800; font-size: 1rem; color: var(--text-gray); margin-left: 12px;">${groupPoolCount}</span>
                             `;
+
+                            const resetSubjectBtn = document.createElement('button');
+                            resetSubjectBtn.className = 'subject-reset-btn';
+                            resetSubjectBtn.title = `Reset ${displayKey}`;
+                            resetSubjectBtn.innerHTML = '<i class="ri-restart-line"></i>';
+                            resetSubjectBtn.onclick = (e) => {
+                                e.stopPropagation();
+                                resetSubject(modName, key, displayKey);
+                            };
 
                             const chevron = document.createElement('i');
                             chevron.className = 'ri-arrow-down-s-line';
@@ -5686,6 +5963,7 @@
 
                             header.appendChild(checkbox);
                             header.appendChild(headerContent);
+                            header.appendChild(resetSubjectBtn);
                             header.appendChild(chevron);
 
                             const childrenContainer = document.createElement('div');
@@ -5857,8 +6135,9 @@
             if (count !== 'max') {
                 count = parseInt(document.getElementById('custom-count').value) || count;
                 if (count <= 0) count = 5;
+                if (count > 100) count = 100;
             }
-            if (count === 'max' || count > pool.length) count = pool.length;
+            if (count === 'max' || count > pool.length) count = Math.min(pool.length, 100);
 
             let customTimeStr = document.getElementById('custom-time').value;
             Session.settings.time = Session.quizMode === 'exam' ? (count * 60 + Math.ceil(count / 5) * 60) : (customTimeStr !== '' ? parseInt(customTimeStr) : Session.settings.time);
@@ -5940,7 +6219,7 @@
                 document.getElementById('q-text').textContent = q.q;
             }
             const qImg = document.getElementById('q-image');
-            if (q.img) { qImg.src = q.img; qImg.style.display = 'block'; } else qImg.style.display = 'none';
+            if (q.img) { qImg.src = q.img; qImg.style.display = 'block'; qImg.onclick = () => openImageLightbox(q.img); } else qImg.style.display = 'none';
 
             const box = document.getElementById('options-box'); box.innerHTML = '';
 
@@ -6382,11 +6661,14 @@
 
         let targetResetModule = null;
         let isResettingMistakes = false;
+        let targetResetSubjectKey = null;
 
         function resetModule(modName, e) {
             e.stopPropagation();
+            closeAllCardMenus();
             isResettingMistakes = document.body.getAttribute('data-mode') === 'mistakes';
             targetResetModule = modName;
+            targetResetSubjectKey = null;
 
             const modalText = document.getElementById('reset-modal-text');
             if (isResettingMistakes) {
@@ -6398,15 +6680,35 @@
             document.getElementById('reset-modal').classList.add('active');
         }
 
+        function resetSubject(modName, subjectKey, displayName) {
+            isResettingMistakes = document.body.getAttribute('data-mode') === 'mistakes';
+            targetResetModule = modName;
+            targetResetSubjectKey = subjectKey;
+
+            const modalText = document.getElementById('reset-modal-text');
+            modalText.innerHTML = `Are you sure you want to reset <b>ALL progress</b> for <span style="color: var(--accent); font-weight: bold;">${displayName}</span> in <span style="color: var(--accent); font-weight: bold;">${modName}</span>?`;
+
+            document.getElementById('reset-modal').classList.add('active');
+        }
+
         function closeResetModal() {
             document.getElementById('reset-modal').classList.remove('active');
             targetResetModule = null;
+            targetResetSubjectKey = null;
         }
 
         function confirmResetAction() {
             if (!targetResetModule) return;
 
-            extractAllQuestions(DB[targetResetModule]).forEach(q => {
+            let questionsToReset;
+            if (targetResetSubjectKey) {
+                const subjectData = DB[targetResetModule][targetResetSubjectKey];
+                questionsToReset = extractAllQuestions(subjectData || []);
+            } else {
+                questionsToReset = extractAllQuestions(DB[targetResetModule]);
+            }
+
+            questionsToReset.forEach(q => {
                 if (isResettingMistakes) {
                     if (AppState.progress[q.q] === 'wrong') delete AppState.progress[q.q];
                 } else {
@@ -6417,9 +6719,30 @@
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
             if (window.saveUserData) window.saveUserData('progress', AppState.progress);
 
-            renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
+            if (targetResetSubjectKey) {
+                if (window.showToast) window.showToast('Subject progress reset!', 'success');
+                openStartModal(targetResetModule, isResettingMistakes);
+            } else {
+                renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
+            }
             closeResetModal();
         }
+
+        function toggleCardMenu(e, btn) {
+            e.stopPropagation();
+            const dropdown = btn.nextElementSibling;
+            const wasOpen = dropdown.classList.contains('show');
+            closeAllCardMenus();
+            if (!wasOpen) dropdown.classList.add('show');
+        }
+
+        function closeAllCardMenus() {
+            document.querySelectorAll('.card-menu-dropdown.show').forEach(d => d.classList.remove('show'));
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.card-menu-wrapper')) closeAllCardMenus();
+        });
 
         function renderFavorites() {
             const favList = document.getElementById('favorites-list'); const notesList = document.getElementById('notes-list');
@@ -7481,6 +7804,8 @@
             if (gameState.currentQ.img) {
                 qImg.src = gameState.currentQ.img;
                 qImg.style.display = 'block';
+                qImg.onclick = () => openImageLightbox(gameState.currentQ.img);
+                qImg.style.cursor = 'zoom-in';
             } else {
                 qImg.style.display = 'none';
             }
@@ -9288,6 +9613,34 @@
                         Next <i class="ri-arrow-right-s-line"></i>
                     </button>
                 </div>
+                <!-- Image Lightbox -->
+                <div class="image-lightbox" id="image-lightbox" onclick="closeImageLightbox(event)">
+                    <button class="lightbox-close" onclick="closeImageLightbox(event)"><i
+                            class="ri-close-line"></i></button>
+                    <img id="lightbox-img" src="" alt="Zoomed Image">
+                </div>
+
+                <script>
+                    function openImageLightbox(src) {
+                        const lightbox = document.getElementById('image-lightbox');
+                        const img = document.getElementById('lightbox-img');
+                        img.src = src;
+                        lightbox.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                    function closeImageLightbox(e) {
+                        if (e && e.target.tagName === 'IMG') return;
+                        const lightbox = document.getElementById('image-lightbox');
+                        lightbox.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && document.getElementById('image-lightbox').classList.contains('active')) {
+                            closeImageLightbox();
+                        }
+                    });
+                </script>
+
 </body>
 
 </html>
