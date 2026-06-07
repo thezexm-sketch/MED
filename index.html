@@ -804,6 +804,8 @@
             color: white;
             transform: rotate(180deg);
         }
+
+        /* Three-dots menu on module cards */
         .card-menu-wrapper {
             position: absolute;
             bottom: 2.8rem;
@@ -887,6 +889,8 @@
         .card-menu-item.danger:hover {
             background: rgba(239, 68, 68, 0.1);
         }
+
+        /* Image lightbox */
         .image-lightbox {
             position: fixed;
             inset: 0;
@@ -945,6 +949,8 @@
         .image-lightbox .lightbox-close:hover {
             background: rgba(255, 255, 255, 0.3);
         }
+
+        /* Subject reset button in modal */
         .subject-reset-btn {
             width: 28px;
             height: 28px;
@@ -960,14 +966,18 @@
             flex-shrink: 0;
             margin-left: 8px;
         }
+
         .subject-reset-btn i {
             color: white !important;
         }
 
         .subject-reset-btn:hover {
             background: #dc2626;
+            /* Darker red */
             border-color: #dc2626;
         }
+
+        /* Weak section indicator */
         .weak-indicator {
             display: inline-flex;
             align-items: center;
@@ -3027,6 +3037,20 @@
             animation: flashGreen 0.5s ease-out forwards;
         }
 
+        @keyframes arcadePulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.25);
+                opacity: 0.7;
+            }
+        }
+
         #admin-panel-editor .result-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -3578,7 +3602,6 @@
         </div>
         <div id="view-game" class="view-section">
 
-            <!-- ===== GAME HUB ===== -->
             <div id="game-hub-screen"
                 style="display:flex; flex-direction:column; align-items:center; padding: 2rem 1rem;">
                 <h2 style="font-size:2rem; font-weight:900; margin-bottom:0.5rem;">🎮 Arcade</h2>
@@ -3586,7 +3609,6 @@
 
                 <div
                     style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.5rem; width:100%; max-width:700px; margin-bottom:3rem;">
-                    <!-- Cardiac Survival Card -->
                     <div onclick="checkUsernamePrompt('survival')"
                         style="background:linear-gradient(135deg,#1a2e22,#0f1a12); border:2px solid rgba(239,68,68,0.4); border-radius:20px; padding:2rem; cursor:pointer; transition:all 0.3s; text-align:center;"
                         onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#EF4444'"
@@ -3594,7 +3616,7 @@
                         <div style="font-size:3.5rem; margin-bottom:1rem;">❤️</div>
                         <h3 style="font-size:1.4rem; font-weight:900; color:#EF4444; margin-bottom:0.5rem;">CARDIAC
                             SURVIVAL</h3>
-                        <p style="color:var(--text-gray); font-size:0.9rem; margin-bottom:1.5rem;">3 Lives · 15s per
+                        <p style="color:var(--text-gray); font-size:0.9rem; margin-bottom:1.5rem;">3 Lives · 20s per
                             question · Combo multiplier</p>
                         <div style="display:flex; gap:0.5rem; justify-content:center;">
                             <span
@@ -3604,7 +3626,6 @@
                         </div>
                     </div>
 
-                    <!-- Lightning Round Card -->
                     <div onclick="checkUsernamePrompt('lightning')"
                         style="background:linear-gradient(135deg,#1a1a2e,#0f0f1a); border:2px solid rgba(245,158,11,0.4); border-radius:20px; padding:2rem; cursor:pointer; transition:all 0.3s; text-align:center;"
                         onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#F59E0B'"
@@ -3623,7 +3644,6 @@
                     </div>
                 </div>
 
-                <!-- Shared Leaderboard -->
                 <div
                     style="width:100%; max-width:700px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:1.5rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -3645,7 +3665,6 @@
                 </div>
             </div>
 
-            <!-- ===== CARDIAC SURVIVAL SCREENS ===== -->
             <div id="game-active-screen"
                 style="display:none; flex-direction:column; height:100%; max-width:800px; margin:0 auto; padding-top:1rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -3664,10 +3683,15 @@
                         <div id="game-combo" style="font-size:1.5rem; font-weight:800; color:#F59E0B;">x1</div>
                     </div>
                 </div>
-                <div
-                    style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin-bottom:2rem;">
-                    <div id="game-timer-bar"
-                        style="width:100%; height:100%; background:#10B981; transition:width 0.1s linear,background-color 0.3s ease;">
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; width:100%;">
+                    <div id="game-timer-number"
+                        style="font-size:1.6rem; font-weight:900; font-family:monospace; color:#10B981; min-width:38px; text-align:center; transition:color 0.3s ease;">
+                        20</div>
+                    <div
+                        style="flex:1; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;">
+                        <div id="game-timer-bar"
+                            style="width:100%; height:100%; background:#10B981; transition:width 0.1s linear,background-color 0.3s ease;">
+                        </div>
                     </div>
                 </div>
                 <div id="game-question-container" class="question-container"
@@ -3717,7 +3741,6 @@
                 </div>
             </div>
 
-            <!-- ===== LIGHTNING ROUND SCREENS ===== -->
             <div id="lr-active-screen"
                 style="display:none; flex-direction:column; align-items:center; max-width:700px; margin:0 auto; padding:1.5rem 1rem; width:100%;">
                 <div
@@ -3841,7 +3864,6 @@
                     </h3>
                     <div id="trophy-grid"
                         style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem;">
-                        <!-- Trophies will be rendered here dynamically -->
                     </div>
                 </div>
 
@@ -4175,12 +4197,10 @@
         <div id="view-admin" class="view-section">
             <div style="max-width:1100px; margin:0 auto; padding:1.5rem 1rem;">
 
-                <!-- Stats Row -->
                 <div id="admin-stats-row"
                     style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:1.5rem;">
                 </div>
 
-                <!-- Tabs -->
                 <div style="display:flex; gap:8px; margin-bottom:1.25rem; flex-wrap:wrap; align-items:center;">
                     <button onclick="adminTab('users')" id="admin-tab-users"
                         style="padding:7px 18px; border-radius:999px; border:1.5px solid var(--accent); background:var(--accent); color:#fff; font-weight:600; font-size:0.85rem; cursor:pointer;">
@@ -4204,7 +4224,6 @@
                     </button>
                 </div>
 
-                <!-- Users Panel -->
                 <div id="admin-panel-users">
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom:1rem; flex-wrap:wrap;">
                         <input id="admin-search" type="text" placeholder="Search by username or email..."
@@ -4223,7 +4242,6 @@
                     </div>
                 </div>
 
-                <!-- Full Leaderboard Panel -->
                 <div id="admin-panel-leaderboard" style="display:none;">
                     <div style="display:flex; gap:8px; margin-bottom:1rem;">
                         <button onclick="adminLbTab('answered')" id="admin-lb-answered"
@@ -4240,14 +4258,12 @@
                     </div>
                 </div>
 
-                <!-- Feedback Panel -->
                 <div id="admin-panel-feedback" style="display:none;">
                     <div id="admin-feedback-list" style="display:flex; flex-direction:column; gap:10px;">
                         <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading feedback...</div>
                     </div>
                 </div>
 
-                <!-- Reports Panel -->
                 <div id="admin-panel-reports" style="display:none;">
                     <div style="display:flex; gap:8px; margin-bottom:1rem;">
                         <button onclick="adminReportsFilter('pending')" id="admin-rep-pending"
@@ -4264,7 +4280,6 @@
                     </div>
                 </div>
 
-                <!-- Editor Panel -->
                 <div id="admin-panel-editor" style="display:none;" dir="rtl">
                     <div style="text-align: center; margin-bottom: 20px;">
                         <h2 style="color: var(--primary-green); font-weight: 800;">Meddy Super Admin ⚡</h2>
@@ -4365,8 +4380,9 @@
                             <div class="chip" onclick="setOption('count', 20, this)">20</div>
                             <div class="chip" onclick="setOption('count', 50, this)">50</div>
                             <div class="chip" onclick="setOption('count', 100, this)">100</div>
+                            <div class="chip" onclick="setOption('count', 120, this)">120</div>
                         </div>
-                        <input type="number" class="custom-input" id="custom-count" placeholder="Max 100Q only"
+                        <input type="number" class="custom-input" id="custom-count" placeholder="Max 120Q only"
                             style="margin-top: 1rem;">
                     </div>
 
@@ -6135,9 +6151,9 @@
             if (count !== 'max') {
                 count = parseInt(document.getElementById('custom-count').value) || count;
                 if (count <= 0) count = 5;
-                if (count > 100) count = 100;
+                if (count > 120) count = 120;
             }
-            if (count === 'max' || count > pool.length) count = Math.min(pool.length, 100);
+            if (count === 'max' || count > pool.length) count = Math.min(pool.length, 120);
 
             let customTimeStr = document.getElementById('custom-time').value;
             Session.settings.time = Session.quizMode === 'exam' ? (count * 60 + Math.ceil(count / 5) * 60) : (customTimeStr !== '' ? parseInt(customTimeStr) : Session.settings.time);
@@ -7604,7 +7620,7 @@
             maxCombo: 1,
             solved: 0,
             timer: null,
-            timeLeft: 15,
+            timeLeft: 20,
             questions: [],
             currentQ: null,
             isPlaying: false
@@ -7826,27 +7842,39 @@
 
         function startGameTimer() {
             clearInterval(gameState.timer);
-            gameState.timeLeft = 15;
+            gameState.timeLeft = 20;
             const bar = document.getElementById('game-timer-bar');
+            const numEl = document.getElementById('game-timer-number');
             bar.style.transition = 'none';
             bar.style.width = '100%';
             bar.style.backgroundColor = '#10B981';
+            if (numEl) { numEl.textContent = '20'; numEl.style.color = '#10B981'; numEl.style.animation = ''; }
 
             setTimeout(() => {
                 bar.style.transition = 'width 1s linear, background-color 0.3s ease';
                 gameState.timer = setInterval(() => {
                     if (!gameState.isPlaying) return;
                     gameState.timeLeft--;
-                    const pct = (gameState.timeLeft / 15) * 100;
+                    const pct = (gameState.timeLeft / 20) * 100;
                     bar.style.width = pct + '%';
+                    if (numEl) numEl.textContent = gameState.timeLeft;
 
-                    if (gameState.timeLeft <= 5) bar.style.backgroundColor = '#EF4444';
-                    else if (gameState.timeLeft <= 10) bar.style.backgroundColor = '#F59E0B';
+                    if (gameState.timeLeft <= 5) {
+                        bar.style.backgroundColor = '#EF4444';
+                        if (numEl) { numEl.style.color = '#EF4444'; numEl.style.animation = 'arcadePulse 0.5s ease-in-out infinite'; }
+                    } else if (gameState.timeLeft <= 10) {
+                        bar.style.backgroundColor = '#F59E0B';
+                        if (numEl) { numEl.style.color = '#F59E0B'; numEl.style.animation = ''; }
+                    }
 
                     if (gameState.timeLeft <= 0) {
                         clearInterval(gameState.timer);
                         gameState.isPlaying = false;
-                        handleWrongAnswer();
+                        // Show correct answer before penalising
+                        const correctIdx = gameState.currentQ.a;
+                        const allOpts = document.querySelectorAll('#game-options-container .option-btn');
+                        if (allOpts[correctIdx]) allOpts[correctIdx].classList.add('correct');
+                        setTimeout(() => handleWrongAnswer(), 1500);
                     }
                 }, 1000);
             }, 50);
@@ -9613,7 +9641,6 @@
                         Next <i class="ri-arrow-right-s-line"></i>
                     </button>
                 </div>
-                <!-- Image Lightbox -->
                 <div class="image-lightbox" id="image-lightbox" onclick="closeImageLightbox(event)">
                     <button class="lightbox-close" onclick="closeImageLightbox(event)"><i
                             class="ri-close-line"></i></button>
