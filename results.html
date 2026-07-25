@@ -59,7 +59,7 @@
     }
 
     .logo {
-      font-size: 12px;
+      font-size: 20px;
       letter-spacing: 4px;
       color: var(--accent2);
       font-weight: 300;
@@ -83,7 +83,6 @@
       font-family: 'Tajawal', sans-serif;
     }
 
-    /* ===== TABS ===== */
     .tabs-container {
       max-width: 480px;
       margin: 0 auto 24px;
@@ -124,7 +123,6 @@
       color: var(--text);
     }
 
-    /* ===== SEARCH PANELS ===== */
     .tab-panel {
       display: none;
     }
@@ -221,14 +219,6 @@
     .btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-    }
-
-    .btn-y4 {
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
-    }
-
-    .btn-y4:hover {
-      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
     }
 
     .results-container {
@@ -363,31 +353,10 @@
       gap: 16px;
     }
 
-    .total-section-y4 {
-      background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(167, 139, 250, 0.04));
-      border: 1px solid rgba(124, 58, 237, 0.25);
-      border-radius: 16px;
-      padding: 24px;
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
     .total-score {
       font-size: 40px;
       font-weight: 900;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .total-score-y4 {
-      font-size: 40px;
-      font-weight: 900;
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -472,19 +441,6 @@
       border: 1px solid rgba(239, 68, 68, 0.3);
     }
 
-    .rank-banner-y4 {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(124, 58, 237, 0.12);
-      border: 1px solid rgba(124, 58, 237, 0.35);
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 14px;
-      color: #a78bfa;
-      font-weight: 700;
-    }
-
     .footer-signature {
       text-align: center;
       padding: 30px 20px;
@@ -494,6 +450,18 @@
       color: var(--muted);
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       background: rgba(0, 0, 0, 0.2);
+    }
+
+    .footer-signature a {
+      text-decoration: underline;
+      text-decoration-color: var(--accent2);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+      transition: text-decoration-color 0.3s ease;
+    }
+
+    .footer-signature a:hover {
+      text-decoration-color: var(--accent);
     }
 
     .footer-signature span {
@@ -616,16 +584,8 @@
   <div class="main-content">
     <div class="header">
       <div class="logo">Alexandria University · Faculty of Medicine</div>
-      <h1>نتائج كلية الطب</h1>
-      <p class="subtitle">أدخل رقم جلوسك لعرض النتيجة والترتيب</p>
+      <h1>نتائج كلية طب اسكندرية</h1>
     </div>
-    <div class="tabs-container">
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('y1')">📘 السنة الأولى</button>
-        <button class="tab-btn" onclick="switchTab('y4')">📗 السنة الرابعة</button>
-      </div>
-    </div>
-
     <div id="panel-y1" class="tab-panel active">
       <div class="tabs-container">
         <div class="tabs" style="max-width:400px;margin:0 auto 20px">
@@ -639,8 +599,8 @@
 
       <div id="subpanel-am">
         <div class="search-container">
-          <div class="search-box">
-            <label>رقم الجلوس (ID)</label>
+          <div class="search-box" style="border-color: rgba(6,182,212,0.3);">
+            <label style="color:var(--accent2)">رقم الجلوس (ID) - العام</label>
             <input type="number" id="studentId" placeholder="مثال: 42">
             <div class="target-box">
               <label>🎯 Am I Far? (اختياري)</label>
@@ -648,7 +608,7 @@
                 بينك وبينه (مثال: 1)</p>
               <input type="number" id="targetRank" placeholder="الترتيب المستهدف">
             </div>
-            <button class="btn" onclick="searchStudent()">🔍 عرض النتيجة</button>
+            <button class="btn" onclick="searchStudent()">🔍 عرض نتيجة العام</button>
           </div>
         </div>
         <div id="output"></div>
@@ -658,7 +618,7 @@
         <div class="search-container">
           <div class="search-box" style="border-color: rgba(6,182,212,0.3);">
             <label style="color:var(--accent2)">رقم الجلوس (ID) - الدولي</label>
-            <input type="text" id="studentIdIntl" placeholder="مثال: 25-1-100"
+            <input type="text" id="studentIdIntl" placeholder="مثال: 100-1-25"
               style="font-size:18px;letter-spacing:1px">
             <div class="target-box">
               <label>🎯 Am I Far? (اختياري)</label>
@@ -675,7 +635,7 @@
         <div class="search-container">
           <div class="search-box" style="border-color: rgba(245,158,11,0.3);">
             <label style="color:var(--gold)">رقم الجلوس (ID) - الترتيب العام الشامل</label>
-            <input type="text" id="studentIdAll" placeholder="مثال: 42 أو 25-1-100"
+            <input type="text" id="studentIdAll" placeholder="مثال: 42 أو 100-1-25"
               style="font-size:18px;letter-spacing:1px">
             <div class="target-box">
               <label>🎯 Am I Far? (اختياري)</label>
@@ -689,45 +649,17 @@
         <div id="outputAll"></div>
       </div>
     </div>
-
-    <div id="panel-y4" class="tab-panel">
-      <div class="search-container">
-        <div class="search-box" style="border-color: rgba(124,58,237,0.3);">
-          <label style="color:#a78bfa;">رقم الجلوس (ID) - السنة الرابعة</label>
-          <input type="number" id="studentId4" placeholder="مثال: 1452" style="border-color: rgba(124,58,237,0.3);">
-
-          <div class="target-box">
-            <label>🎯 Am I Far? (اختياري)</label>
-            <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف لتعرف الفرق بينك
-              وبينه</p>
-            <input type="number" id="targetRank4" placeholder="الترتيب المستهدف">
-          </div>
-
-          <button class="btn btn-y4" onclick="searchStudent4()">🔍 عرض نتيجة السنة الرابعة</button>
-        </div>
-      </div>
-      <div id="output4"></div>
-    </div>
-
   </div>
 
   <div class="footer-signature">
-    made by : <span>Mahmoud</span>
+    made by : <a href="https://t.me/behonor" target="_blank"><span>Mahmoud</span></a>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="data.js"></script>
   <script src="data_intl.js"></script>
-  <script src="data_year4.js"></script>
 
   <script>
-    function switchTab(tab) {
-      document.querySelectorAll('.tabs-container:first-of-type .tab-btn').forEach((b, i) => {
-        b.classList.toggle('active', (i === 0 && tab === 'y1') || (i === 1 && tab === 'y4'));
-      });
-      document.getElementById('panel-y1').classList.toggle('active', tab === 'y1');
-      document.getElementById('panel-y4').classList.toggle('active', tab === 'y4');
-    }
-
     function switchSubTab(sub) {
       document.getElementById('subTabAm').classList.toggle('active', sub === 'am');
       document.getElementById('subTabIntl').classList.toggle('active', sub === 'intl');
@@ -746,13 +678,28 @@
     let validStudents = [];
     const MAX_TOTAL = 1120;
 
-    let studentsData4 = [];
-    let validStudents4 = [];
-    const TOTAL_BATCH4 = 961;
-
     function isNumeric(v) { return v && !isNaN(parseFloat(v)) && v !== 'غ' && v !== 'راسب'; }
     function num(v) { return isNumeric(v) ? parseFloat(v) : 0; }
     function pctStr(v) { return isNumeric(v) ? (parseFloat(v) * 100).toFixed(2) + '%' : v || '—'; }
+
+    function calcModuleRanks(list, suffix = '') {
+      const modules = [
+        { key: 'foundation', rankKey: 'foundationRank' + suffix },
+        { key: 'bloodTotal', rankKey: 'bloodRank' + suffix },
+        { key: 'mskTotal', rankKey: 'mskRank' + suffix },
+        { key: 'cardioTotal', rankKey: 'cardioRank' + suffix },
+        { key: 'commTotal', rankKey: 'commRank' + suffix }
+      ];
+      modules.forEach(mod => {
+        let validMod = list.filter(s => isNumeric(s[mod.key]));
+        validMod.sort((a, b) => num(b[mod.key]) - num(a[mod.key]));
+        let rank = 1;
+        for (let i = 0; i < validMod.length; i++) {
+          if (i > 0 && num(validMod[i][mod.key]) < num(validMod[i - 1][mod.key])) rank = i + 1;
+          validMod[i][mod.rankKey] = rank;
+        }
+      });
+    }
 
     window.onload = () => {
       if (typeof studentsData === 'undefined') {
@@ -766,14 +713,7 @@
           if (i > 0 && num(validStudents[i].totalGrade) < num(validStudents[i - 1].totalGrade)) rank = i + 1;
           validStudents[i].rank = rank;
         }
-      }
-
-      if (typeof year4DataRaw !== 'undefined') {
-        validStudents4 = year4DataRaw.filter(s => s['Rank'] !== null && s['Rank'] !== undefined);
-        validStudents4.sort((a, b) => a['Rank'] - b['Rank']);
-        studentsData4 = year4DataRaw;
-      } else {
-        document.getElementById('output4').innerHTML = '<div class="results-container"><div class="error-box">⚠️ يرجى التأكد من وجود ملف data_year4.js في نفس المجلد.</div></div>';
+        calcModuleRanks(validStudents);
       }
     };
 
@@ -784,11 +724,13 @@
       return '#ef4444';
     }
 
-    function moduleCard(name, score, max, pctVal) {
+    function moduleCard(name, score, max, pctVal, rank) {
       const p = isNumeric(score) ? num(score) / max : 0;
       const pctDisplay = isNumeric(pctVal) ? (parseFloat(pctVal) * 100).toFixed(1) + '%' : (score || '—');
-      return `<div class="module-card">
-        <div class="module-name">${name}</div>
+      const rankHtml = rank ? `<div style="position:absolute;top:15px;left:15px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700" title="الترتيب في هذه المادة">🏆 #${rank}</div>` : '';
+      return `<div class="module-card" style="position:relative">
+        ${rankHtml}
+        <div class="module-name" style="${rank ? 'padding-left: 50px;' : ''}">${name}</div>
         <div class="score-row">
           <span class="score-big" style="color:${barColor(p)}">${score || '—'}</span>
           <span class="score-of">/ ${max}</span>
@@ -826,102 +768,6 @@
       renderY1Result(student, validStudents, allStudents.length, targetInput, output, 'rank');
     }
 
-    function searchStudent4() {
-      if (studentsData4.length === 0) return;
-      const idInput = parseInt(document.getElementById('studentId4').value);
-      const targetInput = parseInt(document.getElementById('targetRank4').value);
-      const output = document.getElementById('output4');
-
-      if (!idInput) {
-        output.innerHTML = '<div class="results-container"><div class="error-box">⚠️ من فضلك أدخل رقم الجلوس</div></div>';
-        return;
-      }
-      const student = studentsData4.find(s => s['ID'] === idInput);
-      if (!student) {
-        output.innerHTML = '<div class="results-container"><div class="error-box">❌ رقم الجلوس غير موجود!</div></div>';
-        return;
-      }
-
-      const pctVal = student['Percent'] ? student['Percent'].toFixed(2) : '—';
-      const cumulative = student['Cumulative'] ? student['Cumulative'].toFixed(4) : '—';
-      const rank4 = student['Rank'] || '—';
-      const year4Score = student['4th year'] ? student['4th year'].toFixed(4) : '—';
-      const oldTotal = student['Old_Total'] !== null ? student['Old_Total'] : '—';
-
-      let targetHTML = '';
-      if (targetInput && rank4 !== '—') {
-        let targetStudent = validStudents4.find(s => s['Rank'] === targetInput);
-        if (!targetStudent) targetStudent = validStudents4.find(s => s['Rank'] >= targetInput);
-        if (rank4 <= targetInput) {
-          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉أنت بالفعل في هذا الترتيب !</h3></div>`;
-        } else if (targetStudent) {
-          const diffScore = (targetStudent['Cumulative'] - student['Cumulative']).toFixed(4);
-          const targetPct = targetStudent['Percent'] ? targetStudent['Percent'].toFixed(2) : '—';
-          targetHTML = `
-            <div class="target-result-card">
-              <div style="text-align: center; margin-bottom: 10px;">
-                <span style="color: var(--muted); font-size: 14px;">بيانات المركز رقم ${targetStudent['Rank']}</span>
-              </div>
-              <div class="diff-grid">
-                <div class="diff-item">
-                  <div style="font-size:13px; color:var(--muted)">مجموع الترتيب المستهدف (تراكمي)</div>
-                  <div class="target-value">${targetStudent['Cumulative'].toFixed(2)}</div>
-                  <div style="font-size:14px; color:var(--gold)">${targetPct}%</div>
-                </div>
-                <div class="diff-item">
-                  <div style="font-size:13px; color:var(--muted)">الفرق بينكم (اللي ناقصك)</div>
-                  <div class="diff-value">🔻 ${diffScore} <span style="font-size:16px">درجة</span></div>
-                </div>
-              </div>
-            </div>`;
-        }
-      }
-
-      output.innerHTML = `
-        <div class="results-container">
-          <div class="student-card" style="border-color: rgba(124,58,237,0.3);">
-            <div class="student-name">${student['NAME']}</div>
-            <div class="badges">
-              <div class="badge">رقم الجلوس: <b>${student['ID']}</b></div>
-            </div>
-            <div class="rank-banner-y4">
-              🏆 الترتيب التراكمي:
-              <span class="rank-num">${rank4}</span>
-              <span style="font-size:13px;opacity:0.6">/ ${TOTAL_BATCH4}</span>
-            </div>
-          </div>
-
-          <div class="section-title">درجات الباطنة و الجراحة</div>
-          <div class="modules-grid">
-            <div class="module-card" style="border-color: rgba(124,58,237,0.2);">
-              <div class="module-name">درجات الباطنة و الجراحة</div>
-              <div class="score-row">
-                <span class="score-big" style="color:#a78bfa">${year4Score}</span>
-              </div>
-            </div>
-            <div class="module-card" style="border-color: rgba(124,58,237,0.2);">
-              <div class="module-name">مجموع السنوات السابقة</div>
-              <div class="score-row">
-                <span class="score-big" style="color:#60a5fa">${oldTotal}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="total-section-y4">
-            <div>
-              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">المجموع التراكمي</div>
-              <div class="total-score-y4">${cumulative}</div>
-            </div>
-            <div style="font-size: 26px; font-weight: 900; color: #a78bfa;">
-              ${pctVal}%
-            </div>
-            <div class="status-pill pass">✓ ناجح</div>
-          </div>
-
-          ${targetHTML}
-        </div>`;
-    }
-
     let allStudentsIntl = [];
     let validStudentsIntl = [];
 
@@ -938,6 +784,7 @@
           if (i > 0 && num(validStudentsIntl[i].totalGrade) < num(validStudentsIntl[i - 1].totalGrade)) rank = i + 1;
           validStudentsIntl[i].rank = rank;
         }
+        calcModuleRanks(validStudentsIntl);
       }
 
       if (typeof studentsData !== 'undefined' && typeof studentsDataIntl !== 'undefined') {
@@ -949,10 +796,11 @@
           if (i > 0 && num(validStudentsCombined[i].totalGrade) < num(validStudentsCombined[i - 1].totalGrade)) cRank = i + 1;
           validStudentsCombined[i].combinedRank = cRank;
         }
+        calcModuleRanks(validStudentsCombined, 'Combined');
       }
     }
 
-    function renderY1Result(student, validList, totalCount, targetInput, outputEl, rankKey = 'rank') {
+    function renderY1Result(student, validList, totalCount, targetInput, outputEl, rankKey = 'rank', suffix = '') {
       const hasTotal = isNumeric(student.totalGrade);
       const isAbsent = student.totalGrade === 'غ';
       const isFail = student.totalGrade === 'راسب';
@@ -1024,8 +872,8 @@
         const avgScore = sum / validList.length;
         const diffFromAvg = (score - avgScore).toFixed(1);
         const avgText = diffFromAvg >= 0
-          ? `<span class="analysis-good">أعلى بـ ${diffFromAvg} درجة</span>`
-          : `<span class="analysis-bad">أقل بـ ${Math.abs(diffFromAvg)} درجة</span>`;
+          ? `<span class="analysis-good">أنت أعلى بـ ${diffFromAvg} درجة</span>`
+          : `<span class="analysis-bad">أنت أقل بـ ${Math.abs(diffFromAvg)} درجة</span>`;
 
         const avgF = cF ? (sumF / cF) * 100 : 0;
         const avgB = cB ? (sumB / cB) * 100 : 0;
@@ -1038,7 +886,7 @@
 
         analyticsHTML = `
           <div class="analytics-dashboard">
-            <div class="analytics-title">📊 التحليل الذكي الشامل</div>
+            <div class="analytics-title">📊 Analysis</div>
             
             <div class="charts-layout">
               <div class="chart-wrapper">
@@ -1048,7 +896,7 @@
                 </div>
               </div>
               <div class="chart-wrapper">
-                <div style="font-size:14px;color:var(--muted);margin-bottom:10px;font-weight:700;text-align:center">تحليل التوازن </div>
+                <div style="font-size:14px;color:var(--muted);margin-bottom:10px;font-weight:700;text-align:center">التحليل</div>
                 <div style="position: relative; height: 260px; width: 100%;">
                   <canvas id="${radarId}"></canvas>
                 </div>
@@ -1069,7 +917,7 @@
               <div class="analysis-card">
                 <div class="analysis-icon">🎯</div>
                 <div class="analysis-label">الهدف القادم</div>
-                <div class="analysis-val">${nextTierDist === '0' ? '<span class="analysis-good">أنت في امتياز!</span>' : `تحتاج <span class="analysis-warn">${nextTierDist} درجة</span> للوصول لـ ${nextTierName}`}</div>
+                <div class="analysis-val">${nextTierDist === '0' ? '<span class="analysis-good">أنت في الامتياز!</span>' : `أنت محتاج <span class="analysis-warn">${nextTierDist} درجة</span> للوصول لـ ${nextTierName}`}</div>
               </div>
               <div class="analysis-card">
                 <div class="analysis-icon">⚖️</div>
@@ -1090,7 +938,6 @@
           ];
           const labelsArr = ['Foundation', 'Blood', 'MSK', 'Cardio', 'Comm'];
 
-          // Render Radar Chart
           const ctxRadar = document.getElementById(radarId);
           if (ctxRadar) {
             new Chart(ctxRadar, {
@@ -1182,19 +1029,19 @@
           </div>
           <div class="section-title">First term & Communication , Skill Lab </div>
           <div class="modules-grid">
-            ${moduleCard('Foundation of Medical School', student.foundation, 300, student.foundationPct)}
-            ${moduleCard('Blood & Immune System', student.bloodTotal, 180, student.bloodPct)}
-            ${moduleCard('Communication & Skill Lab', student.commTotal, 50, student.commPct)}
+            ${moduleCard('Foundation of Medical School', student.foundation, 300, student.foundationPct, student['foundationRank' + suffix])}
+            ${moduleCard('Blood & Immune System', student.bloodTotal, 180, student.bloodPct, student['bloodRank' + suffix])}
+            ${moduleCard('Communication & Skill Lab', student.commTotal, 50, student.commPct, student['commRank' + suffix])}
           </div>
           <div class="section-title">Musculoskeletal System</div>
-          <div class="modules-grid">${moduleCard('MSK Total', student.mskTotal, 250, student.mskPct)}</div>
+          <div class="modules-grid">${moduleCard('MSK Total', student.mskTotal, 250, student.mskPct, student['mskRank' + suffix])}</div>
           <div class="module-card" style="margin-top:10px"><div class="module-name" style="margin-bottom:8px">MSK Breakdown</div>
             ${subScoreRow('End of Module', student.mskEndModule, 50)}
             ${subScoreRow('End of Semester (Final)', student.mskEndSemester, 100)}
             ${subScoreRow('Practical', student.mskPractical, 75)}
           </div>
           <div class="section-title">Cardiopulmonary System</div>
-          <div class="modules-grid">${moduleCard('Cardiopulmonary Total', student.cardioTotal, 300, student.cardioPct)}</div>
+          <div class="modules-grid">${moduleCard('Cardiopulmonary Total', student.cardioTotal, 300, student.cardioPct, student['cardioRank' + suffix])}</div>
           <div class="module-card" style="margin-top:10px"><div class="module-name" style="margin-bottom:8px">Cardiopulmonary Breakdown</div>
             ${subScoreRow('End of Module', student.cardioEndModule, 60)}
             ${subScoreRow('End of Semester (Final)', student.cardioEndSemester, 120)}
@@ -1233,7 +1080,7 @@
       const student = allStudentsCombined.find(s => s.id === parsedId);
 
       if (!student) { output.innerHTML = '<div class="results-container"><div class="error-box">❌ رقم الجلوس غير موجود!</div></div>'; return; }
-      renderY1Result(student, validStudentsCombined, allStudentsCombined.length, targetInput, output, 'combinedRank');
+      renderY1Result(student, validStudentsCombined, allStudentsCombined.length, targetInput, output, 'combinedRank', 'Combined');
     }
 
     const origOnload = window.onload;
@@ -1245,8 +1092,6 @@
     document.getElementById('targetRankIntl').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudentIntl(); });
     document.getElementById('studentIdAll').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudentAll(); });
     document.getElementById('targetRankAll').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudentAll(); });
-    document.getElementById('studentId4').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudent4(); });
-    document.getElementById('targetRank4').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudent4(); });
   </script>
 </body>
 
