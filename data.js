@@ -1,10 +1,4 @@
-// Medical Faculty Results - Alexandria University
-// الفرقة الأولى - الفرقة الأولى مصريين 2025-2026
-// IDs: 1 to 1015
-// Generated: 2026-07-25T11:40:56.954Z
-// Total students with data: 1015
-
-const studentsData = [
+var studentsData = [
   {
     "id": 1,
     "name": "اباء مصطفى اسماعيل مصطفى ابوبركه",
@@ -20307,7 +20301,6 @@ const studentsData = [
   }
 ];
 
-// Export for use
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = studentsData;
 }
