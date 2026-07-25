@@ -155,7 +155,7 @@
       font-family: 'Tajawal', sans-serif;
     }
 
-    input[type="number"] {
+    input[type="number"], input[type="text"] {
       width: 100%;
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -535,22 +535,61 @@
     </div>
 
     <div id="panel-y1" class="tab-panel active">
-      <div class="search-container">
-        <div class="search-box">
-          <label>رقم الجلوس (ID)</label>
-          <input type="number" id="studentId" placeholder="مثال: 42">
-
-          <div class="target-box">
-            <label>🎯 Am I Far? (اختياري)</label>
-            <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف لتعرف الفرق بينك
-              وبينه (مثال: 1)</p>
-            <input type="number" id="targetRank" placeholder="الترتيب المستهدف">
-          </div>
-
-          <button class="btn" onclick="searchStudent()">🔍 عرض النتيجة</button>
+      <div class="tabs-container">
+        <div class="tabs" style="max-width:400px;margin:0 auto 20px">
+          <button class="tab-btn active" id="subTabAm" onclick="switchSubTab('am')">🏫 العام</button>
+          <button class="tab-btn" id="subTabIntl" onclick="switchSubTab('intl')" style="background:transparent">🌍 الدولي</button>
+          <button class="tab-btn" id="subTabAll" onclick="switchSubTab('all')" style="background:transparent">🏆 الكل</button>
         </div>
       </div>
-      <div id="output"></div>
+
+      <div id="subpanel-am">
+        <div class="search-container">
+          <div class="search-box">
+            <label>رقم الجلوس (ID)</label>
+            <input type="number" id="studentId" placeholder="مثال: 42">
+            <div class="target-box">
+              <label>🎯 Am I Far? (اختياري)</label>
+              <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف لتعرف الفرق بينك وبينه (مثال: 1)</p>
+              <input type="number" id="targetRank" placeholder="الترتيب المستهدف">
+            </div>
+            <button class="btn" onclick="searchStudent()">🔍 عرض النتيجة</button>
+          </div>
+        </div>
+        <div id="output"></div>
+      </div>
+
+      <div id="subpanel-intl" style="display:none">
+        <div class="search-container">
+          <div class="search-box" style="border-color: rgba(6,182,212,0.3);">
+            <label style="color:var(--accent2)">رقم الجلوس (ID) - الدولي</label>
+            <input type="text" id="studentIdIntl" placeholder="مثال: 25-1-100" style="font-size:18px;letter-spacing:1px">
+            <div class="target-box">
+              <label>🎯 Am I Far? (اختياري)</label>
+              <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف</p>
+              <input type="number" id="targetRankIntl" placeholder="الترتيب المستهدف">
+            </div>
+            <button class="btn" onclick="searchStudentIntl()">🔍 عرض نتيجة الدولي</button>
+          </div>
+        </div>
+        <div id="outputIntl"></div>
+      </div>
+
+      <div id="subpanel-all" style="display:none">
+        <div class="search-container">
+          <div class="search-box" style="border-color: rgba(245,158,11,0.3);">
+            <label style="color:var(--gold)">رقم الجلوس (ID) - الترتيب العام الشامل</label>
+            <input type="text" id="studentIdAll" placeholder="مثال: 42 أو 25-1-100" style="font-size:18px;letter-spacing:1px">
+            <div class="target-box">
+              <label>🎯 Am I Far? (اختياري)</label>
+              <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف على مستوى الدفعة كاملة</p>
+              <input type="number" id="targetRankAll" placeholder="الترتيب المستهدف">
+            </div>
+            <button class="btn" onclick="searchStudentAll()">🔍 عرض النتيجة الشاملة</button>
+          </div>
+        </div>
+        <div id="outputAll"></div>
+      </div>
     </div>
 
     <div id="panel-y4" class="tab-panel">
@@ -579,15 +618,30 @@
   </div>
 
   <script src="data.js"></script>
+  <script src="data_intl.js"></script>
   <script src="data_year4.js"></script>
 
   <script>
     function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      document.querySelectorAll('.tabs-container:first-of-type .tab-btn').forEach((b, i) => {
         b.classList.toggle('active', (i === 0 && tab === 'y1') || (i === 1 && tab === 'y4'));
       });
       document.getElementById('panel-y1').classList.toggle('active', tab === 'y1');
       document.getElementById('panel-y4').classList.toggle('active', tab === 'y4');
+    }
+
+    function switchSubTab(sub) {
+      document.getElementById('subTabAm').classList.toggle('active', sub === 'am');
+      document.getElementById('subTabIntl').classList.toggle('active', sub === 'intl');
+      document.getElementById('subTabAll').classList.toggle('active', sub === 'all');
+      
+      document.getElementById('subTabAm').style.background = sub === 'am' ? '' : 'transparent';
+      document.getElementById('subTabIntl').style.background = sub === 'intl' ? '' : 'transparent';
+      document.getElementById('subTabAll').style.background = sub === 'all' ? '' : 'transparent';
+      
+      document.getElementById('subpanel-am').style.display = sub === 'am' ? '' : 'none';
+      document.getElementById('subpanel-intl').style.display = sub === 'intl' ? '' : 'none';
+      document.getElementById('subpanel-all').style.display = sub === 'all' ? '' : 'none';
     }
 
     let allStudents = [];
@@ -671,98 +725,7 @@
         output.innerHTML = '<div class="results-container"><div class="error-box">❌ رقم الجلوس غير موجود!</div></div>';
         return;
       }
-
-      const hasTotal = isNumeric(student.totalGrade);
-      const isAbsent = student.totalGrade === 'غ';
-      const isFail = student.totalGrade === 'راسب';
-      const totalVal = hasTotal ? num(student.totalGrade) : 0;
-      const pctPct = hasTotal ? (num(student.totalPercentage) * 100).toFixed(2) : '—';
-      const passStatus = isFail ? 'راسب' : (isAbsent ? 'غائب' : (hasTotal ? 'ناجح' : '—'));
-      const studentRank = student.rank || '—';
-      const totalBatch = validStudents.length;
-
-      let targetHTML = '';
-      if (targetInput && hasTotal && studentRank !== '—') {
-        let targetStudent = validStudents.find(s => s.rank === targetInput);
-        if (!targetStudent) targetStudent = validStudents.find(s => s.rank >= targetInput);
-        if (studentRank <= targetInput) {
-          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉 أنت بالفعل في هذا الترتيب أو أعلى!</h3></div>`;
-        } else if (targetStudent) {
-          const tTotal = num(targetStudent.totalGrade);
-          const diffScore = (tTotal - totalVal).toFixed(2);
-          const targetPct = (num(targetStudent.totalPercentage) * 100).toFixed(2);
-          targetHTML = `
-            <div class="target-result-card">
-              <div style="text-align: center; margin-bottom: 10px;">
-                <span style="color: var(--muted); font-size: 14px;">بيانات المركز رقم ${targetStudent.rank}</span>
-              </div>
-              <div class="diff-grid">
-                <div class="diff-item">
-                  <div style="font-size:13px; color:var(--muted)">مجموع الترتيب المستهدف</div>
-                  <div class="target-value">${tTotal} <span style="font-size:14px;color:var(--muted)">/ ${MAX_TOTAL}</span></div>
-                  <div style="font-size:14px; color:var(--gold)">${targetPct}%</div>
-                </div>
-                <div class="diff-item">
-                  <div style="font-size:13px; color:var(--muted)">الفرق بينكم (اللي ناقصك)</div>
-                  <div class="diff-value">🔻 ${diffScore} <span style="font-size:16px">درجة</span></div>
-                </div>
-              </div>
-            </div>`;
-        }
-      }
-
-      output.innerHTML = `
-        <div class="results-container">
-          <div class="student-card">
-            <div class="student-name">${student.name || '—'}</div>
-            <div class="badges">
-              <div class="badge">رقم الجلوس: <b>${student.id}</b></div>
-            </div>
-            <div class="rank-banner">
-              🏆 الترتيب على الدفعة:
-              <span class="rank-num">${studentRank}</span>
-              <span style="font-size:13px;opacity:0.6">/ ${totalBatch}</span>
-            </div>
-          </div>
-
-          <div class="section-title">المواد الدراسية</div>
-          <div class="modules-grid">
-            ${moduleCard('Foundation of Medical School', student.foundation, 300, student.foundationPct)}
-            ${moduleCard('Blood & Immune System', student.bloodTotal, 180, student.bloodPct)}
-            ${moduleCard('Communication & Skill Lab', student.commTotal, 50, student.commPct)}
-          </div>
-
-          <div class="section-title">Musculoskeletal System</div>
-          <div class="modules-grid">
-            ${moduleCard('MSK Total', student.mskFinal, 250, student.mskPct)}
-          </div>
-          <div class="module-card" style="margin-top:10px">
-            <div class="module-name" style="margin-bottom:8px">MSK Breakdown</div>
-            ${subScoreRow('End of Semester', student.mskEnd, 100)}
-            ${subScoreRow('Practical', student.mskPractical, 75)}
-          </div>
-
-          <div class="section-title">Cardiopulmonary System</div>
-          <div class="modules-grid">
-            ${moduleCard('Cardiopulmonary Total', student.cardioFinal, 300, student.cardioPct)}
-          </div>
-          <div class="module-card" style="margin-top:10px">
-            <div class="module-name" style="margin-bottom:8px">Cardiopulmonary Breakdown</div>
-            ${subScoreRow('End of Semester', student.cardioEnd, 120)}
-            ${subScoreRow('Practical', student.cardioPractical, 90)}
-          </div>
-
-          <div class="total-section">
-            <div>
-              <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">إجمالي الدرجات</div>
-              <div class="total-score">${hasTotal ? totalVal : (isAbsent ? 'غائب' : student.totalGrade)}<span style="font-size:18px;color:var(--muted)"> / ${MAX_TOTAL}</span></div>
-            </div>
-            ${hasTotal ? `<div style="font-size: 26px; font-weight: 900; color: var(--accent2);">${pctPct}%</div>` : ''}
-            <div class="status-pill ${passStatus === 'ناجح' ? 'pass' : 'fail'}">${passStatus === 'ناجح' ? '✓ ناجح' : (isAbsent ? 'غائب' : '✗ راسب')}</div>
-          </div>
-
-          ${targetHTML}
-        </div>`;
+      renderY1Result(student, validStudents, allStudents.length, targetInput, output, 'rank');
     }
 
     function searchStudent4() {
@@ -861,8 +824,139 @@
         </div>`;
     }
 
+    let allStudentsIntl = [];
+    let validStudentsIntl = [];
+    
+    // === COMBINED PROGRAM ===
+    let allStudentsCombined = [];
+    let validStudentsCombined = [];
+
+    function initIntl() {
+      if (typeof studentsDataIntl !== 'undefined') {
+        allStudentsIntl = studentsDataIntl;
+        validStudentsIntl = allStudentsIntl.filter(s => isNumeric(s.totalGrade));
+        validStudentsIntl.sort((a, b) => num(b.totalGrade) - num(a.totalGrade));
+        let rank = 1;
+        for (let i = 0; i < validStudentsIntl.length; i++) {
+          if (i > 0 && num(validStudentsIntl[i].totalGrade) < num(validStudentsIntl[i - 1].totalGrade)) rank = i + 1;
+          validStudentsIntl[i].rank = rank;
+        }
+      }
+      
+      // Init Combined
+      if (typeof studentsData !== 'undefined' && typeof studentsDataIntl !== 'undefined') {
+        allStudentsCombined = [...studentsData, ...studentsDataIntl];
+        validStudentsCombined = allStudentsCombined.filter(s => isNumeric(s.totalGrade));
+        validStudentsCombined.sort((a, b) => num(b.totalGrade) - num(a.totalGrade));
+        let cRank = 1;
+        for (let i = 0; i < validStudentsCombined.length; i++) {
+          if (i > 0 && num(validStudentsCombined[i].totalGrade) < num(validStudentsCombined[i - 1].totalGrade)) cRank = i + 1;
+          validStudentsCombined[i].combinedRank = cRank;
+        }
+      }
+    }
+
+    function renderY1Result(student, validList, totalCount, targetInput, outputEl, rankKey = 'rank') {
+      const hasTotal = isNumeric(student.totalGrade);
+      const isAbsent = student.totalGrade === 'غ';
+      const isFail = student.totalGrade === 'راسب';
+      const totalVal = hasTotal ? num(student.totalGrade) : 0;
+      const pctPct = hasTotal ? (num(student.totalPercentage) * 100).toFixed(2) : '—';
+      const passStatus = isFail ? 'راسب' : (isAbsent ? 'غائب' : (hasTotal ? 'ناجح' : '—'));
+      const studentRank = student[rankKey] || '—';
+
+      let targetHTML = '';
+      if (targetInput && hasTotal && studentRank !== '—') {
+        let ts = validList.find(s => s[rankKey] === targetInput);
+        if (!ts) ts = validList.find(s => s[rankKey] >= targetInput);
+        if (studentRank <= targetInput) {
+          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉 أنت بالفعل في هذا الترتيب أو أعلى!</h3></div>`;
+        } else if (ts) {
+          const tTotal = num(ts.totalGrade);
+          const diffScore = (tTotal - totalVal).toFixed(2);
+          const targetPct = (num(ts.totalPercentage) * 100).toFixed(2);
+          targetHTML = `
+            <div class="target-result-card">
+              <div style="text-align:center;margin-bottom:10px"><span style="color:var(--muted);font-size:14px">بيانات المركز رقم ${ts[rankKey]}</span></div>
+              <div class="diff-grid">
+                <div class="diff-item"><div style="font-size:13px;color:var(--muted)">مجموع الترتيب المستهدف</div><div class="target-value">${tTotal} <span style="font-size:14px;color:var(--muted)">/ ${MAX_TOTAL}</span></div><div style="font-size:14px;color:var(--gold)">${targetPct}%</div></div>
+                <div class="diff-item"><div style="font-size:13px;color:var(--muted)">الفرق بينكم (اللي ناقصك)</div><div class="diff-value">🔻 ${diffScore} <span style="font-size:16px">درجة</span></div></div>
+              </div>
+            </div>`;
+        }
+      }
+
+      outputEl.innerHTML = `
+        <div class="results-container">
+          <div class="student-card">
+            <div class="student-name">${student.name || '—'}</div>
+            <div class="badges"><div class="badge">رقم الجلوس: <b>${student.id}</b></div></div>
+            <div class="rank-banner">🏆 الترتيب على الدفعة: <span class="rank-num">${studentRank}</span> <span style="font-size:13px;opacity:0.6">/ ${totalCount}</span></div>
+          </div>
+          <div class="section-title">المواد الدراسية</div>
+          <div class="modules-grid">
+            ${moduleCard('Foundation of Medical School', student.foundation, 300, student.foundationPct)}
+            ${moduleCard('Blood & Immune System', student.bloodTotal, 180, student.bloodPct)}
+            ${moduleCard('Communication & Skill Lab', student.commTotal, 50, student.commPct)}
+          </div>
+          <div class="section-title">Musculoskeletal System</div>
+          <div class="modules-grid">${moduleCard('MSK Total', student.mskTotal, 250, student.mskPct)}</div>
+          <div class="module-card" style="margin-top:10px"><div class="module-name" style="margin-bottom:8px">MSK Breakdown</div>
+            ${subScoreRow('End of Module', student.mskEndModule, 50)}
+            ${subScoreRow('End of Semester (Final)', student.mskEndSemester, 100)}
+            ${subScoreRow('Practical', student.mskPractical, 75)}
+          </div>
+          <div class="section-title">Cardiopulmonary System</div>
+          <div class="modules-grid">${moduleCard('Cardiopulmonary Total', student.cardioTotal, 300, student.cardioPct)}</div>
+          <div class="module-card" style="margin-top:10px"><div class="module-name" style="margin-bottom:8px">Cardiopulmonary Breakdown</div>
+            ${subScoreRow('End of Module', student.cardioEndModule, 60)}
+            ${subScoreRow('End of Semester (Final)', student.cardioEndSemester, 120)}
+            ${subScoreRow('Practical', student.cardioPractical, 90)}
+          </div>
+          <div class="total-section">
+            <div><div style="font-size:13px;color:var(--muted);margin-bottom:4px">إجمالي الدرجات</div>
+              <div class="total-score">${hasTotal ? totalVal : (isAbsent ? 'غائب' : student.totalGrade)}<span style="font-size:18px;color:var(--muted)"> / ${MAX_TOTAL}</span></div></div>
+            ${hasTotal ? `<div style="font-size:26px;font-weight:900;color:var(--accent2)">${pctPct}%</div>` : ''}
+            <div class="status-pill ${passStatus === 'ناجح' ? 'pass' : 'fail'}">${passStatus === 'ناجح' ? '✓ ناجح' : (isAbsent ? 'غائب' : '✗ راسب')}</div>
+          </div>
+          ${targetHTML}
+        </div>`;
+    }
+
+    function searchStudentIntl() {
+      if (allStudentsIntl.length === 0) return;
+      const idInput = document.getElementById('studentIdIntl').value.trim();
+      const targetInput = parseInt(document.getElementById('targetRankIntl').value);
+      const output = document.getElementById('outputIntl');
+      if (!idInput) { output.innerHTML = '<div class="results-container"><div class="error-box">⚠️ من فضلك أدخل رقم الجلوس</div></div>'; return; }
+      const student = allStudentsIntl.find(s => s.id === idInput);
+      if (!student) { output.innerHTML = '<div class="results-container"><div class="error-box">❌ رقم الجلوس غير موجود!</div></div>'; return; }
+      renderY1Result(student, validStudentsIntl, allStudentsIntl.length, targetInput, output, 'rank');
+    }
+
+    function searchStudentAll() {
+      if (allStudentsCombined.length === 0) return;
+      const idInput = document.getElementById('studentIdAll').value.trim();
+      const targetInput = parseInt(document.getElementById('targetRankAll').value);
+      const output = document.getElementById('outputAll');
+      if (!idInput) { output.innerHTML = '<div class="results-container"><div class="error-box">⚠️ من فضلك أدخل رقم الجلوس</div></div>'; return; }
+      
+      const parsedId = /^\d+$/.test(idInput) ? parseInt(idInput) : idInput;
+      const student = allStudentsCombined.find(s => s.id === parsedId);
+      
+      if (!student) { output.innerHTML = '<div class="results-container"><div class="error-box">❌ رقم الجلوس غير موجود!</div></div>'; return; }
+      renderY1Result(student, validStudentsCombined, allStudentsCombined.length, targetInput, output, 'combinedRank');
+    }
+
+    const origOnload = window.onload;
+    window.onload = () => { origOnload(); initIntl(); };
+
     document.getElementById('studentId').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudent(); });
     document.getElementById('targetRank').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudent(); });
+    document.getElementById('studentIdIntl').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudentIntl(); });
+    document.getElementById('targetRankIntl').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudentIntl(); });
+    document.getElementById('studentIdAll').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudentAll(); });
+    document.getElementById('targetRankAll').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudentAll(); });
     document.getElementById('studentId4').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudent4(); });
     document.getElementById('targetRank4').addEventListener('keydown', e => { if (e.key === 'Enter') searchStudent4(); });
   </script>
