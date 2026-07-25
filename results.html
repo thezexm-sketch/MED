@@ -838,7 +838,7 @@
       if (hasTotal) {
         const totalValid = validList.length;
         const percentile = ((totalValid - studentRank) / totalValid * 100).toFixed(1);
-        exportPct = (100 - parseFloat(percentile)).toFixed(1);
+        exportPct = percentile;
 
         const subjects = [
           { name: 'Foundation', pct: parseFloat(student.foundationPct) || 0 },
