@@ -155,7 +155,8 @@
       font-family: 'Tajawal', sans-serif;
     }
 
-    input[type="number"], input[type="text"] {
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -516,6 +517,97 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .analytics-dashboard {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .analytics-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--accent2);
+      margin-bottom: 20px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .charts-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .chart-wrapper {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .analytics-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .analysis-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 20px 16px;
+      text-align: center;
+      transition: transform 0.3s, border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .analysis-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .analysis-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .analysis-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    .analysis-val {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .analysis-highlight {
+      color: var(--gold);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .analysis-good {
+      color: #10b981;
+    }
+
+    .analysis-warn {
+      color: #f59e0b;
+    }
+
+    .analysis-bad {
+      color: #ef4444;
+    }
   </style>
 </head>
 
@@ -538,8 +630,10 @@
       <div class="tabs-container">
         <div class="tabs" style="max-width:400px;margin:0 auto 20px">
           <button class="tab-btn active" id="subTabAm" onclick="switchSubTab('am')">🏫 العام</button>
-          <button class="tab-btn" id="subTabIntl" onclick="switchSubTab('intl')" style="background:transparent">🌍 الدولي</button>
-          <button class="tab-btn" id="subTabAll" onclick="switchSubTab('all')" style="background:transparent">🏆 الكل</button>
+          <button class="tab-btn" id="subTabIntl" onclick="switchSubTab('intl')" style="background:transparent">🌍
+            الدولي</button>
+          <button class="tab-btn" id="subTabAll" onclick="switchSubTab('all')" style="background:transparent">🏆
+            الكل</button>
         </div>
       </div>
 
@@ -550,7 +644,8 @@
             <input type="number" id="studentId" placeholder="مثال: 42">
             <div class="target-box">
               <label>🎯 Am I Far? (اختياري)</label>
-              <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف لتعرف الفرق بينك وبينه (مثال: 1)</p>
+              <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف لتعرف الفرق
+                بينك وبينه (مثال: 1)</p>
               <input type="number" id="targetRank" placeholder="الترتيب المستهدف">
             </div>
             <button class="btn" onclick="searchStudent()">🔍 عرض النتيجة</button>
@@ -563,7 +658,8 @@
         <div class="search-container">
           <div class="search-box" style="border-color: rgba(6,182,212,0.3);">
             <label style="color:var(--accent2)">رقم الجلوس (ID) - الدولي</label>
-            <input type="text" id="studentIdIntl" placeholder="مثال: 25-1-100" style="font-size:18px;letter-spacing:1px">
+            <input type="text" id="studentIdIntl" placeholder="مثال: 25-1-100"
+              style="font-size:18px;letter-spacing:1px">
             <div class="target-box">
               <label>🎯 Am I Far? (اختياري)</label>
               <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف</p>
@@ -579,10 +675,12 @@
         <div class="search-container">
           <div class="search-box" style="border-color: rgba(245,158,11,0.3);">
             <label style="color:var(--gold)">رقم الجلوس (ID) - الترتيب العام الشامل</label>
-            <input type="text" id="studentIdAll" placeholder="مثال: 42 أو 25-1-100" style="font-size:18px;letter-spacing:1px">
+            <input type="text" id="studentIdAll" placeholder="مثال: 42 أو 25-1-100"
+              style="font-size:18px;letter-spacing:1px">
             <div class="target-box">
               <label>🎯 Am I Far? (اختياري)</label>
-              <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف على مستوى الدفعة كاملة</p>
+              <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">أدخل الترتيب المستهدف على مستوى
+                الدفعة كاملة</p>
               <input type="number" id="targetRankAll" placeholder="الترتيب المستهدف">
             </div>
             <button class="btn" onclick="searchStudentAll()">🔍 عرض النتيجة الشاملة</button>
@@ -614,7 +712,7 @@
   </div>
 
   <div class="footer-signature">
-    made by : <span>DR / Mahmoud</span>
+    made by : <span>Mahmoud</span>
   </div>
 
   <script src="data.js"></script>
@@ -634,11 +732,11 @@
       document.getElementById('subTabAm').classList.toggle('active', sub === 'am');
       document.getElementById('subTabIntl').classList.toggle('active', sub === 'intl');
       document.getElementById('subTabAll').classList.toggle('active', sub === 'all');
-      
+
       document.getElementById('subTabAm').style.background = sub === 'am' ? '' : 'transparent';
       document.getElementById('subTabIntl').style.background = sub === 'intl' ? '' : 'transparent';
       document.getElementById('subTabAll').style.background = sub === 'all' ? '' : 'transparent';
-      
+
       document.getElementById('subpanel-am').style.display = sub === 'am' ? '' : 'none';
       document.getElementById('subpanel-intl').style.display = sub === 'intl' ? '' : 'none';
       document.getElementById('subpanel-all').style.display = sub === 'all' ? '' : 'none';
@@ -826,8 +924,7 @@
 
     let allStudentsIntl = [];
     let validStudentsIntl = [];
-    
-    // === COMBINED PROGRAM ===
+
     let allStudentsCombined = [];
     let validStudentsCombined = [];
 
@@ -842,8 +939,7 @@
           validStudentsIntl[i].rank = rank;
         }
       }
-      
-      // Init Combined
+
       if (typeof studentsData !== 'undefined' && typeof studentsDataIntl !== 'undefined') {
         allStudentsCombined = [...studentsData, ...studentsDataIntl];
         validStudentsCombined = allStudentsCombined.filter(s => isNumeric(s.totalGrade));
@@ -886,6 +982,197 @@
         }
       }
 
+      let analyticsHTML = '';
+      if (hasTotal) {
+        const totalValid = validList.length;
+        const percentile = ((totalValid - studentRank) / totalValid * 100).toFixed(1);
+
+        const subjects = [
+          { name: 'Foundation', pct: parseFloat(student.foundationPct) || 0 },
+          { name: 'Blood', pct: parseFloat(student.bloodPct) || 0 },
+          { name: 'MSK', pct: parseFloat(student.mskPct) || 0 },
+          { name: 'Cardio', pct: parseFloat(student.cardioPct) || 0 },
+          { name: 'Communication', pct: parseFloat(student.commPct) || 0 }
+        ].filter(s => s.pct > 0);
+
+        let bestSubject = { name: '—', pct: 0 }, worstSubject = { name: '—', pct: 100 };
+        if (subjects.length > 0) {
+          bestSubject = subjects.reduce((a, b) => a.pct > b.pct ? a : b);
+          worstSubject = subjects.reduce((a, b) => a.pct < b.pct ? a : b);
+        }
+
+        const score = totalVal;
+        const max = MAX_TOTAL;
+        const pctScore = score / max;
+        let nextTierDist = '—', nextTierName = '—';
+        if (pctScore < 0.65) { nextTierDist = Math.ceil(max * 0.65 - score); nextTierName = 'جيد (65%)'; }
+        else if (pctScore < 0.75) { nextTierDist = Math.ceil(max * 0.75 - score); nextTierName = 'جيد جداً (75%)'; }
+        else if (pctScore < 0.85) { nextTierDist = Math.ceil(max * 0.85 - score); nextTierName = 'امتياز (85%)'; }
+        else { nextTierDist = '0'; nextTierName = 'أنت في أعلى تصنيف!'; }
+
+        let sum = 0, sumF = 0, sumB = 0, sumM = 0, sumC = 0, sumComm = 0;
+        let cF = 0, cB = 0, cM = 0, cC = 0, cComm = 0;
+        for (let s of validList) {
+          sum += num(s.totalGrade);
+          if (parseFloat(s.foundationPct)) { sumF += parseFloat(s.foundationPct); cF++; }
+          if (parseFloat(s.bloodPct)) { sumB += parseFloat(s.bloodPct); cB++; }
+          if (parseFloat(s.mskPct)) { sumM += parseFloat(s.mskPct); cM++; }
+          if (parseFloat(s.cardioPct)) { sumC += parseFloat(s.cardioPct); cC++; }
+          if (parseFloat(s.commPct)) { sumComm += parseFloat(s.commPct); cComm++; }
+        }
+
+        const avgScore = sum / validList.length;
+        const diffFromAvg = (score - avgScore).toFixed(1);
+        const avgText = diffFromAvg >= 0
+          ? `<span class="analysis-good">أعلى بـ ${diffFromAvg} درجة</span>`
+          : `<span class="analysis-bad">أقل بـ ${Math.abs(diffFromAvg)} درجة</span>`;
+
+        const avgF = cF ? (sumF / cF) * 100 : 0;
+        const avgB = cB ? (sumB / cB) * 100 : 0;
+        const avgM = cM ? (sumM / cM) * 100 : 0;
+        const avgC = cC ? (sumC / cC) * 100 : 0;
+        const avgComm = cComm ? (sumComm / cComm) * 100 : 0;
+
+        const radarId = 'radar-' + student.id + '-' + Math.random().toString(36).substr(2, 9);
+        const barId = 'bar-' + student.id + '-' + Math.random().toString(36).substr(2, 9);
+
+        analyticsHTML = `
+          <div class="analytics-dashboard">
+            <div class="analytics-title">📊 التحليل الذكي الشامل</div>
+            
+            <div class="charts-layout">
+              <div class="chart-wrapper">
+                <div style="font-size:14px;color:var(--muted);margin-bottom:10px;font-weight:700;text-align:center">مقارنة بمتوسط الدفعة </div>
+                <div style="position: relative; height: 260px; width: 100%;">
+                  <canvas id="${barId}"></canvas>
+                </div>
+              </div>
+              <div class="chart-wrapper">
+                <div style="font-size:14px;color:var(--muted);margin-bottom:10px;font-weight:700;text-align:center">تحليل التوازن </div>
+                <div style="position: relative; height: 260px; width: 100%;">
+                  <canvas id="${radarId}"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="analytics-grid" style="grid-template-columns: 1fr 1fr;">
+              <div class="analysis-card">
+                <div class="analysis-icon">📈</div>
+                <div class="analysis-label">الترتيب المئوي</div>
+                <div class="analysis-val">أنت تتفوق على <br><span class="analysis-highlight">${percentile}%</span> من الدفعة</div>
+              </div>
+              <div class="analysis-card">
+                <div class="analysis-icon">⭐</div>
+                <div class="analysis-label">نقطة القوة (أفضل مادة)</div>
+                <div class="analysis-val analysis-good">${bestSubject.name} <br><span style="font-size:14px">(${(bestSubject.pct * 100).toFixed(1)}%)</span></div>
+              </div>
+              <div class="analysis-card">
+                <div class="analysis-icon">🎯</div>
+                <div class="analysis-label">الهدف القادم</div>
+                <div class="analysis-val">${nextTierDist === '0' ? '<span class="analysis-good">أنت في امتياز!</span>' : `تحتاج <span class="analysis-warn">${nextTierDist} درجة</span> للوصول لـ ${nextTierName}`}</div>
+              </div>
+              <div class="analysis-card">
+                <div class="analysis-icon">⚖️</div>
+                <div class="analysis-label">متوسط الدفعة الشامل</div>
+                <div class="analysis-val">${avgText}</div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        setTimeout(() => {
+          const studentDataPoints = [
+            (parseFloat(student.foundationPct) || 0) * 100,
+            (parseFloat(student.bloodPct) || 0) * 100,
+            (parseFloat(student.mskPct) || 0) * 100,
+            (parseFloat(student.cardioPct) || 0) * 100,
+            (parseFloat(student.commPct) || 0) * 100
+          ];
+          const labelsArr = ['Foundation', 'Blood', 'MSK', 'Cardio', 'Comm'];
+
+          // Render Radar Chart
+          const ctxRadar = document.getElementById(radarId);
+          if (ctxRadar) {
+            new Chart(ctxRadar, {
+              type: 'radar',
+              data: {
+                labels: labelsArr,
+                datasets: [{
+                  label: 'مستواك',
+                  data: studentDataPoints,
+                  backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                  borderColor: 'rgba(59, 130, 246, 1)',
+                  pointBackgroundColor: '#06b6d4',
+                  pointBorderColor: '#fff',
+                  borderWidth: 2,
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  r: {
+                    min: 0,
+                    max: 100,
+                    ticks: { display: false, stepSize: 20 },
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    angleLines: { color: 'rgba(255,255,255,0.1)' },
+                    pointLabels: { color: '#94a3b8', font: { family: 'Cairo', size: 10, weight: 'bold' } }
+                  }
+                },
+                plugins: { legend: { display: false } }
+              }
+            });
+          }
+
+          const ctxBar = document.getElementById(barId);
+          if (ctxBar) {
+            new Chart(ctxBar, {
+              type: 'bar',
+              data: {
+                labels: labelsArr,
+                datasets: [
+                  {
+                    label: 'نسبتك (%)',
+                    data: studentDataPoints,
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                    borderRadius: 4
+                  },
+                  {
+                    label: 'متوسط الدفعة (%)',
+                    data: [avgF, avgB, avgM, avgC, avgComm],
+                    backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                    borderRadius: 4
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  y: {
+                    min: 0,
+                    max: 100,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#94a3b8' }
+                  },
+                  x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8', font: { size: 10 } }
+                  }
+                },
+                plugins: {
+                  legend: {
+                    display: true,
+                    labels: { color: '#fff', font: { family: 'Tajawal' } }
+                  }
+                }
+              }
+            });
+          }
+        }, 100);
+      }
+
       outputEl.innerHTML = `
         <div class="results-container">
           <div class="student-card">
@@ -893,7 +1180,7 @@
             <div class="badges"><div class="badge">رقم الجلوس: <b>${student.id}</b></div></div>
             <div class="rank-banner">🏆 الترتيب على الدفعة: <span class="rank-num">${studentRank}</span> <span style="font-size:13px;opacity:0.6">/ ${totalCount}</span></div>
           </div>
-          <div class="section-title">المواد الدراسية</div>
+          <div class="section-title">First term & Communication , Skill Lab </div>
           <div class="modules-grid">
             ${moduleCard('Foundation of Medical School', student.foundation, 300, student.foundationPct)}
             ${moduleCard('Blood & Immune System', student.bloodTotal, 180, student.bloodPct)}
@@ -920,6 +1207,7 @@
             <div class="status-pill ${passStatus === 'ناجح' ? 'pass' : 'fail'}">${passStatus === 'ناجح' ? '✓ ناجح' : (isAbsent ? 'غائب' : '✗ راسب')}</div>
           </div>
           ${targetHTML}
+          ${analyticsHTML}
         </div>`;
     }
 
@@ -940,10 +1228,10 @@
       const targetInput = parseInt(document.getElementById('targetRankAll').value);
       const output = document.getElementById('outputAll');
       if (!idInput) { output.innerHTML = '<div class="results-container"><div class="error-box">⚠️ من فضلك أدخل رقم الجلوس</div></div>'; return; }
-      
+
       const parsedId = /^\d+$/.test(idInput) ? parseInt(idInput) : idInput;
       const student = allStudentsCombined.find(s => s.id === parsedId);
-      
+
       if (!student) { output.innerHTML = '<div class="results-container"><div class="error-box">❌ رقم الجلوس غير موجود!</div></div>'; return; }
       renderY1Result(student, validStudentsCombined, allStudentsCombined.length, targetInput, output, 'combinedRank');
     }
