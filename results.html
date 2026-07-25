@@ -590,27 +590,30 @@
       document.getElementById('panel-y4').classList.toggle('active', tab === 'y4');
     }
 
-    let studentsData = [];
+    let allStudents = [];
     let validStudents = [];
-    const TOTAL_BATCH = 1010;
-    const MAX_GRAND_TOTAL = 520;
+    const MAX_TOTAL = 1120;
 
     let studentsData4 = [];
     let validStudents4 = [];
     const TOTAL_BATCH4 = 961;
 
+    function isNumeric(v) { return v && !isNaN(parseFloat(v)) && v !== 'غ' && v !== 'راسب'; }
+    function num(v) { return isNumeric(v) ? parseFloat(v) : 0; }
+    function pctStr(v) { return isNumeric(v) ? (parseFloat(v) * 100).toFixed(2) + '%' : v || '—'; }
+
     window.onload = () => {
-      if (typeof studentsDataRaw === 'undefined') {
+      if (typeof studentsData === 'undefined') {
         document.getElementById('output').innerHTML = '<div class="results-container"><div class="error-box">⚠️ يرجى التأكد من وجود ملف data.js في نفس المجلد.</div></div>';
       } else {
-        validStudents = studentsDataRaw.filter(s => !s.absent);
-        validStudents.sort((a, b) => b.grandTotal - a.grandTotal);
+        allStudents = studentsData;
+        validStudents = allStudents.filter(s => isNumeric(s.totalGrade));
+        validStudents.sort((a, b) => num(b.totalGrade) - num(a.totalGrade));
         let rank = 1;
         for (let i = 0; i < validStudents.length; i++) {
-          if (i > 0 && validStudents[i].grandTotal < validStudents[i - 1].grandTotal) rank = i + 1;
+          if (i > 0 && num(validStudents[i].totalGrade) < num(validStudents[i - 1].totalGrade)) rank = i + 1;
           validStudents[i].rank = rank;
         }
-        studentsData = studentsDataRaw;
       }
 
       if (typeof year4DataRaw !== 'undefined') {
@@ -629,8 +632,32 @@
       return '#ef4444';
     }
 
+    function moduleCard(name, score, max, pctVal) {
+      const p = isNumeric(score) ? num(score) / max : 0;
+      const pctDisplay = isNumeric(pctVal) ? (parseFloat(pctVal) * 100).toFixed(1) + '%' : (score || '—');
+      return `<div class="module-card">
+        <div class="module-name">${name}</div>
+        <div class="score-row">
+          <span class="score-big" style="color:${barColor(p)}">${score || '—'}</span>
+          <span class="score-of">/ ${max}</span>
+        </div>
+        <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${(p*100).toFixed(1)}%;background:${barColor(p)};border-radius:2px;transition:width 0.5s"></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">${pctDisplay}</div>
+      </div>`;
+    }
+
+    function subScoreRow(label, val, max) {
+      const p = isNumeric(val) ? num(val) / max : 0;
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px">
+        <span style="color:var(--muted)">${label}</span>
+        <span style="font-weight:700;color:${barColor(p)}">${val || '—'} <span style="color:var(--muted);font-weight:400">/ ${max}</span></span>
+      </div>`;
+    }
+
     function searchStudent() {
-      if (studentsData.length === 0) return;
+      if (allStudents.length === 0) return;
       const idInput = parseInt(document.getElementById('studentId').value);
       const targetInput = parseInt(document.getElementById('targetRank').value);
       const output = document.getElementById('output');
@@ -639,25 +666,31 @@
         output.innerHTML = '<div class="results-container"><div class="error-box">⚠️ من فضلك أدخل رقم الجلوس</div></div>';
         return;
       }
-      const student = studentsData.find(s => s.id === idInput);
+      const student = allStudents.find(s => s.id === idInput);
       if (!student) {
         output.innerHTML = '<div class="results-container"><div class="error-box">❌ رقم الجلوس غير موجود!</div></div>';
         return;
       }
 
-      const pctTotal = student.absent ? 0 : (student.grandTotal / MAX_GRAND_TOTAL);
-      const pctPct = (pctTotal * 100).toFixed(2);
-      const passStatus = (pctTotal >= 0.6) ? 'ناجح' : (student.absent ? 'غائب' : 'راسب');
+      const hasTotal = isNumeric(student.totalGrade);
+      const isAbsent = student.totalGrade === 'غ';
+      const isFail = student.totalGrade === 'راسب';
+      const totalVal = hasTotal ? num(student.totalGrade) : 0;
+      const pctPct = hasTotal ? (num(student.totalPercentage) * 100).toFixed(2) : '—';
+      const passStatus = isFail ? 'راسب' : (isAbsent ? 'غائب' : (hasTotal ? 'ناجح' : '—'));
+      const studentRank = student.rank || '—';
+      const totalBatch = validStudents.length;
 
       let targetHTML = '';
-      if (targetInput && !student.absent) {
+      if (targetInput && hasTotal && studentRank !== '—') {
         let targetStudent = validStudents.find(s => s.rank === targetInput);
         if (!targetStudent) targetStudent = validStudents.find(s => s.rank >= targetInput);
-        if (student.rank <= targetInput) {
-          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉أنت بالفعل في هذا الترتيب !</h3></div>`;
+        if (studentRank <= targetInput) {
+          targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);"><h3 style="color:#10b981; text-align:center;">🎉 أنت بالفعل في هذا الترتيب أو أعلى!</h3></div>`;
         } else if (targetStudent) {
-          const diffScore = (targetStudent.grandTotal - student.grandTotal).toFixed(2);
-          const targetPct = ((targetStudent.grandTotal / MAX_GRAND_TOTAL) * 100).toFixed(2);
+          const tTotal = num(targetStudent.totalGrade);
+          const diffScore = (tTotal - totalVal).toFixed(2);
+          const targetPct = (num(targetStudent.totalPercentage) * 100).toFixed(2);
           targetHTML = `
             <div class="target-result-card">
               <div style="text-align: center; margin-bottom: 10px;">
@@ -666,7 +699,7 @@
               <div class="diff-grid">
                 <div class="diff-item">
                   <div style="font-size:13px; color:var(--muted)">مجموع الترتيب المستهدف</div>
-                  <div class="target-value">${targetStudent.grandTotal} <span style="font-size:14px;color:var(--muted)">/ 520</span></div>
+                  <div class="target-value">${tTotal} <span style="font-size:14px;color:var(--muted)">/ ${MAX_TOTAL}</span></div>
                   <div style="font-size:14px; color:var(--gold)">${targetPct}%</div>
                 </div>
                 <div class="diff-item">
@@ -681,55 +714,51 @@
       output.innerHTML = `
         <div class="results-container">
           <div class="student-card">
-            <div class="student-name">${student.name}</div>
+            <div class="student-name">${student.name || '—'}</div>
             <div class="badges">
               <div class="badge">رقم الجلوس: <b>${student.id}</b></div>
             </div>
             <div class="rank-banner">
               🏆 الترتيب على الدفعة:
-              <span class="rank-num">${student.absent ? '-' : student.rank}</span>
-              <span style="font-size:13px;opacity:0.6">/ ${TOTAL_BATCH}</span>
+              <span class="rank-num">${studentRank}</span>
+              <span style="font-size:13px;opacity:0.6">/ ${totalBatch}</span>
             </div>
-            ${student.engStatus ? `
-            <div style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;
-              background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);
-              border-radius:8px;padding:8px 14px;font-size:13px;color:#10b981;font-weight:700">
-              🇬🇧 English: ${student.engStatus}
-            </div>` : ''}
           </div>
 
           <div class="section-title">المواد الدراسية</div>
           <div class="modules-grid">
-            <div class="module-card">
-              <div class="module-name">Foundation of Medical School</div>
-              <div class="score-row">
-                <span class="score-big" style="color:${barColor(student.fndTotal / 300)}">${student.fndTotal}</span>
-                <span class="score-of">/ 300</span>
-              </div>
-            </div>
-            <div class="module-card">
-              <div class="module-name">Blood & Immune System</div>
-              <div class="score-row">
-                <span class="score-big" style="color:${barColor(student.bldTotal / 180)}">${student.bldTotal}</span>
-                <span class="score-of">/ 180</span>
-              </div>
-            </div>
-            <div class="module-card">
-              <div class="module-name">Medical School Orientation</div>
-              <div class="score-row">
-                <span class="score-big" style="color:${barColor(student.oriTotal / 40)}">${student.oriTotal}</span>
-                <span class="score-of">/ 40</span>
-              </div>
-            </div>
+            ${moduleCard('Foundation of Medical School', student.foundation, 300, student.foundationPct)}
+            ${moduleCard('Blood & Immune System', student.bloodTotal, 180, student.bloodPct)}
+            ${moduleCard('Communication & Skill Lab', student.commTotal, 50, student.commPct)}
+          </div>
+
+          <div class="section-title">Musculoskeletal System</div>
+          <div class="modules-grid">
+            ${moduleCard('MSK Total', student.mskFinal, 250, student.mskPct)}
+          </div>
+          <div class="module-card" style="margin-top:10px">
+            <div class="module-name" style="margin-bottom:8px">MSK Breakdown</div>
+            ${subScoreRow('End of Semester', student.mskEnd, 100)}
+            ${subScoreRow('Practical', student.mskPractical, 75)}
+          </div>
+
+          <div class="section-title">Cardiopulmonary System</div>
+          <div class="modules-grid">
+            ${moduleCard('Cardiopulmonary Total', student.cardioFinal, 300, student.cardioPct)}
+          </div>
+          <div class="module-card" style="margin-top:10px">
+            <div class="module-name" style="margin-bottom:8px">Cardiopulmonary Breakdown</div>
+            ${subScoreRow('End of Semester', student.cardioEnd, 120)}
+            ${subScoreRow('Practical', student.cardioPractical, 90)}
           </div>
 
           <div class="total-section">
             <div>
               <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">إجمالي الدرجات</div>
-              <div class="total-score">${student.absent ? 'غائب' : student.grandTotal}<span style="font-size:18px;color:var(--muted)"> / 520</span></div>
+              <div class="total-score">${hasTotal ? totalVal : (isAbsent ? 'غائب' : student.totalGrade)}<span style="font-size:18px;color:var(--muted)"> / ${MAX_TOTAL}</span></div>
             </div>
-            ${!student.absent ? `<div style="font-size: 26px; font-weight: 900; color: var(--accent2);">${pctPct}%</div>` : ''}
-            <div class="status-pill ${passStatus === 'ناجح' ? 'pass' : 'fail'}">${passStatus === 'ناجح' ? '✓ ناجح' : (student.absent ? 'غائب' : '✗ راسب')}</div>
+            ${hasTotal ? `<div style="font-size: 26px; font-weight: 900; color: var(--accent2);">${pctPct}%</div>` : ''}
+            <div class="status-pill ${passStatus === 'ناجح' ? 'pass' : 'fail'}">${passStatus === 'ناجح' ? '✓ ناجح' : (isAbsent ? 'غائب' : '✗ راسب')}</div>
           </div>
 
           ${targetHTML}
