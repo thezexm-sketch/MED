@@ -5185,6 +5185,32 @@
                 window.FLASHCARDS_DATA = [];
             }
         };
+        function mergeChunkObjects(target, source) {
+            if (!source) return target;
+            if (!target) return source;
+
+            if (Array.isArray(target) && Array.isArray(source)) {
+                return target.concat(source);
+            }
+
+            if (typeof target === 'object' && typeof source === 'object' && target !== null && source !== null) {
+                const merged = { ...target };
+                for (const key in source) {
+                    if (merged[key] === undefined) {
+                        merged[key] = source[key];
+                    } else if (Array.isArray(merged[key]) && Array.isArray(source[key])) {
+                        merged[key] = merged[key].concat(source[key]);
+                    } else if (typeof merged[key] === 'object' && typeof source[key] === 'object' && merged[key] !== null && source[key] !== null) {
+                        merged[key] = mergeChunkObjects(merged[key], source[key]);
+                    } else {
+                        merged[key] = source[key];
+                    }
+                }
+                return merged;
+            }
+            return source;
+        }
+
         async function fetchQuestionsFromDB() {
             const modules = [
                 { id: 'msk_questions', key: 'MSK' },
@@ -5209,23 +5235,47 @@
                 const snapshots = await Promise.all(fetchPromises);
                 let isUpdated = false;
 
-                snapshots.forEach((docSnap, index) => {
+                for (let index = 0; index < snapshots.length; index++) {
+                    const docSnap = snapshots[index];
+                    const mod = modules[index];
                     if (docSnap.exists()) {
                         let data = docSnap.data();
+
+                        if (data && data._isChunked && data._chunkCount > 1) {
+                            const chunkCount = data._chunkCount;
+                            delete data._isChunked;
+                            delete data._chunkCount;
+                            let mergedData = data;
+                            const chunkPromises = [];
+                            for (let i = 1; i < chunkCount; i++) {
+                                chunkPromises.push(getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)));
+                            }
+                            const chunkSnaps = await Promise.all(chunkPromises);
+                            chunkSnaps.forEach(cSnap => {
+                                if (cSnap.exists()) {
+                                    const cData = cSnap.data();
+                                    delete cData._isChunked;
+                                    delete cData._chunkCount;
+                                    mergedData = mergeChunkObjects(mergedData, cData);
+                                }
+                            });
+                            data = mergedData;
+                        }
+
                         let finalData = data.questionsList ? data.questionsList : data;
 
-                        if (modules[index].key === 'CVS' && typeof CVS_QUESTIONS !== 'undefined') {
+                        if (mod.key === 'CVS' && typeof CVS_QUESTIONS !== 'undefined') {
                             if (typeof finalData === 'object' && !Array.isArray(finalData)) {
                                 finalData = Object.assign({}, CVS_QUESTIONS, finalData);
                             } else {
                                 finalData = CVS_QUESTIONS;
                             }
                         }
-                        window.DB[modules[index].key] = finalData;
-                        try { localStorage.setItem('medStorm_' + modules[index].key, JSON.stringify(finalData)); } catch (e) { }
+                        window.DB[mod.key] = finalData;
+                        try { localStorage.setItem('medStorm_' + mod.key, JSON.stringify(finalData)); } catch (e) { }
                         isUpdated = true;
                     }
-                });
+                }
                 if (isUpdated && typeof window.renderDashboard === "function") window.renderDashboard();
             } catch (e) {
                 console.warn("Firestore fetch failed, using cached data:", e);
@@ -9213,7 +9263,28 @@
                 for (let id of editorDocIds) {
                     const snap = await window.getDoc(window.doc(window.db, "content", id));
                     if (snap.exists()) {
-                        editorAllData[id] = snap.data();
+                        let data = snap.data();
+                        if (data && data._isChunked && data._chunkCount > 1) {
+                            const chunkCount = data._chunkCount;
+                            delete data._isChunked;
+                            delete data._chunkCount;
+                            let mergedData = data;
+                            const chunkPromises = [];
+                            for (let i = 1; i < chunkCount; i++) {
+                                chunkPromises.push(window.getDoc(window.doc(window.db, "content", `${id}_chunk_${i}`)));
+                            }
+                            const chunkSnaps = await Promise.all(chunkPromises);
+                            chunkSnaps.forEach(cSnap => {
+                                if (cSnap.exists()) {
+                                    const cData = cSnap.data();
+                                    delete cData._isChunked;
+                                    delete cData._chunkCount;
+                                    mergedData = mergeChunkObjects(mergedData, cData);
+                                }
+                            });
+                            data = mergedData;
+                        }
+                        editorAllData[id] = data;
                         let list = editorAllData[id].questionsList || editorAllData[id];
                         editorAllQuestionsFlat.push(...extractQuestionsWithRefs(list, id));
                     }
