@@ -769,7 +769,7 @@
             display: flex;
             gap: 0.75rem;
             margin: 0 auto 1.75rem auto;
-            max-width: 1200px;
+            max-width: 1440px;
             width: 100%;
             background: var(--bg-card);
             padding: 6px;
@@ -892,7 +892,7 @@
         }
 
         .dashboard-modules-wrapper {
-            max-width: 1200px;
+            max-width: 1440px;
             margin: 0 auto;
             width: 100%;
             display: flex;
@@ -974,10 +974,16 @@
 
         .module-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
             width: 100%;
             align-content: start;
+        }
+
+        @media (min-width: 1100px) {
+            .term-section[data-cards="5"] .module-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
         }
 
         .module-card {
@@ -4346,7 +4352,7 @@
                         class="ri-close-line"></i></button>
                 <div class="inspiration-text" id="inspiration-text"></div>
             </div>
-            <div id="dashboard-tab-bar" class="dashboard-tab-bar" style="display: none;">
+            <div id="dashboard-tab-bar" class="dashboard-tab-bar">
                 <button class="dash-tab-btn active" id="dash-tab-modules" onclick="switchDashboardTab('modules')">
                     <i class="ri-apps-2-line"></i> Modules
                 </button>
@@ -4839,7 +4845,8 @@
 
                 <div id="admin-panel-users">
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom:1rem; flex-wrap:wrap;">
-                        <input id="admin-search" type="text" placeholder="ابحث باسم الطالب أو الإيميل أو الـ UID..."
+                        <input id="admin-search" type="text"
+                            placeholder="search by uid , name or email to find the user"
                             oninput="handleAdminUserSearch()"
                             style="flex:1; min-width:200px; padding:8px 14px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.9rem;">
                         <div
@@ -7577,7 +7584,6 @@
         };
 
         window.renderDashboard = function (mode) {
-
             if (!mode || typeof mode !== 'string') {
                 mode = document.body.getAttribute('data-mode') === 'mistakes' ? 'mistakes' : 'normal';
             }
@@ -7595,55 +7601,48 @@
 
             const tabBar = document.getElementById('dashboard-tab-bar');
             if (tabBar) {
-                tabBar.style.display = year === '2' ? 'flex' : 'none';
+                tabBar.style.display = 'flex';
             }
 
             let moduleGroups = [];
             const activeTab = window.activeDashboardTab || 'modules';
 
-            if (year === '2') {
-                if (activeTab === 'concept1') {
-                    moduleGroups = [{
-                        title: 'Concept 1',
-                        badge: 'Concept 1',
-                        badgeClass: 'term-generic',
-                        icon: '<i class="ri-capsule-line"></i>',
-                        list: ['Concept 1 Pharmacology', 'Concept 1 Pathology', 'Concept 1 Genetics', 'Concept 1 Past Exams']
-                    }];
-                } else if (activeTab === 'concept2') {
-                    moduleGroups = [{
-                        title: 'Concept 2',
-                        badge: 'Concept 2',
-                        badgeClass: 'term-generic',
-                        icon: '<i class="ri-microscope-line"></i>',
-                        list: ['Concept 2 Pharmacology', 'Concept 2 Pathology', 'Concept 2 Past Exams']
-                    }];
-                } else {
-                    moduleGroups = [{
-                        title: 'Year 2 Modules',
-                        badge: 'Year 2',
-                        badgeClass: 'term-generic',
-                        icon: '<i class="ri-apps-2-line"></i>',
-                        list: ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism']
-                    }];
-                }
+            if (activeTab === 'concept1') {
+                moduleGroups = [{
+                    title: 'Concept 1',
+                    badge: 'Concept 1',
+                    badgeClass: 'term-generic',
+                    icon: '<i class="ri-capsule-line"></i>',
+                    list: ['Concept 1 Pharmacology', 'Concept 1 Pathology', 'Concept 1 Genetics', 'Concept 1 Past Exams']
+                }];
+            } else if (activeTab === 'concept2') {
+                moduleGroups = [{
+                    title: 'Concept 2',
+                    badge: 'Concept 2',
+                    badgeClass: 'term-generic',
+                    icon: '<i class="ri-microscope-line"></i>',
+                    list: ['Concept 2 Pharmacology', 'Concept 2 Pathology', 'Concept 2 Past Exams']
+                }];
             } else {
-                if (activeTab === 'concept1') {
-                    moduleGroups = [{
-                        title: 'Concept 1',
-                        badge: 'Concept 1',
-                        badgeClass: 'term-generic',
-                        icon: '<i class="ri-capsule-line"></i>',
-                        list: ['Concept 1 Pharmacology', 'Concept 1 Pathology', 'Concept 1 Genetics', 'Concept 1 Past Exams']
-                    }];
-                } else if (activeTab === 'concept2') {
-                    moduleGroups = [{
-                        title: 'Concept 2',
-                        badge: 'Concept 2',
-                        badgeClass: 'term-generic',
-                        icon: '<i class="ri-microscope-line"></i>',
-                        list: ['Concept 2 Pharmacology', 'Concept 2 Pathology', 'Concept 2 Past Exams']
-                    }];
+                if (year === '2') {
+                    moduleGroups = [
+                        {
+                            title: 'Term 1',
+                            badge: 'Term 1',
+                            badgeClass: 'term-1',
+                            countText: '2 Modules',
+                            icon: '<i class="ri-calendar-check-line"></i>',
+                            list: ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT']
+                        },
+                        {
+                            title: 'Term 2',
+                            badge: 'Term 2',
+                            badgeClass: 'term-2',
+                            countText: '3 Modules',
+                            icon: '<i class="ri-calendar-2-line"></i>',
+                            list: ['CNS', 'Communication Step 2', 'Professionalism']
+                        }
+                    ];
                 } else {
                     moduleGroups = [
                         {
@@ -7680,7 +7679,6 @@
                         else if (!isMistakes && !status) availableCount++;
                     });
                 }
-
                 const total = hasLocalQs ? allQs.length : (meta ? meta.total : 0);
                 const isLoaded = total > 0;
 
@@ -7789,15 +7787,17 @@
 
                 const sectionEl = document.createElement('div');
                 sectionEl.className = 'term-section';
+                sectionEl.dataset.cards = groupCards.length;
 
                 const headerEl = document.createElement('div');
                 headerEl.className = 'term-header';
+                const countPillText = group.countText || `${groupCards.length} ${groupCards.length === 1 ? 'Module' : 'Modules'}`;
                 headerEl.innerHTML = `
                     <div class="term-title-wrapper">
                         <span class="term-badge ${group.badgeClass}">${group.badge}</span>
                         <h3 class="term-title">${group.icon || ''} ${group.title}</h3>
                     </div>
-                    <span class="term-count-pill">${groupCards.length} ${groupCards.length === 1 ? 'Module' : 'Modules'}</span>
+                    <span class="term-count-pill">${countPillText}</span>
                 `;
 
                 const gridEl = document.createElement('div');
@@ -11109,7 +11109,7 @@
             allAdminUsers = [];
             const list = document.getElementById('admin-users-list');
             if (list) {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;"><i class="ri-search-line" style="font-size:2rem; display:block; margin-bottom:8px; opacity:0.6;"></i>search by uid , name or email to fine the user</div>';
+                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;"><i class="ri-search-line" style="font-size:2rem; display:block; margin-bottom:8px; opacity:0.6;"></i>search by uid , name or email to find the user</div>';
             }
         }
 
@@ -11123,12 +11123,12 @@
 
             if (!searchVal) {
                 allAdminUsers = [];
-                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;"><i class="ri-search-line" style="font-size:2rem; display:block; margin-bottom:8px; opacity:0.6;"></i>search by uid , name or email to fine the user</div>';
+                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;"><i class="ri-search-line" style="font-size:2rem; display:block; margin-bottom:8px; opacity:0.6;"></i>search by uid , name or email to find the user</div>';
                 return;
             }
 
             adminSearchTimeout = setTimeout(async () => {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;"><i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block; font-size:1.5rem; margin-bottom:8px;"></i><br>جاري البحث عن الطالب...</div>';
+                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;"><i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block; font-size:1.5rem; margin-bottom:8px;"></i><br>Searching for user...</div>';
 
                 try {
                     const qLower = searchVal.toLowerCase();
@@ -11210,13 +11210,13 @@
                     });
 
                     if (allAdminUsers.length === 0) {
-                        list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">لم يتم العثور على أي طالب بهذا الاسم أو الإيميل.</div>';
+                        list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">No users found matching this name, email, or UID.</div>';
                     } else {
                         adminFilterUsers();
                     }
                 } catch (e) {
                     console.error("Admin user search error:", e);
-                    list.innerHTML = '<div style="color:#ef4444; padding:2rem; text-align:center;">حدث خطأ أثناء البحث: ' + e.message + '</div>';
+                    list.innerHTML = '<div style="color:#ef4444; padding:2rem; text-align:center;">Error occurred during search: ' + e.message + '</div>';
                 }
             }, 400);
         }
@@ -11236,12 +11236,25 @@
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 list.innerHTML = items.map(item => {
                     const date = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown date';
-                    return `<div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1rem 1.25rem;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                            <span style="font-size:0.78rem; color:var(--text-gray);">${date}</span>
-                            <span style="font-size:0.75rem; color:var(--text-gray);">by ${item.username || 'anon'}${item.userEmail ? ` (${item.userEmail})` : ''}</span>
+                    return `<div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1.1rem 1.25rem; margin-bottom:0.75rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <span style="font-size:0.85rem; font-weight:700; color:var(--text-light);"><i class="ri-user-smile-line" style="color:var(--accent);"></i> ${item.username || 'Anonymous'}</span>
+                                ${item.userEmail ? `<span style="font-size:0.75rem; color:var(--text-gray);">(${item.userEmail})</span>` : ''}
+                                <span style="font-size:0.75rem; color:var(--text-gray); opacity:0.8;">• ${date}</span>
+                            </div>
+                            <button onclick="adminDeleteFeedback('${item.id}', event)" 
+                                    style="padding:5px 12px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.35); 
+                                           background:rgba(239, 68, 68, 0.08); color:var(--primary-red); 
+                                           font-weight:700; font-size:0.78rem; cursor:pointer; display:inline-flex; 
+                                           align-items:center; gap:5px; transition:all 0.2s;" 
+                                    onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'" 
+                                    onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'"
+                                    title="Delete feedback forever">
+                                <i class="ri-delete-bin-line"></i> Delete
+                            </button>
                         </div>
-                        <div style="color:var(--text-light); font-size:0.95rem; line-height:1.6;">${item.message || item.text || ''}</div>
+                        <div style="color:var(--text-light); font-size:0.95rem; line-height:1.6; background:rgba(0,0,0,0.15); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); white-space:pre-wrap;">${item.message || item.text || ''}</div>
                     </div>`;
                 }).join('');
             } catch (e) {
@@ -11249,6 +11262,20 @@
                 if (list) list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">No feedback yet.</div>';
             }
         }
+
+        async function adminDeleteFeedback(feedbackId, e) {
+            if (e) e.stopPropagation();
+            if (!confirm("Are you sure you want to permanently delete this feedback message?")) return;
+            try {
+                await window.deleteDoc(window.doc(window.db, 'feedback', feedbackId));
+                if (window.showToast) window.showToast("Feedback deleted successfully!", "success");
+                await loadAdminFeedback();
+            } catch (err) {
+                console.error("Error deleting feedback:", err);
+                if (window.showToast) window.showToast("Failed to delete feedback: " + err.message, "error");
+            }
+        }
+        window.adminDeleteFeedback = adminDeleteFeedback;
 
         let allAdminReports = [];
         let currentReportsFilter = 'pending';
@@ -11453,7 +11480,6 @@
                                            color:var(--accent); font-weight:600; font-size:0.75rem; cursor:pointer; display:flex; align-items:center; gap:4px;">
                                 <i class="ri-arrow-left-right-line"></i> Set Year ${u.year === '2' ? '1' : '2'}
                             </button>
-                            ${!isYear2 ? `
                             <button onclick="adminToggleTermActivation('${u.uid}', 1, ${isT1})" 
                                     style="padding:5px 12px; border-radius:8px; border:1px solid ${isT1 ? 'var(--primary-green)' : 'var(--border-color)'}; 
                                            background:${isT1 ? 'rgba(16,185,129,0.1)' : 'transparent'}; 
@@ -11466,7 +11492,6 @@
                                            color:${isT2 ? 'var(--primary-green)' : 'var(--text-gray)'}; font-weight:600; font-size:0.75rem; cursor:pointer; display:flex; align-items:center; gap:4px;">
                                 <i class="${isT2 ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'}"></i> Term 2 ${isT2 ? 'Active' : 'Inactive'}
                             </button>
-                            ` : ''}
                             <button onclick="adminResetDevices('${u.uid}', '${u.username.replace(/'/g, "\\'")}')" 
                                     style="padding:5px 12px; border-radius:8px; border:1px solid var(--primary-red); 
                                            background:rgba(239, 68, 68, 0.05); 
@@ -11767,11 +11792,11 @@
                 const docRef = window.doc(window.db, 'content', 'locked_modules');
                 await window.setDoc(docRef, { [modName]: newStatus }, { merge: true });
                 if (window.showToast) {
-                    window.showToast(newStatus ? `🔒 تم قفل موديول ${modName}` : `🔓 تم فتح موديول ${modName}`, 'success');
+                    window.showToast(newStatus ? `🔒 Locked module: ${modName}` : `🔓 Unlocked module: ${modName}`, 'success');
                 }
             } catch (e) {
                 console.error("Failed to update module lock in Firestore:", e);
-                if (window.showToast) window.showToast('فشل تحديث القفل في السحابة: ' + e.message, 'error');
+                if (window.showToast) window.showToast('Failed to update lock in cloud: ' + e.message, 'error');
             }
         }
         window.adminToggleModuleLock = adminToggleModuleLock;
@@ -11782,17 +11807,20 @@
 
             const allMods = [
                 {
-                    year: 'Year 1 Modules',
+                    year: 'Year 1 Modules (Term 1 & Term 2)',
                     list: ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1']
                 },
                 {
-                    year: 'Year 2 Modules',
-                    list: [
-                        'Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS',
-                        'Communication Step 2', 'Professionalism',
-                        'Concept 1 Pharmacology', 'Concept 1 Pathology', 'Concept 1 Genetics', 'Concept 1 Past Exams',
-                        'Concept 2 Pharmacology', 'Concept 2 Pathology', 'Concept 2 Past Exams'
-                    ]
+                    year: 'Year 2 Modules (Term 1 & Term 2)',
+                    list: ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism']
+                },
+                {
+                    year: 'Concept 1 Modules',
+                    list: ['Concept 1 Pharmacology', 'Concept 1 Pathology', 'Concept 1 Genetics', 'Concept 1 Past Exams']
+                },
+                {
+                    year: 'Concept 2 Modules',
+                    list: ['Concept 2 Pharmacology', 'Concept 2 Pathology', 'Concept 2 Past Exams']
                 }
             ];
 
@@ -11801,10 +11829,10 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div>
                             <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-light); margin-bottom:4px; display:flex; align-items:center; gap:8px;">
-                                <i class="ri-lock-2-line" style="color:var(--accent);"></i> التحكم في قفل وإتاحة الموديولات (Lock Modules)
+                                <i class="ri-lock-2-line" style="color:var(--accent);"></i> Module Access Control (Lock Modules)
                             </h3>
                             <p style="font-size:0.84rem; color:var(--text-gray); line-height:1.5;">
-                                الموديول الذي يتم قفله هنا سيظهر عليه علامة قفل 🔒 مع تأثير ضبابي (blur) في الشاشة الرئيسية للطالب ويُمنع فتحه، مع بقاء باقي الموديولات المفتوحة تعمل بصورة طبيعية تماماً بكافة أعداد الأسئلة.
+                                Modules locked here will appear with a lock icon 🔒 and a blurred overlay on the student dashboard, preventing access while all other open modules remain fully accessible with all question counts.
                             </p>
                         </div>
                     </div>
@@ -12224,7 +12252,7 @@
         window.adminFilterUsers = adminFilterUsers;
 
         window.cleanOldBase64Avatars = async function () {
-            if (!confirm("هل تريد مسح جميع نصوص Base64 القديمة لصور البروفايل في Firestore لتوفير المساحة والبيانات؟")) return;
+            if (!confirm("Do you want to purge all legacy Base64 profile avatar strings from Firestore to optimize storage?")) return;
             try {
                 const snap = await window.getDocs(window.collection(window.db, "users"));
                 let cleaned = 0;
@@ -12238,13 +12266,13 @@
                 });
                 if (cleaned > 0) {
                     await batch.commit();
-                    alert(`تم تنظيف ${cleaned} صورة Base64 قديمة من المستندات بنجاح! 🎉`);
+                    alert(`Successfully cleaned ${cleaned} legacy Base64 avatar(s) from documents! 🎉`);
                 } else {
-                    alert("لم يتم العثور على أي صورة Base64 قديمة. كل المستندات نظيفة! ✅");
+                    alert("No legacy Base64 avatars found. All user documents are clean! ✅");
                 }
             } catch (e) {
                 console.error("Clean error:", e);
-                alert("حدث خطأ أثناء التنظيف: " + e.message);
+                alert("An error occurred during cleanup: " + e.message);
             }
         };
 
