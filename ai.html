@@ -1771,9 +1771,9 @@
             transform: translate3d(-50%, -50%, 0);
             opacity: 0;
             pointer-events: none;
-            transition: width 0.38s cubic-bezier(0.1, 0.85, 0.25, 1), 
-                        height 0.38s cubic-bezier(0.1, 0.85, 0.25, 1), 
-                        opacity 0.25s ease;
+            transition: width 0.38s cubic-bezier(0.1, 0.85, 0.25, 1),
+                height 0.38s cubic-bezier(0.1, 0.85, 0.25, 1),
+                opacity 0.25s ease;
         }
 
         [data-theme='light'] .quiz-btn::after,
@@ -6005,8 +6005,13 @@
         window.query = query;
         window.where = where;
         window.orderBy = orderBy;
-        window.limit = limit;
         window.addDoc = addDoc;
+
+        const ADMIN_UIDS = ['6fkQvfQYN4WvOIbcbBuWivqVvtd2', 'Ztl2Cl80hhezE5GxLp4TXjrxSz82', 'UT3XUGOyn8O2G5b2dIayg3aLIPH2'];
+        window.ADMIN_UIDS = ADMIN_UIDS;
+        window.isAdminUID = function (uid) {
+            return !!(uid && ADMIN_UIDS.includes(uid));
+        };
 
         window.defaultAvatar = function (email) {
             let initials = 'US';
@@ -6121,7 +6126,7 @@
         window.flushSync = async function () {
             if (!window.currentUserId) return;
             const keys = Object.keys(pendingSyncData);
-            if (keys.length === 0) {
+            if (keys.length === 0 && localStorage.getItem('medStorm_unsaved_changes') !== 'true') {
                 updateSyncStatusUI('synced');
                 return;
             }
@@ -6132,7 +6137,30 @@
             }
 
             updateSyncStatusUI('syncing');
-            const dataToSync = { ...pendingSyncData, lastSeen: Date.now() };
+
+            // Calculate direct overall metrics to guarantee accurate global leaderboard sync across all devices
+            let computedCorrect = 0;
+            let computedWrong = 0;
+            const prog = AppState.progress || {};
+            for (const k in prog) {
+                if (prog[k] === 'correct') computedCorrect++;
+                else if (prog[k] === 'wrong') computedWrong++;
+            }
+            const computedTotal = computedCorrect + computedWrong;
+            const computedPoints = computedCorrect - computedWrong;
+            const computedAcc = computedTotal > 0 ? Math.round((computedCorrect / computedTotal) * 100) : 0;
+
+            const dataToSync = {
+                ...pendingSyncData,
+                totalAnswered: computedTotal,
+                totalCorrect: computedCorrect,
+                totalWrong: computedWrong,
+                points: computedPoints,
+                accuracy: computedAcc,
+                year: String(AppState.year || '1'),
+                username: AppState.username || localStorage.getItem('medStormUsername') || 'Student',
+                lastSeen: Date.now()
+            };
             pendingSyncData = {};
 
             try {
@@ -6260,7 +6288,7 @@
                 if (snap.exists()) {
                     const data = snap.data();
 
-                    if (user.uid !== '6fkQvfQYN4WvOIbcbBuWivqVvtd2') {
+                    if (!window.isAdminUID(user.uid)) {
                         let deviceId = localStorage.getItem('medStorm_deviceId');
                         if (!deviceId) {
                             deviceId = 'dev_' + Math.random().toString(36).substring(2, 15) + '_' + Date.now();
@@ -6428,7 +6456,7 @@
                         if (docSnap.exists()) {
                             const snapData = docSnap.data();
 
-                            if (user.uid !== '6fkQvfQYN4WvOIbcbBuWivqVvtd2') {
+                            if (!window.isAdminUID(user.uid)) {
                                 const currentDeviceId = localStorage.getItem('medStorm_deviceId');
                                 const sessions = snapData.activeSessions || [];
                                 if (sessions.length > 0 && !sessions.some(s => s.id === currentDeviceId)) {
@@ -6507,7 +6535,7 @@
                 if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
                 if (window.updateSyncStatusUI) window.updateSyncStatusUI(localStorage.getItem('medStorm_unsaved_changes') === 'true' ? 'pending' : 'synced');
 
-                if (user.uid === '6fkQvfQYN4WvOIbcbBuWivqVvtd2') {
+                if (window.isAdminUID(user.uid)) {
                     const adminNav = document.getElementById('nav-admin');
                     if (adminNav) adminNav.style.display = 'flex';
                 }
@@ -7978,7 +8006,7 @@
                     if (typeof window.fetchDiscussions === 'function') window.fetchDiscussions();
                 */
             } else if (mode === 'admin') {
-                if (window.currentUserId !== '6fkQvfQYN4WvOIbcbBuWivqVvtd2') return;
+                if (!window.isAdminUID(window.currentUserId)) return;
                 document.getElementById('nav-admin').classList.add('active');
                 document.getElementById('page-title').textContent = 'Admin Panel';
                 document.getElementById('view-admin').classList.add('active');
@@ -10837,22 +10865,22 @@
             container.style.minHeight = '300px';
 
             if (window.FLASHCARDS_DATA.length === 0) {
-                container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;"><div class="loading-dots-container" style="font-size: 1.15rem;"><span>Loading Flashcards</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
+                container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;"><div class="loading-dots-container" style="font-size: 1.15rem;"><span>Loading Practical</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
                 try {
                     await window.loadAllFlashcards();
                 } catch (e) {
-                    console.error("Flashcards load error:", e);
+                    console.error("Practical load error:", e);
                 }
             } else {
-                window.loadAllFlashcards().catch(e => console.warn("Background flashcards load failed:", e));
+                window.loadAllFlashcards().catch(e => console.warn("Background practical load failed:", e));
             }
 
             if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
                 container.innerHTML = `
                     <div style="text-align:center; padding:4rem 1.5rem; color:var(--text-gray); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
                         <i class="ri-book-open-line" style="font-size:3.5rem; color:var(--text-gray); opacity:0.3;"></i>
-                        <div style="font-size:1.2rem; font-weight:700; color:var(--text-light);">No Flashcards Available</div>
-                        <div style="font-size:0.9rem; max-width:320px; line-height:1.5; opacity:0.8;">There are no flashcards loaded in the database right now. Stay tuned!</div>
+                        <div style="font-size:1.2rem; font-weight:700; color:var(--text-light);">No Practical questions Available</div>
+                        <div style="font-size:0.9rem; max-width:320px; line-height:1.5; opacity:0.8;">There are no practical questions loaded in the database right now. Stay tuned!</div>
                     </div>
                 `;
                 return;
@@ -11636,7 +11664,7 @@
                     <div style="font-weight:700; font-size:1rem; color:var(--text-light); display:flex; align-items:center;">
                         ${p.username}
                         ${p.isSelf ? '<span style="font-size:0.7rem; color:var(--accent); font-weight:600; margin-left:6px;">YOU</span>' : ''}
-                        ${(p.role === 'admin' || (p.username && p.username.toLowerCase() === 'mahmoud')) ? '<span class="admin-badge">ADMIN</span>' : ''}
+                        ${(p.role === 'admin' || (window.isAdminUID && window.isAdminUID(p.uid)) || (p.username && p.username.toLowerCase() === 'mahmoud')) ? '<span class="admin-badge">ADMIN</span>' : ''}
                     </div>
                     <div style="font-size:0.8rem; color:var(--text-gray); margin-top:2px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
                         <span style="color:#10B981; font-weight:600;">✔️ ${p.totalCorrect} (+${p.totalCorrect})</span>
@@ -11675,8 +11703,8 @@
                 return ((centre - offset) / denominator) * 100;
             }
 
-            const currentUserYear = String(AppState.year || '1');
-            const cacheKey = 'medStorm_cache_glb_v2_' + type + '_' + period + '_' + currentUserYear;
+            const currentUserYear = String(AppState.year || '1').trim();
+            const cacheKey = 'medStorm_cache_glb_v3_' + type + '_' + period + '_' + currentUserYear;
             const cacheTimeKey = cacheKey + '_time';
             let cachedPlayers = null;
             try {
@@ -11688,7 +11716,8 @@
                         p.isSelf = (p.uid === window.currentUserId);
                     });
                     renderList(cachedPlayers);
-                    if (cacheTime && (Date.now() - parseInt(cacheTime, 10) < 60 * 1000)) {
+                    // Quota Saver: If cache is fresh (< 15s), skip network fetch
+                    if (cacheTime && (Date.now() - parseInt(cacheTime, 10) < 15 * 1000)) {
                         return;
                     }
                 }
@@ -11698,28 +11727,29 @@
                 container.innerHTML = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:3rem;"><div class="loading-dots-container" style="font-size: 0.95rem;"><span>Loading Leaderboard</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
             }
 
-            if (!window.getDocs || !window.collection || !window.db || !window.query) return;
+            // Sync current user's latest stats to Firestore before fetching
+            if (window.flushSync && localStorage.getItem('medStorm_unsaved_changes') === 'true') {
+                window.flushSync().catch(() => { });
+            }
+
+            if (!window.getDocs || !window.collection || !window.db) return;
             try {
                 let querySnapshot;
                 try {
-                    const q = window.query(
-                        window.collection(window.db, "users"),
-                        window.where("year", "==", currentUserYear),
-                        window.limit(30)
-                    );
-                    querySnapshot = await window.getDocs(q);
-                } catch (idxErr) {
-                    querySnapshot = await window.getDocs(window.query(window.collection(window.db, "users"), window.limit(35)));
+                    querySnapshot = await window.getDocs(window.query(window.collection(window.db, "users"), window.limit(50)));
+                } catch (qErr) {
+                    console.warn("Leaderboard getDocs query error:", qErr);
+                    return;
                 }
 
                 let players = [];
 
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    if (!data.username || data.leaderboardHidden) return;
+                    if (data.leaderboardHidden) return;
 
-                    const userYear = String(data.year || '1');
-                    if (userYear !== currentUserYear) return;
+                    const userYear = String(data.year || '1').trim();
+                    if (userYear !== currentUserYear && userYear !== String(parseInt(currentUserYear, 10))) return;
 
                     let totalAnswered = 0, totalCorrect = 0, totalWrong = 0, accuracy = 0, points = 0;
 
@@ -11737,7 +11767,16 @@
                             totalCorrect = data.totalCorrect || 0;
                             totalWrong = typeof data.totalWrong === 'number' ? data.totalWrong : (totalAnswered - totalCorrect);
                             accuracy = typeof data.accuracy === 'number' ? data.accuracy : (totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0);
-                            points = totalCorrect - totalWrong;
+                            points = typeof data.points === 'number' ? data.points : (totalCorrect - totalWrong);
+                        } else if (data.stats && data.stats.dailyProgress && Object.keys(data.stats.dailyProgress).length > 0) {
+                            const allSt = getStatsForPeriod(data.stats, 'all', currentUserYear);
+                            if (allSt && allSt.totalAnswered > 0) {
+                                totalAnswered = allSt.totalAnswered;
+                                totalCorrect = allSt.totalCorrect;
+                                totalWrong = allSt.totalWrong;
+                                accuracy = allSt.accuracy;
+                                points = allSt.points;
+                            }
                         } else {
                             const progress = data.progress || {};
                             totalAnswered = 0; totalCorrect = 0; totalWrong = 0;
@@ -11753,10 +11792,13 @@
                         return;
                     }
 
-                    if (totalAnswered === 0) return;
+                    if (totalAnswered === 0 && points === 0) return;
+
+                    const displayName = data.username || data.firstName || 'Student';
+
                     players.push({
                         uid: docSnap.id,
-                        username: data.username,
+                        username: displayName,
                         avatarUrl: data.avatarUrl || '',
                         totalAnswered,
                         totalCorrect,
@@ -11784,10 +11826,10 @@
                         selfCorrect = AppState.totalCorrect || 0;
                         selfWrong = typeof AppState.totalWrong === 'number' ? AppState.totalWrong : (selfAnswered - selfCorrect);
                         selfAccuracy = AppState.accuracy || (selfAnswered > 0 ? Math.round((selfCorrect / selfAnswered) * 100) : 0);
-                        selfPoints = selfCorrect - selfWrong;
+                        selfPoints = typeof AppState.points === 'number' ? AppState.points : (selfCorrect - selfWrong);
                     }
 
-                    if (selfAnswered > 0) {
+                    if (selfAnswered > 0 || selfPoints !== 0) {
                         players.push({
                             uid: window.currentUserId,
                             username: AppState.username || localStorage.getItem('medStormUsername') || 'You',
@@ -11836,7 +11878,7 @@
         let currentAdminLbType = 'points';
 
         async function loadAdminPanel(forceRefresh = false) {
-            if (window.currentUserId !== ADMIN_UID) return;
+            if (!window.isAdminUID(window.currentUserId)) return;
             if (!forceRefresh && allAdminUsers.length > 0) {
                 adminFilterUsers();
                 adminRenderReports();
@@ -12536,7 +12578,7 @@
         window.fetchLockedModules = fetchLockedModules;
 
         async function adminToggleModuleLock(modName) {
-            if (window.currentUserId !== ADMIN_UID) return;
+            if (!window.isAdminUID(window.currentUserId)) return;
             const currentStatus = !!(window.LOCKED_MODULES && window.LOCKED_MODULES[modName]);
             const newStatus = !currentStatus;
 
