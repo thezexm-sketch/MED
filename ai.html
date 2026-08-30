@@ -4631,12 +4631,16 @@
                 </div>
                 <div style="display: flex; gap: 8px; width: 100%;">
                     <button type="button" id="signup-year-1-btn" onclick="selectSignupYear('1')"
-                        style="flex: 1; padding: 0.75rem; border-radius: 10px; border: 2px solid var(--accent); background: var(--accent); color: var(--bg-dark); font-weight: 700; cursor: pointer; transition: all 0.2s ease;">
+                        style="flex: 1; padding: 0.75rem 0.4rem; border-radius: 10px; border: 2px solid var(--accent); background: var(--accent); color: var(--bg-dark); font-weight: 700; cursor: pointer; transition: all 0.2s ease;">
                         1st Year
                     </button>
                     <button type="button" id="signup-year-2-btn" onclick="selectSignupYear('2')"
-                        style="flex: 1; padding: 0.75rem; border-radius: 10px; border: 2px solid var(--border-color); background: transparent; color: var(--text-light); font-weight: 700; cursor: pointer; transition: all 0.2s ease;">
+                        style="flex: 1; padding: 0.75rem 0.4rem; border-radius: 10px; border: 2px solid var(--border-color); background: transparent; color: var(--text-light); font-weight: 700; cursor: pointer; transition: all 0.2s ease;">
                         2nd Year
+                    </button>
+                    <button type="button" id="signup-year-3-btn" onclick="selectSignupYear('3')"
+                        style="flex: 1; padding: 0.75rem 0.4rem; border-radius: 10px; border: 2px solid var(--border-color); background: transparent; color: var(--text-light); font-weight: 700; cursor: pointer; transition: all 0.2s ease;">
+                        3rd Year
                     </button>
                 </div>
                 <input type="hidden" id="signup-year-value" value="1">
@@ -4980,8 +4984,7 @@
         <div id="view-leaderboard" class="view-section">
             <div style="max-width: 900px; margin: 0 auto; width: 100%;">
                 <h2 style="margin-bottom: 0.5rem; font-weight: 800; font-size: 2rem;">🏆 Global Leaderboard</h2>
-                <p style="color:var(--text-gray); margin-bottom: 2rem;">Top students ranked by points (+1 for correct,
-                    -1 for wrong), accuracy, and solved questions</p>
+                <p style="color:var(--text-gray); margin-bottom: 2rem;">Top students ranked by points (+1 for correct, -1 for wrong) and solved questions</p>
 
                 <div style="display:flex; gap:0.5rem; margin-bottom:2rem; flex-wrap:wrap;">
                     <button id="glb-tab-points" class="glb-tab-btn active" onclick="switchGlobalLb('points')">
@@ -4989,24 +4992,6 @@
                     </button>
                     <button id="glb-tab-answered" class="glb-tab-btn" onclick="switchGlobalLb('answered')">
                         📊 Most Answered
-                    </button>
-                    <button id="glb-tab-accuracy" class="glb-tab-btn" onclick="switchGlobalLb('accuracy')">
-                        🎯 Highest Accuracy
-                    </button>
-                </div>
-
-                <div style="display:flex; gap:0.4rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-                    <button class="lb-time-btn active" data-period="all" onclick="switchLbTimePeriod('all', this)">
-                        🕐 All Time
-                    </button>
-                    <button class="lb-time-btn" data-period="24h" onclick="switchLbTimePeriod('24h', this)">
-                        📅 Last 24h
-                    </button>
-                    <button class="lb-time-btn" data-period="week" onclick="switchLbTimePeriod('week', this)">
-                        📆 Last Week
-                    </button>
-                    <button class="lb-time-btn" data-period="month" onclick="switchLbTimePeriod('month', this)">
-                        🗓️ Last Month
                     </button>
                 </div>
 
@@ -6767,28 +6752,22 @@
         window.selectSignupYear = (year) => {
             const btn1 = document.getElementById('signup-year-1-btn');
             const btn2 = document.getElementById('signup-year-2-btn');
+            const btn3 = document.getElementById('signup-year-3-btn');
             const valInput = document.getElementById('signup-year-value');
             if (valInput) valInput.value = year;
 
-            if (btn1 && btn2) {
-                if (year === '2') {
-                    btn1.style.background = 'transparent';
-                    btn1.style.borderColor = 'var(--border-color)';
-                    btn1.style.color = 'var(--text-light)';
-
-                    btn2.style.background = 'var(--accent)';
-                    btn2.style.borderColor = 'var(--accent)';
-                    btn2.style.color = 'var(--bg-dark)';
+            [{ btn: btn1, y: '1' }, { btn: btn2, y: '2' }, { btn: btn3, y: '3' }].forEach(({ btn, y }) => {
+                if (!btn) return;
+                if (year === y) {
+                    btn.style.background = 'var(--accent)';
+                    btn.style.borderColor = 'var(--accent)';
+                    btn.style.color = 'var(--bg-dark)';
                 } else {
-                    btn2.style.background = 'transparent';
-                    btn2.style.borderColor = 'var(--border-color)';
-                    btn2.style.color = 'var(--text-light)';
-
-                    btn1.style.background = 'var(--accent)';
-                    btn1.style.borderColor = 'var(--accent)';
-                    btn1.style.color = 'var(--bg-dark)';
+                    btn.style.background = 'transparent';
+                    btn.style.borderColor = 'var(--border-color)';
+                    btn.style.color = 'var(--text-light)';
                 }
-            }
+            });
         };
 
         window.syncProfileYearUI = (activeYear) => {
@@ -7922,6 +7901,10 @@
             }
 
             if (SessionStartTime) endSession();
+            if (mode !== 'leaderboard' && typeof window.unsubscribeLeaderboard === 'function') {
+                window.unsubscribeLeaderboard();
+                window.unsubscribeLeaderboard = null;
+            }
             document.getElementById('view-results').classList.remove('active');
             document.getElementById('view-results').style.cssText = "display: none !important;";
             document.body.classList.remove('focus-mode');
@@ -7996,7 +7979,7 @@
                 document.getElementById('page-title').textContent = 'Global Leaderboard';
                 document.getElementById('view-leaderboard').classList.add('active');
                 document.getElementById('view-leaderboard').style.display = 'block';
-                fetchGlobalLeaderboard(typeof currentGlbTab !== 'undefined' ? currentGlbTab : 'points', typeof currentLbTimePeriod !== 'undefined' ? currentLbTimePeriod : 'all');
+                fetchGlobalLeaderboard(typeof currentGlbTab !== 'undefined' ? currentGlbTab : 'points');
                 /* Community (Commented out)
                 } else if (mode === 'community') {
                     document.getElementById('nav-community').classList.add('active');
@@ -11537,118 +11520,49 @@
             _fcShowCover();
         };
         let currentGlbTab = 'points';
-        let currentLbTimePeriod = 'all';
+        window.unsubscribeLeaderboard = null;
 
         function switchGlobalLb(type) {
+            if (type !== 'points' && type !== 'answered') type = 'points';
             currentGlbTab = type;
             const btnP = document.getElementById('glb-tab-points');
             const btnA = document.getElementById('glb-tab-answered');
-            const btnAcc = document.getElementById('glb-tab-accuracy');
             if (btnP) btnP.classList.toggle('active', type === 'points');
             if (btnA) btnA.classList.toggle('active', type === 'answered');
-            if (btnAcc) btnAcc.classList.toggle('active', type === 'accuracy');
-            fetchGlobalLeaderboard(type, currentLbTimePeriod);
+            fetchGlobalLeaderboard(type);
         }
 
-        window.switchLbTimePeriod = function (period, btnEl) {
-            currentLbTimePeriod = period;
-            document.querySelectorAll('.lb-time-btn').forEach(b => {
-                b.classList.remove('active');
-            });
-            if (btnEl) {
-                btnEl.classList.add('active');
-            }
-            fetchGlobalLeaderboard(currentGlbTab, period);
-        };
-
-        function getDateCutoff(period) {
-            const now = new Date();
-            if (period === '24h') {
-                const d = new Date(now);
-                d.setDate(d.getDate() - 1);
-                return d;
-            } else if (period === 'week') {
-                const d = new Date(now);
-                d.setDate(d.getDate() - 7);
-                return d;
-            } else if (period === 'month') {
-                const d = new Date(now);
-                d.setMonth(d.getMonth() - 1);
-                return d;
-            }
-            return null;
-        }
-
-        function getStatsForPeriod(stats, period, targetYear) {
-            const dailyProgress = stats && stats.dailyProgress ? stats.dailyProgress : {};
-            const cutoff = getDateCutoff(period);
-            const cutoffStr = cutoff ? cutoff.toISOString().split('T')[0] : null;
-
-            let totalAnswered = 0, totalCorrect = 0;
-            let hasAnyData = false;
-
-            Object.entries(dailyProgress).forEach(([dateKey, dayData]) => {
-                if (dayData && (!cutoffStr || dateKey >= cutoffStr)) {
-                    hasAnyData = true;
-                    if (targetYear && (dayData[`correct_y${targetYear}`] !== undefined || dayData[`wrong_y${targetYear}`] !== undefined)) {
-                        const correct = dayData[`correct_y${targetYear}`] || 0;
-                        const wrong = dayData[`wrong_y${targetYear}`] || 0;
-                        totalAnswered += correct + wrong;
-                        totalCorrect += correct;
-                    } else {
-                        const correct = dayData.correct || 0;
-                        const wrong = dayData.wrong || 0;
-                        totalAnswered += correct + wrong;
-                        totalCorrect += correct;
-                    }
-                }
-            });
-
-            if (!hasAnyData && period !== 'all') return null;
-
-            const totalWrong = totalAnswered - totalCorrect;
-            const points = totalCorrect - totalWrong;
-            const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
-            return { totalAnswered, totalCorrect, totalWrong, accuracy, points, hasAnyData };
-        }
-
-        async function fetchGlobalLeaderboard(type, period) {
-            if (!type) type = currentGlbTab || 'points';
-            if (!period) period = currentLbTimePeriod || 'all';
+        async function fetchGlobalLeaderboard(type) {
+            if (!type || (type !== 'points' && type !== 'answered')) type = currentGlbTab || 'points';
+            currentGlbTab = type;
             const container = document.getElementById('global-leaderboard-content');
+            if (!container) return;
+
+            // Unsubscribe previous listener if one is already running
+            if (typeof window.unsubscribeLeaderboard === 'function') {
+                window.unsubscribeLeaderboard();
+                window.unsubscribeLeaderboard = null;
+            }
 
             const renderList = (players) => {
-                if (type === 'points') {
-                    players.sort((a, b) => (b.points - a.points) || (b.accuracy - a.accuracy) || (b.totalAnswered - a.totalAnswered));
-                } else if (type === 'answered') {
-                    players.sort((a, b) => (b.totalAnswered - a.totalAnswered) || (b.points - a.points));
-                } else {
-                    players.sort((a, b) => {
-                        const scoreA = wilsonScore(a.totalCorrect, a.totalAnswered);
-                        const scoreB = wilsonScore(b.totalCorrect, b.totalAnswered);
-                        if (scoreB !== scoreA) return scoreB - scoreA;
-                        return (b.points - a.points) || (b.totalAnswered - a.totalAnswered);
-                    });
-                }
-                const periodLabels = { 'all': '', '24h': ' (Last 24h)', 'week': ' (Last Week)', 'month': ' (Last Month)' };
-                const top = players.slice(0, 10);
+                const top = (players || []).slice(0, 10);
                 if (top.length === 0) {
-                    container.innerHTML = `<div style="text-align:center; color:var(--text-gray); padding:3rem;">No data${periodLabels[period] || ''} — start solving modules!</div>`;
+                    container.innerHTML = `<div style="text-align:center; color:var(--text-gray); padding:3rem;">No rankings yet — start solving modules to claim the top spot!</div>`;
                     return;
                 }
                 const medals = ['🥇', '🥈', '🥉'];
                 container.innerHTML = top.map((p, idx) => {
-                    const defAvatar = `https://ui-avatars.com/api/?name=${p.username.substring(0, 2).toUpperCase()}&background=10B981&color=fff&font-size=0.4&bold=true`;
+                    const displayName = p.username || 'Student';
+                    const defAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName.substring(0, 2).toUpperCase())}&background=10B981&color=fff&font-size=0.4&bold=true`;
                     const avatarSrc = p.avatarUrl || defAvatar;
                     let mainStat = '';
                     if (type === 'points') {
-                        const ptsColor = p.points > 0 ? '#10B981' : p.points < 0 ? '#EF4444' : 'var(--text-gray)';
-                        const ptsSign = p.points > 0 ? '+' : '';
-                        mainStat = `<div style="font-size:1.5rem; font-weight:900; color:${ptsColor};">${ptsSign}${p.points}</div><div style="font-size:0.75rem; color:var(--text-gray);">Points ⭐</div>`;
-                    } else if (type === 'answered') {
-                        mainStat = `<div style="font-size:1.5rem; font-weight:900; color:var(--accent);">${p.totalAnswered}</div><div style="font-size:0.75rem; color:var(--text-gray);">answered</div>`;
+                        const pts = p.points || 0;
+                        const ptsColor = pts > 0 ? '#10B981' : pts < 0 ? '#EF4444' : 'var(--text-gray)';
+                        const ptsSign = pts > 0 ? '+' : '';
+                        mainStat = `<div style="font-size:1.5rem; font-weight:900; color:${ptsColor};">${ptsSign}${pts}</div><div style="font-size:0.75rem; color:var(--text-gray);">Points ⭐</div>`;
                     } else {
-                        mainStat = `<div style="font-size:1.5rem; font-weight:900; color:var(--accent);">${p.accuracy}%</div><div style="font-size:0.75rem; color:var(--text-gray);">accuracy</div>`;
+                        mainStat = `<div style="font-size:1.5rem; font-weight:900; color:var(--accent);">${p.totalAnswered || 0}</div><div style="font-size:0.75rem; color:var(--text-gray);">answered</div>`;
                     }
 
                     return `
@@ -11662,14 +11576,14 @@
                 <img src="${avatarSrc}" style="width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid ${p.isSelf ? 'var(--accent)' : 'var(--border-color)'};" onerror="this.src='${defAvatar}'">
                 <div style="flex:1;">
                     <div style="font-weight:700; font-size:1rem; color:var(--text-light); display:flex; align-items:center;">
-                        ${p.username}
+                        ${displayName}
                         ${p.isSelf ? '<span style="font-size:0.7rem; color:var(--accent); font-weight:600; margin-left:6px;">YOU</span>' : ''}
-                        ${(p.role === 'admin' || (window.isAdminUID && window.isAdminUID(p.uid)) || (p.username && p.username.toLowerCase() === 'mahmoud')) ? '<span class="admin-badge">ADMIN</span>' : ''}
+                        ${(p.role === 'admin' || (window.isAdminUID && window.isAdminUID(p.uid)) || (displayName.toLowerCase() === 'mahmoud')) ? '<span class="admin-badge">ADMIN</span>' : ''}
                     </div>
                     <div style="font-size:0.8rem; color:var(--text-gray); margin-top:2px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                        <span style="color:#10B981; font-weight:600;">✔️ ${p.totalCorrect} (+${p.totalCorrect})</span>
-                        <span style="color:#EF4444; font-weight:600;">❌ ${p.totalWrong} (-${p.totalWrong})</span>
-                        <span>🎯 ${p.accuracy}% acc</span>
+                        <span style="color:#10B981; font-weight:600;">✔️ ${p.totalCorrect || 0} (+${p.totalCorrect || 0})</span>
+                        <span style="color:#EF4444; font-weight:600;">❌ ${p.totalWrong || 0} (-${p.totalWrong || 0})</span>
+                        <span>🎯 ${p.accuracy || 0}% acc</span>
                     </div>
                     ${(function () {
                             const s = p.stats || {};
@@ -11679,9 +11593,9 @@
                                 bHTML += `<span style="font-size:0.7rem; background:rgba(245,158,11,0.1); color:#F59E0B; padding:3px 8px; border-radius:999px; border:1px solid rgba(245,158,11,0.2); display:inline-flex; align-items:center; gap:4px;"><dotlottie-wc src="https://lottie.host/8d7319ea-25f7-4275-b6bc-e8c636f04c5e/InGvqqPW3T.lottie" style="width: 20px; height: 20px; transform: translateY(-3px); margin-left: -2px;" autoplay loop></dotlottie-wc> <span style="transform: translateY(-1px);">${streak}-Day Streak</span></span>`;
                             }
 
-                            if (p.points >= 500) {
+                            if ((p.points || 0) >= 500) {
                                 bHTML += `<span style="font-size:0.7rem; background:rgba(245,158,11,0.15); color:#F59E0B; padding:3px 8px; border-radius:999px; border:1px solid rgba(245,158,11,0.3);"><i class="ri-vip-crown-fill"></i> Points Master</span>`;
-                            } else if (p.totalAnswered > 500 && p.accuracy >= 80) {
+                            } else if ((p.totalAnswered || 0) > 500 && (p.accuracy || 0) >= 80) {
                                 bHTML += `<span style="font-size:0.7rem; background:rgba(139,92,246,0.1); color:#8B5CF6; padding:3px 8px; border-radius:999px; border:1px solid rgba(139,92,246,0.2);"><i class="ri-vip-crown-fill"></i> Elite Scholar</span>`;
                             }
                             return bHTML ? `<div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">${bHTML}</div>` : '';
@@ -11692,34 +11606,21 @@
                 }).join('');
             };
 
-            function wilsonScore(correct, total) {
-                if (total === 0) return 0;
-                const z = 1.96;
-                const p = correct / total;
-                const n = total;
-                const denominator = 1 + (z * z) / n;
-                const centre = p + (z * z) / (2 * n);
-                const offset = z * Math.sqrt((p * (1 - p) + (z * z) / (4 * n)) / n);
-                return ((centre - offset) / denominator) * 100;
-            }
-
-            const currentUserYear = String(AppState.year || '1').trim();
-            const cacheKey = 'medStorm_cache_glb_v3_' + type + '_' + period + '_' + currentUserYear;
-            const cacheTimeKey = cacheKey + '_time';
+            const rawUserYear = String(AppState.year || '1').trim();
+            const currentUserYear = ['1', '2', '3'].includes(rawUserYear) ? rawUserYear : '1';
+            const docId = `year${currentUserYear}_${type}`;
+            const cacheKey = `medStorm_cache_glb_v4_${type}_year${currentUserYear}`;
+            const cacheTimeKey = `${cacheKey}_time`;
             let cachedPlayers = null;
+
             try {
                 const cachedStr = localStorage.getItem(cacheKey);
-                const cacheTime = localStorage.getItem(cacheTimeKey);
                 if (cachedStr) {
                     cachedPlayers = JSON.parse(cachedStr);
                     cachedPlayers.forEach(p => {
                         p.isSelf = (p.uid === window.currentUserId);
                     });
                     renderList(cachedPlayers);
-                    // Quota Saver: If cache is fresh (< 15s), skip network fetch
-                    if (cacheTime && (Date.now() - parseInt(cacheTime, 10) < 15 * 1000)) {
-                        return;
-                    }
                 }
             } catch (err) { }
 
@@ -11727,148 +11628,44 @@
                 container.innerHTML = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:3rem;"><div class="loading-dots-container" style="font-size: 0.95rem;"><span>Loading Leaderboard</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
             }
 
-            // Sync current user's latest stats to Firestore before fetching
+            // Sync current user's latest stats to Firestore before listening if unsaved changes exist
             if (window.flushSync && localStorage.getItem('medStorm_unsaved_changes') === 'true') {
                 window.flushSync().catch(() => { });
             }
 
-            if (!window.getDocs || !window.collection || !window.db) return;
+            if (!window.onSnapshot || !window.doc || !window.db) return;
+
             try {
-                let querySnapshot;
-                try {
-                    querySnapshot = await window.getDocs(window.query(window.collection(window.db, "users"), window.limit(50)));
-                } catch (qErr) {
-                    console.warn("Leaderboard getDocs query error:", qErr);
-                    return;
-                }
-
-                let players = [];
-
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    if (data.leaderboardHidden) return;
-
-                    const userYear = String(data.year || '1').trim();
-                    if (userYear !== currentUserYear && userYear !== String(parseInt(currentUserYear, 10))) return;
-
-                    let totalAnswered = 0, totalCorrect = 0, totalWrong = 0, accuracy = 0, points = 0;
-
-                    const periodStats = getStatsForPeriod(data.stats, period, currentUserYear);
-
-                    if (periodStats && periodStats.hasAnyData && periodStats.totalAnswered > 0) {
-                        totalAnswered = periodStats.totalAnswered;
-                        totalCorrect = periodStats.totalCorrect;
-                        totalWrong = periodStats.totalWrong;
-                        accuracy = periodStats.accuracy;
-                        points = periodStats.points;
-                    } else if (period === 'all') {
-                        if (typeof data.totalAnswered === 'number' && data.totalAnswered > 0) {
-                            totalAnswered = data.totalAnswered;
-                            totalCorrect = data.totalCorrect || 0;
-                            totalWrong = typeof data.totalWrong === 'number' ? data.totalWrong : (totalAnswered - totalCorrect);
-                            accuracy = typeof data.accuracy === 'number' ? data.accuracy : (totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0);
-                            points = typeof data.points === 'number' ? data.points : (totalCorrect - totalWrong);
-                        } else if (data.stats && data.stats.dailyProgress && Object.keys(data.stats.dailyProgress).length > 0) {
-                            const allSt = getStatsForPeriod(data.stats, 'all', currentUserYear);
-                            if (allSt && allSt.totalAnswered > 0) {
-                                totalAnswered = allSt.totalAnswered;
-                                totalCorrect = allSt.totalCorrect;
-                                totalWrong = allSt.totalWrong;
-                                accuracy = allSt.accuracy;
-                                points = allSt.points;
-                            }
-                        } else {
-                            const progress = data.progress || {};
-                            totalAnswered = 0; totalCorrect = 0; totalWrong = 0;
-                            for (const [qText, val] of Object.entries(progress)) {
-                                totalAnswered++;
-                                if (val === 'correct') totalCorrect++;
-                                else if (val === 'wrong') totalWrong++;
-                            }
-                            accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
-                            points = totalCorrect - totalWrong;
-                        }
-                    } else {
-                        return;
+                const targetDocRef = window.doc(window.db, "leaderboard", docId);
+                const unsubscribe = window.onSnapshot(targetDocRef, (docSnap) => {
+                    let players = [];
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        players = (data.entries || data.top || data.players || []).map(p => ({
+                            ...p,
+                            isSelf: (p.uid === window.currentUserId)
+                        }));
                     }
 
-                    if (totalAnswered === 0 && points === 0) return;
+                    try {
+                        localStorage.setItem(cacheKey, JSON.stringify(players));
+                        localStorage.setItem(cacheTimeKey, Date.now().toString());
+                    } catch (e) { }
 
-                    const displayName = data.username || data.firstName || 'Student';
-
-                    players.push({
-                        uid: docSnap.id,
-                        username: displayName,
-                        avatarUrl: data.avatarUrl || '',
-                        totalAnswered,
-                        totalCorrect,
-                        totalWrong,
-                        accuracy,
-                        points,
-                        isSelf: docSnap.id === window.currentUserId,
-                        role: data.role,
-                        stats: data.stats || {}
-                    });
-                });
-
-                const hasSelf = players.some(p => p.uid === window.currentUserId);
-                if (!hasSelf && window.currentUserId) {
-                    let selfAnswered = 0, selfCorrect = 0, selfWrong = 0, selfAccuracy = 0, selfPoints = 0;
-                    const selfPeriod = getStatsForPeriod(AppState.stats, period, currentUserYear);
-                    if (selfPeriod && selfPeriod.hasAnyData && selfPeriod.totalAnswered > 0) {
-                        selfAnswered = selfPeriod.totalAnswered;
-                        selfCorrect = selfPeriod.totalCorrect;
-                        selfWrong = selfPeriod.totalWrong;
-                        selfAccuracy = selfPeriod.accuracy;
-                        selfPoints = selfPeriod.points;
-                    } else if (period === 'all') {
-                        selfAnswered = AppState.totalAnswered || 0;
-                        selfCorrect = AppState.totalCorrect || 0;
-                        selfWrong = typeof AppState.totalWrong === 'number' ? AppState.totalWrong : (selfAnswered - selfCorrect);
-                        selfAccuracy = AppState.accuracy || (selfAnswered > 0 ? Math.round((selfCorrect / selfAnswered) * 100) : 0);
-                        selfPoints = typeof AppState.points === 'number' ? AppState.points : (selfCorrect - selfWrong);
-                    }
-
-                    if (selfAnswered > 0 || selfPoints !== 0) {
-                        players.push({
-                            uid: window.currentUserId,
-                            username: AppState.username || localStorage.getItem('medStormUsername') || 'You',
-                            avatarUrl: AppState.avatarUrl || localStorage.getItem('medStorm_avatar_' + window.currentUserId) || '',
-                            totalAnswered: selfAnswered,
-                            totalCorrect: selfCorrect,
-                            totalWrong: selfWrong,
-                            accuracy: selfAccuracy,
-                            points: selfPoints,
-                            isSelf: true,
-                            role: AppState.role || '',
-                            stats: AppState.stats || {}
-                        });
-                    }
-                }
-
-                players.forEach(p => {
-                    if (p.isSelf && AppState.stats) {
-                        const sPeriod = getStatsForPeriod(AppState.stats, period, currentUserYear);
-                        if (sPeriod && sPeriod.hasAnyData && sPeriod.totalAnswered > 0) {
-                            p.totalAnswered = sPeriod.totalAnswered;
-                            p.totalCorrect = sPeriod.totalCorrect;
-                            p.totalWrong = sPeriod.totalWrong;
-                            p.accuracy = sPeriod.accuracy;
-                            p.points = sPeriod.points;
-                        }
+                    renderList(players);
+                }, (error) => {
+                    console.error("Leaderboard onSnapshot error:", error);
+                    if (!cachedPlayers) {
+                        container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">Failed to load leaderboard.</div>';
                     }
                 });
 
-                try {
-                    localStorage.setItem(cacheKey, JSON.stringify(players));
-                    localStorage.setItem(cacheTimeKey, Date.now().toString());
-                } catch (e) { }
-
-                renderList(players);
+                window.unsubscribeLeaderboard = unsubscribe;
             } catch (e) {
-                console.error('Global leaderboard error:', e);
-                if (cachedPlayers) return;
-                container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">Failed to load leaderboard.</div>';
+                console.error("Global leaderboard error:", e);
+                if (!cachedPlayers) {
+                    container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">Failed to load leaderboard.</div>';
+                }
             }
         }
         window.switchGlobalLb = switchGlobalLb;
