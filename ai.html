@@ -6781,9 +6781,9 @@
             if (!window.currentUserId) return;
             AppState.year = newYear;
             localStorage.setItem('medStorm_year', newYear);
-            window.syncProfileYearUI(newYear);
-
-            const allowedModules = newYear === '2' ? ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] : ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
+            const allowedModules = newYear === '2' ?
+                ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] :
+                (newYear === '3' ? [] : ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1']);
             const allowedQs = new Set();
             allowedModules.forEach(modName => {
                 if (DB[modName]) {
@@ -9500,7 +9500,9 @@
 
             try {
                 const currentUserYear = String(AppState.year || '1');
-                const allowedModules = currentUserYear === '2' ? ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] : ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
+                const allowedModules = currentUserYear === '2' ?
+                    ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] :
+                    (currentUserYear === '3' ? [] : ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1']);
                 const allowedQs = new Set();
                 allowedModules.forEach(modName => {
                     if (DB[modName]) {
@@ -9871,7 +9873,7 @@
         function getTopWeakSpots(activeYear) {
             const allowedModules = activeYear === '2' ?
                 ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] :
-                ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
+                (activeYear === '3' ? [] : ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1']);
 
             const topicList = [];
 
@@ -9967,66 +9969,74 @@
             const currentUserYear = String(AppState.year || '1');
             const allowedModules = currentUserYear === '2' ?
                 ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] :
-                ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
+                (currentUserYear === '3' ? [] : ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1']);
 
             const activeRows = [];
             const notStartedRows = [];
 
-            for (const [modName, modContent] of Object.entries(DB)) {
-                if (!allowedModules.includes(modName)) continue;
-                let qs = extractAllQuestions(modContent);
-                const modTotal = qs.length || 1;
-                totalQs += qs.length;
-                let m = 0, w = 0;
+            if (currentUserYear !== '3') {
+                for (const [modName, modContent] of Object.entries(DB)) {
+                    if (!allowedModules.includes(modName)) continue;
+                    let qs = extractAllQuestions(modContent);
+                    const modTotal = qs.length || 1;
+                    totalQs += qs.length;
+                    let m = 0, w = 0;
 
-                qs.forEach(q => {
-                    if (AppState.progress[q.q] === 'correct') m++;
-                    else if (AppState.progress[q.q] === 'wrong') w++;
-                });
+                    qs.forEach(q => {
+                        if (AppState.progress[q.q] === 'correct') m++;
+                        else if (AppState.progress[q.q] === 'wrong') w++;
+                    });
 
-                totalMastered += m;
-                totalWrong += w;
-                const solvedCount = m + w;
-                if (solvedCount > 0) totalSolved += solvedCount;
+                    totalMastered += m;
+                    totalWrong += w;
+                    const solvedCount = m + w;
+                    if (solvedCount > 0) totalSolved += solvedCount;
 
-                const correctPct = (m / modTotal) * 100;
-                const wrongPct = (w / modTotal) * 100;
-                const remainingPct = 100 - correctPct - wrongPct;
-                const modTime = (AppState.stats && AppState.stats.moduleTime) ? (AppState.stats.moduleTime[modName] || 0) : 0;
+                    const correctPct = (m / modTotal) * 100;
+                    const wrongPct = (w / modTotal) * 100;
+                    const remainingPct = 100 - correctPct - wrongPct;
+                    const modTime = (AppState.stats && AppState.stats.moduleTime) ? (AppState.stats.moduleTime[modName] || 0) : 0;
 
-                const rowHTML = `
-                    <div class="analytics-row">
-                        <div class="row-header">
-                            <span style="font-size: 1.05rem;">${modName}</span>
-                            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-                                <span style="font-size: 0.85rem; color: var(--primary-green); font-weight: 700;">${m} Correct</span>
-                                <span style="font-size: 0.85rem; color: var(--primary-red); font-weight: 700;">${w} Wrong</span>
-                                <span style="font-size: 0.85rem; color: var(--text-gray);"><i class="ri-time-line"></i> ${formatTime(modTime)}</span>
-                                <span style="font-weight: 800; min-width: 45px; text-align: right; color: ${m > 0 ? 'var(--accent)' : 'var(--text-gray)'};">${Math.round(correctPct)}%</span>
+                    const rowHTML = `
+                        <div class="analytics-row">
+                            <div class="row-header">
+                                <span style="font-size: 1.05rem;">${modName}</span>
+                                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                                    <span style="font-size: 0.85rem; color: var(--primary-green); font-weight: 700;">${m} Correct</span>
+                                    <span style="font-size: 0.85rem; color: var(--primary-red); font-weight: 700;">${w} Wrong</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-gray);"><i class="ri-time-line"></i> ${formatTime(modTime)}</span>
+                                    <span style="font-weight: 800; min-width: 45px; text-align: right; color: ${m > 0 ? 'var(--accent)' : 'var(--text-gray)'};">${Math.round(correctPct)}%</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="stacked-bar">
-                            <div class="bar-correct" style="width:${correctPct}%"></div>
-                            <div class="bar-wrong" style="width:${wrongPct}%"></div>
-                            <div class="bar-remaining" style="width:${remainingPct}%"></div>
-                        </div>
-                    </div>`;
+                            <div class="stacked-bar">
+                                <div class="bar-correct" style="width:${correctPct}%"></div>
+                                <div class="bar-wrong" style="width:${wrongPct}%"></div>
+                                <div class="bar-remaining" style="width:${remainingPct}%"></div>
+                            </div>
+                        </div>`;
 
-                if (solvedCount > 0 || modTime > 0) {
-                    activeRows.push(rowHTML);
-                } else {
-                    notStartedRows.push(rowHTML);
+                    if (solvedCount > 0 || modTime > 0) {
+                        activeRows.push(rowHTML);
+                    } else {
+                        notStartedRows.push(rowHTML);
+                    }
                 }
             }
 
             let moduleBreakdownHTML = '';
-            if (activeRows.length > 0) {
+            if (currentUserYear === '3') {
+                moduleBreakdownHTML = `<div style="text-align: center; padding: 3rem 1.5rem; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); color: var(--text-gray);">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🩺</div>
+                    <h4 style="font-size: 1.1rem; color: var(--text-light); margin-bottom: 0.3rem;">3rd Year Analytics</h4>
+                    No modules or questions available yet for 3rd Year.
+                </div>`;
+            } else if (activeRows.length > 0) {
                 moduleBreakdownHTML += `<div style="display: flex; flex-direction: column; gap: 1rem;">${activeRows.join('')}</div>`;
             } else {
                 moduleBreakdownHTML += `<div style="text-align: center; padding: 2rem; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); color: var(--text-gray);">🚀 No modules started yet. Begin solving to see your progress breakdown!</div>`;
             }
 
-            if (notStartedRows.length > 0) {
+            if (currentUserYear !== '3' && notStartedRows.length > 0) {
                 moduleBreakdownHTML += `
                     <div class="not-started-accordion" id="not-started-acc">
                         <div class="not-started-header" onclick="toggleNotStartedAccordion()">
@@ -10195,7 +10205,13 @@
             const currentUserYear = String(AppState.year || '1');
             const allowedModules = currentUserYear === '2' ?
                 ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] :
-                ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
+                (currentUserYear === '3' ? [] : ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1']);
+
+            if (currentUserYear === '3' || allowedModules.length === 0) {
+                fallbackContainer.style.display = 'flex';
+                fallbackContainer.innerHTML = '<div style="text-align:center; padding: 2.5rem 1rem; color: var(--text-gray); width: 100%;">No module mastery data available for 3rd Year yet.</div>';
+                return;
+            }
 
             const moduleStats = [];
 
