@@ -4782,9 +4782,6 @@
             <div class="nav-label" id="label-features" onclick="toggleNavSection(this)">More Features <i
                     class="ri-arrow-down-s-line"></i></div>
             <div class="nav-sub-items">
-                <div class="nav-item" onclick="switchMode('links')" id="nav-links">
-                    <i class="ri-links-line"></i><span>Resources</span>
-                </div>
                 <div class="nav-item" onclick="openFeedbackModal()">
                     <i class="ri-chat-smile-3-line"></i><span>Feedback</span>
                 </div>
@@ -5374,6 +5371,10 @@
                             <button onclick="setAdminYearFilter('2')" id="admin-filter-year-2"
                                 style="padding:6px 14px; border-radius:8px; border:none; background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease;">
                                 2nd Year
+                            </button>
+                            <button onclick="setAdminYearFilter('3')" id="admin-filter-year-3"
+                                style="padding:6px 14px; border-radius:8px; border:none; background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease;">
+                                3rd Year
                             </button>
                         </div>
                         <select id="admin-sort" onchange="adminFilterUsers()"
@@ -6740,7 +6741,7 @@
         window.syncProfileYearUI = (activeYear) => {
             const textEl = document.getElementById('profile-academic-year-text');
             if (textEl) {
-                textEl.textContent = activeYear === '2' ? '2nd Year' : '1st Year';
+                textEl.textContent = activeYear === '2' ? '2nd Year' : (activeYear === '3' ? '3rd Year' : '1st Year');
             }
             const btn1 = document.getElementById('profile-year-1-btn');
             const btn2 = document.getElementById('profile-year-2-btn');
@@ -8244,6 +8245,8 @@
                             list: ['CNS', 'Communication Step 2', 'Professionalism']
                         }
                     ];
+                } else if (year === '3') {
+                    moduleGroups = [];
                 } else {
                     moduleGroups = [
                         {
@@ -8411,13 +8414,20 @@
             });
 
             if (totalRenderedCards === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-gray); width: 100%;">🎉 No active modules found!</div>`;
+                if (year === '3') {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 4rem 1.5rem; color: var(--text-gray); width: 100%; max-width: 550px; margin: 2rem auto; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🩺</div>
+                            <h3 style="font-size: 1.4rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.5rem;">3rd Year Modules</h3>
+                            <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-gray);">No modules available yet for 3rd Year. New content and questions will be added soon!</p>
+                        </div>`;
+                } else {
+                    container.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-gray); width: 100%;">🎉 No active modules found!</div>`;
+                }
             }
         };
 
         function createSubtopicBtn(label, count, value, weakInfo) {
-            const btn = document.createElement('div');
-            btn.className = 'subtopic-btn';
             btn.dataset.count = count;
 
             const displayLabel = label.replace(/^\d+\.\s*/, "");
@@ -12010,8 +12020,9 @@
             const btnAll = document.getElementById('admin-filter-year-all');
             const btn1 = document.getElementById('admin-filter-year-1');
             const btn2 = document.getElementById('admin-filter-year-2');
+            const btn3 = document.getElementById('admin-filter-year-3');
 
-            [btnAll, btn1, btn2].forEach(btn => {
+            [btnAll, btn1, btn2, btn3].forEach(btn => {
                 if (btn) {
                     btn.style.background = 'transparent';
                     btn.style.color = 'var(--text-gray)';
@@ -12021,6 +12032,7 @@
             let activeBtn;
             if (year === '1') activeBtn = btn1;
             else if (year === '2') activeBtn = btn2;
+            else if (year === '3') activeBtn = btn3;
             else activeBtn = btnAll;
 
             if (activeBtn) {
@@ -12047,6 +12059,7 @@
                 const isT1 = !!u.isTerm1Active;
                 const isT2 = !!u.isTerm2Active;
                 const isYear2 = (u.year || '1') === '2';
+                const isYear3 = (u.year || '1') === '3';
                 const qSolved = u.totalQuestionsSolved || 0;
                 const activeSessions = u.activeSessions || [];
                 const now = Date.now();
@@ -12080,14 +12093,26 @@
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; width:100%; border-top:1px solid var(--border-color); padding-top:10px; margin-top:10px; justify-content: space-between;">
                         <div style="font-size:0.8rem; color:var(--text-gray);">
-                            ${isYear2 ? '<span style="color:#10b981; font-weight:700;"><i class="ri-checkbox-circle-fill"></i> Year 2 Unlimited</span>' : `Solved: <b style="color:var(--accent);">${qSolved}</b> / 200 free trial qs`}
+                            ${isYear3 ? '<span style="color:#60a5fa; font-weight:700;"><i class="ri-checkbox-circle-fill"></i> Year 3 Unlimited</span>' : (isYear2 ? '<span style="color:#10b981; font-weight:700;"><i class="ri-checkbox-circle-fill"></i> Year 2 Unlimited</span>' : `Solved: <b style="color:var(--accent);">${qSolved}</b> / 200 free trial qs`)}
                         </div>
-                        <div style="display:flex; gap:8px;">
-                            <button onclick="adminToggleYear('${u.uid}', '${u.year || '1'}')" 
-                                    style="padding:5px 12px; border-radius:8px; border:1px solid var(--accent); 
-                                           background:rgba(245,158,11,0.08); 
-                                           color:var(--accent); font-weight:600; font-size:0.75rem; cursor:pointer; display:flex; align-items:center; gap:4px;">
-                                <i class="ri-arrow-left-right-line"></i> Set Year ${u.year === '2' ? '1' : '2'}
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                            <button onclick="adminSetUserYear('${u.uid}', '1')" 
+                                    style="padding:5px 10px; border-radius:8px; border:1px solid ${(!u.year || u.year === '1') ? 'var(--primary-green)' : 'var(--border-color)'}; 
+                                           background:${(!u.year || u.year === '1') ? 'rgba(16,185,129,0.15)' : 'transparent'}; 
+                                           color:${(!u.year || u.year === '1') ? 'var(--primary-green)' : 'var(--text-gray)'}; font-weight:700; font-size:0.75rem; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                                <i class="${(!u.year || u.year === '1') ? 'ri-checkbox-circle-fill' : 'ri-arrow-right-circle-line'}"></i> Set Year 1
+                            </button>
+                            <button onclick="adminSetUserYear('${u.uid}', '2')" 
+                                    style="padding:5px 10px; border-radius:8px; border:1px solid ${u.year === '2' ? 'var(--accent)' : 'var(--border-color)'}; 
+                                           background:${u.year === '2' ? 'rgba(245,158,11,0.15)' : 'transparent'}; 
+                                           color:${u.year === '2' ? 'var(--accent)' : 'var(--text-gray)'}; font-weight:700; font-size:0.75rem; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                                <i class="${u.year === '2' ? 'ri-checkbox-circle-fill' : 'ri-arrow-right-circle-line'}"></i> Set Year 2
+                            </button>
+                            <button onclick="adminSetUserYear('${u.uid}', '3')" 
+                                    style="padding:5px 10px; border-radius:8px; border:1px solid ${u.year === '3' ? '#3b82f6' : 'var(--border-color)'}; 
+                                           background:${u.year === '3' ? 'rgba(59,130,246,0.15)' : 'transparent'}; 
+                                           color:${u.year === '3' ? '#60a5fa' : 'var(--text-gray)'}; font-weight:700; font-size:0.75rem; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                                <i class="${u.year === '3' ? 'ri-checkbox-circle-fill' : 'ri-arrow-right-circle-line'}"></i> Set Year 3
                             </button>
                             <button onclick="adminToggleTermActivation('${u.uid}', 1, ${isT1})" 
                                     style="padding:5px 12px; border-radius:8px; border:1px solid ${isT1 ? 'var(--primary-green)' : 'var(--border-color)'}; 
@@ -12132,8 +12157,12 @@
         }
         window.adminToggleTermActivation = adminToggleTermActivation;
 
-        async function adminToggleYear(uid, currentYear) {
-            const newYear = currentYear === '2' ? '1' : '2';
+        async function adminSetUserYear(uid, newYear) {
+            const user = allAdminUsers.find(x => x.uid === uid);
+            if (user && (user.year || '1') === String(newYear)) {
+                if (window.showToast) window.showToast(`User is already in Year ${newYear}`, 'info');
+                return;
+            }
             if (!confirm(`Are you sure you want to change this user to Year ${newYear}?`)) return;
             try {
                 const userRef = window.doc(window.db, "users", uid);
@@ -12144,7 +12173,15 @@
                 const userData = userSnap.data();
                 const userProgress = userData.progress || {};
 
-                const allowedModules = newYear === '2' ? ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] : ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
+                let allowedModules = [];
+                if (newYear === '1') {
+                    allowedModules = ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
+                } else if (newYear === '2') {
+                    allowedModules = ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'];
+                } else if (newYear === '3') {
+                    allowedModules = [];
+                }
+
                 const allowedQs = new Set();
                 allowedModules.forEach(modName => {
                     if (DB[modName]) {
@@ -12168,7 +12205,7 @@
                 const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
 
                 const updateObj = {
-                    year: newYear,
+                    year: String(newYear),
                     totalAnswered,
                     totalCorrect,
                     accuracy
@@ -12178,7 +12215,7 @@
 
                 const u = allAdminUsers.find(x => x.uid === uid);
                 if (u) {
-                    u.year = newYear;
+                    u.year = String(newYear);
                     u.totalAnswered = totalAnswered;
                     u.totalCorrect = totalCorrect;
                     u.accuracy = accuracy;
@@ -12190,7 +12227,8 @@
                 if (window.showToast) window.showToast("Failed to update user academic year", "error");
             }
         }
-        window.adminToggleYear = adminToggleYear;
+        window.adminSetUserYear = adminSetUserYear;
+        window.adminToggleYear = (uid, curYear) => adminSetUserYear(uid, curYear === '2' ? '1' : '2');
 
         async function adminBulkDeactivateTerm(termNum) {
             const field = termNum === 1 ? 'isTerm1Active' : 'isTerm2Active';
