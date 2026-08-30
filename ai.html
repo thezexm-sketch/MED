@@ -9538,7 +9538,7 @@
                         timestamp: new Date().getTime()
                     };
                     AppState.examsHistory.unshift(result);
-                    if (AppState.examsHistory.length > 50) AppState.examsHistory.pop();
+                    if (AppState.examsHistory.length > 15) AppState.examsHistory.pop();
                     localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory));
                     batchData.examsHistory = AppState.examsHistory;
 
