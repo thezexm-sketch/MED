@@ -4480,7 +4480,7 @@
             const overlay = document.getElementById('first-load-overlay');
             if (!overlay) return;
             const elapsed = Date.now() - window.firstLoadOverlayStartTime;
-            const minDuration = 2000;
+            const minDuration = 1000;
             if (elapsed < minDuration) {
                 setTimeout(window.hideFirstLoadOverlay, minDuration - elapsed);
                 return;
@@ -4488,13 +4488,12 @@
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.setProperty('display', 'none', 'important');
-            }, 500);
+            }, 400);
         };
-        if (localStorage.getItem('medStormProgress')) {
-            setTimeout(() => {
-                window.hideFirstLoadOverlay();
-            }, 2000);
-        }
+        // Unconditional safety timer: hide overlay after 3.5s no matter what happens
+        setTimeout(() => {
+            if (window.hideFirstLoadOverlay) window.hideFirstLoadOverlay();
+        }, 3500);
     </script>
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
@@ -6273,33 +6272,6 @@
                 if (snap.exists()) {
                     const data = snap.data();
 
-                    if (!window.isAdminUID(user.uid)) {
-                        let deviceId = localStorage.getItem('medStorm_deviceId');
-                        if (!deviceId) {
-                            deviceId = 'dev_' + Math.random().toString(36).substring(2, 15) + '_' + Date.now();
-                            localStorage.setItem('medStorm_deviceId', deviceId);
-                        }
-                        let activeSessions = data.activeSessions || [];
-                        const now = Date.now();
-                        activeSessions = activeSessions.filter(s => s && s.id && (now - (s.lastActive || 0)) < 24 * 60 * 60 * 1000);
-
-                        const sessionExists = activeSessions.some(s => s.id === deviceId);
-                        if (!sessionExists) {
-                            if (activeSessions.length >= 2) {
-                                document.getElementById('device-limit-modal').classList.add('active');
-                                return;
-                            }
-                            activeSessions.push({ id: deviceId, lastActive: now });
-                            await updateDoc(userRef, { activeSessions: activeSessions });
-                        } else {
-                            const idx = activeSessions.findIndex(s => s.id === deviceId);
-                            if (idx !== -1 && (now - (activeSessions[idx].lastActive || 0)) > 5 * 60 * 1000) {
-                                activeSessions[idx].lastActive = now;
-                                await updateDoc(userRef, { activeSessions: activeSessions });
-                            }
-                        }
-                    }
-
                     if (data.progress !== undefined) { AppState.progress = data.progress || {}; localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); }
                     if (data.favorites !== undefined) { AppState.favorites = data.favorites || {}; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); }
                     if (data.notes !== undefined) { AppState.notes = data.notes || {}; localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); }
@@ -6441,20 +6413,6 @@
                         if (docSnap.exists()) {
                             const snapData = docSnap.data();
 
-                            if (!window.isAdminUID(user.uid)) {
-                                const currentDeviceId = localStorage.getItem('medStorm_deviceId');
-                                const sessions = snapData.activeSessions || [];
-                                if (sessions.length > 0 && !sessions.some(s => s.id === currentDeviceId)) {
-                                    if (window.activeUserListener) {
-                                        window.activeUserListener();
-                                        window.activeUserListener = null;
-                                    }
-                                    alert("You have been logged out because your account is open on more than 2 devices.");
-                                    window.executeLogout();
-                                    return;
-                                }
-                            }
-
                             let changed = false;
                             if (snapData.isTerm1Active !== undefined && AppState.isTerm1Active !== !!snapData.isTerm1Active) {
                                 AppState.isTerm1Active = !!snapData.isTerm1Active;
@@ -6500,79 +6458,88 @@
         }
 
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                if (!user.emailVerified && user.providerData && user.providerData.some(p => p.providerId === 'password')) {
-                    const creationTime = user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).getTime() : 0;
-                    const enforcementDate = new Date('2026-07-15T00:00:00Z').getTime();
+            try {
+                if (user) {
+                    if (!user.emailVerified && user.providerData && user.providerData.some(p => p.providerId === 'password')) {
+                        const creationTime = user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).getTime() : 0;
+                        const enforcementDate = new Date('2026-07-15T00:00:00Z').getTime();
 
-                    if (creationTime > enforcementDate) {
-                        document.getElementById('login-overlay').style.display = 'none';
-                        document.getElementById('verification-overlay').style.display = 'flex';
-                        return;
+                        if (creationTime > enforcementDate) {
+                            const lOverlay = document.getElementById('login-overlay');
+                            if (lOverlay) lOverlay.style.display = 'none';
+                            const vOverlay = document.getElementById('verification-overlay');
+                            if (vOverlay) vOverlay.style.display = 'flex';
+                            if (window.hideFirstLoadOverlay) window.hideFirstLoadOverlay();
+                            return;
+                        }
                     }
-                }
-                const vOverlay = document.getElementById('verification-overlay');
-                if (vOverlay) vOverlay.style.display = 'none';
+                    const vOverlay = document.getElementById('verification-overlay');
+                    if (vOverlay) vOverlay.style.display = 'none';
 
-                document.getElementById('login-overlay').style.display = 'none';
-                window.currentUserId = user.uid;
-                window.currentUserEmail = user.email || 'No email';
-                if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
-                if (window.updateSyncStatusUI) window.updateSyncStatusUI(localStorage.getItem('medStorm_unsaved_changes') === 'true' ? 'pending' : 'synced');
+                    const lOverlay = document.getElementById('login-overlay');
+                    if (lOverlay) lOverlay.style.display = 'none';
+                    window.currentUserId = user.uid;
+                    window.currentUserEmail = user.email || 'No email';
+                    if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
+                    if (window.updateSyncStatusUI) window.updateSyncStatusUI(localStorage.getItem('medStorm_unsaved_changes') === 'true' ? 'pending' : 'synced');
 
-                if (window.isAdminUID(user.uid)) {
-                    const adminNav = document.getElementById('nav-admin');
-                    if (adminNav) adminNav.style.display = 'flex';
-                }
-
-                const emailDisplay = document.getElementById('profile-page-email');
-                if (emailDisplay) emailDisplay.textContent = user.email;
-
-                const defAvatar = window.defaultAvatar(user.email);
-                const savedAvatar = localStorage.getItem('medStorm_avatar_' + user.uid);
-                window.setAvatarUI(savedAvatar ? savedAvatar : defAvatar);
-                try {
-                    const userRef = doc(db, 'users', user.uid);
-                    const userSnap = await getDoc(userRef);
-                    const updateData = { lastSeen: Date.now(), email: user.email || '' };
-                    if (!userSnap.exists() || !userSnap.data().createdAt) {
-
-                        const authCreated = user.metadata && user.metadata.creationTime
-                            ? new Date(user.metadata.creationTime).getTime()
-                            : Date.now();
-                        updateData.createdAt = authCreated;
+                    if (window.isAdminUID(user.uid)) {
+                        const adminNav = document.getElementById('nav-admin');
+                        if (adminNav) adminNav.style.display = 'flex';
                     }
-                    await setDoc(userRef, updateData, { merge: true });
-                } catch (e) { console.warn('lastSeen update failed:', e); }
 
-                fetchQuestionsFromDB().catch(err => {
-                    console.warn("Background questions load failed:", err);
-                });
-                if (typeof window.fetchLockedModules === 'function') {
-                    window.fetchLockedModules().catch(err => console.warn("Fetch locked modules failed:", err));
-                }
+                    const emailDisplay = document.getElementById('profile-page-email');
+                    if (emailDisplay) emailDisplay.textContent = user.email;
 
-                try {
-                    await loadUserData(user);
-                } catch (err) {
-                    console.warn("Initial user data load failed, proceeding anyway:", err);
-                }
-                const inActiveQuiz = document.body.classList.contains('focus-mode') ||
-                    (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
-                if (!inActiveQuiz) {
-                    const lastMode = localStorage.getItem('medStormLastMode') || 'dashboard';
-                    switchMode(lastMode);
-                }
-                if (typeof loadPrivacySetting === 'function') loadPrivacySetting();
-                if (window.hideFirstLoadOverlay) window.hideFirstLoadOverlay();
-            } else {
-                document.getElementById('login-overlay').style.display = 'flex';
-                const btn = document.getElementById('auth-btn');
-                if (btn) { btn.innerHTML = window.isSignupMode ? "Sign Up ✨" : "Login 🔓"; btn.disabled = false; }
+                    const defAvatar = window.defaultAvatar(user.email);
+                    const savedAvatar = localStorage.getItem('medStorm_avatar_' + user.uid);
+                    window.setAvatarUI(savedAvatar ? savedAvatar : defAvatar);
+                    try {
+                        const userRef = doc(db, 'users', user.uid);
+                        const userSnap = await getDoc(userRef);
+                        const updateData = { lastSeen: Date.now(), email: user.email || '' };
+                        if (!userSnap.exists() || !userSnap.data().createdAt) {
 
-                const emailDisplay = document.getElementById('profile-page-email');
-                if (emailDisplay) emailDisplay.textContent = 'Not Logged In';
-                window.setAvatarUI(window.defaultAvatar(''));
+                            const authCreated = user.metadata && user.metadata.creationTime
+                                ? new Date(user.metadata.creationTime).getTime()
+                                : Date.now();
+                            updateData.createdAt = authCreated;
+                        }
+                        await setDoc(userRef, updateData, { merge: true });
+                    } catch (e) { console.warn('lastSeen update failed:', e); }
+
+                    fetchQuestionsFromDB().catch(err => {
+                        console.warn("Background questions load failed:", err);
+                    });
+                    if (typeof window.fetchLockedModules === 'function') {
+                        window.fetchLockedModules().catch(err => console.warn("Fetch locked modules failed:", err));
+                    }
+
+                    try {
+                        await loadUserData(user);
+                    } catch (err) {
+                        console.warn("Initial user data load failed, proceeding anyway:", err);
+                    }
+                    const inActiveQuiz = document.body.classList.contains('focus-mode') ||
+                        (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
+                    if (!inActiveQuiz) {
+                        const lastMode = localStorage.getItem('medStormLastMode') || 'dashboard';
+                        switchMode(lastMode);
+                    }
+                    if (typeof loadPrivacySetting === 'function') loadPrivacySetting();
+                } else {
+                    const lOverlay = document.getElementById('login-overlay');
+                    if (lOverlay) lOverlay.style.display = 'flex';
+                    const btn = document.getElementById('auth-btn');
+                    if (btn) { btn.innerHTML = window.isSignupMode ? "Sign Up ✨" : "Login 🔓"; btn.disabled = false; }
+
+                    const emailDisplay = document.getElementById('profile-page-email');
+                    if (emailDisplay) emailDisplay.textContent = 'Not Logged In';
+                    window.setAvatarUI(window.defaultAvatar(''));
+                }
+            } catch (err) {
+                console.error("onAuthStateChanged error:", err);
+            } finally {
                 if (window.hideFirstLoadOverlay) window.hideFirstLoadOverlay();
             }
         });
@@ -6971,9 +6938,11 @@
             } catch (error) {
                 console.error("Auth Error:", error);
                 let errorMsg = error.message;
-                if (error.code === 'auth/email-already-in-use') errorMsg = "Email is already registered. Please login.";
-                if (error.code === 'auth/weak-password') errorMsg = "Password should be at least 6 characters.";
-                if (error.code === 'auth/invalid-credential') errorMsg = "Incorrect email or password.";
+                if (error.code === 'auth/email-already-in-use') errorMsg = "Email is already registered. Please login or reset your password.";
+                else if (error.code === 'auth/weak-password') errorMsg = "Password must be at least 6 characters.";
+                else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') errorMsg = "Incorrect email or password.";
+                else if (error.code === 'auth/too-many-requests') errorMsg = "Access temporarily disabled due to many attempts. Please wait 1-2 minutes or reset your password.";
+                else if (error.code === 'auth/invalid-email') errorMsg = "Please enter a valid email address.";
 
                 showError("❌ " + errorMsg);
                 btn.innerHTML = window.isSignupMode ? "Sign Up ✨" : "Login 🔓";
@@ -6983,13 +6952,16 @@
 
         window.handleGoogleAuth = async () => {
             const btn = document.getElementById('google-auth-btn');
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = "Authenticating... ⏳";
-            btn.disabled = true;
+            const originalHtml = btn ? btn.innerHTML : 'Sign in with Google';
+            if (btn) {
+                btn.innerHTML = "Authenticating... ⏳";
+                btn.disabled = true;
+            }
             document.getElementById('login-error').style.display = 'none';
 
             try {
                 const provider = new window.GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
                 const result = await window.signInWithPopup(auth, provider);
                 const user = result.user;
 
@@ -6997,11 +6969,14 @@
                     const docSnap = await window.getDoc(window.doc(window.db, 'users', user.uid));
                     if (!docSnap.exists()) {
                         let parts = (user.displayName || "Anonymous").split(" ");
-                        let fName = parts[0];
+                        let fName = parts[0] || "Student";
                         let lName = parts.slice(1).join(" ") || "";
-                        let uname = (user.displayName ? user.displayName.replace(/\s+/g, '').toLowerCase() : 'user') + Math.floor(Math.random() * 10000);
+                        let cleanName = (user.displayName ? user.displayName.replace(/[^\w\u0600-\u06FF]/g, '').toLowerCase() : 'user');
+                        if (cleanName.length < 3) cleanName = 'student';
+                        let uname = cleanName.slice(0, 10) + Math.floor(1000 + Math.random() * 9000);
 
-                        let year = document.getElementById('signup-year-value') ? document.getElementById('signup-year-value').value : '1';
+                        let yearInput = document.getElementById('signup-year-value');
+                        let year = yearInput ? yearInput.value : '1';
 
                         await window.setDoc(window.doc(window.db, 'users', user.uid), {
                             username: uname,
@@ -7024,18 +6999,29 @@
                         }
                     }
                 }
+                if (window.hideFirstLoadOverlay) window.hideFirstLoadOverlay();
             } catch (error) {
                 console.error("Google Auth Error:", error);
                 let errorMsg = error.message;
-                if (error.code === 'auth/popup-closed-by-user') errorMsg = "Sign-in cancelled.";
+                if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+                    errorMsg = "Sign-in popup was closed.";
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMsg = "Google Sign-In is disabled in Firebase Console. Please enable it in Authentication -> Sign-in method -> Google.";
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    errorMsg = "Domain unauthorized. Add this domain in Firebase Console -> Authentication -> Settings -> Authorized domains.";
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMsg = "Popup was blocked by your browser. Please allow popups for this site.";
+                }
                 const errDiv = document.getElementById('login-error');
                 if (errDiv) {
                     errDiv.textContent = "❌ " + errorMsg;
                     errDiv.style.display = 'block';
                 }
             } finally {
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
+                if (btn) {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
             }
         };
 
