@@ -4498,6 +4498,78 @@
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
+    <!-- Academic Year Selection Modal (shown after Google Sign-Up or when needed) -->
+    <div class="modal-overlay" id="select-year-modal"
+        style="z-index: 100003; background: rgba(14, 20, 18, 0.98); display: none; backdrop-filter: blur(12px);">
+        <div class="modal-container"
+            style="max-width: 480px; width: 92%; text-align: center; padding: 2.2rem 1.8rem; background: var(--bg-card); border-radius: 24px; border: 1px solid var(--accent); box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 25px rgba(34, 197, 94, 0.15); animation: zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem; line-height: 1;">🎓</div>
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.4rem;">Choose Your Academic Year</h2>
+            <p style="color: var(--text-gray); margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.5;">Select your academic year to personalize your modules, exams, and dashboard content.</p>
+
+            <div id="year-options-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; text-align: left;">
+                <!-- Year 1 Option -->
+                <div class="year-select-card" id="year-option-1" onclick="window.selectYearOption('1')"
+                    style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.1rem; border-radius: 14px; border: 2px solid var(--accent); background: rgba(34, 197, 94, 0.12); cursor: pointer; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(34, 197, 94, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--accent); flex-shrink: 0;">
+                            <i class="ri-book-open-line"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-light);">1st Year</div>
+                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Foundation, Blood, CVS, MSK & More</div>
+                        </div>
+                    </div>
+                    <div class="year-check-icon" id="year-check-1" style="color: var(--accent); font-size: 1.4rem; flex-shrink: 0;">
+                        <i class="ri-checkbox-circle-fill"></i>
+                    </div>
+                </div>
+
+                <!-- Year 2 Option -->
+                <div class="year-select-card" id="year-option-2" onclick="window.selectYearOption('2')"
+                    style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.1rem; border-radius: 14px; border: 2px solid var(--border-color); background: var(--bg-darker); cursor: pointer; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #60A5FA; flex-shrink: 0;">
+                            <i class="ri-heart-pulse-line"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-light);">2nd Year</div>
+                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Endo, Genital, Urinary, GIT, CNS & More</div>
+                        </div>
+                    </div>
+                    <div class="year-check-icon" id="year-check-2" style="color: var(--text-gray); font-size: 1.4rem; opacity: 0.3; flex-shrink: 0;">
+                        <i class="ri-checkbox-blank-circle-line"></i>
+                    </div>
+                </div>
+
+                <!-- Year 3 Option -->
+                <div class="year-select-card" id="year-option-3" onclick="window.selectYearOption('3')"
+                    style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.1rem; border-radius: 14px; border: 2px solid var(--border-color); background: var(--bg-darker); cursor: pointer; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(168, 85, 247, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #a855f7; flex-shrink: 0;">
+                            <i class="ri-hospital-line"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-light);">3rd Year</div>
+                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Clinical Modules & Advanced Question Banks</div>
+                        </div>
+                    </div>
+                    <div class="year-check-icon" id="year-check-3" style="color: var(--text-gray); font-size: 1.4rem; opacity: 0.3; flex-shrink: 0;">
+                        <i class="ri-checkbox-blank-circle-line"></i>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" id="modal-selected-year" value="1">
+            <div id="select-year-error" style="color: var(--primary-red); font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
+
+            <button class="quiz-btn btn-primary" onclick="window.confirmSelectedYear()" id="confirm-year-btn"
+                style="width: 100%; padding: 1rem; font-size: 1.05rem; background: var(--accent); color: var(--bg-dark); border: none; font-weight: 800; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); transition: all 0.2s ease;">
+                <span>Confirm & Continue</span> <i class="ri-arrow-right-line"></i>
+            </button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="force-username-modal"
         style="z-index: 100000; background: rgba(14, 20, 18, 0.98); display: none;">
         <div class="modal-container"
@@ -5096,6 +5168,33 @@
                         <div id="profile-page-email"
                             style="font-size: 1.1rem; font-weight: 800; color: var(--text-light); word-break: break-all;">
                             Loading...
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 1rem; text-align: left; background: var(--bg-darker); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <div
+                                style="color: var(--text-gray); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">
+                                <i class="ri-graduation-cap-line" style="margin-right: 5px;"></i> Academic Year
+                            </div>
+                            <span id="profile-academic-year-text"
+                                style="font-size: 0.82rem; font-weight: 800; color: var(--accent); background: rgba(34, 197, 94, 0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.25);">1st Year</span>
+                        </div>
+                        <div style="display: flex; gap: 8px; width: 100%; margin-top: 0.5rem;">
+                            <button type="button" id="profile-year-1-btn" onclick="window.updateProfileYear('1')"
+                                style="flex: 1; padding: 0.65rem 0.3rem; border-radius: 10px; border: 2px solid var(--accent); background: var(--accent); color: var(--bg-dark); font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 0.85rem;">
+                                1st Year
+                            </button>
+                            <button type="button" id="profile-year-2-btn" onclick="window.updateProfileYear('2')"
+                                style="flex: 1; padding: 0.65rem 0.3rem; border-radius: 10px; border: 2px solid var(--border-color); background: transparent; color: var(--text-light); font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 0.85rem;">
+                                2nd Year
+                            </button>
+                            <button type="button" id="profile-year-3-btn" onclick="window.updateProfileYear('3')"
+                                style="flex: 1; padding: 0.65rem 0.3rem; border-radius: 10px; border: 2px solid var(--border-color); background: transparent; color: var(--text-light); font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 0.85rem;">
+                                3rd Year
+                            </button>
                         </div>
                     </div>
 
@@ -6407,6 +6506,10 @@
                         if (forceModal) forceModal.style.display = 'flex';
                     }
 
+                    if (data.needsYearSelection === true || !data.year || window.isPendingGoogleYearChoice) {
+                        if (window.openSelectYearModal) window.openSelectYearModal(AppState.year || '1');
+                    }
+
                     if (window.activeUserListener) {
                         window.activeUserListener();
                         window.activeUserListener = null;
@@ -6746,25 +6849,21 @@
             }
             const btn1 = document.getElementById('profile-year-1-btn');
             const btn2 = document.getElementById('profile-year-2-btn');
-            if (btn1 && btn2) {
-                if (activeYear === '2') {
-                    btn1.style.background = 'transparent';
-                    btn1.style.borderColor = 'var(--border-color)';
-                    btn1.style.color = 'var(--text-gray)';
-
-                    btn2.style.background = 'var(--accent)';
-                    btn2.style.borderColor = 'var(--accent)';
-                    btn2.style.color = 'var(--bg-dark)';
+            const btn3 = document.getElementById('profile-year-3-btn');
+            
+            [{ btn: btn1, y: '1' }, { btn: btn2, y: '2' }, { btn: btn3, y: '3' }].forEach(({ btn, y }) => {
+                if (!btn) return;
+                if (String(activeYear) === y) {
+                    btn.style.background = 'var(--accent)';
+                    btn.style.borderColor = 'var(--accent)';
+                    btn.style.color = 'var(--bg-dark)';
                 } else {
-                    btn2.style.background = 'transparent';
-                    btn2.style.borderColor = 'var(--border-color)';
-                    btn2.style.color = 'var(--text-gray)';
-
-                    btn1.style.background = 'var(--accent)';
-                    btn1.style.borderColor = 'var(--accent)';
-                    btn1.style.color = 'var(--bg-dark)';
+                    btn.style.background = 'transparent';
+                    btn.style.borderColor = 'var(--border-color)';
+                    btn.style.color = 'var(--text-light)';
                 }
-            }
+            });
+
             const navLinks = document.getElementById('nav-links');
             if (navLinks) {
                 navLinks.style.display = activeYear === '2' ? 'none' : 'flex';
@@ -6775,6 +6874,96 @@
             }
             if (activeYear !== '2') {
                 window.activeDashboardTab = 'modules';
+            }
+        };
+
+        window.selectedModalYear = '1';
+
+        window.openSelectYearModal = (defaultYear = '1') => {
+            const modal = document.getElementById('select-year-modal');
+            if (!modal) return;
+            window.selectedModalYear = String(defaultYear || AppState.year || '1');
+            window.selectYearOption(window.selectedModalYear);
+            const errEl = document.getElementById('select-year-error');
+            if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+            modal.style.display = 'flex';
+        };
+
+        window.closeSelectYearModal = () => {
+            const modal = document.getElementById('select-year-modal');
+            if (modal) modal.style.display = 'none';
+        };
+
+        window.selectYearOption = (year) => {
+            window.selectedModalYear = String(year);
+            const valInput = document.getElementById('modal-selected-year');
+            if (valInput) valInput.value = year;
+
+            ['1', '2', '3'].forEach(y => {
+                const card = document.getElementById(`year-option-${y}`);
+                const check = document.getElementById(`year-check-${y}`);
+                if (!card) return;
+                if (y === String(year)) {
+                    card.style.borderColor = 'var(--accent)';
+                    card.style.background = 'rgba(34, 197, 94, 0.12)';
+                    if (check) {
+                        check.innerHTML = '<i class="ri-checkbox-circle-fill"></i>';
+                        check.style.color = 'var(--accent)';
+                        check.style.opacity = '1';
+                    }
+                } else {
+                    card.style.borderColor = 'var(--border-color)';
+                    card.style.background = 'var(--bg-darker)';
+                    if (check) {
+                        check.innerHTML = '<i class="ri-checkbox-blank-circle-line"></i>';
+                        check.style.color = 'var(--text-gray)';
+                        check.style.opacity = '0.3';
+                    }
+                }
+            });
+        };
+
+        window.confirmSelectedYear = async () => {
+            const year = window.selectedModalYear || document.getElementById('modal-selected-year')?.value || '1';
+            const btn = document.getElementById('confirm-year-btn');
+            const originalHtml = btn ? btn.innerHTML : '<span>Confirm & Continue</span> <i class="ri-arrow-right-line"></i>';
+            if (btn) {
+                btn.innerHTML = `<i class="ri-loader-4-line" style="animation: spin 1s linear infinite; display: inline-block;"></i> Saving...`;
+                btn.disabled = true;
+            }
+
+            try {
+                if (window.currentUserId && window.updateDoc && window.doc && window.db) {
+                    await window.updateDoc(window.doc(window.db, 'users', window.currentUserId), {
+                        year: year,
+                        needsYearSelection: false
+                    });
+                }
+                AppState.year = year;
+                localStorage.setItem('medStorm_year', year);
+                window.isPendingGoogleYearChoice = false;
+
+                if (window.syncProfileYearUI) window.syncProfileYearUI(year);
+                if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
+                if (typeof window.renderDashboard === 'function') window.renderDashboard();
+
+                window.closeSelectYearModal();
+                if (window.showToast) {
+                    const yearName = year === '2' ? '2nd Year' : (year === '3' ? '3rd Year' : '1st Year');
+                    window.showToast(`Academic Year set to ${yearName}! 🎓`, 'success');
+                }
+            } catch (err) {
+                console.error("Failed to save selected year:", err);
+                const errEl = document.getElementById('select-year-error');
+                if (errEl) {
+                    errEl.textContent = '❌ ' + (err.message || 'Failed to save year. Please try again.');
+                    errEl.style.display = 'block';
+                }
+            } finally {
+                if (btn) {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
             }
         };
 
@@ -6978,7 +7167,7 @@
                         let uname = cleanName.slice(0, 10) + Math.floor(1000 + Math.random() * 9000);
 
                         let yearInput = document.getElementById('signup-year-value');
-                        let year = yearInput ? yearInput.value : '1';
+                        let initialYear = (window.isSignupMode && yearInput) ? yearInput.value : '1';
 
                         await window.setDoc(window.doc(window.db, 'users', user.uid), {
                             username: uname,
@@ -6986,18 +7175,25 @@
                             firstName: fName,
                             lastName: lName,
                             email: user.email || '',
-                            year: year,
+                            year: initialYear,
+                            needsYearSelection: true,
                             createdAt: Date.now(),
                             lastSeen: Date.now()
                         }, { merge: true });
 
                         localStorage.setItem('medStorm_username', uname);
                         AppState.username = uname;
+                        window.isPendingGoogleYearChoice = true;
+                        if (window.openSelectYearModal) window.openSelectYearModal(initialYear);
                     } else {
                         const data = docSnap.data();
                         if (data && data.username) {
                             localStorage.setItem('medStorm_username', data.username);
                             AppState.username = data.username;
+                        }
+                        if (data && (data.needsYearSelection === true || !data.year)) {
+                            window.isPendingGoogleYearChoice = true;
+                            if (window.openSelectYearModal) window.openSelectYearModal(data.year || '1');
                         }
                     }
                 }
