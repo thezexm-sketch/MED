@@ -1872,10 +1872,11 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 100000;
         }
 
         .profile-btn-container {
@@ -5193,34 +5194,6 @@
                     </div>
 
                     <div
-                        style="margin-top: 1rem; text-align: left; background: var(--bg-darker); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color);">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                            <div
-                                style="color: var(--text-gray); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">
-                                <i class="ri-graduation-cap-line" style="margin-right: 5px;"></i> Academic Year
-                            </div>
-                            <span id="profile-academic-year-text"
-                                style="font-size: 0.82rem; font-weight: 800; color: var(--accent); background: rgba(34, 197, 94, 0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.25);">1st
-                                Year</span>
-                        </div>
-                        <div style="display: flex; gap: 8px; width: 100%; margin-top: 0.5rem;">
-                            <button type="button" id="profile-year-1-btn" onclick="window.updateProfileYear('1')"
-                                style="flex: 1; padding: 0.65rem 0.3rem; border-radius: 10px; border: 2px solid var(--accent); background: var(--accent); color: var(--bg-dark); font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 0.85rem;">
-                                1st Year
-                            </button>
-                            <button type="button" id="profile-year-2-btn" onclick="window.updateProfileYear('2')"
-                                style="flex: 1; padding: 0.65rem 0.3rem; border-radius: 10px; border: 2px solid var(--border-color); background: transparent; color: var(--text-light); font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 0.85rem;">
-                                2nd Year
-                            </button>
-                            <button type="button" id="profile-year-3-btn" onclick="window.updateProfileYear('3')"
-                                style="flex: 1; padding: 0.65rem 0.3rem; border-radius: 10px; border: 2px solid var(--border-color); background: transparent; color: var(--text-light); font-weight: 700; cursor: pointer; transition: all 0.2s ease; font-size: 0.85rem;">
-                                3rd Year
-                            </button>
-                        </div>
-                    </div>
-
-                    <div
                         style="margin-top:1rem; text-align:left; background:var(--bg-darker); padding:1.5rem; border-radius:16px; border:1px solid var(--border-color);">
                         <div
                             style="color:var(--text-gray); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem; font-weight:700;">
@@ -5247,10 +5220,13 @@
                 </div>
             </div>
         </div>
-        <div id="view-quiz" class="view-section">
+        <div id="view-quiz" class="view-section" style="position: relative;">
             <div class="quiz-progress-bar">
                 <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
             </div>
+
+            <canvas id="drawing-canvas"
+                style="position: absolute; top: 0; left: 0; width: 100%; min-height: 100%; z-index: 99990; pointer-events: none; touch-action: none;"></canvas>
 
             <div class="quiz-header" style="align-items: flex-start; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -5338,9 +5314,6 @@
                             style="width: 100%; background: rgba(239, 68, 68, 0.15); color: var(--primary-red); font-weight: bold; border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s;"><i
                                 class="ri-delete-bin-line"></i> Clear</button>
                     </div>
-
-                    <canvas id="drawing-canvas"
-                        style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 99990; pointer-events: none; touch-action: none;"></canvas>
                 </div>
 
                 <div class="question-card">
@@ -6001,7 +5974,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="exit-quiz-modal" style="z-index: 9999;">
+    <div class="modal-overlay" id="exit-quiz-modal" style="z-index: 100000;">
         <div class="modal"
             style="text-align: center; max-width: 420px; padding: 2.5rem 2rem; border-color: rgba(239, 68, 68, 0.3);">
             <div
@@ -8140,7 +8113,26 @@
         function startSession() {
             preloadVotes();
             SessionStartTime = Date.now();
-            document.getElementById('main-quiz-timer').classList.remove('hidden');
+            const pill = document.getElementById('main-quiz-timer');
+            if (pill) {
+                pill.classList.remove('hidden', 'warning');
+            }
+            const timerTextEl = document.getElementById('timer-text');
+            if (timerTextEl) {
+                if (Session.quizMode === 'exam' && Session.settings.time > 0) {
+                    const timeLeft = Session.examTimeLeft || Session.settings.time || 0;
+                    const m = Math.floor(Math.max(0, timeLeft) / 60).toString().padStart(2, '0');
+                    const s = (Math.max(0, timeLeft) % 60).toString().padStart(2, '0');
+                    timerTextEl.innerText = `${m}:${s}`;
+                } else if (Session.quizMode === 'tutor' && Session.settings.time > 0) {
+                    const timeLeft = (Session.questionTimes && Session.questionTimes[Session.index]) || Session.settings.time || 0;
+                    const m = Math.floor(Math.max(0, timeLeft) / 60).toString().padStart(2, '0');
+                    const s = (Math.max(0, timeLeft) % 60).toString().padStart(2, '0');
+                    timerTextEl.innerText = `${m}:${s}`;
+                } else {
+                    timerTextEl.innerText = "00:00";
+                }
+            }
             secondsElapsed = 0;
             clearInterval(globalStopwatch);
             globalStopwatch = setInterval(() => {
@@ -8149,8 +8141,8 @@
                     if (Session.settings.time === 0) {
                         const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
                         const s = (secondsElapsed % 60).toString().padStart(2, '0');
-                        const timerTextEl = document.getElementById('timer-text');
-                        if (timerTextEl) timerTextEl.innerText = `${m}:${s}`;
+                        const tEl = document.getElementById('timer-text');
+                        if (tEl) tEl.innerText = `${m}:${s}`;
                     }
                 }
             }, 1000);
@@ -8216,6 +8208,12 @@
 
         function switchMode(mode, fromHistory = false) {
             clearTimeout(Session.timer);
+            clearInterval(Session.timer);
+            clearInterval(globalStopwatch);
+            const timerTextEl = document.getElementById('timer-text');
+            if (timerTextEl) timerTextEl.innerText = "00:00";
+            const pill = document.getElementById('main-quiz-timer');
+            if (pill) pill.classList.remove('warning');
 
             const drawCanvas = document.getElementById('drawing-canvas');
             if (drawCanvas) {
@@ -9969,7 +9967,12 @@
             try { clearInterval(Session.timer); } catch (e) { }
             try {
                 const timerEl = document.getElementById('main-quiz-timer');
-                if (timerEl) timerEl.classList.add('hidden');
+                if (timerEl) {
+                    timerEl.classList.add('hidden');
+                    timerEl.classList.remove('warning');
+                }
+                const timerTextEl = document.getElementById('timer-text');
+                if (timerTextEl) timerTextEl.innerText = "00:00";
             } catch (e) { }
 
             const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
@@ -12095,6 +12098,7 @@
 
         function loadCurrentDrawing() {
             if (!canvas || !ctx) return;
+            resizeCanvas();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (Session.drawings && Session.drawings[Session.index]) {
                 const img = new Image();
@@ -12109,8 +12113,9 @@
         function resizeCanvas() {
             if (!canvas || !ctx) return;
             const dpr = window.devicePixelRatio || 1;
-            const width = window.innerWidth;
-            const height = window.innerHeight;
+            const quizView = document.getElementById('view-quiz') || document.body;
+            const width = Math.max(quizView.scrollWidth || 0, quizView.clientWidth || 0, window.innerWidth);
+            const height = Math.max(quizView.scrollHeight || 0, quizView.clientHeight || 0, window.innerHeight);
 
             let tempCanvas = null;
             if (canvas.width > 0 && canvas.height > 0) {
@@ -12121,8 +12126,8 @@
                 if (tempCtx) tempCtx.drawImage(canvas, 0, 0);
             }
 
-            canvas.width = width * dpr;
-            canvas.height = height * dpr;
+            canvas.width = Math.round(width * dpr);
+            canvas.height = Math.round(height * dpr);
             canvas.style.width = width + 'px';
             canvas.style.height = height + 'px';
 
@@ -12245,6 +12250,12 @@
                 canvas.addEventListener('touchcancel', endPosition, { passive: false });
             }
         }
+
+        window.addEventListener('resize', () => {
+            if (document.body.classList.contains('focus-mode')) {
+                resizeCanvas();
+            }
+        });
 
         const clearDrawBtn = document.getElementById('clear-draw-btn');
         if (clearDrawBtn) {
@@ -14028,7 +14039,7 @@
         };
 
     </script>
-    <div class="modal-overlay" id="reset-modal" style="z-index: 9999;">
+    <div class="modal-overlay" id="reset-modal" style="z-index: 100000;">
         <div class="modal"
             style="text-align: center; max-width: 420px; padding: 2.5rem 2rem; border-color: rgba(239, 68, 68, 0.3);">
             <div
