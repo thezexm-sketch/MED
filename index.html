@@ -1659,6 +1659,15 @@
             user-select: none;
         }
 
+        .ai-explain-btn.hidden,
+        #ai-explain-btn.hidden {
+            display: none !important;
+        }
+
+        body.focus-mode .ai-chat-btn {
+            display: none !important;
+        }
+
         .ai-explain-btn:hover {
             background: linear-gradient(135deg, rgba(34, 197, 94, 0.28), rgba(21, 128, 61, 0.38));
             border-color: #4ade80;
@@ -1733,7 +1742,6 @@
             cursor: not-allowed;
         }
 
-        /* Tactile Button Feedback & Dark Ripple Layer */
         .quiz-btn,
         .ai-explain-btn,
         .finish-quiz-btn,
@@ -2291,7 +2299,6 @@
             transition: width 0.6s ease;
         }
 
-        /* Analytics Timeframe Selector */
         .timeframe-selector-group {
             display: inline-flex;
             background: var(--bg-darker);
@@ -2323,7 +2330,6 @@
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
         }
 
-        /* Analytics Tooltip */
         .info-tooltip-wrap {
             position: relative;
             display: inline-flex;
@@ -2372,7 +2378,6 @@
             transform: translateX(-50%) translateY(-2px);
         }
 
-        /* Not Started Modules Accordion */
         .not-started-accordion {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -2418,7 +2423,6 @@
             display: flex;
         }
 
-        /* Weak Spots Item */
         .weak-spot-item {
             background: var(--bg-darker);
             border: 1px solid var(--border-color);
@@ -2437,7 +2441,6 @@
             transform: translateY(-2px);
         }
 
-        /* Mastery Bar Item */
         .mastery-bar-row {
             display: flex;
             flex-direction: column;
@@ -2672,6 +2675,11 @@
         .q-box.active {
             border-color: var(--accent);
             background: var(--hover-bg);
+        }
+
+        .q-box.answered {
+            border-color: var(--primary-blue);
+            background: rgba(59, 130, 246, 0.15);
         }
 
         .q-box.correct {
@@ -2916,7 +2924,7 @@
                 gap: 4px !important;
             }
 
-            #ai-explain-btn {
+            #ai-explain-btn:not(.hidden) {
                 display: inline-flex !important;
                 align-items: center !important;
                 gap: 6px !important;
@@ -2925,6 +2933,10 @@
                 font-size: 0.82rem !important;
                 border-radius: 10px !important;
                 margin-left: auto !important;
+            }
+
+            #ai-explain-btn.hidden {
+                display: none !important;
             }
 
             .map-drawer {
@@ -4490,7 +4502,6 @@
                 overlay.style.setProperty('display', 'none', 'important');
             }, 400);
         };
-        // Unconditional safety timer: hide overlay after 3.5s no matter what happens
         setTimeout(() => {
             if (window.hideFirstLoadOverlay) window.hideFirstLoadOverlay();
         }, 3500);
@@ -4498,70 +4509,79 @@
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Academic Year Selection Modal (shown after Google Sign-Up or when needed) -->
     <div class="modal-overlay" id="select-year-modal"
         style="z-index: 100003; background: rgba(14, 20, 18, 0.98); display: none; backdrop-filter: blur(12px);">
         <div class="modal-container"
             style="max-width: 480px; width: 92%; text-align: center; padding: 2.2rem 1.8rem; background: var(--bg-card); border-radius: 24px; border: 1px solid var(--accent); box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 25px rgba(34, 197, 94, 0.15); animation: zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="font-size: 3rem; margin-bottom: 0.5rem; line-height: 1;">🎓</div>
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.4rem;">Choose Your Academic Year</h2>
-            <p style="color: var(--text-gray); margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.5;">Select your academic year to personalize your modules, exams, and dashboard content.</p>
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.4rem;">Choose
+                Your Academic Year</h2>
+            <p style="color: var(--text-gray); margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.5;">Select your
+                academic year to personalize your modules, exams, and dashboard content.</p>
 
-            <div id="year-options-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; text-align: left;">
-                <!-- Year 1 Option -->
+            <div id="year-options-list"
+                style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; text-align: left;">
                 <div class="year-select-card" id="year-option-1" onclick="window.selectYearOption('1')"
                     style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.1rem; border-radius: 14px; border: 2px solid var(--accent); background: rgba(34, 197, 94, 0.12); cursor: pointer; transition: all 0.2s ease;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(34, 197, 94, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--accent); flex-shrink: 0;">
+                        <div
+                            style="width: 42px; height: 42px; border-radius: 10px; background: rgba(34, 197, 94, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--accent); flex-shrink: 0;">
                             <i class="ri-book-open-line"></i>
                         </div>
                         <div>
                             <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-light);">1st Year</div>
-                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Foundation, Blood, CVS, MSK & More</div>
+                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Foundation,
+                                Blood, CVS, MSK & More</div>
                         </div>
                     </div>
-                    <div class="year-check-icon" id="year-check-1" style="color: var(--accent); font-size: 1.4rem; flex-shrink: 0;">
+                    <div class="year-check-icon" id="year-check-1"
+                        style="color: var(--accent); font-size: 1.4rem; flex-shrink: 0;">
                         <i class="ri-checkbox-circle-fill"></i>
                     </div>
                 </div>
 
-                <!-- Year 2 Option -->
                 <div class="year-select-card" id="year-option-2" onclick="window.selectYearOption('2')"
                     style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.1rem; border-radius: 14px; border: 2px solid var(--border-color); background: var(--bg-darker); cursor: pointer; transition: all 0.2s ease;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #60A5FA; flex-shrink: 0;">
+                        <div
+                            style="width: 42px; height: 42px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #60A5FA; flex-shrink: 0;">
                             <i class="ri-heart-pulse-line"></i>
                         </div>
                         <div>
                             <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-light);">2nd Year</div>
-                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Endo, Genital, Urinary, GIT, CNS & More</div>
+                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Endo, Genital,
+                                Urinary, GIT, CNS & More</div>
                         </div>
                     </div>
-                    <div class="year-check-icon" id="year-check-2" style="color: var(--text-gray); font-size: 1.4rem; opacity: 0.3; flex-shrink: 0;">
+                    <div class="year-check-icon" id="year-check-2"
+                        style="color: var(--text-gray); font-size: 1.4rem; opacity: 0.3; flex-shrink: 0;">
                         <i class="ri-checkbox-blank-circle-line"></i>
                     </div>
                 </div>
 
-                <!-- Year 3 Option -->
                 <div class="year-select-card" id="year-option-3" onclick="window.selectYearOption('3')"
                     style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.1rem; border-radius: 14px; border: 2px solid var(--border-color); background: var(--bg-darker); cursor: pointer; transition: all 0.2s ease;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(168, 85, 247, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #a855f7; flex-shrink: 0;">
+                        <div
+                            style="width: 42px; height: 42px; border-radius: 10px; background: rgba(168, 85, 247, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #a855f7; flex-shrink: 0;">
                             <i class="ri-hospital-line"></i>
                         </div>
                         <div>
                             <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-light);">3rd Year</div>
-                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Clinical Modules & Advanced Question Banks</div>
+                            <div style="font-size: 0.78rem; color: var(--text-gray); margin-top: 2px;">Clinical Modules
+                                & Advanced Question Banks</div>
                         </div>
                     </div>
-                    <div class="year-check-icon" id="year-check-3" style="color: var(--text-gray); font-size: 1.4rem; opacity: 0.3; flex-shrink: 0;">
+                    <div class="year-check-icon" id="year-check-3"
+                        style="color: var(--text-gray); font-size: 1.4rem; opacity: 0.3; flex-shrink: 0;">
                         <i class="ri-checkbox-blank-circle-line"></i>
                     </div>
                 </div>
             </div>
 
             <input type="hidden" id="modal-selected-year" value="1">
-            <div id="select-year-error" style="color: var(--primary-red); font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
+            <div id="select-year-error"
+                style="color: var(--primary-red); font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
 
             <button class="quiz-btn btn-primary" onclick="window.confirmSelectedYear()" id="confirm-year-btn"
                 style="width: 100%; padding: 1rem; font-size: 1.05rem; background: var(--accent); color: var(--bg-dark); border: none; font-weight: 800; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); transition: all 0.2s ease;">
@@ -4989,8 +5009,9 @@
                         style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; display: flex; flex-direction: column;">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
-                            <h3 id="journey-chart-title" style="margin: 0; font-weight: 700; font-size: 1.25rem;"><i class="ri-line-chart-fill"
-                                    style="color: var(--primary-blue);"></i> All-Time Performance Journey</h3>
+                            <h3 id="journey-chart-title" style="margin: 0; font-weight: 700; font-size: 1.25rem;"><i
+                                    class="ri-line-chart-fill" style="color: var(--primary-blue);"></i> All-Time
+                                Performance Journey</h3>
                             <div style="display: flex; gap: 1rem;">
                                 <span
                                     style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; color: var(--text-light);">
@@ -5180,7 +5201,8 @@
                                 <i class="ri-graduation-cap-line" style="margin-right: 5px;"></i> Academic Year
                             </div>
                             <span id="profile-academic-year-text"
-                                style="font-size: 0.82rem; font-weight: 800; color: var(--accent); background: rgba(34, 197, 94, 0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.25);">1st Year</span>
+                                style="font-size: 0.82rem; font-weight: 800; color: var(--accent); background: rgba(34, 197, 94, 0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.25);">1st
+                                Year</span>
                         </div>
                         <div style="display: flex; gap: 8px; width: 100%; margin-top: 0.5rem;">
                             <button type="button" id="profile-year-1-btn" onclick="window.updateProfileYear('1')"
@@ -5341,7 +5363,8 @@
                             <button class="icon-action-btn" onclick="toggleMap()" title="Question Map">
                                 <i class="ri-list-unordered"></i>
                             </button>
-                            <button id="ai-explain-btn" class="ai-explain-btn" title="Explain Question with ASA AI">
+                            <button id="ai-explain-btn" class="ai-explain-btn hidden" style="display: none;"
+                                title="Explain Question with ASA AI">
                                 <i class="ri-sparkling-fill"></i>
                                 <span>AI Explain</span>
                             </button>
@@ -6223,17 +6246,35 @@
 
             updateSyncStatusUI('syncing');
 
-            // Calculate direct overall metrics to guarantee accurate global leaderboard sync across all devices
             let computedCorrect = 0;
             let computedWrong = 0;
-            const prog = AppState.progress || {};
-            for (const k in prog) {
-                if (prog[k] === 'correct') computedCorrect++;
-                else if (prog[k] === 'wrong') computedWrong++;
+            const attempted = (AppState.stats && AppState.stats.attemptedQuestions) ? AppState.stats.attemptedQuestions : (AppState.progress || {});
+
+            const validQuestionSet = new Set();
+            if (typeof DB === 'object') {
+                for (const mod in DB) {
+                    if (DB[mod] && typeof extractAllQuestions === 'function') {
+                        const qs = extractAllQuestions(DB[mod]);
+                        qs.forEach(q => { if (q && q.q) validQuestionSet.add(q.q); });
+                    }
+                }
+            }
+
+            for (const k in attempted) {
+                if (validQuestionSet.size === 0 || validQuestionSet.has(k)) {
+                    if (attempted[k] === 'correct') computedCorrect++;
+                    else if (attempted[k] === 'wrong') computedWrong++;
+                }
             }
             const computedTotal = computedCorrect + computedWrong;
             const computedPoints = computedCorrect - computedWrong;
             const computedAcc = computedTotal > 0 ? Math.round((computedCorrect / computedTotal) * 100) : 0;
+
+            delete pendingSyncData.points;
+            delete pendingSyncData.totalCorrect;
+            delete pendingSyncData.totalWrong;
+            delete pendingSyncData.totalAnswered;
+            delete pendingSyncData.accuracy;
 
             const dataToSync = {
                 ...pendingSyncData,
@@ -6399,11 +6440,10 @@
                     AppState.accuracy = typeof data.accuracy === 'number' ? data.accuracy : (AppState.totalAnswered > 0 ? Math.round((AppState.totalCorrect / AppState.totalAnswered) * 100) : 0);
 
                     let totalCorr = 0, totalWr = 0;
-                    if (data.progress) {
-                        for (const val of Object.values(data.progress)) {
-                            if (val === 'correct') totalCorr++;
-                            else if (val === 'wrong') totalWr++;
-                        }
+                    const attempted = (data.stats && data.stats.attemptedQuestions) ? data.stats.attemptedQuestions : (data.progress || {});
+                    for (const val of Object.values(attempted)) {
+                        if (val === 'correct') totalCorr++;
+                        else if (val === 'wrong') totalWr++;
                     }
                     AppState.points = typeof data.points === 'number' ? data.points : (totalCorr - totalWr);
                     localStorage.setItem('medStormPoints', AppState.points);
@@ -6565,19 +6605,6 @@
         onAuthStateChanged(auth, async (user) => {
             try {
                 if (user) {
-                    if (!user.emailVerified && user.providerData && user.providerData.some(p => p.providerId === 'password')) {
-                        const creationTime = user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).getTime() : 0;
-                        const enforcementDate = new Date('2026-07-15T00:00:00Z').getTime();
-
-                        if (creationTime > enforcementDate) {
-                            const lOverlay = document.getElementById('login-overlay');
-                            if (lOverlay) lOverlay.style.display = 'none';
-                            const vOverlay = document.getElementById('verification-overlay');
-                            if (vOverlay) vOverlay.style.display = 'flex';
-                            if (window.hideFirstLoadOverlay) window.hideFirstLoadOverlay();
-                            return;
-                        }
-                    }
                     const vOverlay = document.getElementById('verification-overlay');
                     if (vOverlay) vOverlay.style.display = 'none';
 
@@ -6850,7 +6877,7 @@
             const btn1 = document.getElementById('profile-year-1-btn');
             const btn2 = document.getElementById('profile-year-2-btn');
             const btn3 = document.getElementById('profile-year-3-btn');
-            
+
             [{ btn: btn1, y: '1' }, { btn: btn2, y: '2' }, { btn: btn3, y: '3' }].forEach(({ btn, y }) => {
                 if (!btn) return;
                 if (String(activeYear) === y) {
@@ -6987,7 +7014,8 @@
             let totalAnswered = 0;
             let totalCorrect = 0;
             let totalWrong = 0;
-            for (const [qText, val] of Object.entries(AppState.progress || {})) {
+            const attempted = (AppState.stats && AppState.stats.attemptedQuestions) ? AppState.stats.attemptedQuestions : (AppState.progress || {});
+            for (const [qText, val] of Object.entries(attempted)) {
                 if (allowedQs.has(qText)) {
                     totalAnswered++;
                     if (val === 'correct') {
@@ -7078,11 +7106,6 @@
             try {
                 if (window.isSignupMode) {
                     const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                    try {
-                        await window.sendEmailVerification(cred.user);
-                    } catch (e) {
-                        console.warn("Failed to send verification email: ", e);
-                    }
 
                     const isUnique = await window.checkUsernameUnique(uname);
                     if (!isUnique || isUnique === "error") {
@@ -7265,7 +7288,6 @@
                 if (window.showToast) window.showToast("Verification email sent! Check spam folder.", "success");
                 else alert("Verification email sent! Check your inbox and spam folder.");
 
-                // Start 60-second cooldown to prevent Firebase rate-limiting
                 let secondsLeft = 60;
                 if (btn) btn.innerHTML = `Resend in ${secondsLeft}s`;
                 if (resendCooldownTimer) clearInterval(resendCooldownTimer);
@@ -7427,19 +7449,40 @@
         };
         const IDB_NAME = 'MedStormQuestionsDB';
         const IDB_STORE = 'modules';
+        let idbInstance = null;
+        let idbOpeningPromise = null;
 
         function openIDB() {
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open(IDB_NAME, 1);
-                req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
-                req.onsuccess = () => resolve(req.result);
-                req.onerror = () => reject(req.error);
+            if (idbInstance) return Promise.resolve(idbInstance);
+            if (idbOpeningPromise) return idbOpeningPromise;
+            idbOpeningPromise = new Promise((resolve) => {
+                try {
+                    const req = indexedDB.open(IDB_NAME, 1);
+                    req.onupgradeneeded = () => {
+                        try { req.result.createObjectStore(IDB_STORE); } catch (e) { }
+                    };
+                    req.onsuccess = () => {
+                        idbInstance = req.result;
+                        idbInstance.onclose = () => { idbInstance = null; };
+                        idbOpeningPromise = null;
+                        resolve(idbInstance);
+                    };
+                    req.onerror = () => {
+                        idbOpeningPromise = null;
+                        resolve(null);
+                    };
+                } catch (e) {
+                    idbOpeningPromise = null;
+                    resolve(null);
+                }
             });
+            return idbOpeningPromise;
         }
 
         async function getIDBCache(key) {
             try {
                 const idb = await openIDB();
+                if (!idb) return null;
                 return new Promise((resolve) => {
                     const tx = idb.transaction(IDB_STORE, 'readonly');
                     const req = tx.objectStore(IDB_STORE).get(key);
@@ -7452,11 +7495,40 @@
         async function setIDBCache(key, value) {
             try {
                 const idb = await openIDB();
+                if (!idb) return false;
                 return new Promise((resolve) => {
                     const tx = idb.transaction(IDB_STORE, 'readwrite');
                     tx.objectStore(IDB_STORE).put(value, key);
                     tx.oncomplete = () => resolve(true);
                     tx.onerror = () => resolve(false);
+                });
+            } catch (e) { return false; }
+        }
+
+        async function loadAllCachedModulesFromIDB() {
+            try {
+                const idb = await openIDB();
+                if (!idb) return false;
+                return new Promise((resolve) => {
+                    const tx = idb.transaction(IDB_STORE, 'readonly');
+                    const store = tx.objectStore(IDB_STORE);
+                    const req = store.openCursor();
+                    req.onsuccess = (e) => {
+                        const cursor = e.target.result;
+                        if (cursor) {
+                            const key = cursor.key;
+                            const val = cursor.value;
+                            if (val && val.data && key !== '__modules_metadata__') {
+                                DB[key] = val.data;
+                            } else if (key === '__modules_metadata__' && val && val.data) {
+                                window.DB_METADATA = Object.assign({}, window.DB_METADATA, val.data);
+                            }
+                            cursor.continue();
+                        } else {
+                            resolve(true);
+                        }
+                    };
+                    req.onerror = () => resolve(false);
                 });
             } catch (e) { return false; }
         }
@@ -7512,69 +7584,59 @@
         };
 
         async function checkServerMetadata() {
+            if (serverMetadata) return serverMetadata;
             try {
-                const metaSnap = await getDoc(doc(db, "content", "metadata"));
-                if (metaSnap.exists()) {
+                const metaPromise = getDoc(doc(db, "content", "metadata"));
+                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 3000));
+                const metaSnap = await Promise.race([metaPromise, timeoutPromise]);
+                if (metaSnap && metaSnap.exists()) {
                     serverMetadata = metaSnap.data();
                 }
-            } catch (e) { console.warn("Metadata check failed:", e); }
+            } catch (e) { }
+            return serverMetadata;
         }
 
         async function fetchQuestionsFromDB() {
-            await checkServerMetadata();
+            await loadAllCachedModulesFromIDB();
+            if (typeof window.renderDashboard === "function") window.renderDashboard();
 
-            try {
-                const cachedMeta = await getIDBCache('__modules_metadata__');
-                const serverUpdatedAt = serverMetadata ? serverMetadata['modules_metadata_updatedAt'] : null;
-                if (cachedMeta && cachedMeta.data && (!serverUpdatedAt || (cachedMeta.updatedAt && cachedMeta.updatedAt >= serverUpdatedAt))) {
-                    window.DB_METADATA = Object.assign({}, window.DB_METADATA, cachedMeta.data);
-                } else {
-                    const metaSnap = await getDoc(doc(db, "content", "modules_metadata"));
-                    if (metaSnap.exists()) {
-                        const rMeta = metaSnap.data();
-                        window.DB_METADATA = Object.assign({}, window.DB_METADATA, rMeta);
-                        await setIDBCache('__modules_metadata__', { data: rMeta, updatedAt: serverUpdatedAt || Date.now() });
-                    }
-                }
-            } catch (e) { console.warn("Fetch modules_metadata failed:", e); }
-
-            const modules = [
-                { id: 'msk_questions', key: 'MSK' },
-                { id: 'blood_questions', key: 'Blood' },
-                { id: 'foundation_questions', key: 'Foundation' },
-                { id: 'terminology_questions', key: 'Terminology' },
-                { id: 'cvs_questions', key: 'CVS' },
-                { id: 'communication_step_1_questions', key: 'Communication Step 1' },
-                { id: 'communication_step_2_questions', key: 'Communication Step 2' },
-                { id: 'professionalism_questions', key: 'Professionalism' },
-                { id: 'endocrine_questions', key: 'Endocrine' },
-                { id: 'genital_questions', key: 'Genital' },
-                { id: 'urinary_questions', key: 'Urinary' },
-                { id: 'egu_questions', key: 'EGU' },
-                { id: 'git_questions', key: 'GIT' },
-                { id: 'cns_questions', key: 'CNS' },
-                { id: 'c1_pharmacology_questions', key: 'Concept 1 Pharmacology' },
-                { id: 'c1_pathology_questions', key: 'Concept 1 Pathology' },
-                { id: 'c1_genetics_questions', key: 'Concept 1 Genetics' },
-                { id: 'c1_past_exams_questions', key: 'Concept 1 Past Exams' },
-                { id: 'c2_pharmacology_questions', key: 'Concept 2 Pharmacology' },
-                { id: 'c2_pathology_questions', key: 'Concept 2 Pathology' },
-                { id: 'c2_past_exams_questions', key: 'Concept 2 Past Exams' },
-            ];
-
-            for (const mod of modules) {
+            checkServerMetadata().then(async (meta) => {
+                if (!meta) return;
                 try {
-                    const cached = await getIDBCache(mod.key);
-                    const serverUpdatedAt = serverMetadata ? serverMetadata[mod.id + '_updatedAt'] : null;
-                    if (cached && cached.data && Object.keys(cached.data).length > 0) {
-                        if (!serverUpdatedAt || (cached.updatedAt && cached.updatedAt >= serverUpdatedAt)) {
-                            DB[mod.key] = cached.data;
+                    const cachedMeta = await getIDBCache('__modules_metadata__');
+                    const serverUpdatedAt = meta['modules_metadata_updatedAt'];
+                    if (!cachedMeta || !cachedMeta.updatedAt || (serverUpdatedAt && serverUpdatedAt > cachedMeta.updatedAt)) {
+                        const metaSnap = await getDoc(doc(db, "content", "modules_metadata"));
+                        if (metaSnap.exists()) {
+                            const rMeta = metaSnap.data();
+                            window.DB_METADATA = Object.assign({}, window.DB_METADATA, rMeta);
+                            await setIDBCache('__modules_metadata__', { data: rMeta, updatedAt: serverUpdatedAt || Date.now() });
+                            if (typeof window.renderDashboard === "function") window.renderDashboard();
                         }
                     }
                 } catch (e) { }
-            }
+            }).catch(() => { });
 
-            if (typeof window.renderDashboard === "function") window.renderDashboard();
+
+            setTimeout(async () => {
+                try {
+                    const yr = String((window.AppState && window.AppState.year) || '1');
+                    let priorityModules = [];
+                    if (yr === '1') {
+                        priorityModules = ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
+                    } else if (yr === '2') {
+                        priorityModules = ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'Communication Step 2', 'CNS', 'Professionalism', 'Concept 1 Pharmacology', 'Concept 1 Pathology', 'Concept 2 Pharmacology', 'Concept 2 Pathology'];
+                    }
+                    for (const modKey of priorityModules) {
+                        if (!DB[modKey] || Object.keys(DB[modKey]).length === 0) {
+                            await fetchSingleModuleFromDB(modKey);
+                            await new Promise(r => setTimeout(r, 350));
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Background module prefetch error:", e);
+                }
+            }, 1200);
         }
 
         function mergeChunkObjects(target, source) {
@@ -7601,6 +7663,31 @@
                 return merged;
             }
             return source;
+        }
+
+        function getGlobalFallbackModule(moduleKey) {
+            if (moduleKey === 'MSK' && typeof MSK_QUESTIONS !== 'undefined') return MSK_QUESTIONS;
+            if (moduleKey === 'Blood' && typeof BLOOD_QUESTIONS !== 'undefined') return BLOOD_QUESTIONS;
+            if (moduleKey === 'Foundation' && typeof FOUNDATION_QUESTIONS !== 'undefined') return FOUNDATION_QUESTIONS;
+            if (moduleKey === 'Terminology' && typeof TERMINOLOGY_QUESTIONS !== 'undefined') return TERMINOLOGY_QUESTIONS;
+            if (moduleKey === 'CVS' && typeof CVS_QUESTIONS !== 'undefined') return CVS_QUESTIONS;
+            if (moduleKey === 'Communication Step 1' && (typeof communication_step_1 !== 'undefined' || typeof COMMUNICATION_STEP_1 !== 'undefined')) return typeof communication_step_1 !== 'undefined' ? communication_step_1 : COMMUNICATION_STEP_1;
+            if (moduleKey === 'Communication Step 2' && (typeof communication_step_2 !== 'undefined' || typeof COMMUNICATION_STEP_2 !== 'undefined')) return typeof communication_step_2 !== 'undefined' ? communication_step_2 : COMMUNICATION_STEP_2;
+            if (moduleKey === 'Professionalism' && (typeof professionalism !== 'undefined' || typeof PROFESSIONALISM !== 'undefined')) return typeof professionalism !== 'undefined' ? professionalism : PROFESSIONALISM;
+            if (moduleKey === 'CNS' && typeof CNS_QUESTIONS !== 'undefined') return CNS_QUESTIONS;
+            if (moduleKey === 'Endocrine' && typeof ENDOCRINE_QUESTIONS !== 'undefined') return ENDOCRINE_QUESTIONS;
+            if (moduleKey === 'Genital' && typeof GENITAL_QUESTIONS !== 'undefined') return GENITAL_QUESTIONS;
+            if (moduleKey === 'Urinary' && typeof URINARY_QUESTIONS !== 'undefined') return URINARY_QUESTIONS;
+            if (moduleKey === 'EGU' && typeof EGU !== 'undefined') return EGU;
+            if (moduleKey === 'GIT' && typeof GIT_QUESTIONS !== 'undefined') return GIT_QUESTIONS;
+            if (moduleKey === 'Concept 1 Pharmacology' && typeof CONCEPT_1_PHARMACOLOGY !== 'undefined') return CONCEPT_1_PHARMACOLOGY;
+            if (moduleKey === 'Concept 1 Pathology' && typeof CONCEPT_1_PATHOLOGY !== 'undefined') return CONCEPT_1_PATHOLOGY;
+            if (moduleKey === 'Concept 1 Genetics' && typeof CONCEPT_1_GENETICS !== 'undefined') return CONCEPT_1_GENETICS;
+            if (moduleKey === 'Concept 1 Past Exams' && (typeof CONCEPT_1_PAST_EXAMS !== 'undefined' || typeof C1_PAST_EXAMS !== 'undefined')) return typeof CONCEPT_1_PAST_EXAMS !== 'undefined' ? CONCEPT_1_PAST_EXAMS : C1_PAST_EXAMS;
+            if (moduleKey === 'Concept 2 Pharmacology' && (typeof C2_Pharma !== 'undefined' || typeof CONCEPT_2_PHARMACOLOGY !== 'undefined')) return typeof C2_Pharma !== 'undefined' ? C2_Pharma : CONCEPT_2_PHARMACOLOGY;
+            if (moduleKey === 'Concept 2 Pathology' && (typeof C2_Pathology !== 'undefined' || typeof CONCEPT_2_PATHOLOGY !== 'undefined')) return typeof C2_Pathology !== 'undefined' ? C2_Pathology : CONCEPT_2_PATHOLOGY;
+            if (moduleKey === 'Concept 2 Past Exams' && (typeof C2_PREVIOUS_EXAMS !== 'undefined' || typeof CONCEPT_2_PAST_EXAMS !== 'undefined' || typeof C2_PAST_EXAMS !== 'undefined' || typeof PAST_EXAMS !== 'undefined')) return typeof C2_PREVIOUS_EXAMS !== 'undefined' ? C2_PREVIOUS_EXAMS : (typeof CONCEPT_2_PAST_EXAMS !== 'undefined' ? CONCEPT_2_PAST_EXAMS : (typeof C2_PAST_EXAMS !== 'undefined' ? C2_PAST_EXAMS : (typeof PAST_EXAMS !== 'undefined' ? PAST_EXAMS : null)));
+            return null;
         }
 
         async function fetchSingleModuleFromDB(moduleKey) {
@@ -7630,74 +7717,102 @@
             const mod = modules.find(m => m.key === moduleKey);
             if (!mod) return DB[moduleKey];
 
-            if (!serverMetadata) await checkServerMetadata();
+            if (DB[moduleKey] && Object.keys(DB[moduleKey]).length > 0) {
+                return DB[moduleKey];
+            }
 
             const cached = await getIDBCache(moduleKey);
-            const serverUpdatedAt = serverMetadata ? serverMetadata[mod.id + '_updatedAt'] : null;
-
-            if (cached && cached.data && Object.keys(cached.data).length > 0 && serverUpdatedAt && cached.updatedAt && cached.updatedAt >= serverUpdatedAt) {
+            if (cached && cached.data && Object.keys(cached.data).length > 0) {
                 DB[moduleKey] = cached.data;
+                checkForModuleUpdateInBackground(mod, cached.updatedAt);
+                return DB[moduleKey];
+            }
+
+            const fallbackData = getGlobalFallbackModule(moduleKey);
+            if (fallbackData && Object.keys(fallbackData).length > 0) {
+                DB[moduleKey] = fallbackData;
+                setIDBCache(moduleKey, { data: fallbackData, updatedAt: Date.now() });
+                checkForModuleUpdateInBackground(mod, 0);
                 return DB[moduleKey];
             }
 
             try {
-                const docSnap = await getDoc(doc(db, "content", mod.id));
-                if (docSnap.exists()) {
-                    let data = docSnap.data();
-                    if (data && data._isChunked && data._chunkCount > 1) {
-                        const chunkCount = data._chunkCount;
-                        delete data._isChunked;
-                        delete data._chunkCount;
-                        let mergedData = data;
-                        const chunkPromises = [];
-                        for (let i = 1; i < chunkCount; i++) {
-                            chunkPromises.push(getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)));
-                        }
-                        const chunkSnaps = await Promise.all(chunkPromises);
-                        chunkSnaps.forEach(cSnap => {
-                            if (cSnap.exists()) {
-                                const cData = cSnap.data();
-                                delete cData._isChunked;
-                                delete cData._chunkCount;
-                                mergedData = mergeChunkObjects(mergedData, cData);
+                const fetchPromise = (async () => {
+                    const docSnap = await getDoc(doc(db, "content", mod.id));
+                    if (docSnap.exists()) {
+                        let data = docSnap.data();
+                        if (data && data._isChunked && data._chunkCount > 1) {
+                            const chunkPromises = [];
+                            for (let i = 1; i < data._chunkCount; i++) {
+                                chunkPromises.push(getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)));
                             }
-                        });
-                        data = mergedData;
+                            const chunkSnaps = await Promise.all(chunkPromises);
+                            let mergedData = data;
+                            delete mergedData._isChunked;
+                            delete mergedData._chunkCount;
+                            chunkSnaps.forEach(cSnap => {
+                                if (cSnap.exists()) {
+                                    const cData = cSnap.data();
+                                    delete cData._isChunked;
+                                    delete cData._chunkCount;
+                                    mergedData = mergeChunkObjects(mergedData, cData);
+                                }
+                            });
+                            data = mergedData;
+                        }
+                        const finalData = data.questionsList ? data.questionsList : data;
+                        DB[moduleKey] = finalData;
+                        await setIDBCache(moduleKey, { data: finalData, updatedAt: Date.now() });
+                        return finalData;
                     }
-                    let finalData = data.questionsList ? data.questionsList : data;
+                    return null;
+                })();
 
-                    if (moduleKey === 'MSK' && (!finalData || Object.keys(finalData).length === 0) && typeof MSK_QUESTIONS !== 'undefined') finalData = MSK_QUESTIONS;
-                    if (moduleKey === 'Blood' && (!finalData || Object.keys(finalData).length === 0) && typeof BLOOD_QUESTIONS !== 'undefined') finalData = BLOOD_QUESTIONS;
-                    if (moduleKey === 'Foundation' && (!finalData || Object.keys(finalData).length === 0) && typeof FOUNDATION_QUESTIONS !== 'undefined') finalData = FOUNDATION_QUESTIONS;
-                    if (moduleKey === 'Terminology' && (!finalData || Object.keys(finalData).length === 0) && typeof TERMINOLOGY_QUESTIONS !== 'undefined') finalData = TERMINOLOGY_QUESTIONS;
-                    if (moduleKey === 'CVS' && (!finalData || Object.keys(finalData).length === 0) && typeof CVS_QUESTIONS !== 'undefined') finalData = CVS_QUESTIONS;
-                    if (moduleKey === 'Communication Step 1' && (!finalData || Object.keys(finalData).length === 0) && (typeof communication_step_1 !== 'undefined' || typeof COMMUNICATION_STEP_1 !== 'undefined')) finalData = typeof communication_step_1 !== 'undefined' ? communication_step_1 : COMMUNICATION_STEP_1;
-                    if (moduleKey === 'Communication Step 2' && (!finalData || Object.keys(finalData).length === 0) && (typeof communication_step_2 !== 'undefined' || typeof COMMUNICATION_STEP_2 !== 'undefined')) finalData = typeof communication_step_2 !== 'undefined' ? communication_step_2 : COMMUNICATION_STEP_2;
-                    if (moduleKey === 'Professionalism' && (!finalData || Object.keys(finalData).length === 0) && (typeof professionalism !== 'undefined' || typeof PROFESSIONALISM !== 'undefined')) finalData = typeof professionalism !== 'undefined' ? professionalism : PROFESSIONALISM;
-                    if (moduleKey === 'CNS' && (!finalData || Object.keys(finalData).length === 0) && typeof CNS_QUESTIONS !== 'undefined') finalData = CNS_QUESTIONS;
-                    if (moduleKey === 'Endocrine' && (!finalData || Object.keys(finalData).length === 0) && typeof ENDOCRINE_QUESTIONS !== 'undefined') finalData = ENDOCRINE_QUESTIONS;
-                    if (moduleKey === 'Genital' && (!finalData || Object.keys(finalData).length === 0) && typeof GENITAL_QUESTIONS !== 'undefined') finalData = GENITAL_QUESTIONS;
-                    if (moduleKey === 'Urinary' && (!finalData || Object.keys(finalData).length === 0) && typeof URINARY_QUESTIONS !== 'undefined') finalData = URINARY_QUESTIONS;
-                    if (moduleKey === 'EGU' && (!finalData || Object.keys(finalData).length === 0) && typeof EGU !== 'undefined') finalData = EGU;
-                    if (moduleKey === 'GIT' && (!finalData || Object.keys(finalData).length === 0) && typeof GIT_QUESTIONS !== 'undefined') finalData = GIT_QUESTIONS;
-                    if (moduleKey === 'Concept 1 Pharmacology' && (!finalData || Object.keys(finalData).length === 0) && typeof CONCEPT_1_PHARMACOLOGY !== 'undefined') finalData = CONCEPT_1_PHARMACOLOGY;
-                    if (moduleKey === 'Concept 1 Pathology' && (!finalData || Object.keys(finalData).length === 0) && typeof CONCEPT_1_PATHOLOGY !== 'undefined') finalData = CONCEPT_1_PATHOLOGY;
-                    if (moduleKey === 'Concept 1 Genetics' && (!finalData || Object.keys(finalData).length === 0) && typeof CONCEPT_1_GENETICS !== 'undefined') finalData = CONCEPT_1_GENETICS;
-                    if (moduleKey === 'Concept 1 Past Exams' && (!finalData || Object.keys(finalData).length === 0) && (typeof CONCEPT_1_PAST_EXAMS !== 'undefined' ? CONCEPT_1_PAST_EXAMS : (typeof C1_PAST_EXAMS !== 'undefined' ? C1_PAST_EXAMS : undefined))) finalData = typeof CONCEPT_1_PAST_EXAMS !== 'undefined' ? CONCEPT_1_PAST_EXAMS : C1_PAST_EXAMS;
-                    if (moduleKey === 'Concept 2 Pharmacology' && (!finalData || Object.keys(finalData).length === 0) && (typeof C2_Pharma !== 'undefined' || typeof CONCEPT_2_PHARMACOLOGY !== 'undefined')) finalData = typeof C2_Pharma !== 'undefined' ? C2_Pharma : CONCEPT_2_PHARMACOLOGY;
-                    if (moduleKey === 'Concept 2 Pathology' && (!finalData || Object.keys(finalData).length === 0) && (typeof C2_Pathology !== 'undefined' || typeof CONCEPT_2_PATHOLOGY !== 'undefined')) finalData = typeof C2_Pathology !== 'undefined' ? C2_Pathology : CONCEPT_2_PATHOLOGY;
-                    if (moduleKey === 'Concept 2 Past Exams' && (!finalData || Object.keys(finalData).length === 0) && (typeof C2_PREVIOUS_EXAMS !== 'undefined' || typeof CONCEPT_2_PAST_EXAMS !== 'undefined' || typeof C2_PAST_EXAMS !== 'undefined')) finalData = typeof C2_PREVIOUS_EXAMS !== 'undefined' ? C2_PREVIOUS_EXAMS : (typeof CONCEPT_2_PAST_EXAMS !== 'undefined' ? CONCEPT_2_PAST_EXAMS : C2_PAST_EXAMS);
-
-                    DB[moduleKey] = finalData;
-                    await setIDBCache(moduleKey, { data: finalData, updatedAt: serverUpdatedAt || Date.now() });
-                } else if (cached && cached.data && Object.keys(cached.data).length > 0) {
-                    DB[moduleKey] = cached.data;
-                }
+                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Network timeout")), 6000));
+                await Promise.race([fetchPromise, timeoutPromise]);
             } catch (e) {
-                console.warn(`Fetch module ${moduleKey} failed:`, e);
-                if (cached && cached.data && Object.keys(cached.data).length > 0) DB[moduleKey] = cached.data;
+                console.warn(`Fetch module ${moduleKey} network timeout or error:`, e);
+                const fb = getGlobalFallbackModule(moduleKey);
+                if (fb) DB[moduleKey] = fb;
             }
+
             return DB[moduleKey];
+        }
+
+        async function checkForModuleUpdateInBackground(mod, cachedUpdatedAt) {
+            try {
+                if (!serverMetadata) await checkServerMetadata();
+                const serverUpdatedAt = serverMetadata ? serverMetadata[mod.id + '_updatedAt'] : null;
+                if (serverUpdatedAt && (!cachedUpdatedAt || serverUpdatedAt > cachedUpdatedAt)) {
+                    const docSnap = await getDoc(doc(db, "content", mod.id));
+                    if (docSnap.exists()) {
+                        let data = docSnap.data();
+                        if (data && data._isChunked && data._chunkCount > 1) {
+                            const chunkPromises = [];
+                            for (let i = 1; i < data._chunkCount; i++) {
+                                chunkPromises.push(getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)));
+                            }
+                            const chunkSnaps = await Promise.all(chunkPromises);
+                            let merged = data;
+                            delete merged._isChunked;
+                            delete merged._chunkCount;
+                            chunkSnaps.forEach(cs => {
+                                if (cs.exists()) {
+                                    const cd = cs.data();
+                                    delete cd._isChunked;
+                                    delete cd._chunkCount;
+                                    merged = mergeChunkObjects(merged, cd);
+                                }
+                            });
+                            data = merged;
+                        }
+                        const finalData = data.questionsList ? data.questionsList : data;
+                        DB[mod.key] = finalData;
+                        await setIDBCache(mod.key, { data: finalData, updatedAt: serverUpdatedAt });
+                        if (typeof window.renderDashboard === "function") window.renderDashboard();
+                    }
+                }
+            } catch (e) { }
         }
 
         window.fetchSingleModuleFromDB = fetchSingleModuleFromDB;
@@ -7784,7 +7899,7 @@
                 'Concept 1 Past Exams': typeof CONCEPT_1_PAST_EXAMS !== 'undefined' ? CONCEPT_1_PAST_EXAMS : (typeof C1_PAST_EXAMS !== 'undefined' ? C1_PAST_EXAMS : {}),
                 'Concept 2 Pharmacology': typeof C2_Pharma !== 'undefined' ? C2_Pharma : (typeof CONCEPT_2_PHARMACOLOGY !== 'undefined' ? CONCEPT_2_PHARMACOLOGY : []),
                 'Concept 2 Pathology': typeof C2_Pathology !== 'undefined' ? C2_Pathology : (typeof CONCEPT_2_PATHOLOGY !== 'undefined' ? CONCEPT_2_PATHOLOGY : []),
-                'Concept 2 Past Exams': typeof C2_PREVIOUS_EXAMS !== 'undefined' ? C2_PREVIOUS_EXAMS : (typeof CONCEPT_2_PAST_EXAMS !== 'undefined' ? CONCEPT_2_PAST_EXAMS : (typeof C2_PAST_EXAMS !== 'undefined' ? C2_PAST_EXAMS : {}))
+                'Concept 2 Past Exams': typeof C2_PREVIOUS_EXAMS !== 'undefined' ? C2_PREVIOUS_EXAMS : (typeof CONCEPT_2_PAST_EXAMS !== 'undefined' ? CONCEPT_2_PAST_EXAMS : (typeof C2_PAST_EXAMS !== 'undefined' ? C2_PAST_EXAMS : (typeof PAST_EXAMS !== 'undefined' ? PAST_EXAMS : {})))
             };
 
             const AppState = {
@@ -7998,8 +8113,8 @@
                     Session.cachedVotes[voteDocId] = voteData;
 
                     if (Session.index === idx) {
-                        const answered = Session.answers[idx] !== null;
-                        if (answered || Session.reviewing) {
+                        const isTutorAnswered = Session.quizMode === 'tutor' && Session.answers[idx] !== null;
+                        if (isTutorAnswered || Session.reviewing) {
                             showVotePercentages(q.q, q.o.length, idx);
                         }
                     }
@@ -8032,14 +8147,16 @@
             SessionStartTime = Date.now();
             document.getElementById('main-quiz-timer').classList.remove('hidden');
             secondsElapsed = 0;
-            document.getElementById('timer-text').innerText = '00:00';
             clearInterval(globalStopwatch);
             globalStopwatch = setInterval(() => {
                 if (!Session.reviewing) {
                     secondsElapsed++;
-                    const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-                    const s = (secondsElapsed % 60).toString().padStart(2, '0');
-                    document.getElementById('timer-text').innerText = `${m}:${s}`;
+                    if (Session.settings.time === 0) {
+                        const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                        const s = (secondsElapsed % 60).toString().padStart(2, '0');
+                        const timerTextEl = document.getElementById('timer-text');
+                        if (timerTextEl) timerTextEl.innerText = `${m}:${s}`;
+                    }
                 }
             }, 1000);
         }
@@ -8088,7 +8205,7 @@
                 nextQuestion();
             }
 
-            if (Session.answers[Session.index] === null && !Session.reviewing) {
+            if (!Session.reviewing && (Session.answers[Session.index] === null || Session.quizMode === 'exam')) {
                 const num = parseInt(e.key);
                 if (num >= 1 && num <= 4) {
                     e.preventDefault();
@@ -8566,7 +8683,7 @@
                         if (window.showToast) window.showToast(`${cardTitle} module is currently locked 🔒`, 'error');
                         return;
                     }
-                    if (!displayAllSolved) openStartModal(modName, isMistakes);
+                    openStartModal(modName, isMistakes);
                 };
                 return card;
             }
@@ -8623,6 +8740,8 @@
         };
 
         function createSubtopicBtn(label, count, value, weakInfo) {
+            const btn = document.createElement('button');
+            btn.className = 'subtopic-btn';
             btn.dataset.count = count;
 
             const displayLabel = label.replace(/^\d+\.\s*/, "");
@@ -8826,9 +8945,13 @@
                 return;
             }
             if ((!DB[modName] || Object.keys(DB[modName]).length === 0) && window.fetchSingleModuleFromDB) {
-                if (window.showToast) window.showToast(`Fetching ${modName} questions... ⏳`, 'info');
+                if (window.showToast) window.showToast(`Loading ${modName}... ⏳`, 'info');
                 await window.fetchSingleModuleFromDB(modName);
                 if (typeof window.renderDashboard === "function") window.renderDashboard();
+            }
+            if (!DB[modName] || Object.keys(DB[modName]).length === 0) {
+                if (window.showToast) window.showToast(`Could not load ${modName} questions. Check your internet connection.`, 'error');
+                return;
             }
             const errDiv = document.getElementById('start-modal-error');
             if (errDiv) errDiv.style.display = 'none';
@@ -8973,7 +9096,16 @@
                         }
                     }
                 }
-                if (subGrid.innerHTML === '') subGrid.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-gray)">No questions available.</div>';
+                if (subGrid.innerHTML === '') {
+                    subGrid.innerHTML = `
+                        <div style="text-align:center; padding:2rem; color:var(--text-gray);">
+                            <div style="font-size: 2.2rem; color: var(--primary-green); margin-bottom: 0.5rem;"><i class="ri-checkbox-circle-fill"></i></div>
+                            <h4 style="color:var(--text-light); font-size:1.1rem; margin-bottom:0.5rem;">${isMistakes ? 'No mistakes recorded!' : 'All questions solved!'}</h4>
+                            <p style="font-size:0.85rem; margin-bottom:1.2rem;">${isMistakes ? 'You currently have no wrong questions in this module.' : 'You have completed all questions in this module.'}</p>
+                            ${!isMistakes ? `<button class="quiz-btn btn-secondary" style="display:inline-flex; align-items:center; gap:6px;" onclick="resetModule('${modName}', event)"><i class="ri-restart-line"></i> Reset Module to Solve Again</button>` : ''}
+                        </div>
+                    `;
+                }
             } else {
                 if (subContainer) subContainer.style.display = 'none';
             }
@@ -9117,6 +9249,8 @@
 
             Session.queue = pool.sort(() => 0.5 - Math.random()).slice(0, count);
             Session.answers = new Array(Session.queue.length).fill(null);
+            Session.questionTimes = new Array(Session.queue.length).fill(Session.settings.time);
+            Session.examTimeLeft = Session.settings.time;
             Session.index = 0; Session.score = 0; Session.reviewing = false;
 
             if (Session.mode === 'mistakes') document.body.setAttribute('data-mode', 'mistakes');
@@ -9127,11 +9261,13 @@
             const quizView = document.getElementById('view-quiz');
             quizView.style.display = 'flex'; quizView.classList.add('active');
 
-            startSession(); loadQuestion();
+            startSession();
+            if (Session.quizMode === 'exam' && Session.settings.time > 0) {
+                startExamTimer();
+            }
+            loadQuestion();
 
             Session.queue.slice(0, 2).forEach(q => { if (q.img) { const img = new Image(); img.src = q.img; } });
-
-            if (Session.settings.time > 0) startQuestionTimer();
             Session.drawings = {};
             Session.highlights = {};
             clearQuizCanvas();
@@ -9157,7 +9293,21 @@
         function loadQuestion() {
             window._questionStartTime = Date.now();
             _accumulatedInactiveTime = 0;
+            if (!Session.queue || Session.queue.length === 0) {
+                console.warn("No questions in session queue.");
+                if (window.showToast) window.showToast("No questions available in this session.", "error");
+                switchMode('dashboard');
+                return;
+            }
+            if (Session.index < 0 || Session.index >= Session.queue.length) {
+                Session.index = Math.max(0, Math.min(Session.index || 0, Session.queue.length - 1));
+            }
             const q = Session.queue[Session.index];
+            if (!q) {
+                console.warn("Question not found at index:", Session.index);
+                if (window.showToast) window.showToast("Question data not found.", "error");
+                return;
+            }
             let categoryName = "General";
 
             const modData = DB[Session.module];
@@ -9231,16 +9381,27 @@
                     eliminateBtn.classList.toggle('active-x');
                 };
 
-                if (Session.reviewing || ans !== null) {
+                if (Session.reviewing) {
                     btn.disabled = true;
                     eliminateBtn.disabled = true;
-                    if (Session.reviewing || Session.quizMode === 'tutor') {
-                        if (i === q.a) btn.classList.add('correct');
-                        if (ans === i && i !== q.a) btn.classList.add('wrong');
-                    } else if (Session.quizMode === 'exam' && ans === i) {
+                    if (i === q.a) btn.classList.add('correct');
+                    if (ans === i && i !== q.a) btn.classList.add('wrong');
+                } else if (Session.quizMode === 'tutor' && ans !== null) {
+                    btn.disabled = true;
+                    eliminateBtn.disabled = true;
+                    if (i === q.a) btn.classList.add('correct');
+                    if (ans === i && i !== q.a && ans !== -1) btn.classList.add('wrong');
+                } else if (Session.quizMode === 'exam') {
+                    if (ans === i) {
+                        btn.classList.add('exam-selected');
                         btn.style.borderColor = 'var(--primary-blue)';
                         btn.style.background = 'rgba(59, 130, 246, 0.1)';
                     }
+                    btn.onclick = () => {
+                        if (!btn.classList.contains('opt-eliminated')) {
+                            handleAnswer(i, btn, q);
+                        }
+                    };
                 } else {
                     btn.onclick = () => {
                         if (!btn.classList.contains('opt-eliminated')) {
@@ -9253,12 +9414,20 @@
                 wrapper.appendChild(eliminateBtn);
                 box.appendChild(wrapper);
             });
-            if (ans !== null || Session.reviewing) {
+            if (Session.reviewing || (Session.quizMode === 'tutor' && ans !== null)) {
                 showVotePercentages(q.q, q.o.length, Session.index);
             }
 
             const aiBtn = document.getElementById('ai-explain-btn');
             if (aiBtn) {
+                const isAnswered = (ans !== null && Session.quizMode === 'tutor') || Session.reviewing;
+                if (isAnswered) {
+                    aiBtn.classList.remove('hidden');
+                    aiBtn.style.display = 'inline-flex';
+                } else {
+                    aiBtn.classList.add('hidden');
+                    aiBtn.style.display = 'none';
+                }
                 aiBtn.onclick = () => explainQuestionWithAI(q.q, q.o, q.a);
             }
 
@@ -9267,7 +9436,7 @@
             const noteBtn = document.getElementById('btn-note');
             noteBtn.classList.toggle('active', !!AppState.notes[q.q]); noteBtn.querySelector('i').className = AppState.notes[q.q] ? 'ri-file-text-fill' : 'ri-file-text-line';
 
-            if (Session.quizMode === 'tutor' && Session.settings.time > 0 && !Session.reviewing && ans === null) startQuestionTimer();
+            if (Session.quizMode === 'tutor' && Session.settings.time > 0 && !Session.reviewing) startQuestionTimer();
             loadCurrentDrawing();
 
             if (Session.index + 1 < Session.queue.length) {
@@ -9278,73 +9447,197 @@
                 preloadVoteForIndex(Session.index + i);
             }
         }
-        function startQuestionTimer() {
+        function startExamTimer() {
             clearInterval(Session.timer);
             const pill = document.getElementById('main-quiz-timer');
-            pill.classList.remove('warning');
-
-            let timeLeft = Session.settings.time;
+            if (pill) pill.classList.remove('warning');
 
             function updateDisplay() {
-                const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-                const s = (timeLeft % 60).toString().padStart(2, '0');
-                document.getElementById('timer-text').innerText = `${m}:${s}`;
-                if (timeLeft <= 10 && timeLeft > 0) pill.classList.add('warning');
-                else pill.classList.remove('warning');
+                const timeLeft = Session.examTimeLeft || 0;
+                const m = Math.floor(Math.max(0, timeLeft) / 60).toString().padStart(2, '0');
+                const s = (Math.max(0, timeLeft) % 60).toString().padStart(2, '0');
+                const timerTextEl = document.getElementById('timer-text');
+                if (timerTextEl) timerTextEl.innerText = `${m}:${s}`;
+                if (timeLeft <= 60 && timeLeft > 0) {
+                    if (pill) pill.classList.add('warning');
+                } else if (pill) {
+                    pill.classList.remove('warning');
+                }
             }
             updateDisplay();
 
             Session.timer = setInterval(() => {
+                if (Session.reviewing) {
+                    clearInterval(Session.timer);
+                    return;
+                }
+                Session.examTimeLeft--;
+                updateDisplay();
+
+                if (Session.examTimeLeft <= 0) {
+                    clearInterval(Session.timer);
+                    if (pill) pill.classList.add('warning');
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function startQuestionTimer() {
+            clearInterval(Session.timer);
+            const pill = document.getElementById('main-quiz-timer');
+            if (pill) pill.classList.remove('warning');
+
+            if (!Session.questionTimes) {
+                Session.questionTimes = new Array(Session.queue.length).fill(Session.settings.time);
+            }
+            if (Session.questionTimes[Session.index] === undefined) {
+                Session.questionTimes[Session.index] = Session.settings.time;
+            }
+
+            const currentAns = Session.answers[Session.index];
+            if (Session.reviewing || currentAns !== null) {
+                const timeLeft = Math.max(0, Session.questionTimes[Session.index]);
+                const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                const s = (timeLeft % 60).toString().padStart(2, '0');
+                const timerTextEl = document.getElementById('timer-text');
+                if (timerTextEl) timerTextEl.innerText = `${m}:${s}`;
+                if (currentAns === -1 && pill) pill.classList.add('warning');
+                return;
+            }
+
+            let timeLeft = Session.questionTimes[Session.index];
+
+            function updateDisplay() {
+                const m = Math.floor(Math.max(0, timeLeft) / 60).toString().padStart(2, '0');
+                const s = (Math.max(0, timeLeft) % 60).toString().padStart(2, '0');
+                const timerTextEl = document.getElementById('timer-text');
+                if (timerTextEl) timerTextEl.innerText = `${m}:${s}`;
+                if (timeLeft <= 10 && timeLeft > 0) {
+                    if (pill) pill.classList.add('warning');
+                } else if (pill) {
+                    pill.classList.remove('warning');
+                }
+            }
+            updateDisplay();
+
+            if (timeLeft <= 0) {
+                handleQuestionTimeout();
+                return;
+            }
+
+            Session.timer = setInterval(() => {
+                if (Session.reviewing || Session.answers[Session.index] !== null) {
+                    clearInterval(Session.timer);
+                    return;
+                }
+
                 timeLeft--;
+                Session.questionTimes[Session.index] = timeLeft;
                 updateDisplay();
 
                 if (timeLeft <= 0) {
                     clearInterval(Session.timer);
-                    if (Session.quizMode === 'exam') finishQuiz();
-                    else if (Session.answers[Session.index] === null && !Session.reviewing) {
-                        const q = Session.queue[Session.index];
-                        const isMistakesMode = (Session.mode === 'mistakes' || document.body.getAttribute('data-mode') === 'mistakes');
-                        if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
-                        const isFirstAttempt = !isMistakesMode && !AppState.stats.attemptedQuestions[q.q] && !AppState.progress[q.q];
-
-                        AppState.progress[q.q] = 'wrong';
-                        const today = new Date().toISOString().split('T')[0];
-                        if (isFirstAttempt) {
-                            AppState.stats.attemptedQuestions[q.q] = 'wrong';
-                            if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
-                            if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
-                            AppState.stats.dailyProgress[today].wrong++;
-                            const currentYear = String(AppState.year || '1');
-                            const yKey = `wrong_y${currentYear}`;
-                            AppState.stats.dailyProgress[today][yKey] = (AppState.stats.dailyProgress[today][yKey] || 0) + 1;
-                        }
-
-                        localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-                        localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-                        if (window.saveBatchUserData) {
-                            window.saveBatchUserData({ progress: AppState.progress, stats: AppState.stats });
-                        }
-
-                        document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
-                        const opts = document.querySelectorAll('.option-btn');
-                        if (opts[q.a]) opts[q.a].classList.add('correct');
-
-                        Session.answers[Session.index] = -1;
-
-                        setTimeout(() => {
-                            if (!Session.answers.includes(null)) {
-                                finishQuiz();
-                            } else {
-                                nextQuestion();
-                            }
-                        }, 1000);
-                    }
+                    handleQuestionTimeout();
                 }
             }, 1000);
         }
+
+        function handleQuestionTimeout() {
+            const qIndex = Session.index;
+            if (Session.answers[qIndex] !== null || Session.reviewing) return;
+
+            const q = Session.queue[qIndex];
+            if (!q) return;
+
+            Session.answers[qIndex] = -1;
+
+            const pill = document.getElementById('main-quiz-timer');
+            if (pill) pill.classList.add('warning');
+
+            const isNonScoringMode = (Session.mode === 'mistakes' || Session.mode === 'favorites' || document.body.getAttribute('data-mode') === 'mistakes');
+            if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
+            const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
+
+            AppState.progress[q.q] = 'wrong';
+            const today = new Date().toISOString().split('T')[0];
+            if (isFirstAttempt) {
+                AppState.stats.attemptedQuestions[q.q] = 'wrong';
+                if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
+                if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
+                AppState.stats.dailyProgress[today].wrong = (AppState.stats.dailyProgress[today].wrong || 0) + 1;
+                const currentYear = String(AppState.year || '1');
+                const yKey = `wrong_y${currentYear}`;
+                AppState.stats.dailyProgress[today][yKey] = (AppState.stats.dailyProgress[today][yKey] || 0) + 1;
+            }
+
+            if (typeof recordMistake === 'function') {
+                recordMistake(q, Session.module, -1);
+            }
+
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+            if (window.saveBatchUserData) {
+                window.saveBatchUserData({ progress: AppState.progress, stats: AppState.stats });
+            }
+
+            document.querySelectorAll('#options-box .option-btn').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('#options-box .eliminate-btn').forEach(btn => btn.disabled = true);
+            const opts = document.querySelectorAll('#options-box .option-btn');
+            if (opts[q.a]) opts[q.a].classList.add('correct');
+
+            const aiBtn = document.getElementById('ai-explain-btn');
+            if (aiBtn) {
+                aiBtn.classList.remove('hidden');
+                aiBtn.style.display = 'inline-flex';
+            }
+
+            if (window.showToast) {
+                window.showToast("⏰ انتهى وقت السؤال!", "error");
+            }
+
+            if (!Session.answers.includes(null)) {
+                setTimeout(() => { finishQuiz(); }, 1500);
+            }
+        }
         function handleAnswer(idx, btn, q) {
-            if (Session.reviewing || Session.answers[Session.index] !== null) return;
-            clearTimeout(Session.timer);
+            if (Session.reviewing) return;
+            if (Session.quizMode === 'tutor' && Session.answers[Session.index] !== null) return;
+
+            let qActiveDuration = 0;
+            if (window._questionStartTime) {
+                const rawElapsed = (Date.now() - window._questionStartTime - _accumulatedInactiveTime) / 1000;
+                qActiveDuration = Math.max(2, Math.min(rawElapsed, 180));
+                _accumulatedInactiveTime = 0;
+                window._questionStartTime = Date.now();
+            }
+            if (!AppState.stats.activeSolvingTime) AppState.stats.activeSolvingTime = 0;
+            if (!AppState.stats.activeSolvingQuestionsCount) AppState.stats.activeSolvingQuestionsCount = 0;
+            if (qActiveDuration > 0) {
+                AppState.stats.activeSolvingTime += qActiveDuration;
+                AppState.stats.activeSolvingQuestionsCount++;
+            }
+
+            if (Session.quizMode === 'exam') {
+                Session.answers[Session.index] = idx;
+                const wrappers = document.querySelectorAll('#options-box .option-wrapper');
+                wrappers.forEach((wrapper, i) => {
+                    const optBtn = wrapper.querySelector('.option-btn');
+                    if (optBtn) {
+                        if (i === idx) {
+                            optBtn.classList.add('exam-selected');
+                            optBtn.style.borderColor = 'var(--primary-blue)';
+                            optBtn.style.background = 'rgba(59, 130, 246, 0.1)';
+                        } else {
+                            optBtn.classList.remove('exam-selected');
+                            optBtn.style.borderColor = '';
+                            optBtn.style.background = '';
+                        }
+                    }
+                });
+                return;
+            }
+
+            clearInterval(Session.timer);
             Session.answers[Session.index] = idx;
             document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
             const today = new Date().toISOString().split('T')[0];
@@ -9356,8 +9649,8 @@
             const yCorrectKey = `correct_y${currentYear}`;
             const yWrongKey = `wrong_y${currentYear}`;
 
-            const isMistakesMode = (Session.mode === 'mistakes' || document.body.getAttribute('data-mode') === 'mistakes');
-            const isFirstAttempt = !isMistakesMode && !AppState.stats.attemptedQuestions[q.q] && !AppState.progress[q.q];
+            const isNonScoringMode = (Session.mode === 'mistakes' || Session.mode === 'favorites' || document.body.getAttribute('data-mode') === 'mistakes');
+            const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
             const isCorrect = (idx === q.a);
 
             if (isCorrect) {
@@ -9380,21 +9673,6 @@
                 }
             }
 
-            // Calculate active question time (idle-protected, capped at 180s)
-            let qActiveDuration = 0;
-            if (window._questionStartTime) {
-                const rawElapsed = (Date.now() - window._questionStartTime - _accumulatedInactiveTime) / 1000;
-                qActiveDuration = Math.max(2, Math.min(rawElapsed, 180));
-                _accumulatedInactiveTime = 0;
-                window._questionStartTime = Date.now();
-            }
-            if (!AppState.stats.activeSolvingTime) AppState.stats.activeSolvingTime = 0;
-            if (!AppState.stats.activeSolvingQuestionsCount) AppState.stats.activeSolvingQuestionsCount = 0;
-            if (qActiveDuration > 0) {
-                AppState.stats.activeSolvingTime += qActiveDuration;
-                AppState.stats.activeSolvingQuestionsCount++;
-            }
-
             const batchFields = { progress: AppState.progress, stats: AppState.stats };
             if (isFirstAttempt && Session.module && !Session.module.toLowerCase().trim().includes('terminology')) {
                 AppState.totalQuestionsSolved = (AppState.totalQuestionsSolved || 0) + 1;
@@ -9408,22 +9686,23 @@
                 window.saveBatchUserData(batchFields);
             }
 
-            if (Session.quizMode === 'tutor') {
-                if (isCorrect) {
-                    btn.classList.add('correct');
-                    if (window.confetti) {
-                        try { confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } }); } catch (e) { }
-                    }
-                } else {
-                    btn.classList.add('wrong');
-                    btn.parentElement.classList.add('shake');
-                    setTimeout(() => btn.parentElement.classList.remove('shake'), 800);
-                    const opts = document.querySelectorAll('.option-btn');
-                    if (opts[q.a]) opts[q.a].classList.add('correct');
+            if (isCorrect) {
+                btn.classList.add('correct');
+                if (window.confetti) {
+                    try { confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } }); } catch (e) { }
                 }
             } else {
-                btn.style.borderColor = 'var(--primary-blue)';
-                btn.style.background = 'rgba(59, 130, 246, 0.1)';
+                btn.classList.add('wrong');
+                btn.parentElement.classList.add('shake');
+                setTimeout(() => btn.parentElement.classList.remove('shake'), 800);
+                const opts = document.querySelectorAll('.option-btn');
+                if (opts[q.a]) opts[q.a].classList.add('correct');
+            }
+
+            const aiBtn = document.getElementById('ai-explain-btn');
+            if (aiBtn) {
+                aiBtn.classList.remove('hidden');
+                aiBtn.style.display = 'inline-flex';
             }
 
             recordVote(q.q, idx, q.o.length);
@@ -9608,6 +9887,7 @@
 
         function showVotePercentages(questionText, optionCount, callerIndex) {
             try {
+                if (Session.quizMode === 'exam' && !Session.reviewing) return;
                 const voteDocId = hashQuestion(questionText);
                 if (callerIndex !== undefined && Session.index !== callerIndex) return;
 
@@ -9665,12 +9945,18 @@
 
         function prevQuestion() {
             saveCurrentDrawing();
+            if (Session.quizMode === 'tutor') {
+                clearInterval(Session.timer);
+            }
             if (Session.index > 0) {
                 Session.index--;
                 loadQuestion();
             }
         } function nextQuestion() {
             saveCurrentDrawing();
+            if (Session.quizMode === 'tutor') {
+                clearInterval(Session.timer);
+            }
             if (Session.index < Session.queue.length - 1) {
                 Session.index++;
                 loadQuestion();
@@ -9685,6 +9971,7 @@
         function finishQuiz() {
             clearQuizCanvas();
             try { clearInterval(globalStopwatch); } catch (e) { }
+            try { clearInterval(Session.timer); } catch (e) { }
             try {
                 const timerEl = document.getElementById('main-quiz-timer');
                 if (timerEl) timerEl.classList.add('hidden');
@@ -9702,13 +9989,67 @@
             }
 
             try {
-                Session.queue.forEach((q, i) => {
-                    if (Session.answers[i] === null) {
-                        AppState.progress[q.q] = 'wrong';
-                        if (typeof recordMistake === 'function') recordMistake(q, Session.module, -1);
+                if (Session.quizMode === 'exam' && !Session.reviewing) {
+                    Session.score = 0;
+                    const today = new Date().toISOString().split('T')[0];
+                    if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
+                    if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
+                    if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
+                    const currentYear = String(AppState.year || '1');
+                    const yCorrectKey = `correct_y${currentYear}`;
+                    const yWrongKey = `wrong_y${currentYear}`;
+                    const isNonScoringMode = (Session.mode === 'mistakes' || Session.mode === 'favorites' || document.body.getAttribute('data-mode') === 'mistakes');
+
+                    let newQuestionsSolvedCount = 0;
+
+                    Session.queue.forEach((q, i) => {
+                        const ans = Session.answers[i];
+                        const isCorrect = (ans !== null && ans === q.a);
+                        const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
+
+                        if (isCorrect) {
+                            Session.score++;
+                            AppState.progress[q.q] = 'correct';
+                            if (isFirstAttempt) {
+                                AppState.stats.attemptedQuestions[q.q] = 'correct';
+                                AppState.stats.dailyProgress[today].correct = (AppState.stats.dailyProgress[today].correct || 0) + 1;
+                                AppState.stats.dailyProgress[today][yCorrectKey] = (AppState.stats.dailyProgress[today][yCorrectKey] || 0) + 1;
+                                newQuestionsSolvedCount++;
+                            }
+                        } else {
+                            AppState.progress[q.q] = 'wrong';
+                            if (isFirstAttempt) {
+                                AppState.stats.attemptedQuestions[q.q] = 'wrong';
+                                AppState.stats.dailyProgress[today].wrong = (AppState.stats.dailyProgress[today].wrong || 0) + 1;
+                                AppState.stats.dailyProgress[today][yWrongKey] = (AppState.stats.dailyProgress[today][yWrongKey] || 0) + 1;
+                                newQuestionsSolvedCount++;
+                            }
+                            if (typeof recordMistake === 'function') {
+                                recordMistake(q, Session.module, ans !== null ? ans : -1);
+                            }
+                        }
+
+                        if (ans !== null && ans !== -1 && Array.isArray(q.o) && q.o.length > 0) {
+                            recordVote(q.q, ans, q.o.length);
+                        }
+                    });
+
+                    if (newQuestionsSolvedCount > 0 && Session.module && !Session.module.toLowerCase().trim().includes('terminology')) {
+                        AppState.totalQuestionsSolved = (AppState.totalQuestionsSolved || 0) + newQuestionsSolvedCount;
+                        localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
                     }
-                });
-                localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+
+                    localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+                    localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+                } else {
+                    Session.queue.forEach((q, i) => {
+                        if (Session.answers[i] === null) {
+                            AppState.progress[q.q] = 'wrong';
+                            if (typeof recordMistake === 'function') recordMistake(q, Session.module, -1);
+                        }
+                    });
+                    localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+                }
             } catch (e) { console.warn("Progress update error:", e); }
 
             try {
@@ -9729,7 +10070,8 @@
                 let totalAnswered = 0;
                 let totalCorrect = 0;
                 let totalWrong = 0;
-                for (const [qText, val] of Object.entries(AppState.progress || {})) {
+                const attempted = (AppState.stats && AppState.stats.attemptedQuestions) ? AppState.stats.attemptedQuestions : (AppState.progress || {});
+                for (const [qText, val] of Object.entries(attempted)) {
                     if (allowedQs.has(qText)) {
                         totalAnswered++;
                         if (val === 'correct') {
@@ -9744,7 +10086,7 @@
                 AppState.points = points;
                 localStorage.setItem('medStormPoints', points);
 
-                const batchData = { progress: AppState.progress, totalAnswered, totalCorrect, totalWrong, accuracy, points };
+                const batchData = { progress: AppState.progress, stats: AppState.stats, totalAnswered, totalCorrect, totalWrong, accuracy, points };
 
                 if (!Session.reviewing && Session.queue.length > 0) {
                     const result = {
@@ -9892,11 +10234,16 @@
                         selectedSubtopics: Session.selectedSubtopics,
                         timestamp: new Date().getTime(),
                         date: new Date().toLocaleDateString(),
-                        unanswered: unanswered
+                        unanswered: unanswered,
+                        examTimeLeft: Session.examTimeLeft,
+                        questionTimes: Session.questionTimes,
+                        drawings: Session.drawings,
+                        highlights: Session.highlights
                     };
                     if (Session.resumingId) {
-                        const idx = AppState.pendingExams.findIndex(e => e.id === Session.resumingId);
+                        const idx = AppState.pendingExams.findIndex(e => String(e.id) === String(Session.resumingId));
                         if (idx !== -1) AppState.pendingExams[idx] = pending;
+                        else AppState.pendingExams.unshift(pending);
                     } else {
                         AppState.pendingExams.unshift(pending);
                     }
@@ -9915,7 +10262,8 @@
         function confirmExitQuiz() {
             closeExitModal();
             saveSessionProgress();
-            clearTimeout(Session.timer);
+            clearInterval(Session.timer);
+            clearInterval(globalStopwatch);
             switchMode('dashboard');
         }
 
@@ -9924,10 +10272,23 @@
             const grid = document.getElementById('map-grid'); grid.innerHTML = '';
             Session.queue.forEach((q, i) => {
                 const box = document.createElement('div'); box.className = 'q-box'; if (Session.index === i) box.classList.add('active');
-                if (Session.answers[i] !== null) box.classList.add(Session.answers[i] === q.a ? 'correct' : 'wrong');
+                if (Session.answers[i] !== null) {
+                    if (Session.reviewing || Session.quizMode === 'tutor') {
+                        box.classList.add(Session.answers[i] === q.a ? 'correct' : 'wrong');
+                    } else if (Session.quizMode === 'exam') {
+                        box.classList.add('answered');
+                    }
+                }
                 if (AppState.favorites[q.q]) box.classList.add('favorited'); if (AppState.notes[q.q]) box.classList.add('noted');
                 box.innerHTML = `<span class="q-num">${i + 1}.</span><span class="q-preview">${q.q}</span>`;
-                box.onclick = () => { Session.index = i; loadQuestion(); toggleMap(); }; grid.appendChild(box);
+                box.onclick = () => {
+                    if (Session.quizMode === 'tutor') {
+                        clearInterval(Session.timer);
+                    }
+                    Session.index = i;
+                    loadQuestion();
+                    toggleMap();
+                }; grid.appendChild(box);
             });
         }
 
@@ -9985,9 +10346,6 @@
                     if (AppState.progress[q.q] === 'wrong') delete AppState.progress[q.q];
                 } else {
                     delete AppState.progress[q.q];
-                    if (AppState.stats.attemptedQuestions) {
-                        delete AppState.stats.attemptedQuestions[q.q];
-                    }
                 }
             });
 
@@ -10209,14 +10567,12 @@
                     const remainingPct = 100 - correctPct - wrongPct;
                     let modTime = (AppState.stats && AppState.stats.moduleTime) ? (AppState.stats.moduleTime[modName] || 0) : 0;
 
-                    // If a module has 0 questions solved (e.g. after a reset), its cycle time is 0 (lifetime totalTime is preserved separately)
                     if (solvedCount === 0 && modTime > 0) {
                         modTime = 0;
                         if (AppState.stats && AppState.stats.moduleTime) {
                             AppState.stats.moduleTime[modName] = 0;
                         }
                     } else if (solvedCount > 0 && modTime > 0) {
-                        // If the module was reset and only a few questions were answered, cap disproportionate pre-reset time (>5 min/Q)
                         if (modTime / solvedCount > 300) {
                             modTime = solvedCount * 60;
                             if (AppState.stats && AppState.stats.moduleTime) {
@@ -10610,9 +10966,16 @@
             }
         }
 
-        function retakeExam(id) {
-            const result = AppState.examsHistory.find(r => r.id == id);
+        async function retakeExam(id) {
+            const result = AppState.examsHistory.find(r => String(r.id) === String(id));
             if (!result) return;
+            if (window.checkModuleAccess && !window.checkModuleAccess(result.module)) {
+                if (window.openPremiumLockModal && window.getModuleAccessReason) {
+                    window.openPremiumLockModal(result.module, window.getModuleAccessReason(result.module));
+                }
+                return;
+            }
+
             Session.module = result.module;
             Session.mode = result.quizType || 'normal';
             Session.quizMode = result.mode || 'exam';
@@ -10622,19 +10985,28 @@
             if (result.queue && result.queue.length > 0) {
                 pool = JSON.parse(JSON.stringify(result.queue));
             } else {
-                if (!Array.isArray(DB[Session.module])) {
-                    (result.selectedSubtopics || []).forEach(selection => {
-                        let subQs;
-                        if (selection.includes('___')) {
-                            const parts = selection.split('___');
-                            subQs = DB[Session.module][parts[0]][parts[1]];
-                        } else {
-                            subQs = DB[Session.module][selection];
+                if ((!DB[Session.module] || Object.keys(DB[Session.module]).length === 0) && window.fetchSingleModuleFromDB) {
+                    if (window.showToast) window.showToast(`Loading ${Session.module}... ⏳`, 'info');
+                    await window.fetchSingleModuleFromDB(Session.module);
+                }
+                if (DB[Session.module]) {
+                    if (!Array.isArray(DB[Session.module])) {
+                        (result.selectedSubtopics || []).forEach(selection => {
+                            let subQs;
+                            if (selection.includes('___')) {
+                                const parts = selection.split('___');
+                                subQs = DB[Session.module] && DB[Session.module][parts[0]] && DB[Session.module][parts[0]][parts[1]];
+                            } else {
+                                subQs = DB[Session.module] && DB[Session.module][selection];
+                            }
+                            if (subQs && Array.isArray(subQs)) pool.push(...subQs);
+                        });
+                        if (pool.length === 0 && typeof extractAllQuestions === 'function') {
+                            pool = extractAllQuestions(DB[Session.module]);
                         }
-                        if (subQs) pool.push(...subQs);
-                    });
-                } else {
-                    pool = [...DB[Session.module]];
+                    } else {
+                        pool = [...DB[Session.module]];
+                    }
                 }
             }
 
@@ -10663,7 +11035,7 @@
         }
 
         function reviewExamFromHistory(id) {
-            const result = AppState.examsHistory.find(r => r.id == id);
+            const result = AppState.examsHistory.find(r => String(r.id) === String(id));
             if (!result) return;
 
             if (!result.queue || result.queue.length === 0) {
@@ -10674,11 +11046,12 @@
             Session.mode = result.quizType || 'normal';
             Session.quizMode = result.mode || 'exam';
             Session.queue = JSON.parse(JSON.stringify(result.queue));
-            Session.answers = JSON.parse(JSON.stringify(result.answers));
-            Session.score = result.score;
+            Session.answers = JSON.parse(JSON.stringify(result.answers || []));
+            while (Session.answers.length < Session.queue.length) Session.answers.push(null);
+            Session.score = result.score || 0;
             Session.index = 0;
             Session.reviewing = true;
-            Session.settings = result.settings || { count: result.total, time: 0 };
+            Session.settings = result.settings || { count: result.total || Session.queue.length, time: 0 };
 
             document.body.classList.add('focus-mode');
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
@@ -10688,9 +11061,12 @@
             loadQuestion();
         }
 
-        function resumeExam(id) {
-            const exam = AppState.pendingExams.find(e => e.id == id);
-            if (!exam) return;
+        async function resumeExam(id) {
+            const exam = AppState.pendingExams.find(e => String(e.id) === String(id));
+            if (!exam) {
+                if (window.showToast) window.showToast("Exam not found or already completed!", "error");
+                return;
+            }
             if (window.checkModuleAccess && !window.checkModuleAccess(exam.module)) {
                 if (window.openPremiumLockModal && window.getModuleAccessReason) {
                     window.openPremiumLockModal(exam.module, window.getModuleAccessReason(exam.module));
@@ -10698,17 +11074,53 @@
                 return;
             }
 
+            if ((!DB[exam.module] || Object.keys(DB[exam.module]).length === 0) && window.fetchSingleModuleFromDB) {
+                if (window.showToast) window.showToast(`Loading ${exam.module}... ⏳`, 'info');
+                await window.fetchSingleModuleFromDB(exam.module);
+            }
+
+            let queue = Array.isArray(exam.queue) && exam.queue.length > 0 ? exam.queue : [];
+            if (queue.length === 0 && DB[exam.module]) {
+                if (Array.isArray(DB[exam.module])) {
+                    queue = [...DB[exam.module]];
+                } else {
+                    (exam.selectedSubtopics || []).forEach(selection => {
+                        let subQs;
+                        if (selection.includes('___')) {
+                            const parts = selection.split('___');
+                            subQs = DB[exam.module] && DB[exam.module][parts[0]] && DB[exam.module][parts[0]][parts[1]];
+                        } else {
+                            subQs = DB[exam.module] && DB[exam.module][selection];
+                        }
+                        if (subQs && Array.isArray(subQs)) queue.push(...subQs);
+                    });
+                    if (queue.length === 0 && typeof extractAllQuestions === 'function') {
+                        queue = extractAllQuestions(DB[exam.module]);
+                    }
+                }
+            }
+
+            if (queue.length === 0) {
+                if (window.showToast) window.showToast(`Could not load questions for ${exam.module}`, "error");
+                return;
+            }
+
             Session.module = exam.module;
-            Session.mode = exam.mode;
-            Session.quizMode = exam.quizMode;
-            Session.queue = exam.queue;
-            Session.answers = exam.answers;
-            Session.index = exam.index;
-            Session.score = exam.score;
-            Session.settings = exam.settings;
-            Session.selectedSubtopics = exam.selectedSubtopics;
+            Session.mode = exam.mode || 'normal';
+            Session.quizMode = exam.quizMode || 'exam';
+            Session.queue = queue;
+            Session.answers = Array.isArray(exam.answers) ? [...exam.answers] : new Array(queue.length).fill(null);
+            while (Session.answers.length < queue.length) Session.answers.push(null);
+            Session.index = Math.max(0, Math.min(exam.index || 0, queue.length - 1));
+            Session.score = exam.score || 0;
+            Session.settings = exam.settings || { count: queue.length, time: 0 };
+            Session.selectedSubtopics = exam.selectedSubtopics || [];
             Session.resumingId = exam.id;
             Session.reviewing = false;
+            Session.examTimeLeft = exam.examTimeLeft !== undefined ? exam.examTimeLeft : Session.settings.time;
+            Session.questionTimes = exam.questionTimes || new Array(queue.length).fill(Session.settings.time);
+            Session.drawings = exam.drawings || {};
+            Session.highlights = exam.highlights || {};
 
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
             document.body.classList.add('focus-mode');
@@ -10717,18 +11129,21 @@
             quizView.classList.add('active');
 
             startSession();
+            if (Session.quizMode === 'exam' && Session.settings.time > 0) {
+                startExamTimer();
+            }
             loadQuestion();
         }
 
         function deleteExamResult(id) {
-            AppState.examsHistory = AppState.examsHistory.filter(e => e.id != id);
+            AppState.examsHistory = AppState.examsHistory.filter(e => String(e.id) !== String(id));
             localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory));
             window.saveUserData('examsHistory', AppState.examsHistory);
             renderExamHistory();
         }
 
         function deletePendingExam(id) {
-            AppState.pendingExams = AppState.pendingExams.filter(e => e.id != id);
+            AppState.pendingExams = AppState.pendingExams.filter(e => String(e.id) !== String(id));
             localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams));
             window.saveUserData('pendingExams', AppState.pendingExams);
             renderExamHistory();
@@ -11835,7 +12250,6 @@
             const container = document.getElementById('global-leaderboard-content');
             if (!container) return;
 
-            // Unsubscribe previous listener if one is already running
             if (typeof window.unsubscribeLeaderboard === 'function') {
                 window.unsubscribeLeaderboard();
                 window.unsubscribeLeaderboard = null;
@@ -11925,7 +12339,6 @@
                 container.innerHTML = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:3rem;"><div class="loading-dots-container" style="font-size: 0.95rem;"><span>Loading Leaderboard</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
             }
 
-            // Sync current user's latest stats to Firestore before listening if unsaved changes exist
             if (window.flushSync && localStorage.getItem('medStorm_unsaved_changes') === 'true') {
                 window.flushSync().catch(() => { });
             }
@@ -11938,10 +12351,19 @@
                     let players = [];
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        players = (data.entries || data.top || data.players || []).map(p => ({
-                            ...p,
-                            isSelf: (p.uid === window.currentUserId)
-                        }));
+                        players = (data.entries || data.top || data.players || [])
+                            .filter(p => {
+                                const pts = Number(p.points) || 0;
+                                const ans = Number(p.totalAnswered) || 0;
+                                const uName = (p.username || '').toLowerCase();
+                                if (pts > 3500 || ans > 3500) return false;
+                                if (uName.includes('testuserbold') || uName.includes('bot') || uName.includes('hack') || uName.includes('zeroq') || uName.includes('switcher') || uName.includes('spam') || uName.includes('probe')) return false;
+                                return true;
+                            })
+                            .map(p => ({
+                                ...p,
+                                isSelf: (p.uid === window.currentUserId)
+                            }));
                     }
 
                     try {
