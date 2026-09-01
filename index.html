@@ -42,6 +42,10 @@
             --accent: var(--primary-green);
             --accent-dark: var(--dark-green);
             --accent-light: var(--light-green);
+            --accent-glow: rgba(16, 185, 129, 0.4);
+            --accent-glow-subtle: rgba(16, 185, 129, 0.2);
+            --accent-bg-subtle: rgba(16, 185, 129, 0.1);
+            --accent-shadow-tab: 0 4px 15px rgba(16, 185, 129, 0.35);
 
             --shimmer-base: rgba(241, 245, 249, 0.45);
             --shimmer-highlight: rgba(241, 245, 249, 1);
@@ -51,12 +55,20 @@
             --accent: var(--primary-red);
             --accent-dark: var(--dark-red);
             --accent-light: var(--light-red);
+            --accent-glow: rgba(239, 68, 68, 0.45);
+            --accent-glow-subtle: rgba(239, 68, 68, 0.25);
+            --accent-bg-subtle: rgba(239, 68, 68, 0.12);
+            --accent-shadow-tab: 0 4px 15px rgba(239, 68, 68, 0.4);
         }
 
         [data-mode='favorites'] {
             --accent: var(--primary-blue);
             --accent-dark: var(--dark-blue);
             --accent-light: var(--light-blue);
+            --accent-glow: rgba(59, 130, 246, 0.45);
+            --accent-glow-subtle: rgba(59, 130, 246, 0.25);
+            --accent-bg-subtle: rgba(59, 130, 246, 0.12);
+            --accent-shadow-tab: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
 
         [data-theme='light'] {
@@ -85,7 +97,6 @@
             box-sizing: border-box;
         }
 
-        /* Sleek Global Scrollbar System */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -193,7 +204,7 @@
             place-items: center;
             font-size: 1.8rem;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 10px 25px var(--accent-glow);
             z-index: 99999 !important;
             transition: var(--transition);
             border: none;
@@ -526,13 +537,21 @@
             max-height: 110px;
             height: auto;
             object-fit: contain;
-            filter: drop-shadow(0 4px 14px rgba(34, 197, 94, 0.35));
+            filter: drop-shadow(0 4px 14px var(--accent-glow));
             transition: filter 0.3s ease, transform 0.25s ease;
             display: block;
         }
 
         .sidebar-logo-container:hover .sidebar-logo-img {
-            filter: drop-shadow(0 6px 20px rgba(34, 197, 94, 0.55));
+            filter: drop-shadow(0 6px 20px var(--accent-glow));
+        }
+
+        [data-mode='mistakes'] .sidebar-logo-img {
+            transform: scale(1.1);
+        }
+
+        [data-mode='mistakes'] .sidebar-logo-container:hover .sidebar-logo-img {
+            transform: scale(1.14);
         }
 
         .logo {
@@ -855,7 +874,7 @@
         .dash-tab-btn.active {
             background: linear-gradient(135deg, var(--accent), var(--accent-dark));
             color: white;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+            box-shadow: var(--accent-shadow-tab, 0 4px 15px var(--accent-glow));
             transform: translateY(-1px);
         }
 
@@ -1762,12 +1781,12 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--accent), var(--accent-dark));
             color: white;
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 20px var(--accent-glow);
         }
 
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 12px 25px var(--accent-glow);
         }
 
         .btn-primary:disabled,
@@ -3673,7 +3692,7 @@
             font-weight: 800;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 20px var(--accent-glow);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -3681,7 +3700,7 @@
 
         .fc-start-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 12px 28px var(--accent-glow);
         }
 
         .fc-session-wrap {
@@ -4747,6 +4766,18 @@
 </head>
 
 <body data-theme="dark">
+    <script>
+        (function () {
+            try {
+                const savedMode = localStorage.getItem('asa_active_mode');
+                if (savedMode === 'mistakes') {
+                    document.body.setAttribute('data-mode', 'mistakes');
+                } else if (savedMode === 'favorites') {
+                    document.body.setAttribute('data-mode', 'favorites');
+                }
+            } catch (e) { }
+        })();
+    </script>
 
     <div id="first-load-overlay"
         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; overflow: hidden;">
@@ -4771,9 +4802,22 @@
                     </circle>
                 </g>
             </svg>
-            <img src="img/load.png"
-                style="width: 90px; height: 90px; padding: 6px; position: relative; border-radius: 50%; object-fit: contain; z-index: 10; box-shadow: 0 0 30px rgba(34, 197, 94, 0.3); border: 2px solid var(--accent);">
+            <img id="first-load-img" src="img/load.png"
+                style="width: 90px; height: 90px; padding: 6px; position: relative; border-radius: 50%; object-fit: contain; z-index: 10; box-shadow: 0 0 30px var(--accent-glow); border: 2px solid var(--accent);">
         </div>
+        <script>
+            (function () {
+                try {
+                    const savedMode = localStorage.getItem('asa_active_mode');
+                    const loadImg = document.getElementById('first-load-img');
+                    if (savedMode === 'mistakes') {
+                        if (loadImg) loadImg.src = 'img/rload.png';
+                    } else if (savedMode === 'favorites') {
+                        if (loadImg) loadImg.src = 'img/bload.png';
+                    }
+                } catch (e) { }
+            })();
+        </script>
         <div class="loading-dots-container" style="margin-top: 30px; color: var(--text-light);">
             <span>Loading</span>
             <span class="loading-dots">
@@ -5121,7 +5165,20 @@
     </div>
     <nav class="sidebar">
         <div class="sidebar-logo-container" onclick="switchMode('dashboard')" title="ASA Dashboard">
-            <img src="img/logo.png" alt="ASA Logo" class="sidebar-logo-img">
+            <img id="sidebar-logo-img" src="img/logo.png" alt="ASA Logo" class="sidebar-logo-img">
+            <script>
+                (function () {
+                    try {
+                        const savedMode = localStorage.getItem('asa_active_mode');
+                        const sideLogo = document.getElementById('sidebar-logo-img');
+                        if (savedMode === 'mistakes') {
+                            if (sideLogo) sideLogo.src = 'img/rlogo.png';
+                        } else if (savedMode === 'favorites') {
+                            if (sideLogo) sideLogo.src = 'img/blogo.png';
+                        }
+                    } catch (e) { }
+                })();
+            </script>
         </div>
         <div class="nav-section">
             <div class="nav-label" id="label-quiz" onclick="toggleNavSection(this)">Quiz <i
@@ -7908,7 +7965,6 @@
             checkServerMetadata().then(async (meta) => {
                 if (!meta) return;
                 try {
-                    // 1. Sync modules summary counts & chapter breakdowns
                     const cachedMeta = await getIDBCache('__modules_metadata__');
                     const serverUpdatedAt = meta['modules_metadata_updatedAt'];
                     if (!cachedMeta || !cachedMeta.updatedAt || (serverUpdatedAt && serverUpdatedAt > cachedMeta.updatedAt)) {
@@ -7921,7 +7977,6 @@
                         }
                     }
 
-                    // 2. Check for updated modules on server (Zero extra reads unless an update exists!)
                     for (const modKey in MODULE_KEY_TO_DOC_ID) {
                         const docId = MODULE_KEY_TO_DOC_ID[modKey];
                         const serverDocUpdatedAt = meta[docId + '_updatedAt'];
@@ -8533,6 +8588,28 @@
             }
         }
 
+        function updateAppThemeLogos(mode) {
+            const sideLogo = document.getElementById('sidebar-logo-img');
+            const loadImg = document.getElementById('first-load-img');
+            if (mode === 'mistakes') {
+                document.body.setAttribute('data-mode', 'mistakes');
+                if (sideLogo) sideLogo.src = 'img/rlogo.png';
+                if (loadImg) loadImg.src = 'img/rload.png';
+                try { localStorage.setItem('asa_active_mode', 'mistakes'); } catch (e) { }
+            } else if (mode === 'favorites') {
+                document.body.setAttribute('data-mode', 'favorites');
+                if (sideLogo) sideLogo.src = 'img/blogo.png';
+                if (loadImg) loadImg.src = 'img/bload.png';
+                try { localStorage.setItem('asa_active_mode', 'favorites'); } catch (e) { }
+            } else {
+                document.body.removeAttribute('data-mode');
+                if (sideLogo) sideLogo.src = 'img/logo.png';
+                if (loadImg) loadImg.src = 'img/load.png';
+                try { localStorage.setItem('asa_active_mode', 'normal'); } catch (e) { }
+            }
+        }
+        window.updateAppThemeLogos = updateAppThemeLogos;
+
         function toggleNavSection(el) {
             el.classList.toggle('collapsed');
         }
@@ -8560,7 +8637,7 @@
             document.getElementById('view-results').classList.remove('active');
             document.getElementById('view-results').style.cssText = "display: none !important;";
             document.body.classList.remove('focus-mode');
-            document.body.removeAttribute('data-mode');
+            updateAppThemeLogos(mode);
 
             document.querySelectorAll('.view-section').forEach(el => {
                 if (el.id !== 'view-results') { el.classList.remove('active'); el.style.display = 'none'; }
@@ -12687,7 +12764,7 @@
                 ctx.strokeStyle = 'rgba(0,0,0,1)';
             } else if (currentTool === 'highlighter') {
                 ctx.globalCompositeOperation = 'source-over';
-                ctx.globalAlpha = 0.35; // Light, soft, transparent highlight!
+                ctx.globalAlpha = 0.35;
                 ctx.strokeStyle = currentHighlighterColor || '#FFE600';
             } else {
                 ctx.globalCompositeOperation = 'source-over';
