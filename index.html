@@ -7505,6 +7505,8 @@
             } catch (e) { return false; }
         }
 
+        const cachedModuleUpdatedAts = {};
+
         async function loadAllCachedModulesFromIDB() {
             try {
                 const idb = await openIDB();
@@ -7520,6 +7522,7 @@
                             const val = cursor.value;
                             if (val && val.data && key !== '__modules_metadata__') {
                                 DB[key] = val.data;
+                                cachedModuleUpdatedAts[key] = val.updatedAt || 0;
                             } else if (key === '__modules_metadata__' && val && val.data) {
                                 window.DB_METADATA = Object.assign({}, window.DB_METADATA, val.data);
                             }
@@ -7562,7 +7565,7 @@
         window.DB_METADATA = {
             'Blood': { total: 1519 },
             'Foundation': { total: 2828 },
-            'Terminology': { total: 615 },
+            'Terminology': { total: 610 },
             'MSK': { total: 2886 },
             'CVS': { total: 3025 },
             'Communication Step 1': { total: 143 },
@@ -7603,6 +7606,7 @@
             checkServerMetadata().then(async (meta) => {
                 if (!meta) return;
                 try {
+                    // 1. Sync modules summary counts & chapter breakdowns
                     const cachedMeta = await getIDBCache('__modules_metadata__');
                     const serverUpdatedAt = meta['modules_metadata_updatedAt'];
                     if (!cachedMeta || !cachedMeta.updatedAt || (serverUpdatedAt && serverUpdatedAt > cachedMeta.updatedAt)) {
@@ -7614,9 +7618,19 @@
                             if (typeof window.renderDashboard === "function") window.renderDashboard();
                         }
                     }
+
+                    // 2. Check for updated modules on server (Zero extra reads unless an update exists!)
+                    for (const modKey in MODULE_KEY_TO_DOC_ID) {
+                        const docId = MODULE_KEY_TO_DOC_ID[modKey];
+                        const serverDocUpdatedAt = meta[docId + '_updatedAt'];
+                        const cachedDocUpdatedAt = cachedModuleUpdatedAts[modKey] || 0;
+                        if (serverDocUpdatedAt && (!cachedDocUpdatedAt || serverDocUpdatedAt > cachedDocUpdatedAt)) {
+                            console.log(`[Auto-Sync] Update detected on server for ${modKey}. Syncing in background...`);
+                            await fetchSingleModuleFromDB(modKey, true);
+                        }
+                    }
                 } catch (e) { }
             }).catch(() => { });
-
 
             setTimeout(async () => {
                 try {
@@ -7690,7 +7704,7 @@
             return null;
         }
 
-        async function fetchSingleModuleFromDB(moduleKey) {
+        async function fetchSingleModuleFromDB(moduleKey, forceRefresh = false) {
             const modules = [
                 { id: 'msk_questions', key: 'MSK' },
                 { id: 'blood_questions', key: 'Blood' },
@@ -7717,23 +7731,27 @@
             const mod = modules.find(m => m.key === moduleKey);
             if (!mod) return DB[moduleKey];
 
-            if (DB[moduleKey] && Object.keys(DB[moduleKey]).length > 0) {
-                return DB[moduleKey];
-            }
+            if (!forceRefresh) {
+                if (DB[moduleKey] && Object.keys(DB[moduleKey]).length > 0) {
+                    return DB[moduleKey];
+                }
 
-            const cached = await getIDBCache(moduleKey);
-            if (cached && cached.data && Object.keys(cached.data).length > 0) {
-                DB[moduleKey] = cached.data;
-                checkForModuleUpdateInBackground(mod, cached.updatedAt);
-                return DB[moduleKey];
-            }
+                const cached = await getIDBCache(moduleKey);
+                if (cached && cached.data && Object.keys(cached.data).length > 0) {
+                    DB[moduleKey] = cached.data;
+                    cachedModuleUpdatedAts[moduleKey] = cached.updatedAt || 0;
+                    checkForModuleUpdateInBackground(mod, cached.updatedAt);
+                    return DB[moduleKey];
+                }
 
-            const fallbackData = getGlobalFallbackModule(moduleKey);
-            if (fallbackData && Object.keys(fallbackData).length > 0) {
-                DB[moduleKey] = fallbackData;
-                setIDBCache(moduleKey, { data: fallbackData, updatedAt: Date.now() });
-                checkForModuleUpdateInBackground(mod, 0);
-                return DB[moduleKey];
+                const fallbackData = getGlobalFallbackModule(moduleKey);
+                if (fallbackData && Object.keys(fallbackData).length > 0) {
+                    DB[moduleKey] = fallbackData;
+                    cachedModuleUpdatedAts[moduleKey] = Date.now();
+                    setIDBCache(moduleKey, { data: fallbackData, updatedAt: Date.now() });
+                    checkForModuleUpdateInBackground(mod, 0);
+                    return DB[moduleKey];
+                }
             }
 
             try {
@@ -7762,7 +7780,10 @@
                         }
                         const finalData = data.questionsList ? data.questionsList : data;
                         DB[moduleKey] = finalData;
-                        await setIDBCache(moduleKey, { data: finalData, updatedAt: Date.now() });
+                        const syncTime = (serverMetadata && serverMetadata[mod.id + '_updatedAt']) || Date.now();
+                        cachedModuleUpdatedAts[moduleKey] = syncTime;
+                        await setIDBCache(moduleKey, { data: finalData, updatedAt: syncTime });
+                        if (typeof window.renderDashboard === "function") window.renderDashboard();
                         return finalData;
                     }
                     return null;
@@ -7773,7 +7794,7 @@
             } catch (e) {
                 console.warn(`Fetch module ${moduleKey} network timeout or error:`, e);
                 const fb = getGlobalFallbackModule(moduleKey);
-                if (fb) DB[moduleKey] = fb;
+                if (fb && (!DB[moduleKey] || Object.keys(DB[moduleKey]).length === 0)) DB[moduleKey] = fb;
             }
 
             return DB[moduleKey];
@@ -7784,33 +7805,7 @@
                 if (!serverMetadata) await checkServerMetadata();
                 const serverUpdatedAt = serverMetadata ? serverMetadata[mod.id + '_updatedAt'] : null;
                 if (serverUpdatedAt && (!cachedUpdatedAt || serverUpdatedAt > cachedUpdatedAt)) {
-                    const docSnap = await getDoc(doc(db, "content", mod.id));
-                    if (docSnap.exists()) {
-                        let data = docSnap.data();
-                        if (data && data._isChunked && data._chunkCount > 1) {
-                            const chunkPromises = [];
-                            for (let i = 1; i < data._chunkCount; i++) {
-                                chunkPromises.push(getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)));
-                            }
-                            const chunkSnaps = await Promise.all(chunkPromises);
-                            let merged = data;
-                            delete merged._isChunked;
-                            delete merged._chunkCount;
-                            chunkSnaps.forEach(cs => {
-                                if (cs.exists()) {
-                                    const cd = cs.data();
-                                    delete cd._isChunked;
-                                    delete cd._chunkCount;
-                                    merged = mergeChunkObjects(merged, cd);
-                                }
-                            });
-                            data = merged;
-                        }
-                        const finalData = data.questionsList ? data.questionsList : data;
-                        DB[mod.key] = finalData;
-                        await setIDBCache(mod.key, { data: finalData, updatedAt: serverUpdatedAt });
-                        if (typeof window.renderDashboard === "function") window.renderDashboard();
-                    }
+                    await fetchSingleModuleFromDB(mod.key, true);
                 }
             } catch (e) { }
         }
