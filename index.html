@@ -51,6 +51,26 @@
             --shimmer-highlight: rgba(241, 245, 249, 1);
         }
 
+        .quiz-container,
+        #quiz-screen,
+        #exam-screen,
+        .question-card,
+        .option-card,
+        .question-box,
+        .choices-container,
+        .question-text {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+
+        body.devtools-active #view-quiz {
+            filter: blur(28px) !important;
+            opacity: 0.04 !important;
+            pointer-events: none !important;
+        }
+
         [data-mode='mistakes'] {
             --accent: var(--primary-red);
             --accent-dark: var(--dark-red);
@@ -806,10 +826,10 @@
         }
 
         #view-quiz {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
             position: relative;
             overflow-x: hidden !important;
             overflow-y: auto;
@@ -5163,6 +5183,34 @@
             </div>
         </div>
     </div>
+
+    <div class="modal-overlay" id="devtools-modal"
+        style="z-index: 1000000; backdrop-filter: blur(16px); background: rgba(10, 16, 20, 0.94);">
+        <div class="modal"
+            style="text-align: center; max-width: 440px; padding: 2.5rem 2rem; border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
+            <div
+                style="font-size: 3.8rem; color: var(--primary-red); margin-bottom: 0.5rem; animation: pulseRed 2s infinite;">
+                <i class="ri-shield-keyhole-fill"></i>
+            </div>
+
+            <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.8rem; color: var(--text-light);">
+                Security Alert
+            </h2>
+
+            <p style="color: var(--text-gray); margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.6;">
+                Developer tools (F12) are open. For quiz and exam integrity, please close Developer Tools to continue.
+            </p>
+
+            <div
+                style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 0.8rem; margin-bottom: 1.2rem; color: #FCA5A5; font-size: 0.88rem; font-weight: 600;">
+                Questions are hidden while inspection tools are active.
+            </div>
+
+            <p style="color: var(--text-gray); font-size: 0.82rem;">
+                Close F12 or close the inspect panel to resume automatically.
+            </p>
+        </div>
+    </div>
     <nav class="sidebar">
         <div class="sidebar-logo-container" onclick="switchMode('dashboard')" title="ASA Dashboard">
             <img id="sidebar-logo-img" src="img/logo.png" alt="ASA Logo" class="sidebar-logo-img">
@@ -6416,6 +6464,7 @@
 
         var AppState = window._getInternalAppState ? window._getInternalAppState() : {};
         var DB = window._getInternalDB ? window._getInternalDB() : {};
+        try { delete window._getInternalDB; } catch (e) { window._getInternalDB = undefined; }
 
         const firebaseConfig = {
             apiKey: "AIzaSyC7UzVIsD8R9wvBJSFzLrON0WqPH5_MSo8",
@@ -7807,6 +7856,59 @@
         let idbInstance = null;
         let idbOpeningPromise = null;
 
+        const _ENC_SECRET = 'MedStorm_Secure_Payload_2026_x87!@#';
+
+        function encryptPayload(obj) {
+            try {
+                const json = JSON.stringify(obj);
+                const codeUnits = new TextEncoder().encode(json);
+                const keyUnits = new TextEncoder().encode(_ENC_SECRET);
+                const out = new Uint8Array(codeUnits.length);
+                for (let i = 0; i < codeUnits.length; i++) {
+                    out[i] = codeUnits[i] ^ keyUnits[i % keyUnits.length] ^ ((i * 37) & 0xFF);
+                }
+                let binary = '';
+                const chunk = 8192;
+                for (let i = 0; i < out.length; i += chunk) {
+                    binary += String.fromCharCode.apply(null, out.subarray(i, i + chunk));
+                }
+                return btoa(binary);
+            } catch (e) {
+                console.error("[Crypto] Encryption error:", e);
+                return null;
+            }
+        }
+
+        function decryptPayload(b64) {
+            try {
+                const binary = atob(b64);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+                const keyUnits = new TextEncoder().encode(_ENC_SECRET);
+                for (let i = 0; i < bytes.length; i++) {
+                    bytes[i] = bytes[i] ^ keyUnits[i % keyUnits.length] ^ ((i * 37) & 0xFF);
+                }
+                const json = new TextDecoder().decode(bytes);
+                return JSON.parse(json);
+            } catch (e) {
+                console.error("[Crypto] Decryption error:", e);
+                return null;
+            }
+        }
+
+        function unpackCachedModule(val) {
+            if (!val) return null;
+            if (val._enc === true && typeof val.data === 'string') {
+                return decryptPayload(val.data);
+            }
+            if (val.data && typeof val.data === 'object') {
+                return val.data;
+            }
+            return null;
+        }
+
         function openIDB() {
             if (idbInstance) return Promise.resolve(idbInstance);
             if (idbOpeningPromise) return idbOpeningPromise;
@@ -7841,7 +7943,19 @@
                 return new Promise((resolve) => {
                     const tx = idb.transaction(IDB_STORE, 'readonly');
                     const req = tx.objectStore(IDB_STORE).get(key);
-                    req.onsuccess = () => resolve(req.result || null);
+                    req.onsuccess = () => {
+                        const result = req.result;
+                        if (!result) return resolve(null);
+                        const unpacked = unpackCachedModule(result);
+                        if (unpacked) {
+                            if (!result._enc && typeof result.data === 'object') {
+                                setIDBCache(key, { data: unpacked, updatedAt: result.updatedAt || Date.now() });
+                            }
+                            resolve({ data: unpacked, updatedAt: result.updatedAt || 0 });
+                        } else {
+                            resolve(null);
+                        }
+                    };
                     req.onerror = () => resolve(null);
                 });
             } catch (e) { return null; }
@@ -7851,9 +7965,22 @@
             try {
                 const idb = await openIDB();
                 if (!idb) return false;
+
+                let recordToStore = value;
+                if (value && value.data) {
+                    const cipher = encryptPayload(value.data);
+                    if (cipher) {
+                        recordToStore = {
+                            _enc: true,
+                            data: cipher,
+                            updatedAt: value.updatedAt || Date.now()
+                        };
+                    }
+                }
+
                 return new Promise((resolve) => {
                     const tx = idb.transaction(IDB_STORE, 'readwrite');
-                    tx.objectStore(IDB_STORE).put(value, key);
+                    tx.objectStore(IDB_STORE).put(recordToStore, key);
                     tx.oncomplete = () => resolve(true);
                     tx.onerror = () => resolve(false);
                 });
@@ -7875,11 +8002,19 @@
                         if (cursor) {
                             const key = cursor.key;
                             const val = cursor.value;
-                            if (val && val.data && key !== '__modules_metadata__') {
-                                DB[key] = val.data;
-                                cachedModuleUpdatedAts[key] = val.updatedAt || 0;
-                            } else if (key === '__modules_metadata__' && val && val.data) {
-                                window.DB_METADATA = Object.assign({}, window.DB_METADATA, val.data);
+                            if (val) {
+                                const unpacked = unpackCachedModule(val);
+                                if (unpacked) {
+                                    if (key !== '__modules_metadata__') {
+                                        DB[key] = unpacked;
+                                        cachedModuleUpdatedAts[key] = val.updatedAt || 0;
+                                    } else {
+                                        window.DB_METADATA = Object.assign({}, window.DB_METADATA, unpacked);
+                                    }
+                                    if (!val._enc && typeof val.data === 'object') {
+                                        setIDBCache(key, { data: unpacked, updatedAt: val.updatedAt || Date.now() });
+                                    }
+                                }
                             }
                             cursor.continue();
                         } else {
@@ -7981,33 +8116,13 @@
                         const docId = MODULE_KEY_TO_DOC_ID[modKey];
                         const serverDocUpdatedAt = meta[docId + '_updatedAt'];
                         const cachedDocUpdatedAt = cachedModuleUpdatedAts[modKey] || 0;
-                        if (serverDocUpdatedAt && (!cachedDocUpdatedAt || serverDocUpdatedAt > cachedDocUpdatedAt)) {
+                        if (cachedDocUpdatedAt && serverDocUpdatedAt && serverDocUpdatedAt > cachedDocUpdatedAt) {
                             console.log(`[Auto-Sync] Update detected on server for ${modKey}. Syncing in background...`);
                             await fetchSingleModuleFromDB(modKey, true);
                         }
                     }
                 } catch (e) { }
             }).catch(() => { });
-
-            setTimeout(async () => {
-                try {
-                    const yr = String((window.AppState && window.AppState.year) || '1');
-                    let priorityModules = [];
-                    if (yr === '1') {
-                        priorityModules = ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS', 'Communication Step 1'];
-                    } else if (yr === '2') {
-                        priorityModules = ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'Communication Step 2', 'CNS', 'Professionalism', 'Concept 1 Pharmacology', 'Concept 1 Pathology', 'Concept 2 Pharmacology', 'Concept 2 Pathology'];
-                    }
-                    for (const modKey of priorityModules) {
-                        if (!DB[modKey] || Object.keys(DB[modKey]).length === 0) {
-                            await fetchSingleModuleFromDB(modKey);
-                            await new Promise(r => setTimeout(r, 350));
-                        }
-                    }
-                } catch (e) {
-                    console.warn("Background module prefetch error:", e);
-                }
-            }, 1200);
         }
 
         function mergeChunkObjects(target, source) {
@@ -9704,6 +9819,7 @@
         };
 
         function loadQuestion() {
+            if (typeof checkDevToolsSecurity === 'function') checkDevToolsSecurity();
             window._questionStartTime = Date.now();
             _accumulatedInactiveTime = 0;
             if (!Session.queue || Session.queue.length === 0) {
@@ -15369,6 +15485,81 @@
             }
         }
         */
+
+        document.addEventListener('contextmenu', function (e) {
+            if (e.target && e.target.closest && e.target.closest('#view-quiz, #quiz-screen, #exam-screen, .quiz-container, .question-card, .question-box, .choices-container, .question-text')) {
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('keydown', function (e) {
+            const isQuizActive = (document.getElementById('view-quiz') && document.getElementById('view-quiz').classList.contains('active')) ||
+                (document.body && document.body.classList.contains('focus-mode'));
+
+            if (isQuizActive) {
+                if (e.key === 'F12' || e.keyCode === 123) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.showToast) window.showToast("⚠️ Developer tools (F12) are disabled during quizzes and exams.", "warning");
+                    return false;
+                }
+
+                const isInspectShortcut = (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) ||
+                    (e.metaKey && e.altKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key));
+                if (isInspectShortcut) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.showToast) window.showToast("⚠️ Inspection shortcuts are disabled during quizzes and exams.", "warning");
+                    return false;
+                }
+
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+
+                if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+            }
+        }, true);
+
+        function checkDevToolsSecurity() {
+            const isQuizActive = (document.getElementById('view-quiz') && document.getElementById('view-quiz').classList.contains('active')) ||
+                (document.body && document.body.classList.contains('focus-mode'));
+            const modal = document.getElementById('devtools-modal');
+
+            if (!isQuizActive) {
+                if (modal) modal.classList.remove('active');
+                document.body.classList.remove('devtools-active');
+                return;
+            }
+
+            const widthDelta = window.outerWidth - window.innerWidth;
+            const heightDelta = window.outerHeight - window.innerHeight;
+            const isDocked = widthDelta > 180 || heightDelta > 240;
+
+            let isPaused = false;
+            const startTime = performance.now();
+            debugger;
+            if (performance.now() - startTime > 100) {
+                isPaused = true;
+            }
+
+            if (isDocked || isPaused) {
+                if (modal) modal.classList.add('active');
+                document.body.classList.add('devtools-active');
+            } else {
+                if (modal) modal.classList.remove('active');
+                document.body.classList.remove('devtools-active');
+            }
+        }
+
+        window.addEventListener('resize', checkDevToolsSecurity);
+        setInterval(checkDevToolsSecurity, 1200);
 
     </script>
 </body>
