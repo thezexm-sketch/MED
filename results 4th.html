@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Faculty of Medicine - Alexandria University | 4th Year Results</title>
+  <title>Faculty of Medicine - Alexandria University | 4th Year Final Results</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;500;600;700;900&family=Tajawal:wght@400;500;700&display=swap"
     rel="stylesheet">
@@ -176,7 +176,7 @@
     }
 
     .results-container {
-      max-width: 900px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 0 20px 40px;
       animation: fadeUp 0.5s ease;
@@ -224,6 +224,7 @@
       align-items: flex-start;
       direction: ltr;
       text-align: left;
+      gap: 8px;
     }
 
     @media (max-width: 680px) {
@@ -240,7 +241,6 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 14px;
       direction: ltr;
       text-align: left;
     }
@@ -265,6 +265,13 @@
       background: rgba(245, 158, 11, 0.1);
     }
 
+    .rank-banners-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
     .rank-banner {
       display: inline-flex;
       align-items: center;
@@ -272,15 +279,83 @@
       background: rgba(245, 158, 11, 0.1);
       border: 1px solid rgba(245, 158, 11, 0.3);
       border-radius: 12px;
-      padding: 10px 18px;
-      font-size: 15px;
+      padding: 8px 16px;
+      font-size: 14px;
       color: var(--gold);
       font-weight: 700;
     }
 
+    .rank-banner.sub-rank {
+      background: rgba(6, 182, 212, 0.08);
+      border-color: rgba(6, 182, 212, 0.25);
+      color: var(--accent2);
+    }
+
     .rank-num {
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .rank-change-badge {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+      margin-left: 4px;
+    }
+
+    .rank-change-badge.up {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .rank-change-badge.down {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .rank-change-badge.same {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .summary-val {
       font-size: 28px;
       font-weight: 900;
+      color: #fff;
+    }
+
+    .summary-val.highlight {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .section-title {
@@ -494,22 +569,22 @@
   <div class="main-content">
     <div class="header">
       <div class="logo">Alexandria Faculty of Medicine</div>
-      <h1>4th Year Results</h1>
-      <p class="subtitle">General Track · First Round 2025-2026</p>
+      <h1>4th Year Final Results</h1>
+      <p class="subtitle">Official Cumulative & 4th Year Standing · Round 1 (2025-2026)</p>
     </div>
 
     <div class="search-container">
       <div class="search-box" style="border-color: rgba(6,182,212,0.3);">
         <label style="color:var(--accent2); font-weight: 600;">Student Number (ID)</label>
-        <input type="number" id="studentId" placeholder="e.g. 42 or 2760" autofocus>
+        <input type="number" id="studentId" placeholder="e.g. 1452 or 2307" autofocus>
         <div class="target-box">
           <label>🎯 Am I Far? (Optional)</label>
           <p style="font-size: 12px; color: var(--muted); margin-bottom: 10px;">
-            Enter your target rank to calculate the exact points and score gap (e.g. 1)
+            Enter your target cumulative rank to see the exact points needed
           </p>
           <input type="number" id="targetRank" placeholder="Target Rank (e.g. 1 or 50)">
         </div>
-        <button class="btn" onclick="searchStudent()">🔍 View Result</button>
+        <button class="btn" onclick="searchStudent()">🔍 View Full Results</button>
       </div>
     </div>
 
@@ -522,24 +597,24 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="data_4th.js"></script>
+  <script src="4th_final.js"></script>
 
   <script>
     let allStudents = [];
-    let validStudents = [];
-    const MAX_TOTAL = 1655;
+    let validCumulativeStudents = [];
+    let validY4Students = [];
+    const MAX_4TH = 1655;
 
     function isNumeric(v) {
-      return v !== null && v !== undefined && v !== '' && !isNaN(parseFloat(v)) && v !== 'غ' && v !== 'غ ب' && v !== 'راسب';
+      return v !== null && v !== undefined && v !== '' && !isNaN(parseFloat(v)) && v !== 'غ' && v !== 'غ ب' && v !== 'راسب' && v !== '—';
     }
 
     function num(v) {
       return isNumeric(v) ? parseFloat(v) : 0;
     }
 
-    // Format score neatly to at most 2 decimal places (e.g. 324.53 instead of 324.533333333333)
     function formatScore(v) {
-      if (v === null || v === undefined || v === '') return '—';
+      if (v === null || v === undefined || v === '' || v === '—') return '—';
       if (v === 'غ' || v === 'غ ب' || v === 'غائب') return 'Absent';
       if (v === 'راسب') return 'Fail';
       if (!isNumeric(v)) return translateGrade(v);
@@ -547,7 +622,6 @@
       return Number.isInteger(n) ? n.toString() : parseFloat(n.toFixed(2)).toString();
     }
 
-    // Translate Arabic appreciations/grades into English
     function translateGrade(g) {
       if (!g) return '';
       const s = g.trim();
@@ -588,27 +662,26 @@
     }
 
     function initData() {
-      if (typeof studentsData4th === 'undefined') {
+      const srcData = typeof studentsDataFinal !== 'undefined' ? studentsDataFinal : (typeof studentsData4th !== 'undefined' ? studentsData4th : null);
+      if (!srcData) {
         document.getElementById('output').innerHTML = `
           <div class="results-container">
-            <div class="error-box">⚠️ Please ensure data_4th.js is in the same directory.</div>
+            <div class="error-box">⚠️ Please ensure 4th_final.js is in the same directory.</div>
           </div>`;
         return;
       }
 
-      allStudents = studentsData4th;
-      validStudents = allStudents.filter(s => isNumeric(s.totalGrade));
-      validStudents.sort((a, b) => num(b.totalGrade) - num(a.totalGrade));
+      allStudents = srcData;
 
-      let rank = 1;
-      for (let i = 0; i < validStudents.length; i++) {
-        if (i > 0 && num(validStudents[i].totalGrade) < num(validStudents[i - 1].totalGrade)) {
-          rank = i + 1;
-        }
-        validStudents[i].rank = rank;
-      }
+      // Valid Cumulative Students
+      validCumulativeStudents = allStudents.filter(s => s.cumulativeTotal !== null && isNumeric(s.cumulativeTotal));
+      validCumulativeStudents.sort((a, b) => num(b.cumulativeTotal) - num(a.cumulativeTotal));
 
-      calcModuleRanks(validStudents);
+      // Valid 4th Year Students
+      validY4Students = allStudents.filter(s => isNumeric(s.totalGrade));
+      validY4Students.sort((a, b) => num(b.totalGrade) - num(a.totalGrade));
+
+      calcModuleRanks(validY4Students);
     }
 
     window.onload = () => {
@@ -629,7 +702,7 @@
       const formatted = formatScore(score);
       const engGrade = translateGrade(gradeText);
       const pctDisplay = hasScore ? (p * 100).toFixed(1) + '%' : (isAbsent ? 'Absent' : (formatted || '—'));
-      const rankHtml = rank ? `<div style="position:absolute;top:15px;right:15px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700" title="Class Rank in this module">🏆 #${rank}</div>` : '';
+      const rankHtml = rank ? `<div style="position:absolute;top:15px;right:15px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--gold);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700" title="4th Year Rank in this module">🏆 #${rank}</div>` : '';
       const gradeBadge = engGrade && engGrade !== '*' ? `<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:var(--accent2);font-weight:600">${engGrade}</span>` : '';
 
       return `<div class="module-card">
@@ -680,65 +753,65 @@
 
       const student = allStudents.find(s => s.id === idInput);
       if (!student) {
-        output.innerHTML = '<div class="results-container"><div class="error-box">❌ Student ID not found in 4th Year records!</div></div>';
+        output.innerHTML = '<div class="results-container"><div class="error-box">❌ Student ID not found in records!</div></div>';
         return;
       }
 
-      renderResult(student, validStudents, allStudents.length, targetInput, output);
+      renderResult(student, targetInput, output);
     }
 
-    function renderResult(student, validList, totalCount, targetInput, outputEl) {
-      const hasTotal = isNumeric(student.totalGrade);
+    function renderResult(student, targetInput, outputEl) {
+      const hasY4Total = isNumeric(student.totalGrade);
+      const hasCumulative = student.cumulativeTotal !== null && isNumeric(student.cumulativeTotal);
       const isAbsent = student.totalGrade === 'غ' || student.totalGrade === 'غ ب';
       const engAppreciation = translateGrade(student.appreciation);
       const isFail = student.totalGrade === 'راسب' || engAppreciation.includes('Fail');
-      const totalVal = hasTotal ? num(student.totalGrade) : 0;
-      const pctPct = hasTotal ? ((totalVal / MAX_TOTAL) * 100).toFixed(2) : '—';
-      const passStatus = isFail ? 'Fail' : (isAbsent ? 'Absent' : (hasTotal ? (engAppreciation || 'Pass') : '—'));
-      const studentRank = student.rank || '—';
+      const y4Val = hasY4Total ? num(student.totalGrade) : 0;
+      const pctPct = hasY4Total ? ((y4Val / MAX_4TH) * 100).toFixed(2) : '—';
+      const passStatus = isFail ? 'Fail' : (isAbsent ? 'Absent' : (hasY4Total ? (engAppreciation || 'Pass') : '—'));
 
-      // Target "Am I Far?" Calculation
+      // Target "Am I Far?" (Comparison on Cumulative Rank if available, else 4th year rank)
       let targetHTML = '';
-      if (targetInput && hasTotal && studentRank !== '—') {
-        let ts = validList.find(s => s.rank === targetInput);
-        if (!ts) ts = validList.find(s => s.rank >= targetInput);
-        if (studentRank <= targetInput) {
+      if (targetInput && hasCumulative && student.cumulativeRank) {
+        let ts = validCumulativeStudents.find(s => s.cumulativeRank === targetInput);
+        if (!ts) ts = validCumulativeStudents.find(s => s.cumulativeRank >= targetInput);
+        if (student.cumulativeRank <= targetInput) {
           targetHTML = `<div class="target-result-card" style="border-color:#10b981; background: rgba(16, 185, 129, 0.05);">
-            <h3 style="color:#10b981; text-align:center; font-weight: 700;">🎉 You have already achieved or surpassed this rank! Excellent work!</h3>
+            <h3 style="color:#10b981; text-align:center; font-weight: 700;">🎉 You have already achieved or surpassed this cumulative rank!</h3>
           </div>`;
         } else if (ts) {
-          const tTotal = num(ts.totalGrade);
-          const diffScore = (tTotal - totalVal).toFixed(2);
-          const targetPct = ((tTotal / MAX_TOTAL) * 100).toFixed(2);
+          const tTotal = num(ts.cumulativeTotal);
+          const diffScore = (tTotal - num(student.cumulativeTotal)).toFixed(2);
           targetHTML = `
             <div class="target-result-card">
               <div style="text-align:center;margin-bottom:10px">
-                <span style="color:var(--muted);font-size:14px;font-weight:600">Comparison with Class Rank #${ts.rank}</span>
+                <span style="color:var(--muted);font-size:14px;font-weight:600">Comparison with Cumulative Rank #${ts.cumulativeRank}</span>
               </div>
               <div class="diff-grid">
                 <div class="diff-item">
-                  <div style="font-size:13px;color:var(--muted)">Target Rank Total</div>
-                  <div class="target-value">${formatScore(tTotal)} <span style="font-size:14px;color:var(--muted)">/ ${MAX_TOTAL}</span></div>
-                  <div style="font-size:14px;color:var(--gold);font-weight:600">${targetPct}%</div>
+                  <div style="font-size:13px;color:var(--muted)">Target Cumulative Total</div>
+                  <div class="target-value">${formatScore(tTotal)}</div>
+                  <div style="font-size:12px;color:var(--muted)">Rank #${ts.cumulativeRank} score</div>
                 </div>
                 <div class="diff-item">
-                  <div style="font-size:13px;color:var(--muted)">Score Difference (Gap)</div>
+                  <div style="font-size:13px;color:var(--muted)">Cumulative Gap</div>
                   <div class="diff-value">🔻 ${diffScore} <span style="font-size:15px">Marks</span></div>
-                  <div style="font-size:12px;color:var(--muted)">Required to reach Rank #${ts.rank}</div>
+                  <div style="font-size:12px;color:var(--muted)">Required to reach Rank #${ts.cumulativeRank}</div>
                 </div>
               </div>
             </div>`;
         }
       }
 
-      // Analytics & Percentiles
+      // Performance analytics
       let analyticsHTML = '';
-      let exportPct = '—';
       let bestSubName = '—';
+      let exportPct = '—';
 
-      if (hasTotal) {
-        const totalValid = validList.length;
-        const percentile = ((totalValid - studentRank) / totalValid * 100).toFixed(1);
+      if (hasY4Total) {
+        const totalValid = validY4Students.length;
+        const currentRank = student.cumulativeRank || student.year4Rank || 1;
+        const percentile = ((totalValid - currentRank) / totalValid * 100).toFixed(1);
         exportPct = percentile;
 
         const subjects = [
@@ -831,52 +904,55 @@
         }, 100);
       }
 
-      // Export Card for HTML2Canvas (Full English Certificate Card)
+      // Export Certificate Card
       const exportCardHTML = `
-        <div class="export-card" style="width: 820px; padding: 40px; background: #0a0f1e; background-image: radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 45%), radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.15), transparent 45%); color: #fff; font-family: 'Inter', sans-serif; position: absolute; left: -9999px; top: -9999px; border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.35);">
+        <div class="export-card" style="width: 840px; padding: 40px; background: #0a0f1e; background-image: radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 45%), radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.15), transparent 45%); color: #fff; font-family: 'Inter', sans-serif; position: absolute; left: -9999px; top: -9999px; border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.35);">
           <div style="text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 20px; margin-bottom: 30px;">
             <div style="font-size: 15px; color: #06b6d4; letter-spacing: 2px; text-transform: uppercase; font-weight: 600;">Alexandria University · Faculty of Medicine</div>
-            <div style="font-size: 34px; font-weight: 900; margin-top: 8px; color: #fff; margin-bottom: 0;">4th Year Official Result · Round 1</div>
+            <div style="font-size: 32px; font-weight: 900; margin-top: 8px; color: #fff; margin-bottom: 0;">4th Year Official Final Results · Round 1</div>
           </div>
           
           <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 25px 30px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
             <div style="text-align: left;">
               <div style="color: #94a3b8; font-size: 16px; margin-bottom: 8px;">Seating No: <span style="color: #fff; font-weight: bold;">${student.id}</span> ${engAppreciation ? `<span style="margin-left:12px;color:#06b6d4;font-weight:700">| Grade: ${engAppreciation}</span>` : ''}</div>
-              <div style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px 18px; border-radius: 10px;">
-                <span style="color: #f59e0b; font-size: 13px; font-weight: bold; text-transform: uppercase;">Class Rank:</span>
-                <span style="font-size: 26px; font-weight: 900; color: #f59e0b;">#${studentRank}</span>
+              <div style="display: flex; gap: 10px;">
+                <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px 16px; border-radius: 10px;">
+                  <span style="color: #f59e0b; font-size: 12px; font-weight: bold; text-transform: uppercase;">Cumulative Rank:</span>
+                  <span style="font-size: 22px; font-weight: 900; color: #f59e0b;">#${student.cumulativeRank || '—'}</span>
+                </div>
+                <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); padding: 8px 16px; border-radius: 10px;">
+                  <span style="color: #06b6d4; font-size: 12px; font-weight: bold; text-transform: uppercase;">4th Year Rank:</span>
+                  <span style="font-size: 22px; font-weight: 900; color: #06b6d4;">#${student.year4Rank || '—'}</span>
+                </div>
               </div>
             </div>
             <div style="text-align: right; direction: rtl;">
-              <div style="font-size: 30px; font-weight: 900; color: #fff; font-family: 'Cairo', sans-serif;">${student.name || '—'}</div>
+              <div style="font-size: 28px; font-weight: 900; color: #fff; font-family: 'Cairo', sans-serif;">${student.name || '—'}</div>
             </div>
           </div>
 
-          <div style="display: flex; gap: 20px; margin-bottom: 25px;">
-            <div style="flex: 1.2; background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(6, 182, 212, 0.06)); border: 1px solid rgba(59, 130, 246, 0.3); padding: 25px; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);">
-              <div style="color: #94a3b8; font-size: 15px; margin-bottom: 8px;">Total Score</div>
-              <div style="font-size: 48px; font-weight: 900; color: #3b82f6; line-height: 1; margin-bottom: 5px;">${hasTotal ? formatScore(totalVal) : (isAbsent ? 'Absent' : formatScore(student.totalGrade))} <span style="font-size: 18px; color: #64748b; font-weight: 600;">/ ${MAX_TOTAL}</span></div>
-              ${hasTotal ? `<div style="font-size: 24px; font-weight: bold; color: #06b6d4;">${pctPct}%</div>` : ''}
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 25px;">
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); padding: 18px; border-radius: 14px; text-align: center;">
+              <div style="color: #94a3b8; font-size: 13px; margin-bottom: 4px;">Old Cumulative (Y1-3)</div>
+              <div style="font-size: 26px; font-weight: 900; color: #fff;">${formatScore(student.oldTotal)}</div>
             </div>
-            
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
-              <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 12px 20px; border-radius: 14px; text-align: center; display: flex; justify-content: space-between; align-items: center; flex: 1;">
-                <span style="color: #94a3b8; font-size: 14px;">Result Status</span>
-                <span style="font-size: 20px; font-weight: 900; color: #10b981;">${passStatus}</span>
-              </div>
-              ${hasTotal ? `
-              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px 20px; border-radius: 14px; text-align: center; display: flex; justify-content: space-between; align-items: center; flex: 1;">
-                <span style="color: #94a3b8; font-size: 14px;">Class Percentile</span>
-                <span style="font-size: 16px; font-weight: bold; color: #fff;">Top <span style="color: #f59e0b; font-weight: 900; font-size: 20px;">${exportPct}%</span></span>
-              </div>
-              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px 20px; border-radius: 14px; text-align: center; display: flex; justify-content: space-between; align-items: center; flex: 1;">
-                <span style="color: #94a3b8; font-size: 14px;">Best Module</span>
-                <span style="font-size: 16px; font-weight: bold; color: #10b981;">${bestSubName}</span>
-              </div>` : ''}
+            <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); padding: 18px; border-radius: 14px; text-align: center;">
+              <div style="color: #94a3b8; font-size: 13px; margin-bottom: 4px;">4th Year Total</div>
+              <div style="font-size: 26px; font-weight: 900; color: #3b82f6;">${formatScore(student.totalGrade)} <span style="font-size: 14px; color: #64748b;">/ 1655</span></div>
+            </div>
+            <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.08)); border: 1px solid rgba(6, 182, 212, 0.3); padding: 18px; border-radius: 14px; text-align: center;">
+              <div style="color: #94a3b8; font-size: 13px; margin-bottom: 4px;">Grand Cumulative</div>
+              <div style="font-size: 26px; font-weight: 900; color: #06b6d4;">${formatScore(student.cumulativeTotal)}</div>
             </div>
           </div>
 
-          <div style="text-align: center; color: #64748b; font-size: 13px; margin-top: 15px; letter-spacing: 1px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px 25px; border-radius: 12px; font-size: 14px;">
+            <span>Best Module: <b style="color:#10b981;">${bestSubName}</b></span>
+            <span>Percentile: <b style="color:#f59e0b;">Top ${exportPct}%</b></span>
+            <span>Status: <b style="color:#10b981;">${passStatus}</b></span>
+          </div>
+
+          <div style="text-align: center; color: #64748b; font-size: 13px; margin-top: 20px; letter-spacing: 1px;">
             Verified Results • Generated via Medical Analytics Platform • Made by Mahmoud
           </div>
         </div>
@@ -891,16 +967,44 @@
                   <div class="badge">Seating No: <b>${student.id}</b></div>
                   ${engAppreciation ? `<div class="badge appreciation-badge">Overall Grade: <b>${engAppreciation}</b></div>` : ''}
                 </div>
-                <div class="rank-banner">
-                  🏆 Class Rank: <span class="rank-num">#${studentRank}</span> 
-                  <span style="font-size:13px;opacity:0.6">/ ${validList.length} Students</span>
+                <div class="rank-banners-group">
+                  <div class="rank-banner">
+                    🏆 Cumulative Rank: <span class="rank-num">#${student.cumulativeRank || '—'}</span>
+                    ${student.oldRank ? `<span style="font-size:12px;opacity:0.8;margin-left:4px">(Prev: #${student.oldRank})</span>` : ''}
+                    ${student.rankChange !== null && student.rankChange !== undefined ? `
+                      <span class="rank-change-badge ${student.rankChange > 0 ? 'up' : (student.rankChange < 0 ? 'down' : 'same')}">
+                        ${student.rankChange > 0 ? `▲ +${student.rankChange}` : (student.rankChange < 0 ? `▼ ${student.rankChange}` : `•`)}
+                      </span>` : ''}
+                  </div>
+                  <div class="rank-banner sub-rank">
+                    🏅 4th Year Rank: <span class="rank-num">#${student.year4Rank || '—'}</span>
+                    <span style="font-size:12px;opacity:0.7">/ ${validY4Students.length}</span>
+                  </div>
                 </div>
               </div>
               <div class="student-name">${student.name || '—'}</div>
             </div>
           </div>
 
-          <div class="section-title">Major Modules</div>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-label">Old Cumulative (Y1-3)</div>
+              <div class="summary-val">${formatScore(student.oldTotal)}</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px">${student.oldRank ? `Previous Rank: #${student.oldRank}` : 'Baseline Total'}</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">4th Year Total</div>
+              <div class="summary-val" style="color:var(--accent);">${formatScore(student.totalGrade)} <span style="font-size:14px;color:var(--muted)">/ ${MAX_4TH}</span></div>
+              <div style="font-size:12px;color:var(--accent2);margin-top:4px">${hasY4Total ? `${pctPct}% · Rank #${student.year4Rank || '—'}` : '—'}</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Grand Cumulative Total</div>
+              <div class="summary-val highlight">${formatScore(student.cumulativeTotal)}</div>
+              <div style="font-size:12px;color:var(--gold);margin-top:4px">${student.cumulativeRank ? `Cumulative Rank: #${student.cumulativeRank}` : '—'}</div>
+            </div>
+          </div>
+
+          <div class="section-title">Major Modules (Batena & Geraha)</div>
           <div class="modules-grid">
             ${moduleCard('Internal Medicine', student.batenaScore, 565, student.batenaGrade, student.batenaRank)}
             ${moduleCard('General Surgery', student.gerahaScore, 565, student.gerahaGrade, student.gerahaRank)}
@@ -951,13 +1055,13 @@
 
           <div class="total-section">
             <div>
-              <div style="font-size:13px;color:var(--muted);margin-bottom:4px">4th Year Total Score</div>
+              <div style="font-size:13px;color:var(--muted);margin-bottom:4px">4th Year Final Score (Out of 1655)</div>
               <div class="total-score">
-                ${hasTotal ? formatScore(totalVal) : (isAbsent ? 'Absent' : formatScore(student.totalGrade))}
-                <span style="font-size:18px;color:var(--muted)"> / ${MAX_TOTAL}</span>
+                ${hasY4Total ? formatScore(y4Val) : (isAbsent ? 'Absent' : formatScore(student.totalGrade))}
+                <span style="font-size:18px;color:var(--muted)"> / ${MAX_4TH}</span>
               </div>
             </div>
-            ${hasTotal ? `<div style="font-size:26px;font-weight:900;color:var(--accent2)">${pctPct}%</div>` : ''}
+            ${hasY4Total ? `<div style="font-size:26px;font-weight:900;color:var(--accent2)">${pctPct}%</div>` : ''}
             <div class="status-pill ${passStatus === 'Fail' ? 'fail' : 'pass'}">
               ${passStatus === 'Fail' ? '✗ Fail' : (isAbsent ? 'Absent' : '✓ ' + passStatus)}
             </div>
@@ -1000,7 +1104,7 @@
           btn.style.pointerEvents = 'auto';
 
           const link = document.createElement('a');
-          link.download = 'Official_Result_Card_4th.png';
+          link.download = 'Official_Result_Card_4th_Final.png';
           link.href = canvas.toDataURL('image/png', 1.0);
           link.click();
         }).catch(err => {
