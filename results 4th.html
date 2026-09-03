@@ -933,7 +933,7 @@
 
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 25px;">
             <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); padding: 18px; border-radius: 14px; text-align: center;">
-              <div style="color: #94a3b8; font-size: 13px; margin-bottom: 4px;">Old Total (+Comm & Res)</div>
+              <div style="color: #94a3b8; font-size: 13px; margin-bottom: 4px;">Old Cumulative Total</div>
               <div style="font-size: 26px; font-weight: 900; color: #fff;">${formatScore(student.oldTotal)}</div>
             </div>
             <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); padding: 18px; border-radius: 14px; text-align: center;">
@@ -988,11 +988,9 @@
 
           <div class="summary-grid">
             <div class="summary-card">
-              <div class="summary-label">Old Cumulative (+Comm & Res)</div>
+              <div class="summary-label">Old Cumulative Total</div>
               <div class="summary-val">${formatScore(student.oldTotal)}</div>
-              <div style="font-size:12px;color:var(--muted);margin-top:4px">
-                ${student.baseOldTotal ? `Base: ${formatScore(student.baseOldTotal)} | Comm: +${formatScore(student.commTotal)} | Res: +${formatScore(student.researchTotal)}` : (student.oldRank ? `Rank #${student.oldRank}` : 'Baseline Total')}
-              </div>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px">${student.oldRank ? `Previous Rank: #${student.oldRank}` : 'Baseline Total'}</div>
             </div>
             <div class="summary-card">
               <div class="summary-label">4th Year Total</div>
@@ -1005,21 +1003,6 @@
               <div style="font-size:12px;color:var(--gold);margin-top:4px">${student.cumulativeRank ? `Cumulative Rank: #${student.cumulativeRank}` : '—'}</div>
             </div>
           </div>
-
-          ${(student.commTotal !== null || student.researchTotal !== null) ? `
-          <div class="section-title">Communication, Professionalism & Research (Old Total Additions)</div>
-          <div class="modules-grid">
-            ${moduleCard('Communication & Professionalism', student.commTotal, 50, '', null)}
-            ${moduleCard('Research 3', student.researchTotal, 50, '', null)}
-          </div>
-          ${student.commTotal !== null ? `
-          <div class="module-card" style="margin-top:10px">
-            <div class="module-name" style="margin-bottom:8px">Communication & Professionalism Breakdown</div>
-            ${subScoreRow('Communication MCQ', student.communicationMCQ, 25)}
-            ${subScoreRow('Professionalism Total', student.totalProfessionalism, 25)}
-            ${subScoreRow('Total (Added to Old Total)', student.commTotal, 50)}
-          </div>` : ''}
-          ` : ''}
 
           <div class="section-title">Major Modules (Batena & Geraha)</div>
           <div class="modules-grid">
