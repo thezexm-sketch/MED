@@ -8939,7 +8939,7 @@
             "إذا مات ابن آدم انقطع عنه عملُه إلا من ثلاثةٍ: إلا من صدقةٍ جاريةٍ، أو علمٍ يُنتفَع به، أو ولدٍ صالحٍ يدعو له",
             "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر",
             "لا إله إلا الله، وحده لا شريك له، له الملك، وله الحمد، وهو على كل شيء قدير",
-            "رب اشرح لي صدري، ويسّر لي أمري، واحلل عقدةً من لساني يفقهوا قولي",
+            "اللهم اشرح لي صدري، ويسّر لي أمري، واحلل عقدةً من لساني يفقهوا قولي",
             "اللهم لا سهل إلا ما جعلته سهلاً، وأنت تجعل الحَزْن إذا شئت سهلاً",
             "اللهم بارك لي في وقتي، وأصلح لي شأني، ولا تكلني إلى نفسي طرفة عين"
         ];
@@ -9771,6 +9771,7 @@
                 if (count > 250) count = 250;
             }
             if (count === 'max' || count > pool.length) count = Math.min(pool.length, 250);
+            Session.settings.count = count;
 
             let customTimeStr = document.getElementById('custom-time').value;
             Session.settings.time = Session.quizMode === 'exam' ? (count * 60 + Math.ceil(count / 5) * 60) : (customTimeStr !== '' ? parseInt(customTimeStr) : Session.settings.time);
@@ -11546,14 +11547,19 @@
 
             if (pool.length === 0) return alert('No questions found for this exam.');
 
-            let count = Session.settings.count;
+            let count = (result.queue && result.queue.length > 0)
+                ? pool.length
+                : (result.total || (result.settings && result.settings.count) || pool.length);
             if (count === 'max' || count > pool.length) count = pool.length;
 
+            Session.settings.count = count;
             Session.queue = pool.sort(() => 0.5 - Math.random()).slice(0, count);
             Session.answers = new Array(Session.queue.length).fill(null);
             Session.index = 0;
             Session.score = 0;
             Session.reviewing = false;
+            Session.examTimeLeft = Session.settings.time > 0 ? Session.settings.time : (Session.quizMode === 'exam' ? (count * 60 + Math.ceil(count / 5) * 60) : 0);
+            Session.questionTimes = new Array(Session.queue.length).fill(Session.settings.time || 0);
 
             document.body.classList.add('focus-mode');
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
@@ -11562,7 +11568,11 @@
 
             startSession(); loadQuestion();
             Session.queue.forEach(q => { if (q.img) { const img = new Image(); img.src = q.img; } });
-            if (Session.settings.time > 0) startQuestionTimer();
+            if (Session.quizMode === 'exam' && Session.settings.time > 0) {
+                startExamTimer();
+            } else if (Session.quizMode === 'tutor' && Session.settings.time > 0) {
+                startQuestionTimer();
+            }
             Session.drawings = {};
             Session.highlights = {};
             clearQuizCanvas();
