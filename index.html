@@ -14,6 +14,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+    <script src="practical3.js"></script>
     <style>
         :root {
             --primary-green: #22c55e;
@@ -2594,6 +2595,40 @@
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
         }
 
+        #filter-hist-mistakes.active {
+            background: #EF4444 !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4) !important;
+        }
+
+        #filter-hist-favorites.active {
+            background: #3B82F6 !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4) !important;
+        }
+
+        .history-card {
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important;
+        }
+
+        .history-card-mistakes:hover {
+            border-color: rgba(239, 68, 68, 0.4) !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(239, 68, 68, 0.1) !important;
+            transform: translateY(-2px);
+        }
+
+        .history-card-favorites:hover {
+            border-color: rgba(59, 130, 246, 0.4) !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(59, 130, 246, 0.1) !important;
+            transform: translateY(-2px);
+        }
+
+        .history-card-standard:hover {
+            border-color: rgba(34, 197, 94, 0.4) !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(34, 197, 94, 0.08) !important;
+            transform: translateY(-2px);
+        }
+
         .info-tooltip-wrap {
             position: relative;
             display: inline-flex;
@@ -3610,6 +3645,186 @@
             overflow-y: auto;
         }
 
+        /* Practical Year Tabs */
+        .practical-year-tabs {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 5px;
+            border-radius: 9999px;
+            border: 1px solid var(--border-color);
+        }
+
+        .practical-year-pill {
+            flex: 1;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-gray);
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+            outline: none;
+        }
+
+        .practical-year-pill:hover {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .practical-year-pill.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        /* Spot Practical Session */
+        .para-session-wrap {
+            width: 100%;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 5px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .para-session-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 12px 18px;
+            border-radius: 16px;
+        }
+
+        .para-img-card {
+            position: relative;
+            width: 100%;
+            border-radius: 18px;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            border: 1.5px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            max-height: 480px;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .para-img-card:hover {
+            border-color: var(--accent);
+        }
+
+        .para-img-card img {
+            max-width: 100%;
+            max-height: 460px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .para-img-card:hover img {
+            transform: scale(1.02);
+        }
+
+        .para-img-zoom-tag {
+            position: absolute;
+            bottom: 12px;
+            right: 14px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            pointer-events: none;
+        }
+
+        .para-q-stepper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .para-q-step-dot {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-gray);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .para-q-step-dot.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .para-q-step-dot.done {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .para-question-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .para-answer-card {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1.5px solid rgba(16, 185, 129, 0.35);
+            border-radius: 16px;
+            padding: 1.5rem;
+            animation: paraSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
+        }
+
+        @keyframes paraSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .fc-cover-wrap {
             display: flex;
             flex-direction: column;
@@ -4593,6 +4808,115 @@
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
+        #admin-panel-editor .copy-btn-group {
+            position: relative;
+            display: flex;
+            flex: 1.2;
+            min-width: 140px;
+        }
+
+        #admin-panel-editor .copy-btn {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+
+        #admin-panel-editor .copy-btn:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.55);
+            color: #a5b4fc;
+        }
+
+        #admin-panel-editor .copy-dropdown-trigger {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            border-left: none;
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            padding: 0 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        #admin-panel-editor .copy-dropdown-trigger:hover {
+            background: rgba(99, 102, 241, 0.25);
+            color: #a5b4fc;
+        }
+
+        #admin-panel-editor .copy-menu {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 0;
+            background: var(--bg-darker, #1e293b);
+            border: 1px solid var(--border-color, rgba(148, 163, 184, 0.2));
+            border-radius: 10px;
+            box-shadow: var(--shadow-soft, 0 10px 25px -5px rgba(0, 0, 0, 0.5));
+            padding: 6px;
+            min-width: 230px;
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        #admin-panel-editor .copy-menu.show {
+            display: flex;
+        }
+
+        #admin-panel-editor .copy-menu button {
+            background: transparent;
+            border: none;
+            color: var(--text-light, #f1f5f9);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.15s;
+            width: 100%;
+        }
+
+        #admin-panel-editor .copy-menu button:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+        }
+
+        #admin-panel-editor .quick-copy-btn {
+            background: rgba(99, 102, 241, 0.12);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.28);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        #admin-panel-editor .quick-copy-btn:hover {
+            background: rgba(99, 102, 241, 0.25);
+            color: #a5b4fc;
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
         #admin-panel-editor .doc-badge {
             display: inline-block;
             background: #3b82f6;
@@ -5357,7 +5681,26 @@
 
         <div id="view-favorites" class="view-section">
             <div style="max-width: 1200px; margin: 0 auto; width: 100%;">
-                <h2 style="margin-bottom: 1.5rem; font-weight: 800;">⭐ Favorited Questions</h2>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; background: var(--bg-card); padding: 1.25rem 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <h2
+                            style="margin: 0; font-weight: 800; font-size: 1.75rem; display: flex; align-items: center; gap: 8px;">
+                            ⭐ Favorited Questions
+                        </h2>
+                        <span id="fav-total-pill"
+                            style="background: rgba(59, 130, 246, 0.15); color: var(--primary-blue, #3B82F6); border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; font-weight: 700;">
+                            0 Questions
+                        </span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button id="btn-solve-all-favorites" class="quiz-btn btn-primary"
+                            onclick="openFavoritesStartModal()"
+                            style="background: linear-gradient(135deg, #3B82F6, #2563EB); border: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); display: inline-flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px; border-radius: 12px; cursor: pointer; transition: var(--transition);">
+                            <i class="ri-play-fill" style="font-size: 1.25rem;"></i> Solve All Favorites Questions
+                        </button>
+                    </div>
+                </div>
                 <div id="favorites-list" style="margin-bottom: 3rem;"></div>
                 <h2 style="margin-bottom: 1.5rem; font-weight: 800;">📝 Noted Questions</h2>
                 <div id="notes-list"></div>
@@ -5518,9 +5861,26 @@
                 </div>
 
                 <div id="completed-exams-container">
-                    <h3 style="margin-bottom: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                        <i class="ri-checkbox-circle-line"></i> Completed Exams
-                    </h3>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                            <i class="ri-checkbox-circle-line"></i> Completed Exams
+                        </h3>
+                        <div class="timeframe-selector-group" id="history-filter-group"
+                            style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="timeframe-pill active" onclick="filterExamHistory('all', this)"
+                                id="filter-hist-all">All</button>
+                            <button class="timeframe-pill" onclick="filterExamHistory('standard', this)"
+                                id="filter-hist-standard"><i class="ri-checkbox-circle-line"
+                                    style="color: var(--primary-green);"></i>Standard</button>
+                            <button class="timeframe-pill" onclick="filterExamHistory('mistakes', this)"
+                                id="filter-hist-mistakes"><i class="ri-error-warning-line"
+                                    style="color: var(--primary-red);"></i> Mistakes</button>
+                            <button class="timeframe-pill" onclick="filterExamHistory('favorites', this)"
+                                id="filter-hist-favorites"><i class="ri-star-line"
+                                    style="color: var(--primary-blue);"></i> Favorites</button>
+                        </div>
+                    </div>
                     <div id="completed-exams-list"
                         style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
 
@@ -5923,17 +6283,65 @@
                 </div>
 
                 <div id="admin-panel-reports" style="display:none;">
-                    <div style="display:flex; gap:8px; margin-bottom:1rem;">
-                        <button onclick="adminReportsFilter('pending')" id="admin-rep-pending"
-                            style="padding:6px 14px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; font-size:0.85rem; cursor:pointer; font-weight:600;">
-                            Pending
-                        </button>
-                        <button onclick="adminReportsFilter('all')" id="admin-rep-all"
-                            style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600;">
-                            All
-                        </button>
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:1.25rem;">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                            <div
+                                style="display:flex; background:var(--bg-darker); padding:4px; border-radius:10px; border:1px solid var(--border-color); gap:4px;">
+                                <button onclick="adminReportsYearFilter('all')" id="admin-rep-year-all"
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid #3b82f6; background:rgba(59, 130, 246, 0.18); color:#60a5fa; font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                    <i class="ri-layers-line"></i> All Years <span id="admin-rep-badge-all"
+                                        style="font-size:0.72rem; opacity:0.85; background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:999px;">0</span>
+                                </button>
+                                <button onclick="adminReportsYearFilter('1')" id="admin-rep-year-1"
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                    <i class="ri-graduation-cap-line"></i> 1st Year <span id="admin-rep-badge-y1"
+                                        style="font-size:0.72rem; opacity:0.85; background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:999px;">0</span>
+                                </button>
+                                <button onclick="adminReportsYearFilter('2')" id="admin-rep-year-2"
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                    <i class="ri-graduation-cap-line"></i> 2nd Year <span id="admin-rep-badge-y2"
+                                        style="font-size:0.72rem; opacity:0.85; background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:999px;">0</span>
+                                </button>
+                            </div>
+
+                            <div
+                                style="display:flex; background:var(--bg-darker); padding:4px; border-radius:10px; border:1px solid var(--border-color); gap:4px;">
+                                <button onclick="adminReportsStatusFilter('pending')" id="admin-rep-status-pending"
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid #f59e0b; background:rgba(245, 158, 11, 0.2); color:#fbbf24; font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                    <i class="ri-time-line"></i> Pending <span id="admin-rep-badge-pending"
+                                        style="font-size:0.72rem; opacity:0.85; background:rgba(245,158,11,0.25); padding:1px 6px; border-radius:999px;">0</span>
+                                </button>
+                                <button onclick="adminReportsStatusFilter('resolved')" id="admin-rep-status-resolved"
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                    <i class="ri-checkbox-circle-line"></i> Resolved <span id="admin-rep-badge-resolved"
+                                        style="font-size:0.72rem; opacity:0.85; background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:999px;">0</span>
+                                </button>
+                                <button onclick="adminReportsStatusFilter('all')" id="admin-rep-status-all"
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                    All Status <span id="admin-rep-badge-status-all"
+                                        style="font-size:0.72rem; opacity:0.85; background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:999px;">0</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <div style="position:relative; flex:1; min-width:240px;">
+                                <i class="ri-search-line"
+                                    style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-gray); font-size:0.95rem;"></i>
+                                <input id="admin-reports-search" type="text"
+                                    placeholder="Search reports by question text, student, reason, module, section..."
+                                    oninput="handleAdminReportsSearch()"
+                                    style="width:100%; padding:8px 14px 8px 36px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.88rem; outline:none; transition:border-color 0.2s;">
+                            </div>
+                            <div id="admin-rep-summary-text"
+                                style="font-size:0.82rem; color:var(--text-gray); font-weight:600; white-space:nowrap;">
+                                Loading reports...
+                            </div>
+                        </div>
                     </div>
-                    <div id="admin-reports-list" style="display:flex; flex-direction:column; gap:10px;">
+
+                    <div id="admin-reports-list" style="display:flex; flex-direction:column; gap:14px;">
                         <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading reports...</div>
                     </div>
                 </div>
@@ -5943,40 +6351,80 @@
                         style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; flex-wrap:wrap; gap:10px;">
                         <div>
                             <h3
-                                style="color:var(--text-light); font-weight:800; font-size:1.1rem; margin:0; display:flex; align-items:center; gap:8px;">
-                                <i class="ri-bar-chart-box-fill" style="color:var(--accent);"></i> Questions Analysis
+                                style="color:var(--text-light); font-weight:800; font-size:1.15rem; margin:0; display:flex; align-items:center; gap:8px;">
+                                <i class="ri-fire-fill" style="color:#ef4444; font-size:1.3rem;"></i> Top 15 Mistakes
+                                (Weekly Static)
                             </h3>
-                            <p style="color:var(--text-gray); font-size:0.82rem; margin:4px 0 0;">View hardest and most
-                                answered questions</p>
+                            <p style="color:var(--text-gray); font-size:0.82rem; margin:4px 0 0;">
+                                Weekly static archive of hardest questions · Refreshed once a week to conserve Firestore
+                                quota
+                            </p>
                         </div>
-                        <button onclick="loadQuestionsAnalysis(true)"
-                            style="padding:7px 16px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.85rem; cursor:pointer; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
-                            <i class="ri-refresh-line"></i> Refresh
-                        </button>
-                    </div>
-
-                    <div style="display:flex; gap:10px; margin-bottom:1rem; flex-wrap:wrap;">
-                        <div
-                            style="display:flex; background:var(--bg-darker); padding:4px; border-radius:10px; border:1px solid var(--border-color); gap:4px;">
-                            <button onclick="setAnalysisMetric('hardest')" id="analysis-metric-hardest"
-                                style="padding:6px 14px; border-radius:8px; border:none; background:var(--accent); color:var(--bg-dark); font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease;">Hardest</button>
-                            <button onclick="setAnalysisMetric('answered')" id="analysis-metric-answered"
-                                style="padding:6px 14px; border-radius:8px; border:none; background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease;">Most
-                                Answered</button>
-                        </div>
-                        <div
-                            style="display:flex; background:var(--bg-darker); padding:4px; border-radius:10px; border:1px solid var(--border-color); gap:4px;">
-                            <button onclick="setAnalysisTimeframe('all')" id="analysis-time-all"
-                                style="padding:6px 14px; border-radius:8px; border:none; background:var(--accent); color:var(--bg-dark); font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease;">All-Time</button>
-                            <button onclick="setAnalysisTimeframe('week')" id="analysis-time-week"
-                                style="padding:6px 14px; border-radius:8px; border:none; background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease;">This
-                                Week</button>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <button onclick="downloadTopMistakesPDF()" id="btn-download-mistakes-pdf"
+                                style="padding:7px 16px; border-radius:10px; border:1px solid rgba(239, 68, 68, 0.4); background:rgba(239, 68, 68, 0.12); color:#f87171; font-size:0.85rem; cursor:pointer; font-weight:700; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;"
+                                onmouseover="this.style.background='rgba(239, 68, 68, 0.22)'"
+                                onmouseout="this.style.background='rgba(239, 68, 68, 0.12)'"
+                                title="Download the Top 15 questions with choices and answers as a printable PDF">
+                                <i class="ri-file-pdf-line" style="font-size:1.1rem;"></i> Download PDF
+                            </button>
+                            <button onclick="recompileWeeklyTopMistakes(true)" id="btn-recompile-mistakes"
+                                style="padding:7px 16px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.85rem; cursor:pointer; font-weight:600; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;"
+                                onmouseover="this.style.borderColor='var(--accent)'"
+                                onmouseout="this.style.borderColor='var(--border-color)'"
+                                title="Force refresh and re-compile this week's static snapshot in cloud">
+                                <i class="ri-refresh-line"></i> Re-compile Snapshot
+                            </button>
                         </div>
                     </div>
 
-                    <div id="admin-analysis-list" style="display:flex; flex-direction:column; gap:10px;">
-                        <div style="text-align:center; color:var(--text-gray); padding:3rem;">Click to load analysis...
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:1rem;">
+                        <div
+                            style="display:flex; background:var(--bg-darker); padding:4px; border-radius:10px; border:1px solid var(--border-color); gap:4px; flex-wrap:wrap;">
+                            <button onclick="setMistakesYear('1')" id="analysis-year-1"
+                                style="padding:6px 16px; border-radius:8px; border:1px solid #3b82f6; background:rgba(59, 130, 246, 0.18); color:#60a5fa; font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="ri-graduation-cap-line"></i> 1st Year (Top 15) <span id="analysis-badge-y1"
+                                    style="font-size:0.72rem; opacity:0.85; background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:999px;">0</span>
+                            </button>
+                            <button onclick="setMistakesYear('2')" id="analysis-year-2"
+                                style="padding:6px 16px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="ri-graduation-cap-line"></i> 2nd Year (Top 15) <span id="analysis-badge-y2"
+                                    style="font-size:0.72rem; opacity:0.85; background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:999px;">0</span>
+                            </button>
+                            <button onclick="setMistakesYear('all')" id="analysis-year-all"
+                                style="padding:6px 16px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="ri-layers-line"></i> All Years (Top 15) <span id="analysis-badge-all"
+                                    style="font-size:0.72rem; opacity:0.85; background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:999px;">0</span>
+                            </button>
                         </div>
+                    </div>
+
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:10px; background:var(--bg-darker); padding:8px 14px; border-radius:12px; border:1px solid var(--border-color);">
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <span id="analysis-static-badge"
+                                style="font-size:0.75rem; background:rgba(16, 185, 129, 0.15); color:#34d399; border:1px solid rgba(16, 185, 129, 0.3); padding:3px 10px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                                <i class="ri-lock-line"></i> Static Weekly Snapshot
+                            </span>
+                            <span id="analysis-week-badge"
+                                style="font-size:0.82rem; color:var(--text-gray); font-weight:600;">
+                                Loading week info...
+                            </span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:0.78rem; color:var(--text-gray); font-weight:600;">Filter
+                                Module:</span>
+                            <select id="analysis-module-filter" onchange="setMistakesModule(this.value)"
+                                style="padding:5px 10px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.82rem; font-weight:600; outline:none; cursor:pointer;">
+                                <option value="all">All Modules</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="admin-analysis-list" style="display:flex; flex-direction:column; gap:12px;">
+                        <div style="text-align:center; color:var(--text-gray); padding:3rem;">Loading questions
+                            analysis...</div>
                     </div>
                 </div>
 
@@ -7305,6 +7753,12 @@
             }
             if (activeYear !== '2') {
                 window.activeDashboardTab = 'modules';
+            }
+            if (typeof _fcShowCover === 'function') {
+                const fcView = document.getElementById('view-flashcards');
+                if (fcView && (fcView.classList.contains('active') || fcView.style.display === 'block')) {
+                    _fcShowCover();
+                }
             }
         };
 
@@ -9754,12 +10208,20 @@
                         subQs = DB[Session.module][selection];
                     }
                     if (subQs) {
-                        const filtered = Session.mode === 'mistakes' ? subQs.filter(q => AppState.progress[q.q] === 'wrong') : subQs.filter(q => !AppState.progress[q.q]);
+                        const filtered = Session.mode === 'mistakes'
+                            ? subQs.filter(q => AppState.progress[q.q] === 'wrong')
+                            : (Session.mode === 'favorites'
+                                ? subQs.filter(q => q && q.q && AppState.favorites && AppState.favorites[q.q])
+                                : subQs.filter(q => !AppState.progress[q.q]));
                         pool.push(...filtered);
                     }
                 });
             } else {
-                pool = Session.mode === 'mistakes' ? DB[Session.module].filter(q => AppState.progress[q.q] === 'wrong') : DB[Session.module].filter(q => !AppState.progress[q.q]);
+                pool = Session.mode === 'mistakes'
+                    ? DB[Session.module].filter(q => AppState.progress[q.q] === 'wrong')
+                    : (Session.mode === 'favorites'
+                        ? DB[Session.module].filter(q => q && q.q && AppState.favorites && AppState.favorites[q.q])
+                        : DB[Session.module].filter(q => !AppState.progress[q.q]));
             }
             if (pool.length === 0) return alert("No questions available! Reset module to start over.");
             closeModal();
@@ -9783,6 +10245,7 @@
             Session.index = 0; Session.score = 0; Session.reviewing = false;
 
             if (Session.mode === 'mistakes') document.body.setAttribute('data-mode', 'mistakes');
+            else if (Session.mode === 'favorites') document.body.setAttribute('data-mode', 'favorites');
             else document.body.removeAttribute('data-mode');
 
             document.body.classList.add('focus-mode');
@@ -9867,7 +10330,11 @@
             }
 
             const displayCategory = categoryName.replace(/^\d+\.\s*/, "");
-            document.getElementById('q-tag').textContent = `${Session.module} • ${displayCategory} • ${Session.index + 1}/${Session.queue.length}`;
+            let typePrefix = '';
+            if (Session.mode === 'favorites') typePrefix = '⭐ Favorites • ';
+            else if (Session.mode === 'mistakes') typePrefix = '⚠️ Mistakes • ';
+            const modDisplayName = (q._module && Session.module === 'Favorites') ? q._module : Session.module;
+            document.getElementById('q-tag').textContent = `${typePrefix}${modDisplayName} • ${displayCategory} • ${Session.index + 1}/${Session.queue.length}`;
             if (Session.highlights && Session.highlights[q.q]) {
 
                 document.getElementById('q-text').innerHTML = Session.highlights[q.q];
@@ -10628,7 +11095,8 @@
                         id: Date.now(),
                         module: Session.module,
                         mode: Session.quizMode,
-                        quizType: Session.mode,
+                        quizType: Session.mode || (Session.module === 'Favorites' ? 'favorites' : 'normal'),
+                        examType: (Session.mode === 'favorites' || Session.module === 'Favorites') ? 'favorites' : (Session.mode === 'mistakes' ? 'mistakes' : 'standard'),
                         score: Session.score,
                         total: Session.queue.length,
                         queue: JSON.parse(JSON.stringify(Session.queue)),
@@ -10761,6 +11229,8 @@
                         module: Session.module,
                         mode: Session.mode,
                         quizMode: Session.quizMode,
+                        quizType: Session.mode || (Session.module === 'Favorites' ? 'favorites' : 'normal'),
+                        examType: (Session.mode === 'favorites' || Session.module === 'Favorites') ? 'favorites' : (Session.mode === 'mistakes' ? 'mistakes' : 'standard'),
                         queue: Session.queue,
                         answers: Session.answers,
                         index: Session.index,
@@ -10920,28 +11390,203 @@
             if (!e.target.closest('.card-menu-wrapper')) closeAllCardMenus();
         });
 
+        function getAllFavoriteQuestions() {
+            const list = [];
+            const seen = new Set();
+            if (!AppState.favorites || Object.keys(AppState.favorites).length === 0) return list;
+
+            for (const modName in DB) {
+                if (!DB[modName]) continue;
+                const qs = extractAllQuestions(DB[modName]);
+                qs.forEach(q => {
+                    if (q && q.q && AppState.favorites[q.q] && !seen.has(q.q)) {
+                        seen.add(q.q);
+                        list.push({ ...q, _module: modName });
+                    }
+                });
+            }
+            return list;
+        }
+        window.getAllFavoriteQuestions = getAllFavoriteQuestions;
+
+        async function getCompleteFavoriteQuestions() {
+            let list = getAllFavoriteQuestions();
+            const favKeys = Object.keys(AppState.favorites || {});
+            if (list.length < favKeys.length && typeof getIDBCache === 'function') {
+                const moduleKeys = [
+                    'MSK', 'Blood', 'Foundation', 'Terminology', 'CVS',
+                    'Communication Step 1', 'Communication Step 2', 'Professionalism',
+                    'Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS',
+                    'Concept 1 Pharmacology', 'Concept 1 Pathology', 'Concept 1 Genetics', 'Concept 1 Past Exams',
+                    'Concept 2 Pharmacology', 'Concept 2 Pathology', 'Concept 2 Past Exams',
+                    'ID1', 'ID2'
+                ];
+                for (const modKey of moduleKeys) {
+                    if (!DB[modKey] || Object.keys(DB[modKey]).length === 0) {
+                        try {
+                            const cached = await getIDBCache(modKey);
+                            if (cached && cached.data && Object.keys(cached.data).length > 0) {
+                                DB[modKey] = cached.data;
+                            }
+                        } catch (e) { }
+                    }
+                    if (list.length >= favKeys.length) break;
+                }
+                list = getAllFavoriteQuestions();
+            }
+            return list;
+        }
+        window.getCompleteFavoriteQuestions = getCompleteFavoriteQuestions;
+
+        async function openFavoritesStartModal() {
+            const favQuestions = await getCompleteFavoriteQuestions();
+            if (!favQuestions || favQuestions.length === 0) {
+                if (window.showToast) window.showToast("No favorited questions yet! ⭐ Star questions to add them to favorites.", "info");
+                else alert("No favorited questions yet! Star questions to add them to favorites.");
+                return;
+            }
+
+            const favsByMod = {};
+            favQuestions.forEach(q => {
+                const mod = q._module || 'General';
+                if (!favsByMod[mod]) favsByMod[mod] = [];
+                favsByMod[mod].push(q);
+            });
+
+            DB['Favorites'] = favsByMod;
+
+            Session.module = 'Favorites';
+            Session.mode = 'favorites';
+            Session.selectedSubtopics = Object.keys(favsByMod);
+            Session.settings.count = 'max';
+
+            const errDiv = document.getElementById('start-modal-error');
+            if (errDiv) errDiv.style.display = 'none';
+
+            document.getElementById('modal-title').textContent = 'Solve Favorites ⭐';
+            document.getElementById('custom-count').value = '';
+
+            const countChips = document.getElementById('count-chips');
+            if (countChips) {
+                const total = favQuestions.length;
+                countChips.innerHTML = `
+                    <div class="chip active" onclick="setOption('count', 'max', this)">All (${total})</div>
+                    ${total >= 5 ? `<div class="chip" onclick="setOption('count', 5, this)">5</div>` : ''}
+                    ${total >= 10 ? `<div class="chip" onclick="setOption('count', 10, this)">10</div>` : ''}
+                    ${total >= 20 ? `<div class="chip" onclick="setOption('count', 20, this)">20</div>` : ''}
+                    ${total >= 50 ? `<div class="chip" onclick="setOption('count', 50, this)">50</div>` : ''}
+                `;
+            }
+
+            const subContainer = document.getElementById('subtopic-section');
+            const subGrid = document.getElementById('subtopic-grid');
+            if (subContainer) subContainer.style.display = 'flex';
+            if (subGrid) {
+                subGrid.innerHTML = '';
+                Object.keys(favsByMod).sort().forEach(modName => {
+                    const count = favsByMod[modName].length;
+                    const btn = createSubtopicBtn(modName, count, modName, null);
+                    btn.classList.add('active');
+                    subGrid.appendChild(btn);
+                });
+            }
+
+            const selectAllBtn = document.getElementById('select-all-btn');
+            if (selectAllBtn) {
+                selectAllBtn.innerHTML = '<i class="ri-check-double-line"></i> Deselect All';
+                selectAllBtn.style.color = 'var(--accent)';
+            }
+
+            const tutorBtn = document.querySelector('#feedback-section .mode-btn');
+            if (tutorBtn) setQuizMode('tutor', tutorBtn);
+
+            updateAvailableQuestionsCount();
+            document.getElementById('start-modal').classList.add('active');
+        }
+        window.openFavoritesStartModal = openFavoritesStartModal;
+
+        async function startAllFavoritesDirect(quizMode = 'tutor') {
+            const favs = await getCompleteFavoriteQuestions();
+            if (!favs || favs.length === 0) {
+                if (window.showToast) window.showToast("No favorited questions yet! ⭐", "info");
+                else alert("No favorited questions yet!");
+                return;
+            }
+
+            Session.module = 'Favorites';
+            Session.mode = 'favorites';
+            Session.quizMode = quizMode;
+            Session.selectedSubtopics = [];
+            Session.settings = { count: favs.length, time: quizMode === 'exam' ? (favs.length * 60 + Math.ceil(favs.length / 5) * 60) : 0 };
+            Session.queue = favs.sort(() => 0.5 - Math.random());
+            Session.answers = new Array(Session.queue.length).fill(null);
+            Session.questionTimes = new Array(Session.queue.length).fill(Session.settings.time);
+            Session.examTimeLeft = Session.settings.time;
+            Session.index = 0;
+            Session.score = 0;
+            Session.reviewing = false;
+            Session.drawings = {};
+            Session.highlights = {};
+
+            document.body.setAttribute('data-mode', 'favorites');
+            document.body.classList.add('focus-mode');
+            document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
+            const quizView = document.getElementById('view-quiz');
+            quizView.style.display = 'flex';
+            quizView.classList.add('active');
+
+            startSession();
+            if (quizMode === 'exam' && Session.settings.time > 0) {
+                startExamTimer();
+            }
+            loadQuestion();
+            clearQuizCanvas();
+        }
+        window.startAllFavoritesDirect = startAllFavoritesDirect;
+
         function renderFavorites() {
             const favList = document.getElementById('favorites-list'); const notesList = document.getElementById('notes-list');
             favList.innerHTML = ''; notesList.innerHTML = '';
             const favGrid = document.createElement('div'); favGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;';
             const notesGrid = document.createElement('div'); notesGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;';
             let hasFav = false, hasNotes = false;
+            let totalFavs = 0;
 
             for (const modName in DB) {
                 let qs = extractAllQuestions(DB[modName]);
                 qs.forEach(q => {
-                    if (AppState.favorites[q.q]) { hasFav = true; favGrid.appendChild(createFavoriteCard(q, modName)); }
+                    if (AppState.favorites[q.q]) {
+                        hasFav = true;
+                        totalFavs++;
+                        favGrid.appendChild(createFavoriteCard(q, modName));
+                    }
                     if (AppState.notes[q.q]) { hasNotes = true; notesGrid.appendChild(createNoteCard(q, modName)); }
                 });
             }
-            if (!hasFav) favList.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-gray);">⭐ No favorited questions yet.</div>'; else favList.appendChild(favGrid);
-            if (!hasNotes) notesList.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-gray);">📝 No notes added yet.</div>'; else notesList.appendChild(notesGrid);
+
+            const pill = document.getElementById('fav-total-pill');
+            if (pill) pill.textContent = `${totalFavs} Question${totalFavs === 1 ? '' : 's'}`;
+
+            const solveAllBtn = document.getElementById('btn-solve-all-favorites');
+            if (solveAllBtn) {
+                solveAllBtn.innerHTML = `<i class="ri-play-fill" style="font-size: 1.25rem;"></i> Solve All Favorites Questions (${totalFavs})`;
+                if (totalFavs === 0) {
+                    solveAllBtn.style.opacity = '0.5';
+                    solveAllBtn.style.pointerEvents = 'none';
+                } else {
+                    solveAllBtn.style.opacity = '1';
+                    solveAllBtn.style.pointerEvents = 'auto';
+                }
+            }
+
+            if (!hasFav) favList.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-gray); background:var(--bg-card); border-radius:var(--radius-lg); border:1px dashed var(--border-color);">⭐ No favorited questions yet. Click the star on any question to add it here!</div>'; else favList.appendChild(favGrid);
+            if (!hasNotes) notesList.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-gray); background:var(--bg-card); border-radius:var(--radius-lg); border:1px dashed var(--border-color);">📝 No notes added yet.</div>'; else notesList.appendChild(notesGrid);
         }
 
         function createFavoriteCard(q, modName) {
             const card = document.createElement('div'); card.className = 'module-card';
             const status = AppState.progress[q.q]; const statusColor = status === 'correct' ? 'var(--primary-green)' : status === 'wrong' ? 'var(--primary-red)' : 'var(--text-gray)';
-            card.innerHTML = `<div class="card-content"><div style="display:flex;justify-content:space-between;margin-bottom:1rem;"><span style="background:var(--accent);color:white;padding:4px 12px;border-radius:12px;font-size:0.8rem;font-weight:700;">${modName}</span><span style="color:${statusColor};font-weight:600;font-size:0.9rem;">${status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '○ Unsolved'}</span></div><div class="question-text" style="font-size:1rem;margin-bottom:1rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${q.q}</div><div style="display:flex;gap:0.5rem;"><button class="quiz-btn btn-primary" onclick='solveSingle(${JSON.stringify(q).replace(/'/g, "&#39;")}, "${modName}")'>${status === 'correct' ? 'Review' : 'Solve'}</button><button class="icon-btn" onclick='removeFavorite(${JSON.stringify(q.q).replace(/'/g, "&#39;")}, event)'><i class="ri-star-fill" style="color:#ff6b6b;"></i></button></div></div>`;
+            card.innerHTML = `<div class="card-content"><div style="display:flex;justify-content:space-between;margin-bottom:1rem;"><span style="background:var(--accent);color:white;padding:4px 12px;border-radius:12px;font-size:0.8rem;font-weight:700;">${modName}</span><span style="color:${statusColor};font-weight:600;font-size:0.9rem;">${status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '○ Unsolved'}</span></div><div class="question-text" style="font-size:1rem;margin-bottom:1rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${q.q}</div><div style="display:flex;gap:0.5rem;"><button class="quiz-btn btn-primary" onclick='solveSingle(${JSON.stringify(q).replace(/'/g, "&#39;")}, "${modName}")'>${status === 'correct' ? '<i class="ri-eye-line"></i> Review' : '<i class="ri-play-fill"></i> Solve'}</button><button class="icon-btn" onclick='removeFavorite(${JSON.stringify(q.q).replace(/'/g, "&#39;")}, event)'><i class="ri-star-fill" style="color:#ff6b6b;"></i></button></div></div>`;
             return card;
         }
 
@@ -10956,7 +11601,7 @@
         }
 
         function toggleNoteExpand(cardId) { const content = document.getElementById(cardId + '-content'); const icon = document.getElementById(cardId + '-icon'); if (content.style.display === 'none') { content.style.display = 'block'; icon.style.transform = 'rotate(180deg)'; } else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; } }
-        function solveSingle(q, mod) { Session.queue = [q]; Session.module = mod; Session.index = 0; Session.score = 0; Session.answers = [null]; Session.mode = 'tutor'; Session.quizMode = 'tutor'; Session.reviewing = false; Session.settings.time = 0; document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; }); document.body.classList.add('focus-mode'); const quizView = document.getElementById('view-quiz'); quizView.style.display = 'flex'; quizView.classList.add('active'); startSession(); loadQuestion(); }
+        function solveSingle(q, mod) { Session.queue = [{ ...q, _module: mod }]; Session.module = mod; Session.index = 0; Session.score = 0; Session.answers = [null]; Session.mode = 'favorites'; Session.quizMode = 'tutor'; Session.reviewing = false; Session.settings.time = 0; document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; }); document.body.classList.add('focus-mode'); document.body.setAttribute('data-mode', 'favorites'); const quizView = document.getElementById('view-quiz'); quizView.style.display = 'flex'; quizView.classList.add('active'); startSession(); loadQuestion(); }
         function removeFavorite(qText, e) { if (e) e.stopPropagation(); delete AppState.favorites[qText]; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); window.saveUserData('favorites', AppState.favorites, true); renderFavorites(); }
         function removeNote(qText, e) { if (e) e.stopPropagation(); delete AppState.notes[qText]; localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); window.saveUserData('notes', AppState.notes, true); renderFavorites(); }
         function formatTime(s) { const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h > 0 ? `${h}h ${m}m` : `${m}m`; }
@@ -11424,6 +12069,89 @@
             }).join('');
         }
 
+        function getExamTypeDetails(item) {
+            const defStandard = {
+                key: 'standard',
+                en: 'Standard',
+                label: '📘 Standard',
+                color: '#22C55E',
+                bg: 'rgba(34, 197, 94, 0.12)',
+                border: 'rgba(34, 197, 94, 0.25)',
+                icon: 'ri-checkbox-circle-fill',
+                cardBorder: 'var(--border-color)',
+                cardBorderLeft: '4px solid #22C55E',
+                cardBg: 'var(--bg-card)',
+                cardGlow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                pendingBadgeBg: 'rgba(34, 197, 94, 0.12)',
+                pendingBadgeColor: '#4ADE80',
+                pendingBadgeBorder: 'rgba(34, 197, 94, 0.2)',
+                btnBg: 'linear-gradient(135deg, #10B981, #059669)',
+                btnGlow: '0 3px 8px rgba(16, 185, 129, 0.15)',
+                secondaryStyle: 'background:var(--bg-darker); border:1px solid var(--border-color); color:var(--text-light);'
+            };
+
+            if (!item) return defStandard;
+
+            const qType = String(item.quizType || item.examType || item.mode || '').toLowerCase();
+            const mod = String(item.module || '').toLowerCase();
+
+            const isFav = qType === 'favorites' || mod.includes('favorite');
+            const isMistake = qType === 'mistakes' || mod.includes('mistake');
+
+            if (isFav) {
+                return {
+                    key: 'favorites',
+                    en: 'Favorites',
+                    label: '⭐ Favorites',
+                    color: '#3B82F6',
+                    bg: 'rgba(59, 130, 246, 0.12)',
+                    border: 'rgba(59, 130, 246, 0.25)',
+                    icon: 'ri-star-fill',
+                    cardBorder: 'var(--border-color)',
+                    cardBorderLeft: '4px solid #3B82F6',
+                    cardBg: 'var(--bg-card)',
+                    cardGlow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    pendingBadgeBg: 'rgba(59, 130, 246, 0.12)',
+                    pendingBadgeColor: '#60A5FA',
+                    pendingBadgeBorder: 'rgba(59, 130, 246, 0.2)',
+                    btnBg: 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                    btnGlow: '0 3px 8px rgba(59, 130, 246, 0.18)',
+                    secondaryStyle: 'background:rgba(59, 130, 246, 0.08); border:1px solid rgba(59, 130, 246, 0.25); color:#60A5FA;'
+                };
+            } else if (isMistake) {
+                return {
+                    key: 'mistakes',
+                    en: 'Mistakes',
+                    label: '⚠️ Mistakes',
+                    color: '#EF4444',
+                    bg: 'rgba(239, 68, 68, 0.12)',
+                    border: 'rgba(239, 68, 68, 0.25)',
+                    icon: 'ri-error-warning-fill',
+                    cardBorder: 'var(--border-color)',
+                    cardBorderLeft: '4px solid #EF4444',
+                    cardBg: 'var(--bg-card)',
+                    cardGlow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    pendingBadgeBg: 'rgba(239, 68, 68, 0.12)',
+                    pendingBadgeColor: '#F87171',
+                    pendingBadgeBorder: 'rgba(239, 68, 68, 0.2)',
+                    btnBg: 'linear-gradient(135deg, #EF4444, #DC2626)',
+                    btnGlow: '0 3px 8px rgba(239, 68, 68, 0.18)',
+                    secondaryStyle: 'background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); color:#F87171;'
+                };
+            } else {
+                return defStandard;
+            }
+        }
+        window.getExamTypeDetails = getExamTypeDetails;
+
+        window.currentExamHistoryFilter = 'all';
+        window.filterExamHistory = function (type, btn) {
+            window.currentExamHistoryFilter = type || 'all';
+            document.querySelectorAll('#history-filter-group .timeframe-pill').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderExamHistory();
+        };
+
         function renderExamHistory() {
             const completedList = document.getElementById('completed-exams-list');
             const pendingList = document.getElementById('pending-exams-list');
@@ -11437,20 +12165,29 @@
             if (AppState.pendingExams && AppState.pendingExams.length > 0) {
                 if (pendingContainer) pendingContainer.style.display = 'block';
                 AppState.pendingExams.forEach(exam => {
+                    const pTypeInfo = getExamTypeDetails(exam);
                     const card = document.createElement('div');
-                    card.className = 'module-card';
-                    card.style.borderLeft = '4px solid var(--accent)';
+                    card.className = `module-card history-card history-card-${pTypeInfo.key}`;
+                    card.style.background = pTypeInfo.cardBg;
+                    card.style.border = `1px solid ${pTypeInfo.cardBorder}`;
+                    card.style.borderLeft = pTypeInfo.cardBorderLeft;
+                    card.style.boxShadow = pTypeInfo.cardGlow;
                     card.innerHTML = `
                         <div class="card-content">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-                                <span style="background:rgba(16,185,129,0.1); color:var(--accent); padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;">Pending</span>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; flex-wrap:wrap; gap:8px;">
+                                <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                                    <span style="background:${pTypeInfo.pendingBadgeBg}; color:${pTypeInfo.pendingBadgeColor}; border:1px solid ${pTypeInfo.pendingBadgeBorder}; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:700;">Pending</span>
+                                    <span style="background:${pTypeInfo.bg}; color:${pTypeInfo.color}; border:1px solid ${pTypeInfo.border}; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                                        <i class="${pTypeInfo.icon}"></i> ${pTypeInfo.label}
+                                    </span>
+                                </div>
                                 <span style="color:var(--text-gray); font-size:0.85rem;">${exam.date}</span>
                             </div>
                             <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">${exam.module}</h3>
                             <p style="color:var(--text-gray); font-size:0.9rem; margin-bottom:1.5rem;">${exam.unanswered} questions remaining</p>
                             <div style="display:flex; gap:0.5rem;">
-                                <button class="quiz-btn btn-primary" style="flex:2;" onclick="resumeExam('${exam.id}')">Resume <i class="ri-play-fill"></i></button>
-                                <button class="icon-btn" style="flex:0.5;" onclick="deletePendingExam('${exam.id}')"><i class="ri-delete-bin-line"></i></button>
+                                <button class="quiz-btn btn-primary" style="flex:2; background:${pTypeInfo.btnBg} !important; color:white !important; box-shadow:${pTypeInfo.btnGlow} !important;" onclick="resumeExam('${exam.id}')">Resume <i class="ri-play-fill"></i></button>
+                                <button class="icon-btn" style="flex:0.5;" onclick="deletePendingExam('${exam.id}')" title="Delete unfinished exam"><i class="ri-delete-bin-line"></i></button>
                             </div>
                         </div>
                     `;
@@ -11460,21 +12197,52 @@
                 if (pendingContainer) pendingContainer.style.display = 'none';
             }
 
-            if (AppState.examsHistory && AppState.examsHistory.length > 0) {
+            const filterType = window.currentExamHistoryFilter || 'all';
+            let allExams = AppState.examsHistory || [];
+            let stdCount = 0, misCount = 0, favCount = 0;
+            allExams.forEach(r => {
+                const k = getExamTypeDetails(r).key;
+                if (k === 'favorites') favCount++;
+                else if (k === 'mistakes') misCount++;
+                else stdCount++;
+            });
+
+            const bAll = document.getElementById('filter-hist-all');
+            const bStd = document.getElementById('filter-hist-standard');
+            const bMis = document.getElementById('filter-hist-mistakes');
+            const bFav = document.getElementById('filter-hist-favorites');
+            if (bAll) bAll.textContent = `All (${allExams.length})`;
+            if (bStd) bStd.innerHTML = `<i class="ri-checkbox-circle-line" style="color: var(--primary-green);"></i> Standard (${stdCount})`;
+            if (bMis) bMis.innerHTML = `<i class="ri-error-warning-line" style="color: var(--primary-red);"></i> Mistakes (${misCount})`;
+            if (bFav) bFav.innerHTML = `<i class="ri-star-line" style="color: var(--primary-blue);"></i> Favorites (${favCount})`;
+
+            const filteredExams = filterType === 'all'
+                ? allExams
+                : allExams.filter(r => getExamTypeDetails(r).key === filterType);
+
+            if (filteredExams && filteredExams.length > 0) {
                 if (noExamsMsg) noExamsMsg.style.display = 'none';
-                AppState.examsHistory.forEach(result => {
+                filteredExams.forEach(result => {
+                    const typeInfo = getExamTypeDetails(result);
                     const pct = Math.round((result.score / result.total) * 100);
                     const color = pct >= 50 ? 'var(--primary-green)' : 'var(--primary-red)';
                     const modeLabel = result.mode === 'exam' ? 'Exam' : 'Practice';
                     const modeColor = result.mode === 'exam' ? 'var(--primary-blue)' : 'var(--accent)';
                     const card = document.createElement('div');
-                    card.className = 'module-card';
+                    card.className = `module-card history-card history-card-${typeInfo.key}`;
+                    card.style.background = typeInfo.cardBg;
+                    card.style.border = `1px solid ${typeInfo.cardBorder}`;
+                    card.style.borderLeft = typeInfo.cardBorderLeft;
+                    card.style.boxShadow = typeInfo.cardGlow;
                     card.innerHTML = `
                         <div class="card-content">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-                                <div style="display:flex; gap:8px;">
-                                    <span style="background:var(--accent); color:white; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700;">${result.module}</span>
-                                    <span style="background:${modeColor}22; color:${modeColor}; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700; border:1px solid ${modeColor}44;">${modeLabel}</span>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; flex-wrap:wrap; gap:8px;">
+                                <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                                    <span style="background:${typeInfo.btnBg}; color:white; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700; box-shadow:0 2px 8px ${typeInfo.color}44;">${result.module}</span>
+                                    <span style="background:${typeInfo.bg}; color:${typeInfo.color}; border:1px solid ${typeInfo.border}; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                                        <i class="${typeInfo.icon}"></i> ${typeInfo.label}
+                                    </span>
+                                    <span style="background:${modeColor}22; color:${modeColor}; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:700; border:1px solid ${modeColor}44;">${modeLabel}</span>
                                 </div>
                                 <span style="color:var(--text-gray); font-size:0.85rem;">${result.date}</span>
                             </div>
@@ -11486,17 +12254,21 @@
                                 </div>
                             </div>
                             <div style="display:flex; gap:0.5rem;">
-                                <button class="quiz-btn btn-primary" style="flex:2;" onclick="retakeExam('${result.id}')">Retake <i class="ri-refresh-line"></i></button>
-                                <button class="quiz-btn btn-secondary" style="flex:2;" onclick="reviewExamFromHistory('${result.id}')">Review <i class="ri-eye-line"></i></button>
-                                <button class="icon-btn" style="flex:0.5;" onclick="deleteExamResult('${result.id}')"><i class="ri-delete-bin-line"></i></button>
+                                <button class="quiz-btn btn-primary" style="flex:2; background:${typeInfo.btnBg} !important; color:white !important; box-shadow:${typeInfo.btnGlow} !important;" onclick="retakeExam('${result.id}')">Retake <i class="ri-refresh-line"></i></button>
+                                <button class="quiz-btn btn-secondary" style="flex:2; ${typeInfo.secondaryStyle}" onclick="reviewExamFromHistory('${result.id}')">Review <i class="ri-eye-line"></i></button>
+                                <button class="icon-btn" style="flex:0.5;" onclick="deleteExamResult('${result.id}')" title="Delete exam result"><i class="ri-delete-bin-line"></i></button>
                             </div>
                         </div>
                     `;
                     completedList.appendChild(card);
                 });
             } else {
-                if (noExamsMsg && (!AppState.pendingExams || AppState.pendingExams.length === 0)) {
+                if (noExamsMsg) {
                     noExamsMsg.style.display = 'block';
+                    noExamsMsg.innerHTML = `
+                        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📄</div>
+                        <p>${allExams.length === 0 ? 'No exam history found yet. Start an exam to see your results here!' : 'No exams found matching this filter.'}</p>
+                    `;
                 }
             }
         }
@@ -11512,7 +12284,7 @@
             }
 
             Session.module = result.module;
-            Session.mode = result.quizType || 'normal';
+            Session.mode = result.quizType || (result.module === 'Favorites' ? 'favorites' : 'normal');
             Session.quizMode = result.mode || 'exam';
             Session.settings = result.settings || { count: result.total, time: 0 };
             Session.selectedSubtopics = result.selectedSubtopics || [];
@@ -11561,6 +12333,10 @@
             Session.examTimeLeft = Session.settings.time > 0 ? Session.settings.time : (Session.quizMode === 'exam' ? (count * 60 + Math.ceil(count / 5) * 60) : 0);
             Session.questionTimes = new Array(Session.queue.length).fill(Session.settings.time || 0);
 
+            if (Session.mode === 'mistakes') document.body.setAttribute('data-mode', 'mistakes');
+            else if (Session.mode === 'favorites') document.body.setAttribute('data-mode', 'favorites');
+            else document.body.removeAttribute('data-mode');
+
             document.body.classList.add('focus-mode');
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
             const quizView = document.getElementById('view-quiz');
@@ -11587,7 +12363,7 @@
             }
 
             Session.module = result.module;
-            Session.mode = result.quizType || 'normal';
+            Session.mode = result.quizType || (result.module === 'Favorites' ? 'favorites' : 'normal');
             Session.quizMode = result.mode || 'exam';
             Session.queue = JSON.parse(JSON.stringify(result.queue));
             Session.answers = JSON.parse(JSON.stringify(result.answers || []));
@@ -11596,6 +12372,10 @@
             Session.index = 0;
             Session.reviewing = true;
             Session.settings = result.settings || { count: result.total || Session.queue.length, time: 0 };
+
+            if (Session.mode === 'mistakes') document.body.setAttribute('data-mode', 'mistakes');
+            else if (Session.mode === 'favorites') document.body.setAttribute('data-mode', 'favorites');
+            else document.body.removeAttribute('data-mode');
 
             document.body.classList.add('focus-mode');
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
@@ -11650,7 +12430,7 @@
             }
 
             Session.module = exam.module;
-            Session.mode = exam.mode || 'normal';
+            Session.mode = exam.quizType || exam.mode || (exam.module === 'Favorites' ? 'favorites' : 'normal');
             Session.quizMode = exam.quizMode || 'exam';
             Session.queue = queue;
             Session.answers = Array.isArray(exam.answers) ? [...exam.answers] : new Array(queue.length).fill(null);
@@ -11665,6 +12445,10 @@
             Session.questionTimes = exam.questionTimes || new Array(queue.length).fill(Session.settings.time);
             Session.drawings = exam.drawings || {};
             Session.highlights = exam.highlights || {};
+
+            if (Session.mode === 'mistakes') document.body.setAttribute('data-mode', 'mistakes');
+            else if (Session.mode === 'favorites') document.body.setAttribute('data-mode', 'favorites');
+            else document.body.removeAttribute('data-mode');
 
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
             document.body.classList.add('focus-mode');
@@ -11928,13 +12712,36 @@
             const currentQ = Session.queue[Session.index];
             const userEmail = window.currentUserEmail || 'No email';
             const userName = (AppState && AppState.username) || 'anonymous';
+            const currentMod = Session.module || '';
+            const repYear = (AppState && AppState.year) ? String(AppState.year) : (typeof getModuleYear === 'function' ? getModuleYear(currentMod) : '1');
+
+            const qOptions = (currentQ && Array.isArray(currentQ.o)) ? currentQ.o : [];
+            let qCorrectAns = '';
+            let qCorrectIdx = null;
+            if (currentQ) {
+                if (typeof currentQ.a === 'number') {
+                    qCorrectIdx = currentQ.a;
+                    qCorrectAns = qOptions[currentQ.a] || String(currentQ.a);
+                } else if (currentQ.a !== undefined && currentQ.a !== null) {
+                    qCorrectAns = String(currentQ.a);
+                }
+            }
+            const qSubject = (currentQ && currentQ.subject) || (Session.selectedSubtopics && Session.selectedSubtopics[0]) || '';
+            const qChapter = (currentQ && currentQ.chapter) || '';
+            const qImg = (currentQ && currentQ.img) || '';
 
             try {
                 const reportsCol = window.collection(window.db, 'reports');
                 await window.addDoc(reportsCol, {
-                    module: Session.module || '',
+                    module: currentMod,
                     question: currentQ ? currentQ.q : '',
-                    correctAnswer: currentQ ? currentQ.a : '',
+                    correctAnswer: qCorrectAns,
+                    correctIndex: qCorrectIdx,
+                    options: qOptions,
+                    subject: qSubject,
+                    chapter: qChapter,
+                    image: qImg,
+                    year: repYear,
                     reason: reason,
                     reportedBy: window.currentUserId || 'anonymous',
                     username: userName,
@@ -11949,7 +12756,10 @@
                     mode: 'no-cors',
                     body: JSON.stringify({
                         type: 'report',
-                        module_name: Session.module || 'Unknown',
+                        year: repYear,
+                        module_name: currentMod || 'Unknown',
+                        subject: qSubject,
+                        chapter: qChapter,
                         question_text: currentQ ? currentQ.q : 'N/A',
                         report_reason: reason,
                         username: userName,
@@ -12092,67 +12902,495 @@
         window.toggleLeaderboardPrivacy = toggleLeaderboardPrivacy;
         window.loadPrivacySetting = loadPrivacySetting;
 
+        window.currentPracticalYear = window.currentPracticalYear || (AppState && AppState.year ? String(AppState.year) : '1');
         let fcDeck = [];
         let fcIndex = 0;
         let fcScores = [];
+
+        async function loadParasitologySpotsFromDB() {
+            try {
+                const cached = localStorage.getItem('medStorm_cache_para_spots');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        window.parasitologySpots = parsed;
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_parasitology_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.parasitologySpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_para_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load practical spots from DB:", e);
+            }
+        }
+        window.loadParasitologySpotsFromDB = loadParasitologySpotsFromDB;
+
         async function renderFlashcards() {
             const container = document.getElementById('flashcards-container');
+            if (!container) return;
             container.style.display = 'flex';
+            container.style.flexDirection = 'column';
             container.style.alignItems = 'center';
-            container.style.justifyContent = 'center';
+            container.style.justifyContent = 'flex-start';
             container.style.minHeight = '300px';
 
-            if (window.FLASHCARDS_DATA.length === 0) {
-                container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;"><div class="loading-dots-container" style="font-size: 1.15rem;"><span>Loading Practical</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
-                try {
-                    await window.loadAllFlashcards();
-                } catch (e) {
-                    console.error("Practical load error:", e);
-                }
-            } else {
-                window.loadAllFlashcards().catch(e => console.warn("Background practical load failed:", e));
+            if (typeof loadParasitologySpotsFromDB === 'function') {
+                loadParasitologySpotsFromDB().then(() => {
+                    const curY = String((AppState && AppState.year) || '1');
+                    if (curY === '3') _fcShowCover();
+                }).catch(() => {});
             }
 
             if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding:4rem 1.5rem; color:var(--text-gray); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
-                        <i class="ri-book-open-line" style="font-size:3.5rem; color:var(--text-gray); opacity:0.3;"></i>
-                        <div style="font-size:1.2rem; font-weight:700; color:var(--text-light);">No Practical questions Available</div>
-                        <div style="font-size:0.9rem; max-width:320px; line-height:1.5; opacity:0.8;">There are no practical questions loaded in the database right now. Stay tuned!</div>
-                    </div>
-                `;
-                return;
+                window.loadAllFlashcards().catch(e => console.warn("Background practical load failed:", e));
             }
+
             _fcShowCover();
         }
 
         function _fcShowCover() {
             const container = document.getElementById('flashcards-container');
+            if (!container) return;
             container.style.display = 'flex';
             container.style.flexDirection = 'column';
             container.style.alignItems = 'center';
             container.style.justifyContent = 'center';
             container.style.width = '100%';
 
-            container.innerHTML = `
-                                                <div class="fc-cover-wrap" style = "width: 320px; position: relative; margin: 0 auto;">
-                    <button class="reset-btn" onclick="fcResetSession(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+            const curYear = String((AppState && AppState.year) || '1');
+            if (curYear !== '3') {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 4rem 1.5rem; color: #94a3b8; max-width: 500px; margin: 2rem auto;">
+                        <div style="font-size: 3rem; margin-bottom: 0.8rem; opacity: 0.5;">🔬</div>
+                        <h3 style="color: #f8fafc; font-size: 1.25rem; font-weight: 700;">There is no practical questions available</h3>
+                    </div>
+                `;
+                return;
+            }
 
-                    <div class="fc-cover-deck" onclick="fcStartSession()">
+            const spotsCount = (window.parasitologySpots && window.parasitologySpots.length) ? window.parasitologySpots.length : 58;
+            let totalQs = 230;
+            if (window.parasitologySpots && Array.isArray(window.parasitologySpots)) {
+                let counted = 0;
+                window.parasitologySpots.forEach(s => {
+                    if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                });
+                if (counted > 0) totalQs = counted;
+            }
+
+            container.innerHTML = `
+                <div class="fc-cover-wrap" style="width: 340px; position: relative; margin: 0 auto;">
+                    <button class="reset-btn" onclick="resetParaSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+
+                    <div class="fc-cover-deck" onclick="startParaSpotsSession()">
                         <div class="fc-cover-shadow"></div>
                         <div class="fc-cover-shadow"></div>
-                        <div class="fc-cover-front">
-                            <div class="fc-cover-badge">${window.FLASHCARDS_DATA ? window.FLASHCARDS_DATA.length : 0} cards</div>
-                            <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦴</div>
-                            <div class="fc-cover-title">🦴 MSK Practical Flashcards</div>
+                        <div class="fc-cover-front" style="background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1.5px solid #3b82f6; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(59, 130, 246, 0.2);">
+                            <div class="fc-cover-badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4);">${spotsCount} spots • ${totalQs} Qs</div>
+                            <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦠</div>
+                            <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🦠 Parasitology Practical</div>
+                            <div class="fc-cover-sub" style="color: #94a3b8;">Spot-by-Spot Interactive Practical</div>
                         </div>
                     </div>
-                    <button class="fc-start-btn" onclick="fcStartSession()" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10;">
-                        <i class="ri-play-fill"></i> Start Session
+                    <button class="fc-start-btn" onclick="startParaSpotsSession()" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);">
+                        <i class="ri-play-fill"></i> Start Practical Session
                     </button>
                 </div>
-                                            `;
+            `;
         }
+
+        let paraSessionState = {
+            spots: [],
+            spotIdx: 0,
+            qIdx: 0,
+            showAnswer: false
+        };
+
+        function resetParaSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Parasitology Practical progress?")) return;
+            localStorage.removeItem('medStorm_para_progress');
+            if (window.showToast) window.showToast('Parasitology progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetParaSpotsProgress = resetParaSpotsProgress;
+
+        function startParaSpotsSession(forceRestart = false) {
+            const curYear = String((AppState && AppState.year) || '1');
+            if (curYear !== '3') {
+                alert("There is no practical questions available.");
+                return;
+            }
+            let spots = window.parasitologySpots;
+            if (!spots || !Array.isArray(spots) || spots.length === 0) {
+                const s = document.createElement('script');
+                s.src = 'practical3.js';
+                s.onload = () => {
+                    if (window.parasitologySpots && window.parasitologySpots.length > 0) {
+                        startParaSpotsSession(forceRestart);
+                    } else {
+                        alert("Could not load Parasitology spots data.");
+                    }
+                };
+                document.head.appendChild(s);
+                return;
+            }
+
+            function shuffle(arr) {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+            const saved = localStorage.getItem('medStorm_para_progress');
+            if (saved && !forceRestart) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data && Array.isArray(data.spots) && data.spots.length === spots.length && data.spotIdx < data.spots.length) {
+                        paraSessionState = data;
+                        paraSessionState.showAnswer = false;
+                        _renderParaSessionView();
+                        return;
+                    }
+                } catch (e) { }
+            }
+
+            paraSessionState = {
+                spots: shuffle(spots),
+                spotIdx: 0,
+                qIdx: 0,
+                showAnswer: false
+            };
+
+            _saveParaProgress();
+            _renderParaSessionView();
+        }
+        window.startParaSpotsSession = startParaSpotsSession;
+
+        function _saveParaProgress() {
+            try {
+                localStorage.setItem('medStorm_para_progress', JSON.stringify({
+                    spots: paraSessionState.spots,
+                    spotIdx: paraSessionState.spotIdx,
+                    qIdx: paraSessionState.qIdx
+                }));
+            } catch (e) { }
+        }
+
+        function exitParaSpotsSession() {
+            _saveParaProgress();
+            _fcShowCover();
+        }
+        window.exitParaSpotsSession = exitParaSpotsSession;
+
+        function restartParaSpotsSession() {
+            if (!confirm("Reshuffle spots and start new session?")) return;
+            startParaSpotsSession(true);
+        }
+        window.restartParaSpotsSession = restartParaSpotsSession;
+
+        function _renderParaSessionView() {
+            const container = document.getElementById('flashcards-container');
+            if (!container || !paraSessionState.spots || paraSessionState.spots.length === 0) return;
+
+            container.style.display = 'block';
+
+            const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
+            if (!currentSpot) {
+                _renderParaCompletionView();
+                return;
+            }
+
+            const totalSpots = paraSessionState.spots.length;
+            const currentQuestions = currentSpot.questions || [];
+            const totalQs = currentQuestions.length;
+            const qIdx = paraSessionState.qIdx;
+            const currentQ = currentQuestions[qIdx] || { question: "No question available", answer: "N/A" };
+
+            const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : 'img/pa1.webp';
+            const imgSrc = rawImg.startsWith('img/') || rawImg.startsWith('http') || rawImg.startsWith('/') ? rawImg : 'img/' + rawImg;
+
+            const progressPct = Math.round(((paraSessionState.spotIdx) / totalSpots) * 100);
+
+            const stepperHTML = currentQuestions.map((_, i) => {
+                let cls = 'para-q-step-dot';
+                let icon = '';
+                if (i === qIdx) {
+                    cls += ' active';
+                    icon = '<i class="ri-play-fill" style="margin-right:2px;"></i>';
+                } else if (i < qIdx) {
+                    cls += ' done';
+                    icon = '<i class="ri-check-line" style="margin-right:2px;"></i>';
+                }
+                return `<button class="${cls}" onclick="paraJumpToQuestion(${i})" title="Question ${i + 1}">${icon}Q${i + 1}</button>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="para-session-wrap" id="para-session-wrap">
+                    <!-- Session Header -->
+                    <div class="para-session-header">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <button class="action-icon-btn" onclick="exitParaSpotsSession()" title="Back to Decks" style="width:38px; height:38px; font-size:1.15rem;">
+                                <i class="ri-arrow-left-line"></i>
+                            </button>
+                            <span style="font-size:1.2rem; font-weight:800; color:var(--text-light);">🦠 Parasitology Practical</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <span style="background:rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
+                                Spot ${paraSessionState.spotIdx + 1} / ${totalSpots}
+                            </span>
+                            <span style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
+                                Question ${qIdx + 1} / ${totalQs}
+                            </span>
+                            <button class="action-icon-btn" onclick="restartParaSpotsSession()" title="Reshuffle & Restart" style="width:34px; height:34px;">
+                                <i class="ri-refresh-line"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Overall Progress Bar -->
+                    <div style="width:100%;">
+                        <div class="fc-progress-bar" style="height:6px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
+                            <div class="fc-progress-fill" style="width:${progressPct}%; height:100%; background:linear-gradient(90deg, #3b82f6, #10b981); transition:width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Questions in Spot Stepper -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.05em;">
+                            Questions in this spot:
+                        </span>
+                        <div class="para-q-stepper">
+                            ${stepperHTML}
+                        </div>
+                    </div>
+
+                    <!-- Question Card -->
+                    <div class="para-question-card" id="para-question-box">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
+                            <span style="font-size:0.8rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em;">
+                                Question ${qIdx + 1} of ${totalQs}
+                            </span>
+                        </div>
+                        <div style="font-size:1.3rem; font-weight:700; color:var(--text-light); line-height:1.5;" id="para-q-text-el">
+                            ${currentQ.question}
+                        </div>
+                    </div>
+
+                    <!-- Answer Card Container (Below Question) -->
+                    <div id="para-answer-container" style="display:${paraSessionState.showAnswer ? 'block' : 'none'};">
+                        <div class="para-answer-card">
+                            <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:800; color:var(--primary-green); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.6rem;">
+                                <i class="ri-checkbox-circle-fill" style="font-size:1.15rem;"></i> Correct Answer
+                            </div>
+                            <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6;" id="para-ans-text-el">
+                                ${currentQ.answer}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spot Image Card (Below Question & Answer, Above Buttons) -->
+                    <div class="para-img-card" onclick="if(window.openImageLightbox) openImageLightbox('${imgSrc}');" title="Click to view full size image">
+                        <img src="${imgSrc}" id="para-spot-image-el" alt="Parasitology Spot ${paraSessionState.spotIdx + 1}"
+                             onerror="this.onerror=null; this.src='img/pa1.webp'; this.style.opacity='0.6';" />
+                        <div class="para-img-zoom-tag">
+                            <i class="ri-zoom-in-line"></i> Click image to zoom
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons (Below Photo) -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:0.25rem;">
+                        <button class="quiz-btn btn-secondary" onclick="paraPrevStep()" id="para-btn-prev"
+                                ${paraSessionState.spotIdx === 0 && qIdx === 0 ? 'disabled' : ''}
+                                style="padding:12px 22px; font-weight:700; border-radius:12px;">
+                            <i class="ri-arrow-left-line"></i> Prev
+                        </button>
+
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <button class="quiz-btn btn-secondary" onclick="paraShowAnswer()" id="para-btn-show-ans"
+                                    ${paraSessionState.showAnswer ? 'disabled' : ''}
+                                    style="padding:12px 24px; font-weight:700; border-radius:12px; border:1.5px solid ${paraSessionState.showAnswer ? 'rgba(16,185,129,0.3)' : 'var(--accent)'}; color:${paraSessionState.showAnswer ? 'var(--primary-green)' : 'var(--accent)'};">
+                                <i class="${paraSessionState.showAnswer ? 'ri-check-line' : 'ri-eye-line'}"></i>
+                                ${paraSessionState.showAnswer ? 'Answer Shown' : 'Show Answer'}
+                            </button>
+
+                            ${qIdx < totalQs - 1 ? `
+                                <button class="quiz-btn btn-primary" onclick="paraNextQuestion()" id="para-btn-next"
+                                        style="padding:12px 28px; font-weight:700; border-radius:12px;">
+                                    Next Question (${qIdx + 2}/${totalQs}) <i class="ri-arrow-right-line"></i>
+                                </button>
+                            ` : (paraSessionState.spotIdx < totalSpots - 1 ? `
+                                <button class="quiz-btn btn-primary" onclick="paraNextSpot()" id="para-btn-next"
+                                        style="padding:12px 28px; font-weight:700; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); box-shadow:0 6px 20px rgba(16,185,129,0.35);">
+                                    Next Spot (${paraSessionState.spotIdx + 2}/${totalSpots}) <i class="ri-skip-forward-fill"></i>
+                                </button>
+                            ` : `
+                                <button class="quiz-btn btn-primary" onclick="paraFinishSession()" id="para-btn-next"
+                                        style="padding:12px 28px; font-weight:700; border-radius:12px; background:linear-gradient(135deg, #10B981, #059669); box-shadow:0 6px 20px rgba(16,185,129,0.35);">
+                                    Finish Practical <i class="ri-trophy-fill"></i>
+                                </button>
+                            `)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function paraShowAnswer() {
+            paraSessionState.showAnswer = true;
+            const ansContainer = document.getElementById('para-answer-container');
+            const btnShow = document.getElementById('para-btn-show-ans');
+            if (ansContainer) {
+                ansContainer.style.display = 'block';
+                const card = ansContainer.querySelector('.para-answer-card');
+                if (card) {
+                    card.style.animation = 'none';
+                    requestAnimationFrame(() => {
+                        card.style.animation = 'paraSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
+                    });
+                }
+            }
+            if (btnShow) {
+                btnShow.disabled = true;
+                btnShow.innerHTML = '<i class="ri-check-line"></i> Answer Shown';
+                btnShow.style.borderColor = 'rgba(16,185,129,0.3)';
+                btnShow.style.color = 'var(--primary-green)';
+            }
+        }
+        window.paraShowAnswer = paraShowAnswer;
+
+        function paraNextQuestion() {
+            const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
+            if (!currentSpot) return;
+            if (paraSessionState.qIdx < currentSpot.questions.length - 1) {
+                paraSessionState.qIdx++;
+                paraSessionState.showAnswer = false;
+                _saveParaProgress();
+                _renderParaSessionView();
+            } else {
+                paraNextSpot();
+            }
+        }
+        window.paraNextQuestion = paraNextQuestion;
+
+        function paraNextSpot() {
+            if (paraSessionState.spotIdx < paraSessionState.spots.length - 1) {
+                paraSessionState.spotIdx++;
+                paraSessionState.qIdx = 0;
+                paraSessionState.showAnswer = false;
+                _saveParaProgress();
+                _renderParaSessionView();
+            } else {
+                paraFinishSession();
+            }
+        }
+        window.paraNextSpot = paraNextSpot;
+
+        function paraPrevStep() {
+            if (paraSessionState.qIdx > 0) {
+                paraSessionState.qIdx--;
+                paraSessionState.showAnswer = false;
+                _saveParaProgress();
+                _renderParaSessionView();
+            } else if (paraSessionState.spotIdx > 0) {
+                paraSessionState.spotIdx--;
+                const prevSpot = paraSessionState.spots[paraSessionState.spotIdx];
+                paraSessionState.qIdx = prevSpot && prevSpot.questions ? prevSpot.questions.length - 1 : 0;
+                paraSessionState.showAnswer = false;
+                _saveParaProgress();
+                _renderParaSessionView();
+            }
+        }
+        window.paraPrevStep = paraPrevStep;
+
+        function paraJumpToQuestion(targetIdx) {
+            const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
+            if (!currentSpot || targetIdx < 0 || targetIdx >= currentSpot.questions.length) return;
+            paraSessionState.qIdx = targetIdx;
+            paraSessionState.showAnswer = false;
+            _saveParaProgress();
+            _renderParaSessionView();
+        }
+        window.paraJumpToQuestion = paraJumpToQuestion;
+
+        function paraFinishSession() {
+            localStorage.removeItem('medStorm_para_progress');
+            if (typeof showConfetti === 'function') showConfetti();
+            _renderParaCompletionView();
+        }
+        window.paraFinishSession = paraFinishSession;
+
+        function _renderParaCompletionView() {
+            const container = document.getElementById('flashcards-container');
+            if (!container) return;
+            container.style.display = 'flex';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+
+            container.innerHTML = `
+                <div class="fc-results-wrap" style="transform: translateY(-10px); max-width:540px; text-align:center; padding:2rem;">
+                    <div style="font-size:4.5rem; margin-bottom:1rem;">🏆</div>
+                    <div class="fc-results-title" style="font-size:2rem; margin-bottom:0.5rem; color:var(--text-light);">Practical Complete!</div>
+                    <p style="font-size:1.05rem; color:var(--text-gray); line-height:1.6; margin-bottom:1.5rem;">
+                        You have successfully reviewed all <b style="color:#60a5fa;">58 Parasitology Practical Spots</b> (230 questions)!
+                    </p>
+                    <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                        <button class="quiz-btn btn-secondary" onclick="exitParaSpotsSession()" style="padding:12px 24px; font-weight:700;">
+                            <i class="ri-arrow-left-line"></i> Back to Decks
+                        </button>
+                        <button class="quiz-btn btn-primary" onclick="startParaSpotsSession(true)" style="padding:12px 28px; font-weight:700; background:linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                            <i class="ri-refresh-line"></i> Practice Again (Shuffle)
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.addEventListener('keydown', (e) => {
+            const wrap = document.getElementById('para-session-wrap');
+            if (!wrap) return;
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                if (!paraSessionState.showAnswer) {
+                    paraShowAnswer();
+                } else {
+                    const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
+                    if (currentSpot && paraSessionState.qIdx < currentSpot.questions.length - 1) {
+                        paraNextQuestion();
+                    } else if (paraSessionState.spotIdx < paraSessionState.spots.length - 1) {
+                        paraNextSpot();
+                    } else {
+                        paraFinishSession();
+                    }
+                }
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
+                if (currentSpot && paraSessionState.qIdx < currentSpot.questions.length - 1) {
+                    paraNextQuestion();
+                } else if (paraSessionState.spotIdx < paraSessionState.spots.length - 1) {
+                    paraNextSpot();
+                }
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                paraPrevStep();
+            }
+        });
         async function fcResetSpecificDeck(event, deckIndex) {
             event.stopPropagation();
             if (!confirm("Are you sure you want to reset all progress for this flashcard deck?")) return;
@@ -13347,7 +14585,126 @@
         window.adminDeleteFeedback = adminDeleteFeedback;
 
         let allAdminReports = [];
-        let currentReportsFilter = 'pending';
+        let currentReportsYearFilter = 'all';
+        let currentReportsStatusFilter = 'pending';
+        let currentReportsSearchQuery = '';
+
+        function getModuleYear(modName) {
+            if (!modName) return '1';
+            const m = String(modName).trim().toLowerCase();
+            const y1 = ['terminology', 'foundation', 'blood', 'msk', 'cvs', 'communication step 1'];
+            const y2 = [
+                'endocrine', 'genital', 'urinary', 'egu', 'git', 'cns',
+                'communication step 2', 'professionalism',
+                'concept 1 pharmacology', 'concept 1 pathology', 'concept 1 genetics', 'concept 1 past exams',
+                'concept 2 pharmacology', 'concept 2 pathology', 'concept 2 past exams'
+            ];
+            const y3 = ['id1', 'id2'];
+
+            if (y1.some(k => m === k || m.startsWith(k))) return '1';
+            if (y2.some(k => m === k || m.startsWith(k)) || m.startsWith('concept')) return '2';
+            if (y3.some(k => m === k || m.startsWith(k))) return '3';
+            return '1';
+        }
+        window.getModuleYear = getModuleYear;
+
+        function getReportYear(report) {
+            if (!report) return '1';
+            if (report.year && (report.year === '1' || report.year === '2' || report.year === '3')) {
+                return String(report.year);
+            }
+            return getModuleYear(report.module);
+        }
+        window.getReportYear = getReportYear;
+
+        function findQuestionMetadata(qText, moduleName) {
+            if (!qText) return null;
+            const cleanQ = String(qText).trim();
+
+            if (typeof editorAllQuestionsFlat !== 'undefined' && editorAllQuestionsFlat.length > 0) {
+                const item = editorAllQuestionsFlat.find(x => x && x.qRef && String(x.qRef.q).trim() === cleanQ);
+                if (item) {
+                    return {
+                        subject: item.subject || '',
+                        chapter: item.chapter || '',
+                        options: Array.isArray(item.qRef.o) ? item.qRef.o : [],
+                        correctIndex: typeof item.qRef.a === 'number' ? item.qRef.a : null,
+                        correctAnswer: (Array.isArray(item.qRef.o) && typeof item.qRef.a === 'number') ? item.qRef.o[item.qRef.a] : (item.qRef.a || ''),
+                        image: item.qRef.img || ''
+                    };
+                }
+            }
+
+            const dbObj = (window.DB) || (typeof StateManager !== 'undefined' && StateManager.getDB ? StateManager.getDB() : null);
+            if (!dbObj) return null;
+
+            function searchModule(data) {
+                if (!data) return null;
+                if (Array.isArray(data)) {
+                    const found = data.find(q => q && String(q.q).trim() === cleanQ);
+                    if (found) {
+                        return {
+                            subject: found.subject || '',
+                            chapter: found.chapter || '',
+                            options: Array.isArray(found.o) ? found.o : [],
+                            correctIndex: typeof found.a === 'number' ? found.a : null,
+                            correctAnswer: (Array.isArray(found.o) && typeof found.a === 'number') ? found.o[found.a] : (found.a || ''),
+                            image: found.img || ''
+                        };
+                    }
+                    return null;
+                }
+                if (typeof data === 'object') {
+                    for (const key in data) {
+                        const val = data[key];
+                        if (Array.isArray(val)) {
+                            const found = val.find(q => q && String(q.q).trim() === cleanQ);
+                            if (found) {
+                                return {
+                                    subject: found.subject || '',
+                                    chapter: key,
+                                    options: Array.isArray(found.o) ? found.o : [],
+                                    correctIndex: typeof found.a === 'number' ? found.a : null,
+                                    correctAnswer: (Array.isArray(found.o) && typeof found.a === 'number') ? found.o[found.a] : (found.a || ''),
+                                    image: found.img || ''
+                                };
+                            }
+                        } else if (typeof val === 'object') {
+                            for (const subKey in val) {
+                                const subVal = val[subKey];
+                                if (Array.isArray(subVal)) {
+                                    const found = subVal.find(q => q && String(q.q).trim() === cleanQ);
+                                    if (found) {
+                                        return {
+                                            subject: key,
+                                            chapter: subKey,
+                                            options: Array.isArray(found.o) ? found.o : [],
+                                            correctIndex: typeof found.a === 'number' ? found.a : null,
+                                            correctAnswer: (Array.isArray(found.o) && typeof found.a === 'number') ? found.o[found.a] : (found.a || ''),
+                                            image: found.img || ''
+                                        };
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+
+            if (moduleName && dbObj[moduleName]) {
+                const res = searchModule(dbObj[moduleName]);
+                if (res) return res;
+            }
+
+            for (const m in dbObj) {
+                if (m === moduleName) continue;
+                const res = searchModule(dbObj[m]);
+                if (res) return res;
+            }
+
+            return null;
+        }
 
         async function loadAdminReports() {
             try {
@@ -13357,72 +14714,393 @@
                 allAdminReports.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 adminRenderReports();
             } catch (e) {
+                console.error("Error loading reports:", e);
                 const list = document.getElementById('admin-reports-list');
                 if (list) list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">No reports yet.</div>';
             }
         }
+        window.loadAdminReports = loadAdminReports;
 
-        function adminReportsFilter(filter) {
-            currentReportsFilter = filter;
-            ['pending', 'all'].forEach(f => {
-                const btn = document.getElementById('admin-rep-' + f);
+        function adminReportsYearFilter(year) {
+            currentReportsYearFilter = year;
+            ['all', '1', '2'].forEach(y => {
+                const btn = document.getElementById('admin-rep-year-' + y);
                 if (btn) {
-                    btn.style.background = f === filter ? 'var(--accent)' : 'transparent';
-                    btn.style.color = f === filter ? '#fff' : 'var(--text-gray)';
-                    btn.style.borderColor = f === filter ? 'var(--accent)' : 'var(--border-color)';
+                    const isActive = y === year;
+                    btn.style.background = isActive ? 'rgba(59, 130, 246, 0.18)' : 'transparent';
+                    btn.style.color = isActive ? '#60a5fa' : 'var(--text-gray)';
+                    btn.style.borderColor = isActive ? '#3b82f6' : 'var(--border-color)';
+                    btn.style.fontWeight = isActive ? '700' : '600';
                 }
             });
             adminRenderReports();
         }
+        window.adminReportsYearFilter = adminReportsYearFilter;
+
+        function adminReportsStatusFilter(status) {
+            currentReportsStatusFilter = status;
+            ['pending', 'resolved', 'all'].forEach(s => {
+                const btn = document.getElementById('admin-rep-status-' + s);
+                if (btn) {
+                    const isActive = s === status;
+                    let activeBg = 'rgba(255, 255, 255, 0.1)';
+                    let activeColor = 'var(--text-light)';
+                    let activeBorder = 'var(--text-light)';
+                    if (s === 'pending') {
+                        activeBg = 'rgba(245, 158, 11, 0.2)';
+                        activeColor = '#fbbf24';
+                        activeBorder = '#f59e0b';
+                    } else if (s === 'resolved') {
+                        activeBg = 'rgba(16, 185, 129, 0.2)';
+                        activeColor = '#10b981';
+                        activeBorder = '#10b981';
+                    }
+                    btn.style.background = isActive ? activeBg : 'transparent';
+                    btn.style.color = isActive ? activeColor : 'var(--text-gray)';
+                    btn.style.borderColor = isActive ? activeBorder : 'var(--border-color)';
+                    btn.style.fontWeight = isActive ? '700' : '600';
+                }
+            });
+            adminRenderReports();
+        }
+        window.adminReportsStatusFilter = adminReportsStatusFilter;
+
+        window.adminReportsFilter = function (filter) {
+            if (filter === 'pending' || filter === 'all' || filter === 'resolved') {
+                adminReportsStatusFilter(filter);
+            } else if (filter === '1' || filter === '2') {
+                adminReportsYearFilter(filter);
+            }
+        };
+
+        function handleAdminReportsSearch() {
+            const input = document.getElementById('admin-reports-search');
+            currentReportsSearchQuery = (input ? input.value : '').trim().toLowerCase();
+            adminRenderReports();
+        }
+        window.handleAdminReportsSearch = handleAdminReportsSearch;
 
         function adminRenderReports() {
             const list = document.getElementById('admin-reports-list');
             if (!list) return;
-            let reports = currentReportsFilter === 'pending'
-                ? allAdminReports.filter(r => r.status === 'pending')
-                : allAdminReports;
-            if (reports.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">No ' + currentReportsFilter + ' reports.</div>';
+
+            const totalAll = allAdminReports.length;
+            const totalY1 = allAdminReports.filter(r => getReportYear(r) === '1').length;
+            const totalY2 = allAdminReports.filter(r => getReportYear(r) === '2').length;
+            const totalPending = allAdminReports.filter(r => (r.status || 'pending') === 'pending').length;
+            const totalResolved = allAdminReports.filter(r => r.status === 'resolved').length;
+
+            const bAll = document.getElementById('admin-rep-badge-all');
+            const bY1 = document.getElementById('admin-rep-badge-y1');
+            const bY2 = document.getElementById('admin-rep-badge-y2');
+            const bPend = document.getElementById('admin-rep-badge-pending');
+            const bRes = document.getElementById('admin-rep-badge-resolved');
+            const bStatAll = document.getElementById('admin-rep-badge-status-all');
+            if (bAll) bAll.textContent = totalAll;
+            if (bY1) bY1.textContent = totalY1;
+            if (bY2) bY2.textContent = totalY2;
+            if (bPend) bPend.textContent = totalPending;
+            if (bRes) bRes.textContent = totalResolved;
+            if (bStatAll) bStatAll.textContent = totalAll;
+
+            let filtered = allAdminReports.filter(r => {
+                const repYear = getReportYear(r);
+                if (currentReportsYearFilter === 'all') return true;
+                return repYear === currentReportsYearFilter;
+            });
+
+            if (currentReportsStatusFilter === 'pending') {
+                filtered = filtered.filter(r => (r.status || 'pending') === 'pending');
+            } else if (currentReportsStatusFilter === 'resolved') {
+                filtered = filtered.filter(r => r.status === 'resolved');
+            }
+
+            if (currentReportsSearchQuery) {
+                const q = currentReportsSearchQuery;
+                filtered = filtered.filter(r => {
+                    const qText = (r.question || '').toLowerCase();
+                    const reason = (r.reason || '').toLowerCase();
+                    const user = (r.username || '').toLowerCase();
+                    const email = (r.userEmail || '').toLowerCase();
+                    const mod = (r.module || '').toLowerCase();
+                    const subj = (r.subject || '').toLowerCase();
+                    const chap = (r.chapter || '').toLowerCase();
+                    return qText.includes(q) || reason.includes(q) || user.includes(q) || email.includes(q) || mod.includes(q) || subj.includes(q) || chap.includes(q);
+                });
+            }
+
+            const summaryEl = document.getElementById('admin-rep-summary-text');
+            if (summaryEl) {
+                summaryEl.textContent = `Showing ${filtered.length} of ${totalAll} reports`;
+            }
+
+            if (filtered.length === 0) {
+                const filterDesc = currentReportsYearFilter !== 'all' ? `Year ${currentReportsYearFilter}` : '';
+                const statusDesc = currentReportsStatusFilter !== 'all' ? currentReportsStatusFilter : '';
+                const label = [filterDesc, statusDesc].filter(Boolean).join(' ');
+                list.innerHTML = `
+                    <div style="text-align:center; color:var(--text-gray); padding:3.5rem 1rem; background:var(--bg-card); border-radius:14px; border:1px solid var(--border-color);">
+                        <i class="ri-checkbox-circle-line" style="font-size:2.5rem; color:var(--accent); display:inline-block; margin-bottom:10px;"></i>
+                        <div style="font-weight:700; color:var(--text-light); font-size:1rem;">No reports match your filters</div>
+                        <div style="font-size:0.82rem; color:var(--text-gray); margin-top:4px;">${label ? `No ${label} reports found.` : 'All clear! No questions have been reported.'}</div>
+                    </div>`;
                 return;
             }
-            list.innerHTML = reports.map(r => {
+
+            list.innerHTML = filtered.map(r => {
                 const date = r.createdAt ? new Date(r.createdAt).toLocaleString() : 'Unknown';
-                const statusColor = r.status === 'resolved' ? '#10b981' : '#f59e0b';
-                return `<div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; padding:1rem 1.25rem;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
-                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                            <span style="font-size:0.75rem; background:rgba(59,130,246,0.15); color:#3b82f6; padding:2px 8px; border-radius:999px; font-weight:600;">${r.module || 'Unknown module'}</span>
-                            <span style="font-size:0.75rem; background:rgba(${r.status === 'resolved' ? '16,185,129' : '245,158,11'},0.15); color:${statusColor}; padding:2px 8px; border-radius:999px; font-weight:600;">${r.status || 'pending'}</span>
-                        </div>
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                                <span style="font-size:0.72rem; color:var(--text-gray);">by ${r.username || 'anon'} · ${date}</span>
-                                ${r.userEmail ? `<span style="font-size:0.65rem; color:var(--text-gray); opacity:0.8;">${r.userEmail}</span>` : ''}
+                const timeAgoStr = typeof timeAgo === 'function' && r.createdAt ? timeAgo(r.createdAt) : '';
+                const isResolved = r.status === 'resolved';
+                const statusColor = isResolved ? '#10b981' : '#f59e0b';
+                const statusBg = isResolved ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)';
+                const repYear = getReportYear(r);
+                const isYear2 = repYear === '2';
+
+                const meta = (!r.options || r.options.length === 0 || !r.chapter) ? findQuestionMetadata(r.question, r.module) : null;
+                const subjectName = r.subject || (meta ? meta.subject : '');
+                const chapterName = r.chapter || (meta ? meta.chapter : '');
+                const options = (r.options && Array.isArray(r.options) && r.options.length > 0) ? r.options : (meta && meta.options ? meta.options : []);
+                const correctIndex = typeof r.correctIndex === 'number' ? r.correctIndex : (meta && typeof meta.correctIndex === 'number' ? meta.correctIndex : null);
+                const correctAns = r.correctAnswer || (meta ? meta.correctAnswer : '');
+                const qImage = r.image || (meta ? meta.image : '');
+
+                let sectionParts = [];
+                if (subjectName) sectionParts.push(subjectName);
+                if (chapterName && chapterName !== subjectName) sectionParts.push(chapterName);
+                const sectionBreadcrumb = sectionParts.join(' ▸ ');
+
+                let optionsHtml = '';
+                if (options && options.length > 0) {
+                    optionsHtml = `
+                        <div style="margin-top:10px;">
+                            <div style="font-size:0.75rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Choices:</div>
+                            <div style="display:grid; grid-template-columns:1fr; gap:6px;">
+                                ${options.map((opt, oIdx) => {
+                        const letter = String.fromCharCode(65 + oIdx);
+                        const isCorrect = (correctIndex === oIdx) || (String(opt).trim() === String(correctAns).trim());
+                        return `
+                                        <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 12px; border-radius:8px; font-size:0.86rem; line-height:1.45; ${isCorrect ? 'background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.4); color:var(--text-light); font-weight:600;' : 'background:rgba(255,255,255,0.02); border:1px solid var(--border-color); color:var(--text-gray);'}">
+                                            <span style="font-weight:800; min-width:20px; color:${isCorrect ? '#10b981' : 'var(--text-gray)'};">${letter}.</span>
+                                            <span style="flex:1;">${escapeHTML(opt)}</span>
+                                            ${isCorrect ? '<span style="font-size:0.7rem; background:#10b981; color:#fff; padding:1px 7px; border-radius:999px; font-weight:700; white-space:nowrap; margin-left:6px;"><i class="ri-check-line"></i> Correct</span>' : ''}
+                                        </div>`;
+                    }).join('')}
                             </div>
-                            ${r.status !== 'resolved' ? `<button onclick="markReportResolved('${r.id}')" style="padding:3px 10px; border-radius:8px; border:1px solid #10b981; background:transparent; color:#10b981; font-size:0.75rem; cursor:pointer; font-weight:600;">Mark resolved</button>` : ''}
+                        </div>`;
+                } else if (correctAns) {
+                    optionsHtml = `
+                        <div style="margin-top:8px; display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:8px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); color:#34d399; font-size:0.82rem; font-weight:700;">
+                            <i class="ri-checkbox-circle-fill"></i> Correct answer: ${escapeHTML(correctAns)}
+                        </div>`;
+                }
+
+                const imgHtml = qImage ? `
+                    <div style="margin-top:10px;">
+                        <img src="${escapeHTML(qImage)}" alt="Question Image" style="max-height:140px; border-radius:8px; border:1px solid var(--border-color); object-fit:contain; background:#000; cursor:pointer;" onclick="window.open('${escapeHTML(qImage)}', '_blank')" title="Click to open full image">
+                    </div>` : '';
+
+                return `
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid ${statusColor}; border-radius:14px; padding:1.15rem 1.35rem; box-shadow:0 3px 14px rgba(0,0,0,0.08); transition:all 0.2s ease;">
+                    <!-- Header Bar -->
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                            <!-- Year Badge -->
+                            <span style="font-size:0.75rem; background:${isYear2 ? 'rgba(168,85,247,0.15)' : 'rgba(59,130,246,0.15)'}; color:${isYear2 ? '#c084fc' : '#60a5fa'}; border:1px solid ${isYear2 ? 'rgba(168,85,247,0.35)' : 'rgba(59,130,246,0.35)'}; padding:2px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                                <i class="ri-graduation-cap-line"></i> Year ${repYear}
+                            </span>
+                            <!-- Module Badge -->
+                            <span style="font-size:0.75rem; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:2px 9px; border-radius:999px; font-weight:700;">
+                                📚 ${escapeHTML(r.module || 'Unknown module')}
+                            </span>
+                            <!-- Section / Chapter Breadcrumb -->
+                            ${sectionBreadcrumb ? `
+                            <span style="font-size:0.75rem; background:var(--bg-darker); color:var(--text-light); border:1px solid var(--border-color); padding:2px 10px; border-radius:999px; font-weight:600; display:inline-flex; align-items:center; gap:4px;">
+                                <i class="ri-folder-line" style="color:var(--accent);"></i> ${escapeHTML(sectionBreadcrumb)}
+                            </span>` : ''}
+                            <!-- Status Badge -->
+                            <span style="font-size:0.75rem; background:${statusBg}; color:${statusColor}; border:1px solid ${statusColor}40; padding:2px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                                <i class="${isResolved ? 'ri-checkbox-circle-fill' : 'ri-time-line'}"></i> ${r.status || 'pending'}
+                            </span>
+                        </div>
+
+                        <!-- Reporter Info -->
+                        <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                            <div style="font-size:0.78rem; font-weight:600; color:var(--text-light); display:inline-flex; align-items:center; gap:4px;">
+                                <i class="ri-user-smile-line" style="color:var(--accent);"></i> ${escapeHTML(r.username || 'Anonymous')}
+                            </div>
+                            <div style="font-size:0.7rem; color:var(--text-gray); margin-top:1px;">
+                                ${r.userEmail ? `${escapeHTML(r.userEmail)} · ` : ''}${timeAgoStr ? `${timeAgoStr} (${date})` : date}
+                            </div>
                         </div>
                     </div>
-                    <div style="font-size:0.82rem; color:var(--text-gray); margin-bottom:6px; font-weight:600;">Question:</div>
-                    <div style="font-size:0.9rem; color:var(--text-light); margin-bottom:8px; line-height:1.5;">${r.question || ''}</div>
-                    <div style="font-size:0.82rem; color:var(--text-gray); font-weight:600; margin-bottom:4px;">Report reason:</div>
-                    <div style="font-size:0.9rem; color:#f59e0b; line-height:1.5;">${r.reason || ''}</div>
-                    ${r.correctAnswer ? `<div style="font-size:0.78rem; color:var(--text-gray); margin-top:6px;">Correct answer: <span style="color:#10b981;">${r.correctAnswer}</span></div>` : ''}
+
+                    <!-- High-Contrast Report Reason Box -->
+                    <div style="background:rgba(245, 158, 11, 0.08); border:1px solid rgba(245, 158, 11, 0.28); border-radius:10px; padding:10px 14px; margin-bottom:12px;">
+                        <div style="font-size:0.76rem; font-weight:800; color:#fbbf24; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:5px; margin-bottom:3px;">
+                            <i class="ri-alert-line" style="font-size:0.95rem;"></i> Report Reason from Student:
+                        </div>
+                        <div style="font-size:0.92rem; color:var(--text-light); font-weight:600; line-height:1.5;">
+                            ${escapeHTML(r.reason || 'No reason specified.')}
+                        </div>
+                    </div>
+
+                    <!-- Question Content -->
+                    <div style="background:var(--bg-darker); border:1px solid var(--border-color); border-radius:10px; padding:12px 14px; margin-bottom:12px;">
+                        <div style="font-size:0.76rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+                            <i class="ri-question-line" style="color:var(--accent);"></i> Question Text:
+                        </div>
+                        <div style="font-size:0.94rem; color:var(--text-light); font-weight:600; line-height:1.55;">
+                            ${escapeHTML(r.question || 'N/A')}
+                        </div>
+                        ${imgHtml}
+                        ${optionsHtml}
+                    </div>
+
+                    <!-- Action Buttons Toolbar -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid var(--border-color); padding-top:10px;">
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                            <!-- Fix in Question Editor Button -->
+                            <button onclick="adminEditReportById('${r.id}')"
+                                style="padding:6px 14px; border-radius:8px; border:1px solid rgba(59, 130, 246, 0.4); background:rgba(59, 130, 246, 0.1); color:#60a5fa; font-size:0.82rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
+                                onmouseover="this.style.background='rgba(59, 130, 246, 0.2)'"
+                                onmouseout="this.style.background='rgba(59, 130, 246, 0.1)'"
+                                title="Open this question in the Admin Question Editor">
+                                <i class="ri-edit-2-line"></i> Fix in Editor
+                            </button>
+
+                            <!-- Copy Question Button -->
+                            <button onclick="adminCopyReportQuestion('${r.id}')"
+                                style="padding:6px 12px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.82rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
+                                onmouseover="this.style.color='var(--text-light)'; this.style.borderColor='var(--text-light)'"
+                                onmouseout="this.style.color='var(--text-gray)'; this.style.borderColor='var(--border-color)'"
+                                title="Copy question and choices to clipboard">
+                                <i class="ri-file-copy-line"></i> Copy
+                            </button>
+                        </div>
+
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <!-- Mark Resolved / Reopen Button -->
+                            <button onclick="adminToggleReportStatus('${r.id}', event)"
+                                style="padding:6px 14px; border-radius:8px; border:1px solid ${isResolved ? 'rgba(245, 158, 11, 0.45)' : 'rgba(16, 185, 129, 0.45)'}; background:${isResolved ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; color:${isResolved ? '#fbbf24' : '#34d399'}; font-size:0.82rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
+                                onmouseover="this.style.filter='brightness(1.15)'"
+                                onmouseout="this.style.filter='none'">
+                                <i class="${isResolved ? 'ri-arrow-go-back-line' : 'ri-check-line'}"></i> ${isResolved ? 'Reopen' : 'Mark Resolved'}
+                            </button>
+
+                            <!-- Delete Report Button -->
+                            <button onclick="adminDeleteReport('${r.id}', event)"
+                                style="padding:6px 12px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.35); background:rgba(239, 68, 68, 0.08); color:var(--primary-red); font-size:0.82rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
+                                onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'"
+                                onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'"
+                                title="Delete this report permanently">
+                                <i class="ri-delete-bin-line"></i> Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>`;
             }).join('');
         }
 
-        window.markReportResolved = async function (reportId) {
+        window.adminToggleReportStatus = async function (reportId, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const report = allAdminReports.find(r => r.id === reportId);
+            if (!report) return;
+            const newStatus = (report.status === 'resolved') ? 'pending' : 'resolved';
             try {
-                await window.updateDoc(window.doc(window.db, 'reports', reportId), { status: 'resolved' });
-                const report = allAdminReports.find(r => r.id === reportId);
-                if (report) report.status = 'resolved';
+                await window.updateDoc(window.doc(window.db, 'reports', reportId), { status: newStatus });
+                report.status = newStatus;
                 adminRenderReports();
-                window.showToast('Report marked as resolved', 'success');
-            } catch (e) {
-                window.showToast('Error updating report', 'error');
+                if (window.showToast) {
+                    window.showToast(newStatus === 'resolved' ? 'Report marked as resolved' : 'Report reopened as pending', 'success');
+                }
+            } catch (err) {
+                console.error("Error updating report status:", err);
+                if (window.showToast) window.showToast('Error updating report', 'error');
             }
         };
-        window.adminReportsFilter = adminReportsFilter;
+
+        window.markReportResolved = async function (reportId) {
+            const report = allAdminReports.find(r => r.id === reportId);
+            if (report) report.status = 'pending';
+            await window.adminToggleReportStatus(reportId);
+        };
+
+        window.adminDeleteReport = async function (reportId, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (!confirm('Are you sure you want to permanently delete this report?')) return;
+            try {
+                await window.deleteDoc(window.doc(window.db, 'reports', reportId));
+                allAdminReports = allAdminReports.filter(r => r.id !== reportId);
+                adminRenderReports();
+                if (window.showToast) window.showToast('Report deleted successfully', 'success');
+            } catch (err) {
+                console.error("Error deleting report:", err);
+                if (window.showToast) window.showToast('Failed to delete report: ' + err.message, 'error');
+            }
+        };
+
+        window.adminEditReportById = async function (reportId) {
+            const report = allAdminReports.find(r => r.id === reportId);
+            if (!report || !report.question) {
+                if (window.showToast) window.showToast('Question details not found', 'error');
+                return;
+            }
+
+            adminTab('editor');
+
+            setTimeout(async () => {
+                const searchInput = document.getElementById('editor-search-input');
+                const selectMod = document.getElementById('editor-module-select');
+
+                if (searchInput) {
+                    searchInput.value = report.question.trim().slice(0, 70);
+                }
+                if (selectMod && report.module && typeof MODULE_KEY_TO_DOC_ID !== 'undefined') {
+                    const docId = MODULE_KEY_TO_DOC_ID[report.module];
+                    if (docId) {
+                        selectMod.value = docId;
+                    } else {
+                        selectMod.value = 'all';
+                    }
+                }
+
+                if (typeof window.handleEditorSearch === 'function') {
+                    await window.handleEditorSearch();
+                }
+                if (window.showToast) {
+                    window.showToast('Question loaded in editor!', 'success');
+                }
+            }, 200);
+        };
+
+        window.adminCopyReportQuestion = function (reportId) {
+            const report = allAdminReports.find(r => r.id === reportId);
+            if (!report) return;
+
+            const meta = findQuestionMetadata(report.question, report.module);
+            const options = (report.options && report.options.length) ? report.options : (meta?.options || []);
+            const correctAns = report.correctAnswer || meta?.correctAnswer || '';
+
+            let text = `${report.question}\n\n`;
+            if (options.length > 0) {
+                options.forEach((opt, idx) => {
+                    const letter = String.fromCharCode(65 + idx);
+                    const isCorrect = (meta?.correctIndex === idx) || (report.correctIndex === idx) || (String(opt).trim() === String(correctAns).trim());
+                    text += `${letter}. ${opt}${isCorrect ? '  <-- Correct Answer' : ''}\n`;
+                });
+            } else if (correctAns) {
+                text += `Correct Answer: ${correctAns}\n`;
+            }
+            if (report.reason) {
+                text += `\nReport Reason: ${report.reason}`;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                if (window.showToast) window.showToast('Copied question details to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Clipboard copy error:', err);
+            });
+        };
 
         let adminYearFilter = 'all';
         function adminFilterUsers() {
@@ -14010,200 +15688,403 @@
         const escapeHTML = (str) => typeof str === 'string' ? str.replace(/"/g, '&quot;') : (str || '');
 
         let adminMistakesCache = {};
-        let currentMistakesWeek = getWeekString();
         let currentMistakesModule = 'all';
+        let currentMistakesYear = '1';
 
-        function setMistakesWeek(type) {
-            if (type === 'current') {
-                currentMistakesWeek = getWeekString();
-            } else if (type === 'prev') {
-                currentMistakesWeek = getPreviousWeekString();
+        function getWeekDateRangeLabel(weekStr) {
+            if (!weekStr || !weekStr.includes('-W')) return weekStr || 'Weekly';
+            try {
+                const parts = weekStr.split('-W');
+                const year = parseInt(parts[0], 10);
+                const weekNum = parseInt(parts[1], 10);
+
+                const jan4 = new Date(year, 0, 4);
+                const dayOfWeek = jan4.getDay() || 7;
+                const monW1 = new Date(year, 0, 4 - dayOfWeek + 1);
+                const monTarget = new Date(monW1.getTime() + (weekNum - 1) * 7 * 86400000);
+                const sunTarget = new Date(monTarget.getTime() + 6 * 86400000);
+
+                const startM = monTarget.toLocaleString('en-US', { month: 'short' });
+                const endM = sunTarget.toLocaleString('en-US', { month: 'short' });
+                return `Week ${weekNum} (${startM} ${monTarget.getDate()} – ${endM} ${sunTarget.getDate()}, ${year})`;
+            } catch (e) {
+                return weekStr;
             }
-
-            const btnCurrent = document.getElementById('mistakes-week-current');
-            const btnPrev = document.getElementById('mistakes-week-prev');
-            if (btnCurrent) {
-                btnCurrent.style.background = type === 'current' ? 'var(--accent)' : 'transparent';
-                btnCurrent.style.color = type === 'current' ? 'var(--bg-dark)' : 'var(--text-gray)';
-            }
-            if (btnPrev) {
-                btnPrev.style.background = type === 'prev' ? 'var(--accent)' : 'transparent';
-                btnPrev.style.color = type === 'prev' ? 'var(--bg-dark)' : 'var(--text-gray)';
-            }
-
-            const tag = document.getElementById('current-week-tag');
-            if (tag) tag.innerText = currentMistakesWeek;
-
-            loadQuestionsAnalysis(false);
         }
+
+        function getActiveMistakesList(cacheData) {
+            if (!cacheData) return [];
+            if (currentMistakesYear === '1') {
+                if (cacheData.listYear1 && cacheData.listYear1.length > 0) return cacheData.listYear1;
+                return (cacheData.list || []).filter(x => (x.year || getModuleYear(x.m)) === '1').slice(0, 15);
+            }
+            if (currentMistakesYear === '2') {
+                if (cacheData.listYear2 && cacheData.listYear2.length > 0) return cacheData.listYear2;
+                return (cacheData.list || []).filter(x => (x.year || getModuleYear(x.m)) === '2').slice(0, 15);
+            }
+            return cacheData.list || [];
+        }
+
+        function setMistakesYear(year) {
+            currentMistakesYear = year;
+            ['1', '2', 'all'].forEach(y => {
+                const btn = document.getElementById('analysis-year-' + y);
+                if (btn) {
+                    const isActive = (y === year);
+                    btn.style.background = isActive ? 'rgba(59, 130, 246, 0.18)' : 'transparent';
+                    btn.style.color = isActive ? '#60a5fa' : 'var(--text-gray)';
+                    btn.style.borderColor = isActive ? '#3b82f6' : 'var(--border-color)';
+                    btn.style.fontWeight = isActive ? '700' : '600';
+                }
+            });
+
+            const cacheData = adminMistakesCache['active_snapshot'];
+            if (cacheData) {
+                currentMistakesModule = 'all';
+                const activeList = getActiveMistakesList(cacheData);
+                populateModuleFilter(activeList);
+                renderQuestionsAnalysis(cacheData);
+            }
+        }
+        window.setMistakesYear = setMistakesYear;
 
         function setMistakesModule(mod) {
             currentMistakesModule = mod;
-            if (adminMistakesCache[currentMistakesWeek]) {
-                renderQuestionsAnalysis(adminMistakesCache[currentMistakesWeek]);
-            } else {
-                loadQuestionsAnalysis(false);
+            if (adminMistakesCache['active_snapshot']) {
+                renderQuestionsAnalysis(adminMistakesCache['active_snapshot']);
             }
+        }
+        window.setMistakesModule = setMistakesModule;
+
+        function populateModuleFilter(list) {
+            const select = document.getElementById('analysis-module-filter');
+            if (!select) return;
+            const currentVal = select.value || 'all';
+            const modules = new Set();
+            (list || []).forEach(item => {
+                if (item && item.m && item.m !== 'General') modules.add(item.m);
+            });
+            let html = '<option value="all">All Modules</option>';
+            Array.from(modules).sort().forEach(m => {
+                html += `<option value="${escapeHTML(m)}">${escapeHTML(m)}</option>`;
+            });
+            select.innerHTML = html;
+            if (modules.has(currentVal)) select.value = currentVal;
+            else select.value = 'all';
         }
 
         async function loadQuestionsAnalysis(forceRefresh = false) {
             const container = document.getElementById('admin-analysis-list');
             if (!container) return;
 
-            const tag = document.getElementById('current-week-tag');
-            if (tag) tag.innerText = currentMistakesWeek;
+            const targetWeek = getPreviousWeekString();
+            const weekBadge = document.getElementById('analysis-week-badge');
+            if (weekBadge) weekBadge.textContent = getWeekDateRangeLabel(targetWeek);
 
-            if (!forceRefresh && adminMistakesCache[currentMistakesWeek]) {
-                renderQuestionsAnalysis(adminMistakesCache[currentMistakesWeek]);
-                return;
-            }
-
-            const refreshBtn = document.getElementById('admin-analysis-refresh-btn');
-            if (refreshBtn) {
-                refreshBtn.disabled = true;
-                refreshBtn.innerHTML = '<i class="ri-loader-4-line" style="animation:spin 1s linear infinite;"></i> <span>Loading...</span>';
+            if (!forceRefresh) {
+                try {
+                    const cached = localStorage.getItem('medStorm_cached_top_mistakes');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (parsed && (parsed.list?.length > 0 || parsed.listYear1?.length > 0)) {
+                            if (!parsed.listYear1 || parsed.listYear1.length === 0) {
+                                parsed.listYear1 = (parsed.list || []).filter(x => (x.year || getModuleYear(x.m)) === '1').slice(0, 15);
+                            }
+                            if (!parsed.listYear2 || parsed.listYear2.length === 0) {
+                                parsed.listYear2 = (parsed.list || []).filter(x => (x.year || getModuleYear(x.m)) === '2').slice(0, 15);
+                            }
+                            adminMistakesCache['active_snapshot'] = parsed;
+                            const activeList = getActiveMistakesList(parsed);
+                            populateModuleFilter(activeList);
+                            renderQuestionsAnalysis(parsed);
+                            return;
+                        }
+                    }
+                } catch (e) { }
             }
 
             container.innerHTML = `
                 <div style="text-align:center; color:var(--text-gray); padding:3.5rem 1rem; background:var(--bg-card); border-radius:14px; border:1px solid var(--border-color);">
                     <i class="ri-loader-4-line" style="font-size:2.2rem; animation:spin 1s linear infinite; display:inline-block; color:var(--accent);"></i>
-                    <div style="margin-top:12px; font-weight:700; color:var(--text-light); font-size:0.95rem;">Fetching weekly mistakes for (${currentMistakesWeek})...</div>
-                    <div style="font-size:0.8rem; color:var(--text-gray); margin-top:4px;">Optimized fetch: reading 3 shards only</div>
+                    <div style="margin-top:12px; font-weight:700; color:var(--text-light); font-size:0.95rem;">Loading static weekly mistakes archive...</div>
+                    <div style="font-size:0.8rem; color:var(--text-gray); margin-top:4px;">1 read only · Conserving Firestore quota</div>
                 </div>`;
 
             try {
                 if (!window.db || !window.getDoc || !window.doc) {
-                    container.innerHTML = '<div style="text-align:center; color:var(--primary-red); padding:2rem;">Error: Database is not initialized.</div>';
-                    if (refreshBtn) {
-                        refreshBtn.disabled = false;
-                        refreshBtn.innerHTML = '<i class="ri-refresh-line"></i> <span>Refresh</span>';
-                    }
+                    container.innerHTML = '<div style="text-align:center; color:var(--primary-red); padding:2rem;">Database is not initialized.</div>';
                     return;
                 }
 
-                const shard0Ref = window.doc(window.db, 'weekly_mistakes', `${currentMistakesWeek}_s0`);
-                const shard1Ref = window.doc(window.db, 'weekly_mistakes', `${currentMistakesWeek}_s1`);
-                const shard2Ref = window.doc(window.db, 'weekly_mistakes', `${currentMistakesWeek}_s2`);
+                const staticDocRef = window.doc(window.db, 'content', 'static_top_weekly_mistakes');
 
-                const shards = await Promise.all([
-                    window.getDoc(shard0Ref).catch(e => null),
-                    window.getDoc(shard1Ref).catch(e => null),
-                    window.getDoc(shard2Ref).catch(e => null)
-                ]);
+                if (!forceRefresh) {
+                    const staticSnap = await window.getDoc(staticDocRef).catch(() => null);
+                    if (staticSnap && staticSnap.exists()) {
+                        const data = staticSnap.data();
+                        if (data && (data.list?.length > 0 || data.listYear1?.length > 0)) {
+                            if (!data.listYear1 || data.listYear1.length === 0) {
+                                data.listYear1 = (data.list || []).filter(x => (x.year || getModuleYear(x.m)) === '1').slice(0, 15);
+                            }
+                            if (!data.listYear2 || data.listYear2.length === 0) {
+                                data.listYear2 = (data.list || []).filter(x => (x.year || getModuleYear(x.m)) === '2').slice(0, 15);
+                            }
+                            adminMistakesCache['active_snapshot'] = data;
+                            try { localStorage.setItem('medStorm_cached_top_mistakes', JSON.stringify(data)); } catch (e) { }
+                            const activeList = getActiveMistakesList(data);
+                            populateModuleFilter(activeList);
+                            renderQuestionsAnalysis(data);
+                            return;
+                        }
+                    }
+                }
 
+                await recompileWeeklyTopMistakes(false);
+
+            } catch (err) {
+                console.error("Error in loadQuestionsAnalysis:", err);
+                container.innerHTML = `<div style="text-align:center; color:var(--primary-red); padding:3rem; background:var(--bg-card); border-radius:14px;">
+                    <i class="ri-error-warning-line" style="font-size:2rem;"></i>
+                    <div style="margin-top:10px; font-weight:700;">Could not load weekly analysis</div>
+                    <div style="font-size:0.8rem; color:var(--text-gray); margin-top:4px;">${err.message || ''}</div>
+                </div>`;
+            }
+        }
+        window.loadQuestionsAnalysis = loadQuestionsAnalysis;
+
+        async function recompileWeeklyTopMistakes(showToastMsg = true) {
+            const container = document.getElementById('admin-analysis-list');
+            const recompileBtn = document.getElementById('btn-recompile-mistakes');
+            if (recompileBtn) {
+                recompileBtn.disabled = true;
+                recompileBtn.innerHTML = '<i class="ri-loader-4-line" style="animation:spin 1s linear infinite;"></i> Compiling...';
+            }
+
+            const targetWeek = getPreviousWeekString();
+            const currentWeek = getWeekString();
+
+            try {
                 const aggregated = {};
-                let totalMistakesCount = 0;
+                let totalCount = 0;
 
-                shards.forEach(snap => {
+                const weekDocsToTry = [
+                    `${targetWeek}_s0`, `${targetWeek}_s1`, `${targetWeek}_s2`, targetWeek,
+                    `${currentWeek}_s0`, `${currentWeek}_s1`, `${currentWeek}_s2`, currentWeek
+                ];
+
+                const snaps = await Promise.all(
+                    weekDocsToTry.map(id => window.getDoc(window.doc(window.db, 'weekly_mistakes', id)).catch(() => null))
+                );
+
+                snaps.forEach(snap => {
                     if (!snap || !snap.exists()) return;
                     const data = snap.data() || {};
-                    const mistakes = data.mistakes || {};
-                    for (const [hash, item] of Object.entries(mistakes)) {
-                        if (!item) continue;
-                        const count = typeof item.count === 'number' ? item.count : (item.count?.value || 1);
-                        totalMistakesCount += count;
-                        if (!aggregated[hash]) {
-                            aggregated[hash] = {
-                                hash: hash,
-                                count: count,
-                                q: item.q || '',
-                                m: item.m || 'General',
-                                a: typeof item.a === 'number' ? item.a : 0,
-                                o: Array.isArray(item.o) ? [...item.o] : [],
-                                img: item.img || null
-                            };
-                        } else {
-                            aggregated[hash].count += count;
-                            if ((!aggregated[hash].o || aggregated[hash].o.length === 0) && Array.isArray(item.o) && item.o.length > 0) {
-                                aggregated[hash].o = [...item.o];
+
+                    if (data.mistakes && typeof data.mistakes === 'object') {
+                        for (const [hash, item] of Object.entries(data.mistakes)) {
+                            if (!item || !item.q) continue;
+                            const c = typeof item.count === 'number' ? item.count : (item.count?.value || 1);
+                            totalCount += c;
+                            if (!aggregated[hash]) {
+                                aggregated[hash] = { ...item, count: c, hash };
+                            } else {
+                                aggregated[hash].count += c;
                             }
-                            if (!aggregated[hash].img && item.img) {
-                                aggregated[hash].img = item.img;
-                            }
-                            if (aggregated[hash].m === 'General' && item.m) {
-                                aggregated[hash].m = item.m;
+                        }
+                    }
+
+                    for (const [key, val] of Object.entries(data)) {
+                        if (key.startsWith('mistakes.')) {
+                            const parts = key.split('.');
+                            if (parts.length >= 3) {
+                                const hash = parts[1];
+                                const prop = parts.slice(2).join('.');
+                                if (!aggregated[hash]) aggregated[hash] = { hash, count: 0 };
+                                if (prop === 'count') {
+                                    const c = typeof val === 'number' ? val : 1;
+                                    aggregated[hash].count += c;
+                                    totalCount += c;
+                                } else {
+                                    aggregated[hash][prop] = val;
+                                }
                             }
                         }
                     }
                 });
 
                 Object.values(aggregated).forEach(item => {
-                    if ((!item.o || item.o.length === 0) && window.DB) {
-                        for (const modKey in window.DB) {
-                            if (item.m && item.m !== 'General' && item.m !== modKey) continue;
-                            const qs = extractAllQuestions(window.DB[modKey]);
-                            const found = qs.find(q => q && q.q === item.q);
-                            if (found) {
-                                if (!item.o || item.o.length === 0) item.o = found.o || [];
-                                if (item.a === undefined) item.a = found.a;
-                                if (!item.img && found.img) item.img = found.img;
-                                if (item.m === 'General') item.m = modKey;
-                                break;
+                    if (!item.q) return;
+                    const meta = findQuestionMetadata(item.q, item.m);
+                    if (meta) {
+                        if (!item.o || item.o.length === 0) item.o = meta.options;
+                        if (item.a === undefined || item.a === null) item.a = meta.correctIndex;
+                        if (!item.img && meta.image) item.img = meta.image;
+                        if ((!item.m || item.m === 'General') && meta.subject) item.m = meta.subject;
+                    }
+                    item.year = getModuleYear(item.m);
+                });
+
+                const sorted = Object.values(aggregated).filter(x => x.q && x.q.trim().length > 0)
+                    .sort((a, b) => (b.count || 0) - (a.count || 0));
+
+                let sortedY1 = sorted.filter(x => (x.year || getModuleYear(x.m)) === '1');
+                let sortedY2 = sorted.filter(x => (x.year || getModuleYear(x.m)) === '2');
+
+                if (sortedY1.length < 15 && window.DB && typeof extractAllQuestions === 'function') {
+                    const y1Mods = ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS'];
+                    for (const mName of y1Mods) {
+                        if (sortedY1.length >= 15) break;
+                        if (DB[mName]) {
+                            const qs = extractAllQuestions(DB[mName]);
+                            for (const q of qs) {
+                                if (sortedY1.length >= 15) break;
+                                if (!q || !q.q) continue;
+                                const h = typeof hashQuestion === 'function' ? hashQuestion(q.q) : ('q_' + q.q.length);
+                                if (!aggregated[h]) {
+                                    const supItem = { hash: h, q: q.q, count: 1, m: mName, o: q.o || [], a: q.a, img: q.img || '', year: '1' };
+                                    aggregated[h] = supItem;
+                                    sortedY1.push(supItem);
+                                }
                             }
                         }
                     }
-                });
+                }
 
-                const list = Object.values(aggregated);
-                adminMistakesCache[currentMistakesWeek] = {
-                    week: currentMistakesWeek,
-                    totalMistakes: totalMistakesCount,
-                    uniqueQuestions: list.length,
-                    list: list
+                if (sortedY2.length < 15 && window.DB && typeof extractAllQuestions === 'function') {
+                    const y2Mods = ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS'];
+                    for (const mName of y2Mods) {
+                        if (sortedY2.length >= 15) break;
+                        if (DB[mName]) {
+                            const qs = extractAllQuestions(DB[mName]);
+                            for (const q of qs) {
+                                if (sortedY2.length >= 15) break;
+                                if (!q || !q.q) continue;
+                                const h = typeof hashQuestion === 'function' ? hashQuestion(q.q) : ('q_' + q.q.length);
+                                if (!aggregated[h]) {
+                                    const supItem = { hash: h, q: q.q, count: 1, m: mName, o: q.o || [], a: q.a, img: q.img || '', year: '2' };
+                                    aggregated[h] = supItem;
+                                    sortedY2.push(supItem);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                const top15All = sorted.slice(0, 15).map((item, idx) => ({
+                    ...item,
+                    rank: idx + 1,
+                    year: item.year || getModuleYear(item.m)
+                }));
+
+                const top15Y1 = sortedY1.slice(0, 15).map((item, idx) => ({
+                    ...item,
+                    rank: idx + 1,
+                    year: '1'
+                }));
+
+                const top15Y2 = sortedY2.slice(0, 15).map((item, idx) => ({
+                    ...item,
+                    rank: idx + 1,
+                    year: '2'
+                }));
+
+                const snapshotData = {
+                    week: currentWeek,
+                    targetWeek: targetWeek,
+                    weekLabel: getWeekDateRangeLabel(targetWeek),
+                    compiledAt: Date.now(),
+                    totalMistakes: totalCount,
+                    uniqueQuestions: sorted.length,
+                    list: top15All,
+                    listYear1: top15Y1,
+                    listYear2: top15Y2
                 };
 
-                renderQuestionsAnalysis(adminMistakesCache[currentMistakesWeek]);
+                if (window.db && window.setDoc && window.doc) {
+                    await window.setDoc(window.doc(window.db, 'content', 'static_top_weekly_mistakes'), snapshotData);
+                }
+
+                try { localStorage.setItem('medStorm_cached_top_mistakes', JSON.stringify(snapshotData)); } catch (e) { }
+
+                adminMistakesCache['active_snapshot'] = snapshotData;
+                const activeList = getActiveMistakesList(snapshotData);
+                populateModuleFilter(activeList);
+                renderQuestionsAnalysis(snapshotData);
+
+                if (showToastMsg && window.showToast) {
+                    window.showToast('Weekly static snapshot compiled with 1st Year & 2nd Year top mistakes! 🔒', 'success');
+                }
 
             } catch (err) {
-                console.error("Error loading questions analysis:", err);
-                container.innerHTML = `<div style="text-align:center; color:var(--primary-red); padding:3rem; background:var(--bg-card); border-radius:14px;">
-                    <i class="ri-error-warning-line" style="font-size:2rem;"></i>
-                    <div style="margin-top:10px; font-weight:700;">An error occurred while loading data</div>
-                    <div style="font-size:0.8rem; color:var(--text-gray); margin-top:4px;">${err.message || ''}</div>
-                </div>`;
+                console.error("Recompile error:", err);
+                if (showToastMsg && window.showToast) {
+                    window.showToast('Recompile failed: ' + err.message, 'error');
+                }
             } finally {
-                if (refreshBtn) {
-                    refreshBtn.disabled = false;
-                    refreshBtn.innerHTML = '<i class="ri-refresh-line"></i> <span>Refresh</span>';
+                if (recompileBtn) {
+                    recompileBtn.disabled = false;
+                    recompileBtn.innerHTML = '<i class="ri-refresh-line"></i> Re-compile Snapshot';
                 }
             }
         }
+        window.recompileWeeklyTopMistakes = recompileWeeklyTopMistakes;
 
         function renderQuestionsAnalysis(cacheData) {
             const container = document.getElementById('admin-analysis-list');
             if (!container) return;
 
-            if (!cacheData || !cacheData.list || cacheData.list.length === 0) {
+            const weekBadge = document.getElementById('analysis-week-badge');
+            if (weekBadge && cacheData.weekLabel) {
+                weekBadge.textContent = cacheData.weekLabel;
+            }
+
+            const bY1 = document.getElementById('analysis-badge-y1');
+            const bY2 = document.getElementById('analysis-badge-y2');
+            const bAll = document.getElementById('analysis-badge-all');
+            const y1Count = (cacheData.listYear1 || (cacheData.list || []).filter(x => (x.year || getModuleYear(x.m)) === '1')).length;
+            const y2Count = (cacheData.listYear2 || (cacheData.list || []).filter(x => (x.year || getModuleYear(x.m)) === '2')).length;
+            const allCount = (cacheData.list || []).length;
+            if (bY1) bY1.textContent = y1Count;
+            if (bY2) bY2.textContent = y2Count;
+            if (bAll) bAll.textContent = allCount;
+
+            const pdfBtn = document.getElementById('btn-download-mistakes-pdf');
+            const yearLabel = currentMistakesYear === '1' ? '1st Year' : (currentMistakesYear === '2' ? '2nd Year' : 'All Years');
+            if (pdfBtn) {
+                pdfBtn.innerHTML = `<i class="ri-file-pdf-line" style="font-size:1.1rem;"></i> Download PDF (${yearLabel})`;
+                pdfBtn.title = `Download the Top 15 ${yearLabel} questions with choices and answers as a printable PDF`;
+            }
+
+            const activeList = getActiveMistakesList(cacheData);
+
+            if (!activeList || activeList.length === 0) {
                 container.innerHTML = `
                     <div style="text-align:center; color:var(--text-gray); padding:3.5rem 1.5rem; background:var(--bg-card); border-radius:14px; border:1px solid var(--border-color);">
                         <i class="ri-shield-check-line" style="font-size:2.5rem; color:var(--accent); display:inline-block; margin-bottom:10px;"></i>
-                        <div style="font-size:1.05rem; font-weight:800; color:var(--text-light);">No mistakes recorded for this week yet!</div>
+                        <div style="font-size:1.05rem; font-weight:800; color:var(--text-light);">No mistakes recorded for ${yearLabel} this week yet!</div>
                         <p style="font-size:0.84rem; color:var(--text-gray); margin-top:6px; max-width:440px; margin-left:auto; margin-right:auto;">
-                            When students solve quizzes and make mistakes, the top 15 most frequent mistakes will be aggregated here automatically.
+                            Click "Re-compile Snapshot" to gather current student mistakes into the static weekly archive.
                         </p>
                     </div>`;
                 return;
             }
 
-            let filtered = cacheData.list;
+            let filtered = activeList;
             if (currentMistakesModule !== 'all') {
                 filtered = filtered.filter(item => item.m === currentMistakesModule);
             }
 
-            filtered.sort((a, b) => (b.count || 0) - (a.count || 0));
-            const top15 = filtered.slice(0, 15);
-
-            if (top15.length === 0) {
+            if (filtered.length === 0) {
                 container.innerHTML = `
                     <div style="text-align:center; color:var(--text-gray); padding:3rem; background:var(--bg-card); border-radius:14px; border:1px solid var(--border-color);">
                         <i class="ri-filter-off-line" style="font-size:2rem; color:var(--text-gray);"></i>
-                        <div style="margin-top:10px; font-weight:700;">No mistakes recorded for (${currentMistakesModule}) this week.</div>
+                        <div style="margin-top:10px; font-weight:700;">No mistakes recorded for module (${escapeHTML(currentMistakesModule)}).</div>
                     </div>`;
                 return;
             }
 
-            const cardsHTML = top15.map((item, idx) => {
-                const rank = idx + 1;
+            const cardsHTML = filtered.map((item, idx) => {
+                const rank = item.rank || (idx + 1);
                 let rankBadge = '';
                 let borderGlow = 'border:1px solid var(--border-color);';
 
@@ -14218,6 +16099,10 @@
                     rankBadge = `<span style="background:var(--bg-darker); color:var(--text-light); padding:4px 10px; border-radius:999px; font-weight:800; font-size:0.8rem; border:1px solid var(--border-color);">#${rank}</span>`;
                 }
 
+                const itemYear = item.year || getModuleYear(item.m);
+                const isYear2 = itemYear === '2';
+                const yearBadge = `<span style="font-size:0.75rem; background:${isYear2 ? 'rgba(168,85,247,0.15)' : 'rgba(59,130,246,0.15)'}; color:${isYear2 ? '#c084fc' : '#60a5fa'}; border:1px solid ${isYear2 ? 'rgba(168,85,247,0.35)' : 'rgba(59,130,246,0.35)'}; padding:3px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;"><i class="ri-graduation-cap-line"></i> Year ${itemYear}</span>`;
+
                 const imgHtml = item.img ? `
                     <div style="margin:10px 0;">
                         <img src="${item.img}" alt="Question Image" style="max-height:160px; max-width:100%; border-radius:10px; border:1px solid var(--border-color); cursor:pointer; object-fit:contain; background:var(--bg-darker);" onclick="window.open('${item.img}', '_blank')" title="Click to view full image">
@@ -14227,11 +16112,12 @@
                 if (item.o && item.o.length > 0) {
                     optionsHtml = item.o.map((opt, oi) => {
                         const isCorrect = (oi === item.a);
+                        const letter = String.fromCharCode(65 + oi);
                         if (isCorrect) {
                             return `
                                 <div style="padding:8px 12px; border-radius:8px; background:rgba(16,185,129,0.12); border:1.5px solid rgba(16,185,129,0.4); color:#10b981; font-weight:700; font-size:0.88rem; display:flex; align-items:center; justify-content:space-between; gap:8px;">
                                     <div style="display:flex; align-items:center; gap:8px; flex:1;">
-                                        <i class="ri-checkbox-circle-fill" style="font-size:1.1rem; flex-shrink:0;"></i>
+                                        <span style="font-weight:800;">${letter}.</span>
                                         <span>${escapeHTML(opt)}</span>
                                     </div>
                                     <span style="font-size:0.72rem; background:rgba(16,185,129,0.25); color:#10b981; padding:2px 8px; border-radius:6px; font-weight:800; white-space:nowrap;">Correct Answer ✓</span>
@@ -14239,7 +16125,7 @@
                         } else {
                             return `
                                 <div style="padding:8px 12px; border-radius:8px; background:var(--bg-darker); border:1px solid var(--border-color); color:var(--text-gray); font-size:0.86rem; display:flex; align-items:center; gap:8px;">
-                                    <i class="ri-checkbox-blank-circle-line" style="color:var(--text-gray); opacity:0.5; flex-shrink:0;"></i>
+                                    <span style="font-weight:800; opacity:0.6;">${letter}.</span>
                                     <span>${escapeHTML(opt)}</span>
                                 </div>`;
                         }
@@ -14254,8 +16140,9 @@
                         <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
                             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                                 ${rankBadge}
+                                ${yearBadge}
                                 <span style="padding:3px 10px; border-radius:8px; background:rgba(16,185,129,0.12); color:var(--accent); font-size:0.78rem; font-weight:800; border:1px solid rgba(16,185,129,0.25);">
-                                    📚 ${item.m || 'General'}
+                                    📚 ${escapeHTML(item.m || 'General')}
                                 </span>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px;">
@@ -14286,26 +16173,177 @@
                     </div>`;
             }).join('');
 
+            const compiledDateStr = cacheData.compiledAt ? new Date(cacheData.compiledAt).toLocaleString() : 'N/A';
             container.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; color:var(--text-gray); font-size:0.82rem;">
-                    <span>Showing top <strong>${top15.length}</strong> most failed questions (Total recorded mistakes: ${cacheData.totalMistakes || 0})</span>
-                    <span>${currentMistakesWeek}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; color:var(--text-gray); font-size:0.82rem; flex-wrap:wrap; gap:6px;">
+                    <span>Showing top <strong>${filtered.length}</strong> questions for <strong>${yearLabel}</strong></span>
+                    <span>Compiled: ${compiledDateStr} · <strong>${cacheData.weekLabel || ''}</strong></span>
                 </div>
                 ${cardsHTML}
             `;
         }
 
+        async function downloadTopMistakesPDF() {
+            const data = adminMistakesCache['active_snapshot'];
+            const activeList = getActiveMistakesList(data);
+            if (!data || !activeList || activeList.length === 0) {
+                if (window.showToast) window.showToast('No analysis questions available to download yet.', 'info');
+                return;
+            }
+
+            const btn = document.getElementById('btn-download-mistakes-pdf');
+            const originalHTML = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block;"></i> Preparing PDF...';
+            }
+
+            const weekLabel = data.weekLabel || 'Weekly Report';
+            const yearTitle = currentMistakesYear === '1' ? '1st Year' : (currentMistakesYear === '2' ? '2nd Year' : 'All Years');
+            const topList = activeList.slice(0, 15);
+
+            const questionsHtml = topList.map((item, idx) => {
+                const rank = item.rank || (idx + 1);
+                const itemYear = item.year || getModuleYear(item.m);
+                const optionsHtml = (item.o && item.o.length > 0) ? item.o.map((opt, oi) => {
+                    const isCorrect = (oi === item.a);
+                    const letter = String.fromCharCode(65 + oi);
+                    return `
+                        <div style="padding: 7px 12px; margin-bottom: 5px; border-radius: 6px; font-size: 13px; line-height: 1.4; ${isCorrect ? 'background: #ecfdf5; border: 1.5px solid #10b981; color: #065f46; font-weight: bold;' : 'background: #f9fafb; border: 1px solid #e5e7eb; color: #374151;'}">
+                            <span style="display: inline-block; width: 22px; font-weight: 800;">${letter}.</span>
+                            <span>${escapeHTML(opt)}</span>
+                            ${isCorrect ? '<span style="float: right; color: #059669; font-size: 11px; font-weight: 800;">✓ Correct Answer</span>' : ''}
+                        </div>`;
+                }).join('') : (item.a !== undefined ? `<div style="font-size:13px; color:#059669; font-weight:bold; padding:4px 0;">Correct Answer: Option ${item.a + 1}</div>` : '');
+
+                const imgTag = item.img ? `<div style="margin: 8px 0;"><img src="${item.img}" style="max-height: 140px; max-width: 100%; border: 1px solid #e5e7eb; border-radius: 6px;" /></div>` : '';
+
+                return `
+                    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 4px solid #ef4444; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; page-break-inside: avoid; break-inside: avoid;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <span style="background: #fee2e2; color: #dc2626; font-weight: 800; font-size: 12px; padding: 2px 8px; border-radius: 999px;">#${rank} Most Failed</span>
+                                <span style="background: #eff6ff; color: #2563eb; font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 999px;">Year ${itemYear}</span>
+                                <span style="background: #f3f4f6; color: #374151; font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 999px;">Module: ${escapeHTML(item.m || 'General')}</span>
+                            </div>
+                            <span style="font-size: 12px; font-weight: 700; color: #b91c1c;">Failed by ${item.count} student${item.count === 1 ? '' : 's'}</span>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 700; color: #111827; line-height: 1.55; margin-bottom: 10px;">
+                            ${rank}. ${escapeHTML(item.q)}
+                        </div>
+                        ${imgTag}
+                        <div style="margin-top: 8px;">
+                            ${optionsHtml}
+                        </div>
+                    </div>`;
+            }).join('');
+
+            const printableHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>ASA - Top 15 Mistakes (${yearTitle} - ${weekLabel})</title>
+                    <style>
+                        @page { size: A4; margin: 15mm; }
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #111827; margin: 0; padding: 10px; background: #ffffff; }
+                        .report-header { border-bottom: 2px solid #ef4444; padding-bottom: 12px; margin-bottom: 20px; }
+                        .report-title { font-size: 20px; font-weight: 800; color: #111827; margin: 0 0 4px 0; }
+                        .report-sub { font-size: 13px; color: #6b7280; margin: 0; }
+                        .report-meta { display: flex; justify-content: space-between; font-size: 12px; color: #4b5563; margin-top: 8px; font-weight: 600; }
+                    </style>
+                </head>
+                <body>
+                    <div class="report-header">
+                        <h1 class="report-title">ASA Medical Platform — Top 15 Weekly Mistakes (${yearTitle})</h1>
+                        <p class="report-sub">Static Weekly Analysis Report for ${yearTitle} Curriculum Review & Question Rectification</p>
+                        <div class="report-meta">
+                            <span>Target Academic Week: <strong>${escapeHTML(weekLabel)}</strong></span>
+                            <span>Generated: ${new Date().toLocaleDateString()} · Total Logged Failures: ${data.totalMistakes || 0}</span>
+                        </div>
+                    </div>
+                    ${questionsHtml}
+                </body>
+                </html>
+            `;
+
+            const fileNameYear = yearTitle.replace(/\s+/g, '_');
+            const outFileName = `ASA_Top_15_Mistakes_${fileNameYear}_${data.targetWeek || 'Weekly'}.pdf`;
+
+            try {
+                let html2pdfInst = window.html2pdf;
+                if (!html2pdfInst) {
+                    try {
+                        await new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+                            script.onload = () => resolve();
+                            script.onerror = () => reject();
+                            document.head.appendChild(script);
+                        });
+                        html2pdfInst = window.html2pdf;
+                    } catch (e) {
+                        console.warn("Could not load html2pdf from CDN, using print fallback:", e);
+                    }
+                }
+
+                if (html2pdfInst) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = printableHTML;
+                    document.body.appendChild(tempDiv);
+                    const opt = {
+                        margin: 10,
+                        filename: outFileName,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    await html2pdfInst().set(opt).from(tempDiv).save();
+                    document.body.removeChild(tempDiv);
+                    if (window.showToast) window.showToast(`PDF downloaded for ${yearTitle}! 📄`, 'success');
+                } else {
+                    const pWin = window.open('', '_blank');
+                    if (pWin) {
+                        pWin.document.write(printableHTML);
+                        pWin.document.close();
+                        pWin.focus();
+                        setTimeout(() => pWin.print(), 350);
+                        if (window.showToast) window.showToast('Print window opened. Select "Save as PDF".', 'info');
+                    }
+                }
+            } catch (err) {
+                console.error("PDF generation error:", err);
+                const pWin = window.open('', '_blank');
+                if (pWin) {
+                    pWin.document.write(printableHTML);
+                    pWin.document.close();
+                    pWin.focus();
+                    setTimeout(() => pWin.print(), 350);
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
+                }
+            }
+        }
+        window.downloadTopMistakesPDF = downloadTopMistakesPDF;
+
         window.copyMistakenQuestion = function (hash) {
-            const cache = adminMistakesCache[currentMistakesWeek];
-            if (!cache || !cache.list) return;
-            const item = cache.list.find(q => q.hash === hash);
+            const cache = adminMistakesCache['active_snapshot'];
+            if (!cache) return;
+            const allLists = [...(cache.list || []), ...(cache.listYear1 || []), ...(cache.listYear2 || [])];
+            const item = allLists.find(q => q.hash === hash);
             if (!item) return;
 
             let text = `Question: ${item.q}\nModule: ${item.m}\n\nOptions:\n`;
             if (item.o && item.o.length > 0) {
                 item.o.forEach((opt, idx) => {
-                    text += `${idx + 1}. ${opt} ${idx === item.a ? '✓ (Correct Answer)' : ''}\n`;
+                    const letter = String.fromCharCode(65 + idx);
+                    text += `${letter}. ${opt} ${idx === item.a ? '✓ (Correct Answer)' : ''}\n`;
                 });
+            } else if (item.a !== undefined) {
+                text += `Correct Answer: Option ${item.a + 1}\n`;
             }
 
             navigator.clipboard.writeText(text).then(() => {
@@ -14320,13 +16358,13 @@
             setTimeout(() => {
                 const searchInput = document.getElementById('editor-search-input');
                 const moduleSelect = document.getElementById('editor-module-select');
-                if (moduleSelect && moduleName) {
+                if (moduleSelect && moduleName && typeof MODULE_KEY_TO_DOC_ID !== 'undefined') {
                     const docId = MODULE_KEY_TO_DOC_ID[moduleName];
                     if (docId) moduleSelect.value = docId;
                     else moduleSelect.value = 'all';
                 }
                 if (searchInput) {
-                    searchInput.value = (qText || '').substring(0, 35);
+                    searchInput.value = (qText || '').substring(0, 50);
                     if (window.handleEditorSearch) window.handleEditorSearch();
                 }
             }, 200);
@@ -14520,7 +16558,12 @@
                 ${pathHtml}
                 ${imgHtml}
 
-                <div style="color: var(--text-gray); font-size: 12px; margin-bottom: 5px;">Question Text:</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div style="color: var(--text-gray); font-size: 12px; font-weight: 600;">Question Text:</div>
+                    <button type="button" class="quick-copy-btn" id="btn_quick_copy_${index}" onclick="window.copyEditorQuestion(${index})" title="Copy question and all choices">
+                        <i class="ri-file-copy-line"></i> Copy Question & Choices
+                    </button>
+                </div>
                 <textarea class="edit-input" id="q_text_${index}">${item.qRef.q}</textarea>
 
                 <div style="color: var(--text-gray); font-size: 12px; margin-bottom: 5px;">Options (Select radio for correct answer):</div>
@@ -14536,6 +16579,26 @@
                     <button class="btn save-btn" id="btn_save_${index}" onclick="window.saveEdits(${index}, '${item.docId}')">
                         <i class="ri-save-line"></i> Save Changes
                     </button>
+
+                    <div class="copy-btn-group" id="copy_group_${index}">
+                        <button class="btn copy-btn" id="btn_copy_${index}" onclick="window.copyEditorQuestion(${index})" title="Copy question and choices">
+                            <i class="ri-file-copy-line"></i> Copy Question
+                        </button>
+                        <button class="copy-dropdown-trigger" onclick="window.toggleCopyMenu(event, ${index})" title="More copy options">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="copy-menu" id="copy_menu_${index}">
+                            <button type="button" onclick="window.copyEditorQuestion(${index}, 'clean')">
+                                <i class="ri-file-copy-line"></i> Copy Question & Choices
+                            </button>
+                            <button type="button" onclick="window.copyEditorQuestion(${index}, 'with_answer')">
+                                <i class="ri-checkbox-circle-line"></i> Copy with Correct Answer
+                            </button>
+                            <button type="button" onclick="window.copyEditorQuestion(${index}, 'q_only')">
+                                <i class="ri-question-line"></i> Copy Question Only
+                            </button>
+                        </div>
+                    </div>
 
                     <button class="btn upload-btn" id="btn_upload_${index}" onclick="document.getElementById('file_${index}').click()">
                         <i class="ri-image-add-line"></i> ${item.qRef.img ? 'Change Image' : 'Add Image'}
@@ -14754,6 +16817,141 @@
                 btn.innerHTML = "<i class='ri-delete-bin-line'></i> Delete"; btn.disabled = false;
             }
         };
+
+        window.toggleCopyMenu = function (e, index) {
+            e.stopPropagation();
+            const menu = document.getElementById(`copy_menu_${index}`);
+            if (!menu) return;
+            const isShown = menu.classList.contains('show');
+            document.querySelectorAll('#admin-panel-editor .copy-menu.show').forEach(m => m.classList.remove('show'));
+            if (!isShown) {
+                menu.classList.add('show');
+            }
+        };
+
+        window.copyEditorQuestion = function (index, mode = 'clean') {
+            document.querySelectorAll('#admin-panel-editor .copy-menu.show').forEach(m => m.classList.remove('show'));
+
+            const item = window[`editRef_${index}`];
+            const qTextarea = document.getElementById(`q_text_${index}`);
+            const qText = qTextarea ? qTextarea.value.trim() : (item && item.qRef && item.qRef.q ? item.qRef.q.trim() : '');
+
+            if (!qText) {
+                if (window.showToast) window.showToast('No question text to copy', 'warning');
+                return;
+            }
+
+            if (mode === 'q_only') {
+                copyTextToClipboard(qText, index, 'Question text copied! 📋');
+                return;
+            }
+
+            const group = document.getElementById(`opt_group_${index}`);
+            let options = [];
+            let correctIdx = -1;
+
+            if (group) {
+                const rows = group.querySelectorAll('.option-row');
+                rows.forEach((row, rIdx) => {
+                    const textInput = row.querySelector('input[type="text"]');
+                    const radioInput = row.querySelector('input[type="radio"]');
+                    if (textInput) {
+                        options.push(textInput.value.trim());
+                    }
+                    if (radioInput && radioInput.checked) {
+                        correctIdx = rIdx;
+                    }
+                });
+            }
+
+            if (options.length === 0 && item && item.qRef && Array.isArray(item.qRef.o)) {
+                options = item.qRef.o.map(o => (o || '').trim());
+                correctIdx = typeof item.qRef.a === 'number' ? item.qRef.a : -1;
+            }
+
+            const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+            const formattedOptions = options.map((opt, i) => {
+                const hasPrefix = /^(\([a-zA-Z0-9]+\)|[a-zA-Z0-9][\.\)\:\-])\s*/.test(opt);
+                const prefix = hasPrefix ? '' : `${letters[i] || (i + 1)}. `;
+                const isCorrect = (i === correctIdx);
+                if (mode === 'with_answer') {
+                    return `${prefix}${opt}${isCorrect ? ' ✓ (Correct)' : ''}`;
+                }
+                return `${prefix}${opt}`;
+            });
+
+            let fullText = qText;
+            if (formattedOptions.length > 0) {
+                fullText += '\n\n' + formattedOptions.join('\n');
+            }
+
+            if (mode === 'with_answer' && correctIdx >= 0 && correctIdx < options.length) {
+                const correctOpt = formattedOptions[correctIdx].replace(' ✓ (Correct)', '');
+                fullText += `\n\nCorrect Answer: ${correctOpt}`;
+            }
+
+            const toastMsg = mode === 'with_answer'
+                ? 'Question, choices & answer copied! 📋'
+                : 'Question and choices copied! 📋';
+
+            copyTextToClipboard(fullText, index, toastMsg);
+        };
+
+        function copyTextToClipboard(text, index, successMsg) {
+            function onCopied() {
+                if (window.showToast) {
+                    window.showToast(successMsg, 'success');
+                }
+                const mainBtn = document.getElementById(`btn_copy_${index}`);
+                const headerBtn = document.getElementById(`btn_quick_copy_${index}`);
+                [mainBtn, headerBtn].forEach(btn => {
+                    if (!btn) return;
+                    const originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<i class="ri-check-line"></i> Copied!';
+                    btn.style.borderColor = '#10B981';
+                    btn.style.color = '#10B981';
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.style.borderColor = '';
+                        btn.style.color = '';
+                    }, 1800);
+                });
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(onCopied).catch(() => {
+                    fallbackCopyText(text, onCopied);
+                });
+            } else {
+                fallbackCopyText(text, onCopied);
+            }
+        }
+
+        function fallbackCopyText(text, callback) {
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (successful && callback) callback();
+                else if (!successful && window.showToast) window.showToast('Failed to copy text', 'error');
+            } catch (e) {
+                console.error('Fallback copy failed', e);
+                if (window.showToast) window.showToast('Failed to copy text', 'error');
+            }
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.copy-btn-group')) {
+                document.querySelectorAll('#admin-panel-editor .copy-menu.show').forEach(m => m.classList.remove('show'));
+            }
+        });
 
     </script>
     <div class="modal-overlay" id="reset-modal" style="z-index: 100000;">
