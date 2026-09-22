@@ -5817,9 +5817,18 @@
         </div>
         <div id="view-leaderboard" class="view-section">
             <div style="max-width: 900px; margin: 0 auto; width: 100%;">
-                <h2 style="margin-bottom: 0.5rem; font-weight: 800; font-size: 2rem;">🏆 Global Leaderboard</h2>
-                <p style="color:var(--text-gray); margin-bottom: 2rem;">Top students ranked by points (+1 for correct,
-                    -1 for wrong) and solved questions</p>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <h2 style="margin-bottom: 0.5rem; font-weight: 800; font-size: 2rem;">🏆 Global Leaderboard</h2>
+                        <p style="color:var(--text-gray); margin:0;">Top students ranked by points (+1 for correct, -1 for wrong) and solved questions</p>
+                    </div>
+                    <div id="leaderboard-reset-timer-container"
+                        style="display:inline-flex; align-items:center; gap:8px; background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); padding:8px 16px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.15);">
+                        <i class="ri-time-line" style="color:var(--accent); font-size:1.1rem; animation:pulse 2s infinite;"></i>
+                        <span style="font-size:0.85rem; color:var(--text-gray); font-weight:600;">Leaderboard resets after:</span>
+                        <span id="leaderboard-reset-countdown" style="font-size:0.95rem; font-weight:800; color:#10B981; font-family:monospace; letter-spacing:0.5px;">10:00</span>
+                    </div>
+                </div>
 
                 <div style="display:flex; gap:0.5rem; margin-bottom:2rem; flex-wrap:wrap;">
                     <button id="glb-tab-points" class="glb-tab-btn active" onclick="switchGlobalLb('points')">
@@ -9297,6 +9306,7 @@
                 document.getElementById('page-title').textContent = 'Global Leaderboard';
                 document.getElementById('view-leaderboard').classList.add('active');
                 document.getElementById('view-leaderboard').style.display = 'block';
+                if (typeof updateLeaderboardTimer === 'function') updateLeaderboardTimer();
                 fetchGlobalLeaderboard(typeof currentGlbTab !== 'undefined' ? currentGlbTab : 'points');
                 /* Community (Commented out)
                 } else if (mode === 'community') {
@@ -14402,6 +14412,35 @@
         }
         window.switchGlobalLb = switchGlobalLb;
         window.fetchGlobalLeaderboard = fetchGlobalLeaderboard;
+
+        function updateLeaderboardTimer() {
+            const timerEl = document.getElementById('leaderboard-reset-countdown');
+            if (!timerEl) return;
+
+            const CYCLE_MS = 10 * 60 * 1000; // 10 minutes
+            const now = Date.now();
+            const elapsed = now % CYCLE_MS;
+            const remainingMs = CYCLE_MS - elapsed;
+
+            const totalSeconds = Math.floor(remainingMs / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerEl.textContent = formatted;
+
+            if (totalSeconds === 0) {
+                const lbView = document.getElementById('view-leaderboard');
+                if (lbView && (lbView.classList.contains('active') || lbView.style.display === 'block')) {
+                    if (typeof window.fetchGlobalLeaderboard === 'function') {
+                        window.fetchGlobalLeaderboard(typeof currentGlbTab !== 'undefined' ? currentGlbTab : 'points');
+                    }
+                }
+            }
+        }
+        window.updateLeaderboardTimer = updateLeaderboardTimer;
+        setInterval(updateLeaderboardTimer, 1000);
+        updateLeaderboardTimer();
         const ADMIN_UID = '6fkQvfQYN4WvOIbcbBuWivqVvtd2';
         let allAdminUsers = [];
         let currentAdminLbType = 'points';
