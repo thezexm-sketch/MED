@@ -14877,13 +14877,13 @@
                 const repYear = getReportYear(r);
                 const isYear2 = repYear === '2';
 
-                const meta = (!r.options || r.options.length === 0 || !r.chapter) ? findQuestionMetadata(r.question, r.module) : null;
-                const subjectName = r.subject || (meta ? meta.subject : '');
-                const chapterName = r.chapter || (meta ? meta.chapter : '');
-                const options = (r.options && Array.isArray(r.options) && r.options.length > 0) ? r.options : (meta && meta.options ? meta.options : []);
-                const correctIndex = typeof r.correctIndex === 'number' ? r.correctIndex : (meta && typeof meta.correctIndex === 'number' ? meta.correctIndex : null);
-                const correctAns = r.correctAnswer || (meta ? meta.correctAnswer : '');
-                const qImage = r.image || (meta ? meta.image : '');
+                const meta = typeof findQuestionMetadata === 'function' ? findQuestionMetadata(r.question, r.module) : null;
+                const subjectName = (meta && meta.subject) ? meta.subject : (r.subject || '');
+                const chapterName = (meta && meta.chapter) ? meta.chapter : (r.chapter || '');
+                const options = (meta && meta.options && meta.options.length > 0) ? meta.options : ((r.options && Array.isArray(r.options) && r.options.length > 0) ? r.options : []);
+                const correctIndex = (meta && typeof meta.correctIndex === 'number') ? meta.correctIndex : (typeof r.correctIndex === 'number' ? r.correctIndex : null);
+                const correctAns = (meta && meta.correctAnswer) ? meta.correctAnswer : (r.correctAnswer || '');
+                const qImage = (meta && meta.image) ? meta.image : (r.image || '');
 
                 let sectionParts = [];
                 if (subjectName) sectionParts.push(subjectName);
@@ -16131,10 +16131,14 @@
                         <img src="${item.img}" alt="Question Image" style="max-height:160px; max-width:100%; border-radius:10px; border:1px solid var(--border-color); cursor:pointer; object-fit:contain; background:var(--bg-darker);" onclick="window.open('${item.img}', '_blank')" title="Click to view full image">
                     </div>` : '';
 
+                const liveMeta = typeof findQuestionMetadata === 'function' ? findQuestionMetadata(item.q, item.m) : null;
+                const displayOptions = (liveMeta && liveMeta.options && liveMeta.options.length > 0) ? liveMeta.options : (item.o || []);
+                const displayCorrectIdx = (liveMeta && typeof liveMeta.correctIndex === 'number') ? liveMeta.correctIndex : item.a;
+
                 let optionsHtml = '';
-                if (item.o && item.o.length > 0) {
-                    optionsHtml = item.o.map((opt, oi) => {
-                        const isCorrect = (oi === item.a);
+                if (displayOptions && displayOptions.length > 0) {
+                    optionsHtml = displayOptions.map((opt, oi) => {
+                        const isCorrect = (oi === displayCorrectIdx);
                         const letter = String.fromCharCode(65 + oi);
                         if (isCorrect) {
                             return `
@@ -17124,6 +17128,42 @@
                 item.qRef.a = newAnswerIndex;
 
                 await saveEditorDocToFirestore(docId);
+
+                // Real-time sync: update Top Mistakes cache if this question is in the mistakes list
+                if (typeof adminMistakesCache !== 'undefined' && adminMistakesCache['active_snapshot']) {
+                    const snap = adminMistakesCache['active_snapshot'];
+                    const syncList = (arr) => {
+                        if (!Array.isArray(arr)) return;
+                        arr.forEach(mItem => {
+                            if (mItem && mItem.q && (mItem.q.trim() === newQText || mItem.q.trim() === item.qRef.q.trim())) {
+                                mItem.q = newQText;
+                                mItem.o = newOptions;
+                                mItem.a = newAnswerIndex;
+                            }
+                        });
+                    };
+                    syncList(snap.list);
+                    syncList(snap.listYear1);
+                    syncList(snap.listYear2);
+                    try { localStorage.setItem('medStorm_cached_top_mistakes', JSON.stringify(snap)); } catch (e) { }
+                    if (typeof renderQuestionsAnalysis === 'function') {
+                        try { renderQuestionsAnalysis(snap); } catch (e) { }
+                    }
+                }
+
+                // Real-time sync: update loaded reports list
+                if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
+                    allAdminReports.forEach(r => {
+                        if (r && r.question && (r.question.trim() === newQText || r.question.trim() === item.qRef.q.trim())) {
+                            r.options = newOptions;
+                            r.correctIndex = newAnswerIndex;
+                            r.correctAnswer = newOptions[newAnswerIndex] || '';
+                        }
+                    });
+                    if (typeof adminRenderReports === 'function') {
+                        try { adminRenderReports(); } catch (e) { }
+                    }
+                }
 
                 btn.innerHTML = "<i class='ri-check-line'></i> Saved successfully";
                 btn.style.backgroundColor = "#10B981";
