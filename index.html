@@ -8451,7 +8451,10 @@
             } catch (e) { return false; }
         }
 
-        const cachedModuleUpdatedAts = {};
+        const cachedModuleUpdatedAts = window.cachedModuleUpdatedAts || {};
+        window.cachedModuleUpdatedAts = cachedModuleUpdatedAts;
+        window.setIDBCache = setIDBCache;
+        window.getIDBCache = getIDBCache;
 
         async function loadAllCachedModulesFromIDB() {
             try {
@@ -8517,6 +8520,7 @@
             'ID1': 'id1_questions',
             'ID2': 'id2_questions'
         };
+        window.MODULE_KEY_TO_DOC_ID = MODULE_KEY_TO_DOC_ID;
 
         window.DB_METADATA = {
             'Blood': { total: 1519 },
@@ -8545,17 +8549,22 @@
         };
 
         async function checkServerMetadata() {
-            if (serverMetadata) return serverMetadata;
+            if (serverMetadata) {
+                window.serverMetadata = serverMetadata;
+                return serverMetadata;
+            }
             try {
                 const metaPromise = getDoc(doc(db, "content", "metadata"));
                 const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 3000));
                 const metaSnap = await Promise.race([metaPromise, timeoutPromise]);
                 if (metaSnap && metaSnap.exists()) {
                     serverMetadata = metaSnap.data();
+                    window.serverMetadata = serverMetadata;
                 }
             } catch (e) { }
             return serverMetadata;
         }
+        window.checkServerMetadata = checkServerMetadata;
 
         async function fetchQuestionsFromDB() {
             await loadAllCachedModulesFromIDB();
@@ -8614,6 +8623,7 @@
             }
             return source;
         }
+        window.mergeChunkObjects = mergeChunkObjects;
 
         function getGlobalFallbackModule(moduleKey) {
             if (moduleKey === 'MSK' && typeof MSK_QUESTIONS !== 'undefined') return MSK_QUESTIONS;
@@ -9568,7 +9578,8 @@
             }
 
             function createModuleCardElement(modName) {
-                const modDocId = (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' && MODULE_KEY_TO_DOC_ID[modName]) ? MODULE_KEY_TO_DOC_ID[modName] : '';
+                const modDocMap = window.MODULE_KEY_TO_DOC_ID || (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' ? MODULE_KEY_TO_DOC_ID : {});
+                const modDocId = modDocMap[modName] || '';
                 const meta = (window.DB_METADATA && (window.DB_METADATA[modDocId] || window.DB_METADATA[modName])) || null;
                 const hasLocalQs = (DB[modName] && ((Array.isArray(DB[modName]) && DB[modName].length > 0) || (typeof DB[modName] === 'object' && Object.keys(DB[modName]).length > 0)));
                 let allQs = hasLocalQs ? extractAllQuestions(DB[modName]) : [];
@@ -15065,8 +15076,9 @@
                 if (searchInput) {
                     searchInput.value = report.question.trim().slice(0, 70);
                 }
-                if (selectMod && report.module && typeof MODULE_KEY_TO_DOC_ID !== 'undefined') {
-                    const docId = MODULE_KEY_TO_DOC_ID[report.module];
+                const reportDocMap = window.MODULE_KEY_TO_DOC_ID || (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' ? MODULE_KEY_TO_DOC_ID : {});
+                if (selectMod && report.module) {
+                    const docId = reportDocMap[report.module];
                     if (docId) {
                         selectMod.value = docId;
                     } else {
@@ -15635,7 +15647,8 @@
 
                 group.list.forEach(modName => {
                     const isLocked = !!(window.LOCKED_MODULES && window.LOCKED_MODULES[modName]);
-                    const modDocId = (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' && MODULE_KEY_TO_DOC_ID[modName]) ? MODULE_KEY_TO_DOC_ID[modName] : '';
+                    const lockedModDocMap = window.MODULE_KEY_TO_DOC_ID || (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' ? MODULE_KEY_TO_DOC_ID : {});
+                    const modDocId = lockedModDocMap[modName] || '';
                     const meta = (window.DB_METADATA && (window.DB_METADATA[modDocId] || window.DB_METADATA[modName])) || null;
                     const hasLocalQs = (DB[modName] && ((Array.isArray(DB[modName]) && DB[modName].length > 0) || (typeof DB[modName] === 'object' && Object.keys(DB[modName]).length > 0)));
                     const qsCount = hasLocalQs ? extractAllQuestions(DB[modName]).length : (meta ? meta.total : 0);
@@ -16368,8 +16381,9 @@
             setTimeout(() => {
                 const searchInput = document.getElementById('editor-search-input');
                 const moduleSelect = document.getElementById('editor-module-select');
-                if (moduleSelect && moduleName && typeof MODULE_KEY_TO_DOC_ID !== 'undefined') {
-                    const docId = MODULE_KEY_TO_DOC_ID[moduleName];
+                const mistakeDocMap = window.MODULE_KEY_TO_DOC_ID || (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' ? MODULE_KEY_TO_DOC_ID : {});
+                if (moduleSelect && moduleName) {
+                    const docId = mistakeDocMap[moduleName];
                     if (docId) moduleSelect.value = docId;
                     else moduleSelect.value = 'all';
                 }
@@ -16419,6 +16433,58 @@
                 alert("An error occurred during cleanup: " + e.message);
             }
         };
+
+        const MODULE_KEY_TO_DOC_ID = window.MODULE_KEY_TO_DOC_ID || {
+            'MSK': 'msk_questions',
+            'Blood': 'blood_questions',
+            'Foundation': 'foundation_questions',
+            'Terminology': 'terminology_questions',
+            'CVS': 'cvs_questions',
+            'Communication Step 1': 'communication_step_1_questions',
+            'Communication Step 2': 'communication_step_2_questions',
+            'Professionalism': 'professionalism_questions',
+            'Endocrine': 'endocrine_questions',
+            'Genital': 'genital_questions',
+            'Urinary': 'urinary_questions',
+            'EGU': 'egu_questions',
+            'GIT': 'git_questions',
+            'CNS': 'cns_questions',
+            'Concept 1 Pharmacology': 'c1_pharmacology_questions',
+            'Concept 1 Pathology': 'c1_pathology_questions',
+            'Concept 1 Genetics': 'c1_genetics_questions',
+            'Concept 1 Past Exams': 'c1_past_exams_questions',
+            'Concept 2 Pharmacology': 'c2_pharmacology_questions',
+            'Concept 2 Pathology': 'c2_pathology_questions',
+            'Concept 2 Past Exams': 'c2_past_exams_questions',
+            'ID1': 'id1_questions',
+            'ID2': 'id2_questions'
+        };
+        window.MODULE_KEY_TO_DOC_ID = MODULE_KEY_TO_DOC_ID;
+
+        function mergeChunkObjects(target, source) {
+            if (!source) return target;
+            if (!target) return source;
+            if (Array.isArray(target) && Array.isArray(source)) {
+                return target.concat(source);
+            }
+            if (typeof target === 'object' && typeof source === 'object' && target !== null && source !== null) {
+                const merged = { ...target };
+                for (const key in source) {
+                    if (merged[key] === undefined) {
+                        merged[key] = source[key];
+                    } else if (Array.isArray(merged[key]) && Array.isArray(source[key])) {
+                        merged[key] = merged[key].concat(source[key]);
+                    } else if (typeof merged[key] === 'object' && typeof source[key] === 'object' && merged[key] !== null && source[key] !== null) {
+                        merged[key] = mergeChunkObjects(merged[key], source[key]);
+                    } else {
+                        merged[key] = source[key];
+                    }
+                }
+                return merged;
+            }
+            return source;
+        }
+        window.mergeChunkObjects = mergeChunkObjects;
 
         const editorDocIds = Object.values(MODULE_KEY_TO_DOC_ID);
         let editorAllData = {};
@@ -16633,22 +16699,37 @@
             await window.setDoc(window.doc(window.db, "content", "metadata"), metadataUpdate, { merge: true });
 
             // Update local in-memory DB and IDB cache immediately
-            let moduleKey = Object.keys(MODULE_KEY_TO_DOC_ID).find(k => MODULE_KEY_TO_DOC_ID[k] === docId);
+            const modDocMap = window.MODULE_KEY_TO_DOC_ID || (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' ? MODULE_KEY_TO_DOC_ID : {});
+            let moduleKey = Object.keys(modDocMap).find(k => modDocMap[k] === docId);
             if (!moduleKey) {
-                for (const [k, v] of Object.entries(MODULE_KEY_TO_DOC_ID)) {
+                for (const [k, v] of Object.entries(modDocMap)) {
                     if (v === docId) { moduleKey = k; break; }
                 }
             }
             if (moduleKey) {
                 const finalData = cleanData.questionsList ? cleanData.questionsList : cleanData;
                 if (typeof DB !== 'undefined') DB[moduleKey] = finalData;
-                if (typeof cachedModuleUpdatedAts !== 'undefined') cachedModuleUpdatedAts[moduleKey] = now;
+                if (window.DB) window.DB[moduleKey] = finalData;
+                if (typeof StateManager !== 'undefined' && StateManager.getDB) {
+                    try { StateManager.getDB()[moduleKey] = finalData; } catch (e) { }
+                }
+                const cacheMap = window.cachedModuleUpdatedAts || (typeof cachedModuleUpdatedAts !== 'undefined' ? cachedModuleUpdatedAts : null);
+                if (cacheMap) cacheMap[moduleKey] = now;
+                if (window.serverMetadata) {
+                    window.serverMetadata[docId + '_updatedAt'] = now;
+                    window.serverMetadata['modules_metadata_updatedAt'] = now;
+                }
                 if (typeof serverMetadata !== 'undefined' && serverMetadata) {
                     serverMetadata[docId + '_updatedAt'] = now;
                     serverMetadata['modules_metadata_updatedAt'] = now;
                 }
-                if (typeof setIDBCache === 'function') {
-                    await setIDBCache(moduleKey, { data: finalData, updatedAt: now });
+                const setCacheFn = window.setIDBCache || (typeof setIDBCache === 'function' ? setIDBCache : null);
+                if (setCacheFn) {
+                    try {
+                        await setCacheFn(moduleKey, { data: finalData, updatedAt: now });
+                    } catch (idbErr) {
+                        console.warn('Failed to update IDB cache:', idbErr);
+                    }
                 }
                 if (typeof window.renderDashboard === 'function') {
                     window.renderDashboard();
