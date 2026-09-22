@@ -6454,7 +6454,17 @@
                             <option value="endocrine_questions">Endocrine</option>
                             <option value="genital_questions">Genital</option>
                             <option value="urinary_questions">Urinary</option>
-                            <option value="egu_questions">EGU / GIT</option>
+                            <option value="egu_questions">EGU</option>
+                            <option value="git_questions">GIT</option>
+                            <option value="c1_pharmacology_questions">Concept 1 Pharmacology</option>
+                            <option value="c1_pathology_questions">Concept 1 Pathology</option>
+                            <option value="c1_genetics_questions">Concept 1 Genetics</option>
+                            <option value="c1_past_exams_questions">Concept 1 Past Exams</option>
+                            <option value="c2_pharmacology_questions">Concept 2 Pharmacology</option>
+                            <option value="c2_pathology_questions">Concept 2 Pathology</option>
+                            <option value="c2_past_exams_questions">Concept 2 Past Exams</option>
+                            <option value="id1_questions">ID1</option>
+                            <option value="id2_questions">ID2</option>
                         </select>
                         <input type="text" id="editor-search-input" placeholder="Search question text..."
                             oninput="handleEditorSearch()"
@@ -12948,7 +12958,7 @@
                 loadParasitologySpotsFromDB().then(() => {
                     const curY = String((AppState && AppState.year) || '1');
                     if (curY === '3') _fcShowCover();
-                }).catch(() => {});
+                }).catch(() => { });
             }
 
             if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
@@ -16410,10 +16420,11 @@
             }
         };
 
-        const editorDocIds = ['msk_questions', 'blood_questions', 'foundation_questions', 'terminology_questions', 'cvs_questions', 'communication_step_1_questions', 'communication_step_2_questions', 'professionalism_questions', 'endocrine_questions', 'genital_questions', 'urinary_questions', 'egu_questions', 'cns_questions'];
+        const editorDocIds = Object.values(MODULE_KEY_TO_DOC_ID);
         let editorAllData = {};
         let editorAllQuestionsFlat = [];
         let editorDocChaptersMap = {};
+        let editorRemoteMeta = {};
 
         function extractQuestionsWithRefs(dataObj, docId, subject, chapter) {
             let qs = [];
@@ -16446,13 +16457,240 @@
             if (searchContainer) searchContainer.style.display = 'flex';
         }
 
+        function getByteSize(obj) {
+            return new TextEncoder().encode(JSON.stringify(obj)).length;
+        }
+
+        function chunkModuleData(data, maxBytes = 700000) {
+            if (getByteSize(data) <= maxBytes) {
+                return [data];
+            }
+
+            if (Array.isArray(data)) {
+                const chunks = [];
+                let currentArr = [];
+                for (const item of data) {
+                    currentArr.push(item);
+                    if (getByteSize(currentArr) > maxBytes) {
+                        currentArr.pop();
+                        if (currentArr.length > 0) chunks.push(currentArr);
+                        currentArr = [item];
+                    }
+                }
+                if (currentArr.length > 0) chunks.push(currentArr);
+                return chunks.length > 0 ? chunks : [data];
+            }
+
+            const chunks = [];
+            let currentChunk = {};
+
+            function setValueAtPath(target, path, val) {
+                let ptr = target;
+                for (let i = 0; i < path.length - 1; i++) {
+                    const k = path[i];
+                    if (!ptr[k] || typeof ptr[k] !== 'object' || Array.isArray(ptr[k])) ptr[k] = {};
+                    ptr = ptr[k];
+                }
+                ptr[path[path.length - 1]] = val;
+            }
+
+            function removeValueAtPath(target, path) {
+                let ptr = target;
+                for (let i = 0; i < path.length - 1; i++) {
+                    const k = path[i];
+                    if (!ptr[k]) return;
+                    ptr = ptr[k];
+                }
+                delete ptr[path[path.length - 1]];
+            }
+
+            function addKeyValuePair(path, val) {
+                setValueAtPath(currentChunk, path, val);
+
+                if (getByteSize(currentChunk) > maxBytes) {
+                    removeValueAtPath(currentChunk, path);
+                    if (Object.keys(currentChunk).length > 0) {
+                        chunks.push(currentChunk);
+                    }
+                    currentChunk = {};
+                    setValueAtPath(currentChunk, path, val);
+                }
+            }
+
+            function traverse(obj, currentPath = []) {
+                if (!obj || typeof obj !== 'object') return;
+                for (const key of Object.keys(obj)) {
+                    const val = obj[key];
+                    const newPath = [...currentPath, key];
+
+                    if (Array.isArray(val)) {
+                        if (getByteSize(val) <= maxBytes) {
+                            addKeyValuePair(newPath, val);
+                        } else {
+                            let currentSlice = [];
+                            for (const item of val) {
+                                currentSlice.push(item);
+                                setValueAtPath(currentChunk, newPath, currentSlice);
+                                if (getByteSize(currentChunk) > maxBytes) {
+                                    currentSlice.pop();
+                                    if (currentSlice.length > 0) {
+                                        setValueAtPath(currentChunk, newPath, currentSlice);
+                                        chunks.push(currentChunk);
+                                        currentChunk = {};
+                                    }
+                                    currentSlice = [item];
+                                    setValueAtPath(currentChunk, newPath, currentSlice);
+                                }
+                            }
+                            if (currentSlice.length > 0) {
+                                setValueAtPath(currentChunk, newPath, currentSlice);
+                            }
+                        }
+                    } else if (typeof val === 'object' && val !== null) {
+                        if (getByteSize(val) <= maxBytes) {
+                            addKeyValuePair(newPath, val);
+                        } else {
+                            traverse(val, newPath);
+                        }
+                    } else {
+                        addKeyValuePair(newPath, val);
+                    }
+                }
+            }
+
+            traverse(data, []);
+
+            if (currentChunk && Object.keys(currentChunk).length > 0) {
+                chunks.push(currentChunk);
+            }
+
+            return chunks.length > 0 ? chunks : [data];
+        }
+
+        async function saveEditorDocToFirestore(docId) {
+            if (!editorAllData[docId]) {
+                throw new Error("Module data not found in editor cache.");
+            }
+            if (!window.db || !window.doc || !window.setDoc) {
+                throw new Error("Firestore connection not available.");
+            }
+
+            const cleanData = JSON.parse(JSON.stringify(editorAllData[docId]));
+            delete cleanData._isChunked;
+            delete cleanData._chunkCount;
+
+            const chunks = chunkModuleData(cleanData, 700000);
+            const docRef = window.doc(window.db, "content", docId);
+
+            const prevMeta = editorRemoteMeta[docId] || { wasChunked: false, chunkCount: 1 };
+            const oldChunkCount = prevMeta.chunkCount || 1;
+
+            if (chunks.length === 1) {
+                const singleData = chunks[0];
+                delete singleData._isChunked;
+                delete singleData._chunkCount;
+                await window.setDoc(docRef, singleData);
+
+                if (oldChunkCount > 1 && window.deleteDoc) {
+                    const deletePromises = [];
+                    for (let i = 1; i < oldChunkCount; i++) {
+                        deletePromises.push(window.deleteDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)).catch(() => {}));
+                    }
+                    await Promise.all(deletePromises);
+                }
+            } else {
+                const totalChunks = chunks.length;
+                const chunk0 = chunks[0];
+                chunk0._isChunked = true;
+                chunk0._chunkCount = totalChunks;
+
+                const chunkPromises = [window.setDoc(docRef, chunk0)];
+                for (let i = 1; i < totalChunks; i++) {
+                    const chunkDocRef = window.doc(window.db, "content", `${docId}_chunk_${i}`);
+                    const cData = chunks[i];
+                    delete cData._isChunked;
+                    delete cData._chunkCount;
+                    chunkPromises.push(window.setDoc(chunkDocRef, cData));
+                }
+                await Promise.all(chunkPromises);
+
+                if (oldChunkCount > totalChunks && window.deleteDoc) {
+                    const deletePromises = [];
+                    for (let i = totalChunks; i < oldChunkCount; i++) {
+                        deletePromises.push(window.deleteDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)).catch(() => {}));
+                    }
+                    await Promise.all(deletePromises);
+                }
+            }
+
+            editorRemoteMeta[docId] = { wasChunked: chunks.length > 1, chunkCount: chunks.length };
+
+            // Update content/metadata with new timestamps so clients detect and download updates
+            const now = Date.now();
+            const metadataUpdate = {};
+            metadataUpdate[docId + '_updatedAt'] = now;
+            metadataUpdate['modules_metadata_updatedAt'] = now;
+            await window.setDoc(window.doc(window.db, "content", "metadata"), metadataUpdate, { merge: true });
+
+            // Update local in-memory DB and IDB cache immediately
+            let moduleKey = Object.keys(MODULE_KEY_TO_DOC_ID).find(k => MODULE_KEY_TO_DOC_ID[k] === docId);
+            if (!moduleKey) {
+                for (const [k, v] of Object.entries(MODULE_KEY_TO_DOC_ID)) {
+                    if (v === docId) { moduleKey = k; break; }
+                }
+            }
+            if (moduleKey) {
+                const finalData = cleanData.questionsList ? cleanData.questionsList : cleanData;
+                if (typeof DB !== 'undefined') DB[moduleKey] = finalData;
+                if (typeof cachedModuleUpdatedAts !== 'undefined') cachedModuleUpdatedAts[moduleKey] = now;
+                if (typeof serverMetadata !== 'undefined' && serverMetadata) {
+                    serverMetadata[docId + '_updatedAt'] = now;
+                    serverMetadata['modules_metadata_updatedAt'] = now;
+                }
+                if (typeof setIDBCache === 'function') {
+                    await setIDBCache(moduleKey, { data: finalData, updatedAt: now });
+                }
+                if (typeof window.renderDashboard === 'function') {
+                    window.renderDashboard();
+                }
+            }
+        }
+
         async function ensureEditorDocLoaded(docId) {
             if (editorAllData[docId]) return true;
             try {
-                const snap = await window.getDoc(window.doc(window.db, "content", docId));
+                const docRef = window.doc(window.db, "content", docId);
+                const snap = await window.getDoc(docRef);
                 if (snap.exists()) {
-                    editorAllData[docId] = snap.data();
-                    let list = editorAllData[docId].questionsList || editorAllData[docId];
+                    let data = snap.data();
+                    let originalChunkCount = 1;
+                    let wasChunked = false;
+
+                    if (data && data._isChunked && data._chunkCount > 1) {
+                        wasChunked = true;
+                        originalChunkCount = data._chunkCount;
+                        const chunkPromises = [];
+                        for (let i = 1; i < data._chunkCount; i++) {
+                            chunkPromises.push(window.getDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)));
+                        }
+                        const chunkSnaps = await Promise.all(chunkPromises);
+                        let mergedData = data;
+                        delete mergedData._isChunked;
+                        delete mergedData._chunkCount;
+                        chunkSnaps.forEach(cSnap => {
+                            if (cSnap.exists()) {
+                                const cData = cSnap.data();
+                                delete cData._isChunked;
+                                delete cData._chunkCount;
+                                mergedData = mergeChunkObjects(mergedData, cData);
+                            }
+                        });
+                        data = mergedData;
+                    }
+
+                    editorRemoteMeta[docId] = { wasChunked, chunkCount: originalChunkCount };
+                    editorAllData[docId] = data;
+                    let list = data.questionsList || data;
                     editorAllQuestionsFlat.push(...extractQuestionsWithRefs(list, docId));
                     return true;
                 }
@@ -16475,15 +16713,14 @@
             resultsContainer.innerHTML = '<div style="text-align:center; color:var(--accent); padding:2rem;"><i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block; font-size:1.5rem;"></i><br>Searching questions...</div>';
 
             const docsToSearch = selectedModuleDoc === 'all' ? editorDocIds : [selectedModuleDoc];
-            for (let id of docsToSearch) {
-                if (!editorAllData[id]) {
-                    await ensureEditorDocLoaded(id);
-                }
+            const neededDocs = docsToSearch.filter(id => !editorAllData[id]);
+            if (neededDocs.length > 0) {
+                await Promise.all(neededDocs.map(id => ensureEditorDocLoaded(id)));
             }
 
             const results = editorAllQuestionsFlat.filter(item => {
                 if (selectedModuleDoc !== 'all' && item.docId !== selectedModuleDoc) return false;
-                return item.qRef.q.toLowerCase().includes(term);
+                return item.qRef && item.qRef.q && item.qRef.q.toLowerCase().includes(term);
             }).slice(0, 15);
 
             resultsContainer.innerHTML = '';
@@ -16505,7 +16742,7 @@
                         <span class="drag-handle" title="Drag to reorder"><i class="ri-draggable"></i></span>
                         <input type="radio" name="correct_ans_${index}" value="${optIndex}" ${isChecked} title="Set as correct answer">
                         <input type="text" class="edit-input" id="opt_text_${index}_${optIndex}" value="${escapeHTML(opt)}" style="margin-bottom:0; padding:8px;">
-                        <button class="remove-opt-btn" onclick="window.removeChoice(${index}, ${optIndex})" title="Remove this option"><i class="ri-close-line"></i></button>
+                        <button type="button" class="remove-opt-btn" onclick="window.removeChoice(${index}, this)" title="Remove this option"><i class="ri-close-line"></i></button>
                     </div>`;
                 });
 
@@ -16522,7 +16759,7 @@
                         return a.chapter.localeCompare(b.chapter);
                     });
                 sortableChapters.forEach(ch => {
-                    const label = ch.subject ? `${ch.subject} ▸ ${ch.chapter}` : ch.chapter;
+                    const label = ch.subject ? `${ch.subject} ➔ ${ch.chapter}` : ch.chapter;
                     moveOptionsHtml += `<option value="${ch.origIdx}">${label}</option>`;
                 });
 
@@ -16568,7 +16805,7 @@
 
                 <div style="color: var(--text-gray); font-size: 12px; margin-bottom: 5px;">Options (Select radio for correct answer):</div>
                 <div class="option-group" id="opt_group_${index}">${optionsHtml}
-                    <button class="add-choice-btn" onclick="window.addChoice(${index})">
+                    <button type="button" class="add-choice-btn" onclick="window.addChoice(${index})">
                         <i class="ri-add-line"></i> Add Choice
                     </button>
                 </div>
@@ -16658,38 +16895,63 @@
                     let newAnswer = 0;
                     currentRows.forEach((r, i) => {
                         const input = r.querySelector('input[type="text"]');
-                        newOptions.push(input.value);
+                        newOptions.push(input ? input.value : '');
                         const radio = r.querySelector('input[type="radio"]');
-                        if (radio.checked) newAnswer = i;
-                        r.dataset.oidx = i; r.id = `opt_row_${qIndex}_${i}`; radio.value = i; input.id = `opt_text_${qIndex}_${i}`;
+                        if (radio && radio.checked) newAnswer = i;
+                        r.dataset.oidx = i; r.id = `opt_row_${qIndex}_${i}`;
+                        if (radio) radio.value = i;
+                        if (input) input.id = `opt_text_${qIndex}_${i}`;
                     });
-                    item.qRef.o = newOptions; item.qRef.a = newAnswer;
+                    if (item && item.qRef) {
+                        item.qRef.o = newOptions; item.qRef.a = newAnswer;
+                    }
                 });
             });
         };
 
         window.addChoice = function (index) {
             const item = window[`editRef_${index}`];
-            const newOptIndex = item.qRef.o.length;
-            item.qRef.o.push('');
+            if (!item) return;
             const group = document.getElementById(`opt_group_${index}`);
+            if (!group) return;
+
             const addBtn = group.querySelector('.add-choice-btn');
+            const existingRows = group.querySelectorAll('.option-row');
+            const newOptIndex = existingRows.length;
+            if (item.qRef && Array.isArray(item.qRef.o)) {
+                item.qRef.o.push('');
+            }
+
             const row = document.createElement('div');
-            row.className = 'option-row'; row.id = `opt_row_${index}_${newOptIndex}`; row.dataset.qidx = index; row.dataset.oidx = newOptIndex;
-            row.innerHTML = `<span class="drag-handle" title="Drag to reorder"><i class="ri-draggable"></i></span><input type="radio" name="correct_ans_${index}" value="${newOptIndex}" title="Set as correct answer"><input type="text" class="edit-input" id="opt_text_${index}_${newOptIndex}" value="" placeholder="Type new option..." style="margin-bottom:0; padding:8px;"><button class="remove-opt-btn" onclick="window.removeChoice(${index}, ${newOptIndex})" title="Remove this option"><i class="ri-close-line"></i></button>`;
+            row.className = 'option-row';
+            row.id = `opt_row_${index}_${newOptIndex}`;
+            row.dataset.qidx = index;
+            row.dataset.oidx = newOptIndex;
+            row.innerHTML = `<span class="drag-handle" title="Drag to reorder"><i class="ri-draggable"></i></span><input type="radio" name="correct_ans_${index}" value="${newOptIndex}" title="Set as correct answer"><input type="text" class="edit-input" id="opt_text_${index}_${newOptIndex}" value="" placeholder="Type new option..." style="margin-bottom:0; padding:8px;"><button type="button" class="remove-opt-btn" onclick="window.removeChoice(${index}, this)" title="Remove this option"><i class="ri-close-line"></i></button>`;
+
             group.insertBefore(row, addBtn);
             window.setupDragDrop(group, index);
-            document.getElementById(`opt_text_${index}_${newOptIndex}`).focus();
+            const input = row.querySelector('.edit-input');
+            if (input) input.focus();
         };
 
-        window.removeChoice = function (index, optIndex) {
-            const item = window[`editRef_${index}`];
-            if (item.qRef.o.length <= 2) { alert('Cannot have fewer than 2 options!'); return; }
+        window.removeChoice = function (index, btnOrIdx) {
+            const group = document.getElementById(`opt_group_${index}`);
+            if (!group) return;
+            const rows = group.querySelectorAll('.option-row');
+            if (rows.length <= 2) {
+                alert('A question cannot have fewer than 2 options!');
+                return;
+            }
             if (!confirm('Are you sure you want to remove this option?')) return;
-            item.qRef.o.splice(optIndex, 1);
-            if (item.qRef.a === optIndex) item.qRef.a = 0;
-            else if (item.qRef.a > optIndex) item.qRef.a--;
-            handleEditorSearch();
+
+            if (typeof btnOrIdx === 'object' && btnOrIdx && btnOrIdx.closest) {
+                const row = btnOrIdx.closest('.option-row');
+                if (row) row.remove();
+            } else if (typeof btnOrIdx === 'number') {
+                const row = document.getElementById(`opt_row_${index}_${btnOrIdx}`);
+                if (row) row.remove();
+            }
         };
 
         window.moveQuestion = async function (index, docId) {
@@ -16700,48 +16962,100 @@
             const targetChapter = chapters[targetChapterIdx];
             if (!targetChapter) { alert('Select a chapter to move to!'); return; }
             if (!confirm("⚠️ Are you sure you want to move this question?")) return;
-            btn.innerHTML = '<i class="ri-loader-4-line"></i> Moving...'; btn.disabled = true;
+            btn.innerHTML = '<i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block;"></i> Moving...'; btn.disabled = true;
             try {
                 const srcArr = item.dataObj;
                 const qIndex = srcArr.indexOf(item.qRef);
                 if (qIndex > -1) srcArr.splice(qIndex, 1);
                 targetChapter.arr.push(item.qRef);
-                await window.updateDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                await saveEditorDocToFirestore(docId);
                 const flatEntry = editorAllQuestionsFlat.find(q => q.qRef === item.qRef);
                 if (flatEntry) { flatEntry.dataObj = targetChapter.arr; flatEntry.subject = targetChapter.subject; flatEntry.chapter = targetChapter.chapter; }
                 btn.innerHTML = '<i class="ri-check-line"></i> Moved successfully!'; btn.style.background = 'rgba(16,185,129,0.2)'; btn.style.color = '#10B981'; btn.style.borderColor = '#10B981';
                 setTimeout(() => { handleEditorSearch(); }, 1500);
             } catch (error) {
-                console.error('Move error:', error); alert('An error occurred while moving question!');
+                console.error('Move error:', error); alert('An error occurred while moving question: ' + (error.message || error));
                 btn.innerHTML = '<i class="ri-swap-box-line"></i> Move to Chapter'; btn.disabled = false;
             }
         };
 
         window.saveEdits = async function (index, docId) {
             const item = window[`editRef_${index}`];
-            const btn = document.getElementById(`btn_save_${index}`);
-            const newQText = document.getElementById(`q_text_${index}`).value.trim();
-            const selectedRadio = document.querySelector(`input[name="correct_ans_${index}"]:checked`);
-            if (!newQText || !selectedRadio) { alert("Make sure to enter the question and select the correct answer!"); return; }
-            const newAnswerIndex = parseInt(selectedRadio.value);
-            let newOptions = [];
-            for (let i = 0; i < item.qRef.o.length; i++) {
-                const optEl = document.getElementById(`opt_text_${index}_${i}`);
-                if (!optEl) continue;
-                const optVal = optEl.value.trim();
-                if (!optVal) { alert("Option cannot be empty!"); return; }
-                newOptions.push(optVal);
+            if (!item || !item.qRef) {
+                alert("Question reference not found. Please re-search and try again.");
+                return;
             }
-            if (newOptions.length < 2) { alert('Must have at least 2 options!'); return; }
-            btn.innerHTML = "Saving... ⏳"; btn.disabled = true;
+            const btn = document.getElementById(`btn_save_${index}`);
+            const qInput = document.getElementById(`q_text_${index}`);
+            const newQText = qInput ? qInput.value.trim() : '';
+
+            if (!newQText) {
+                alert("Make sure to enter the question text!");
+                if (qInput) qInput.focus();
+                return;
+            }
+
+            const group = document.getElementById(`opt_group_${index}`);
+            if (!group) {
+                alert("Options container not found!");
+                return;
+            }
+
+            const rows = group.querySelectorAll('.option-row');
+            if (rows.length < 2) {
+                alert('A question must have at least 2 options!');
+                return;
+            }
+
+            let newOptions = [];
+            let newAnswerIndex = -1;
+
+            for (let rIdx = 0; rIdx < rows.length; rIdx++) {
+                const row = rows[rIdx];
+                const textInput = row.querySelector('.edit-input') || row.querySelector('input[type="text"]');
+                const radio = row.querySelector('input[type="radio"]');
+
+                if (!textInput) continue;
+                const optVal = textInput.value.trim();
+                if (!optVal) {
+                    alert(`Option ${rIdx + 1} cannot be empty!`);
+                    textInput.focus();
+                    return;
+                }
+                newOptions.push(optVal);
+
+                if (radio && radio.checked) {
+                    newAnswerIndex = newOptions.length - 1;
+                }
+            }
+
+            if (newAnswerIndex === -1) {
+                alert("Make sure to select the correct answer by clicking its radio button!");
+                return;
+            }
+
+            btn.innerHTML = "<i class='ri-loader-4-line' style='animation:spin 1s linear infinite; display:inline-block;'></i> Saving... ⏳";
+            btn.disabled = true;
+
             try {
-                item.qRef.q = newQText; item.qRef.o = newOptions; item.qRef.a = newAnswerIndex >= newOptions.length ? 0 : newAnswerIndex;
-                await window.updateDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
-                btn.innerHTML = "<i class='ri-check-line'></i> Saved successfully"; btn.style.backgroundColor = "#10B981";
-                setTimeout(() => { btn.innerHTML = "<i class='ri-save-line'></i> Save Changes"; btn.disabled = false; btn.style.backgroundColor = ""; }, 2000);
+                item.qRef.q = newQText;
+                item.qRef.o = newOptions;
+                item.qRef.a = newAnswerIndex;
+
+                await saveEditorDocToFirestore(docId);
+
+                btn.innerHTML = "<i class='ri-check-line'></i> Saved successfully";
+                btn.style.backgroundColor = "#10B981";
+                setTimeout(() => {
+                    btn.innerHTML = "<i class='ri-save-line'></i> Save Changes";
+                    btn.disabled = false;
+                    btn.style.backgroundColor = "";
+                }, 2000);
             } catch (error) {
-                console.error(error); alert("An error occurred while saving!");
-                btn.innerHTML = "<i class='ri-save-line'></i> Save Changes"; btn.disabled = false;
+                console.error("Save error:", error);
+                alert("An error occurred while saving: " + (error.message || error));
+                btn.innerHTML = "<i class='ri-save-line'></i> Save Changes";
+                btn.disabled = false;
             }
         };
 
@@ -16750,7 +17064,7 @@
             if (!file) return;
             const item = window[`editRef_${index}`];
             const btn = document.getElementById(`btn_upload_${index}`);
-            btn.innerHTML = "Uploading... ⏳"; btn.disabled = true;
+            btn.innerHTML = "<i class='ri-loader-4-line' style='animation:spin 1s linear infinite; display:inline-block;'></i> Uploading... ⏳"; btn.disabled = true;
 
             try {
                 const base64 = await new Promise((resolve, reject) => {
@@ -16779,11 +17093,11 @@
                 });
 
                 item.qRef.img = base64;
-                await window.updateDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                await saveEditorDocToFirestore(docId);
                 btn.innerHTML = "<i class='ri-check-line'></i> Uploaded"; btn.style.backgroundColor = "#10B981";
                 setTimeout(() => { handleEditorSearch(); }, 1000);
             } catch (error) {
-                console.error("Upload error:", error); alert("Upload error!\nReason: " + error.message);
+                console.error("Upload error:", error); alert("Upload error!\nReason: " + (error.message || error));
                 btn.innerHTML = "<i class='ri-image-add-line'></i> Image"; btn.disabled = false;
             }
         };
@@ -16793,10 +17107,10 @@
             const item = window[`editRef_${index}`];
             try {
                 delete item.qRef.img;
-                await window.updateDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                await saveEditorDocToFirestore(docId);
                 handleEditorSearch();
             } catch (error) {
-                console.error(error); alert("Failed to remove image!");
+                console.error(error); alert("Failed to remove image: " + (error.message || error));
             }
         };
 
@@ -16804,16 +17118,16 @@
             if (!confirm("⚠️ Are you sure you want to permanently delete this question from the database?")) return;
             const item = window[`editRef_${index}`];
             const btn = document.getElementById(`btn_delete_${index}`);
-            btn.innerHTML = "Deleting... ⏳"; btn.disabled = true;
+            btn.innerHTML = "<i class='ri-loader-4-line' style='animation:spin 1s linear infinite; display:inline-block;'></i> Deleting... ⏳"; btn.disabled = true;
             try {
                 const arr = item.dataObj;
                 const qIndex = arr.indexOf(item.qRef);
                 if (qIndex > -1) { arr.splice(qIndex, 1); }
-                await window.updateDoc(window.doc(window.db, "content", docId), editorAllData[docId]);
+                await saveEditorDocToFirestore(docId);
                 editorAllQuestionsFlat = editorAllQuestionsFlat.filter(q => q.qRef !== item.qRef);
                 handleEditorSearch();
             } catch (error) {
-                console.error(error); alert("An error occurred while deleting!");
+                console.error(error); alert("An error occurred while deleting: " + (error.message || error));
                 btn.innerHTML = "<i class='ri-delete-bin-line'></i> Delete"; btn.disabled = false;
             }
         };
