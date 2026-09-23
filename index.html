@@ -5826,16 +5826,13 @@
                         style="display:inline-flex; align-items:center; gap:8px; background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); padding:8px 16px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.15);">
                         <i class="ri-time-line" style="color:var(--accent); font-size:1.1rem; animation:pulse 2s infinite;"></i>
                         <span style="font-size:0.85rem; color:var(--text-gray); font-weight:600;">Leaderboard resets after:</span>
-                        <span id="leaderboard-reset-countdown" style="font-size:0.95rem; font-weight:800; color:#10B981; font-family:monospace; letter-spacing:0.5px;">10:00</span>
+                        <span id="leaderboard-reset-countdown" style="font-size:0.95rem; font-weight:800; color:#10B981; font-family:monospace; letter-spacing:0.5px;">15:00</span>
                     </div>
                 </div>
 
-                <div style="display:flex; gap:0.5rem; margin-bottom:2rem; flex-wrap:wrap;">
-                    <button id="glb-tab-points" class="glb-tab-btn active" onclick="switchGlobalLb('points')">
-                        ⭐ Most Points (+1 / -1)
-                    </button>
-                    <button id="glb-tab-answered" class="glb-tab-btn" onclick="switchGlobalLb('answered')">
-                        📊 Most Answered
+                <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+                    <button id="glb-tab-points" class="glb-tab-btn active" onclick="switchGlobalLb('points')" style="pointer-events: none; cursor: default;">
+                        🏆 Top Students by Points (+1 / -1)
                     </button>
                 </div>
 
@@ -14417,7 +14414,7 @@
             const timerEl = document.getElementById('leaderboard-reset-countdown');
             if (!timerEl) return;
 
-            const CYCLE_MS = 10 * 60 * 1000; // 10 minutes
+            const CYCLE_MS = 15 * 60 * 1000; // 15 minutes
             const now = Date.now();
             const elapsed = now % CYCLE_MS;
             const remainingMs = CYCLE_MS - elapsed;
