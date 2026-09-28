@@ -15,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
     <script src="practical3.js"></script>
+    <script src="practical_microbiology.js"></script>
     <style>
         :root {
             --primary-green: #22c55e;
@@ -5817,21 +5818,27 @@
         </div>
         <div id="view-leaderboard" class="view-section">
             <div style="max-width: 900px; margin: 0 auto; width: 100%;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
                     <div>
                         <h2 style="margin-bottom: 0.5rem; font-weight: 800; font-size: 2rem;">🏆 Global Leaderboard</h2>
-                        <p style="color:var(--text-gray); margin:0;">Top students ranked by points (+1 for correct, -1 for wrong) and solved questions</p>
+                        <p style="color:var(--text-gray); margin:0;">Top students ranked by points (+1 for correct, -1
+                            for wrong) and solved questions</p>
                     </div>
                     <div id="leaderboard-reset-timer-container"
                         style="display:inline-flex; align-items:center; gap:8px; background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); padding:8px 16px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.15);">
-                        <i class="ri-time-line" style="color:var(--accent); font-size:1.1rem; animation:pulse 2s infinite;"></i>
-                        <span style="font-size:0.85rem; color:var(--text-gray); font-weight:600;">Leaderboard resets after:</span>
-                        <span id="leaderboard-reset-countdown" style="font-size:0.95rem; font-weight:800; color:#10B981; font-family:monospace; letter-spacing:0.5px;">15:00</span>
+                        <i class="ri-time-line"
+                            style="color:var(--accent); font-size:1.1rem; animation:pulse 2s infinite;"></i>
+                        <span style="font-size:0.85rem; color:var(--text-gray); font-weight:600;">Leaderboard resets
+                            after:</span>
+                        <span id="leaderboard-reset-countdown"
+                            style="font-size:0.95rem; font-weight:800; color:#10B981; font-family:monospace; letter-spacing:0.5px;">15:00</span>
                     </div>
                 </div>
 
                 <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-                    <button id="glb-tab-points" class="glb-tab-btn active" onclick="switchGlobalLb('points')" style="pointer-events: none; cursor: default;">
+                    <button id="glb-tab-points" class="glb-tab-btn active" onclick="switchGlobalLb('points')"
+                        style="pointer-events: none; cursor: default;">
                         🏆 Top Students by Points (+1 / -1)
                     </button>
                 </div>
@@ -12963,6 +12970,34 @@
         }
         window.loadParasitologySpotsFromDB = loadParasitologySpotsFromDB;
 
+        async function loadMicrobiologySpotsFromDB() {
+            try {
+                const cached = localStorage.getItem('medStorm_cache_micro_spots');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        window.microbiologySpots = parsed;
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_microbiology_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.microbiologySpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_micro_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load microbiology practical spots from DB:", e);
+            }
+        }
+        window.loadMicrobiologySpotsFromDB = loadMicrobiologySpotsFromDB;
+
         async function renderFlashcards() {
             const container = document.getElementById('flashcards-container');
             if (!container) return;
@@ -12972,12 +13007,12 @@
             container.style.justifyContent = 'flex-start';
             container.style.minHeight = '300px';
 
-            if (typeof loadParasitologySpotsFromDB === 'function') {
-                loadParasitologySpotsFromDB().then(() => {
-                    const curY = String((AppState && AppState.year) || '1');
-                    if (curY === '3') _fcShowCover();
-                }).catch(() => { });
-            }
+            const p1 = typeof loadParasitologySpotsFromDB === 'function' ? loadParasitologySpotsFromDB() : Promise.resolve();
+            const p2 = typeof loadMicrobiologySpotsFromDB === 'function' ? loadMicrobiologySpotsFromDB() : Promise.resolve();
+            Promise.all([p1, p2]).then(() => {
+                const curY = String((AppState && AppState.year) || '1');
+                if (curY === '3') _fcShowCover();
+            }).catch(() => { });
 
             if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
                 window.loadAllFlashcards().catch(e => console.warn("Background practical load failed:", e));
@@ -13006,38 +13041,79 @@
                 return;
             }
 
-            const spotsCount = (window.parasitologySpots && window.parasitologySpots.length) ? window.parasitologySpots.length : 58;
-            let totalQs = 230;
+            // Parasitology metrics
+            const paraSpotsCount = (window.parasitologySpots && window.parasitologySpots.length) ? window.parasitologySpots.length : 58;
+            let paraTotalQs = 230;
             if (window.parasitologySpots && Array.isArray(window.parasitologySpots)) {
                 let counted = 0;
                 window.parasitologySpots.forEach(s => {
                     if (s && Array.isArray(s.questions)) counted += s.questions.length;
                 });
-                if (counted > 0) totalQs = counted;
+                if (counted > 0) paraTotalQs = counted;
+            }
+
+            // Microbiology metrics
+            const microSpotsCount = (window.microbiologySpots && window.microbiologySpots.length) ? window.microbiologySpots.length : 111;
+            let microTotalQs = 403;
+            if (window.microbiologySpots && Array.isArray(window.microbiologySpots)) {
+                let counted = 0;
+                window.microbiologySpots.forEach(s => {
+                    if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                });
+                if (counted > 0) microTotalQs = counted;
             }
 
             container.innerHTML = `
-                <div class="fc-cover-wrap" style="width: 340px; position: relative; margin: 0 auto;">
-                    <button class="reset-btn" onclick="resetParaSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.4rem;">🔬 3rd Year Practical Exams</h2>
+                    <p style="color: var(--text-gray); font-size: 0.95rem; margin: 0;">Interactive spot-by-spot exams with question steps, answers, and image zooming.</p>
+                </div>
+                <div style="display: flex; justify-content: center; align-items: stretch; gap: 32px; flex-wrap: wrap; width: 100%; max-width: 820px; margin: 0 auto; padding: 10px 0;">
+                    <!-- Parasitology Card -->
+                    <div class="fc-cover-wrap" style="width: 350px; position: relative; margin: 0;">
+                        <button class="reset-btn" onclick="resetParaSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
 
-                    <div class="fc-cover-deck" onclick="startParaSpotsSession()">
-                        <div class="fc-cover-shadow"></div>
-                        <div class="fc-cover-shadow"></div>
-                        <div class="fc-cover-front" style="background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1.5px solid #3b82f6; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(59, 130, 246, 0.2);">
-                            <div class="fc-cover-badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4);">${spotsCount} spots • ${totalQs} Qs</div>
-                            <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦠</div>
-                            <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🦠 Parasitology Practical</div>
-                            <div class="fc-cover-sub" style="color: #94a3b8;">Spot-by-Spot Interactive Practical</div>
+                        <div class="fc-cover-deck" onclick="startPracticalSession('parasitology')">
+                            <div class="fc-cover-shadow"></div>
+                            <div class="fc-cover-shadow"></div>
+                            <div class="fc-cover-front" style="background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1.5px solid #3b82f6; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(59, 130, 246, 0.2);">
+                                <div class="fc-cover-badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4);">${paraSpotsCount} spots • ${paraTotalQs} Qs</div>
+                                <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦠</div>
+                                <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🦠 Parasitology Practical</div>
+                                <div class="fc-cover-sub" style="color: #94a3b8;">Spot-by-Spot Interactive Practical</div>
+                            </div>
                         </div>
+                        <button class="fc-start-btn" onclick="startPracticalSession('parasitology')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);">
+                            <i class="ri-play-fill"></i> Start Practical Session
+                        </button>
                     </div>
-                    <button class="fc-start-btn" onclick="startParaSpotsSession()" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);">
-                        <i class="ri-play-fill"></i> Start Practical Session
-                    </button>
+
+                    <!-- Microbiology Card -->
+                    <div class="fc-cover-wrap" style="width: 350px; position: relative; margin: 0;">
+                        <button class="reset-btn" onclick="resetMicroSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+
+                        <div class="fc-cover-deck" onclick="startPracticalSession('microbiology')">
+                            <div class="fc-cover-shadow"></div>
+                            <div class="fc-cover-shadow"></div>
+                            <div class="fc-cover-front" style="background: linear-gradient(145deg, #0e2a22 0%, #091a15 100%); border: 1.5px solid #10b981; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(16, 185, 129, 0.25);">
+                                <div class="fc-cover-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">${microSpotsCount} spots • ${microTotalQs} Qs</div>
+                                <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🧫</div>
+                                <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🧫 Microbiology Practical</div>
+                                <div class="fc-cover-sub" style="color: #94a3b8;">Spot-by-Spot Interactive Practical</div>
+                            </div>
+                        </div>
+                        <button class="fc-start-btn" onclick="startPracticalSession('microbiology')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);">
+                            <i class="ri-play-fill"></i> Start Practical Session
+                        </button>
+                    </div>
                 </div>
             `;
         }
 
         let paraSessionState = {
+            type: 'parasitology',
+            title: '🦠 Parasitology Practical',
+            icon: '🦠',
             spots: [],
             spotIdx: 0,
             qIdx: 0,
@@ -13053,21 +13129,38 @@
         }
         window.resetParaSpotsProgress = resetParaSpotsProgress;
 
-        function startParaSpotsSession(forceRestart = false) {
+        function resetMicroSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Microbiology Practical progress?")) return;
+            localStorage.removeItem('medStorm_micro_progress');
+            if (window.showToast) window.showToast('Microbiology progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetMicroSpotsProgress = resetMicroSpotsProgress;
+
+        function startPracticalSession(type = 'parasitology', forceRestart = false) {
             const curYear = String((AppState && AppState.year) || '1');
             if (curYear !== '3') {
                 alert("There is no practical questions available.");
                 return;
             }
-            let spots = window.parasitologySpots;
+
+            const isMicro = (type === 'microbiology');
+            const targetVar = isMicro ? 'microbiologySpots' : 'parasitologySpots';
+            const scriptSrc = isMicro ? 'practical_microbiology.js' : 'practical3.js';
+            const storageKey = isMicro ? 'medStorm_micro_progress' : 'medStorm_para_progress';
+            const sessionTitle = isMicro ? '🧫 Microbiology Practical' : '🦠 Parasitology Practical';
+            const sessionIcon = isMicro ? '🧫' : '🦠';
+
+            let spots = window[targetVar];
             if (!spots || !Array.isArray(spots) || spots.length === 0) {
                 const s = document.createElement('script');
-                s.src = 'practical3.js';
+                s.src = scriptSrc;
                 s.onload = () => {
-                    if (window.parasitologySpots && window.parasitologySpots.length > 0) {
-                        startParaSpotsSession(forceRestart);
+                    if (window[targetVar] && window[targetVar].length > 0) {
+                        startPracticalSession(type, forceRestart);
                     } else {
-                        alert("Could not load Parasitology spots data.");
+                        alert(`Could not load ${isMicro ? 'Microbiology' : 'Parasitology'} spots data.`);
                     }
                 };
                 document.head.appendChild(s);
@@ -13083,12 +13176,15 @@
                 return a;
             }
 
-            const saved = localStorage.getItem('medStorm_para_progress');
+            const saved = localStorage.getItem(storageKey);
             if (saved && !forceRestart) {
                 try {
                     const data = JSON.parse(saved);
                     if (data && Array.isArray(data.spots) && data.spots.length === spots.length && data.spotIdx < data.spots.length) {
                         paraSessionState = data;
+                        paraSessionState.type = type;
+                        paraSessionState.title = sessionTitle;
+                        paraSessionState.icon = sessionIcon;
                         paraSessionState.showAnswer = false;
                         _renderParaSessionView();
                         return;
@@ -13097,6 +13193,9 @@
             }
 
             paraSessionState = {
+                type: type,
+                title: sessionTitle,
+                icon: sessionIcon,
                 spots: shuffle(spots),
                 spotIdx: 0,
                 qIdx: 0,
@@ -13106,11 +13205,17 @@
             _saveParaProgress();
             _renderParaSessionView();
         }
-        window.startParaSpotsSession = startParaSpotsSession;
+        window.startPracticalSession = startPracticalSession;
+        window.startParaSpotsSession = (force) => startPracticalSession('parasitology', force);
+        window.startMicroSpotsSession = (force) => startPracticalSession('microbiology', force);
 
         function _saveParaProgress() {
             try {
-                localStorage.setItem('medStorm_para_progress', JSON.stringify({
+                const key = paraSessionState.type === 'microbiology' ? 'medStorm_micro_progress' : 'medStorm_para_progress';
+                localStorage.setItem(key, JSON.stringify({
+                    type: paraSessionState.type,
+                    title: paraSessionState.title,
+                    icon: paraSessionState.icon,
                     spots: paraSessionState.spots,
                     spotIdx: paraSessionState.spotIdx,
                     qIdx: paraSessionState.qIdx
@@ -13126,7 +13231,7 @@
 
         function restartParaSpotsSession() {
             if (!confirm("Reshuffle spots and start new session?")) return;
-            startParaSpotsSession(true);
+            startPracticalSession(paraSessionState.type || 'parasitology', true);
         }
         window.restartParaSpotsSession = restartParaSpotsSession;
 
@@ -13136,6 +13241,7 @@
 
             container.style.display = 'block';
 
+            const isMicro = paraSessionState.type === 'microbiology';
             const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
             if (!currentSpot) {
                 _renderParaCompletionView();
@@ -13148,10 +13254,15 @@
             const qIdx = paraSessionState.qIdx;
             const currentQ = currentQuestions[qIdx] || { question: "No question available", answer: "N/A" };
 
-            const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : 'img/pa1.webp';
-            const imgSrc = rawImg.startsWith('img/') || rawImg.startsWith('http') || rawImg.startsWith('/') ? rawImg : 'img/' + rawImg;
+            const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : '';
+            const imgSrc = rawImg.startsWith('img/') || rawImg.startsWith('http') || rawImg.startsWith('/') ? rawImg : (rawImg ? 'img/' + rawImg : '');
+            const hasImg = Boolean(imgSrc);
 
             const progressPct = Math.round(((paraSessionState.spotIdx) / totalSpots) * 100);
+            const badgeThemeColor = isMicro ? '#34d399' : '#60a5fa';
+            const badgeBgColor = isMicro ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)';
+            const badgeBorderColor = isMicro ? 'rgba(16,185,129,0.3)' : 'rgba(59,130,246,0.3)';
+            const progressGradient = isMicro ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #3b82f6, #10b981)';
 
             const stepperHTML = currentQuestions.map((_, i) => {
                 let cls = 'para-q-step-dot';
@@ -13174,10 +13285,10 @@
                             <button class="action-icon-btn" onclick="exitParaSpotsSession()" title="Back to Decks" style="width:38px; height:38px; font-size:1.15rem;">
                                 <i class="ri-arrow-left-line"></i>
                             </button>
-                            <span style="font-size:1.2rem; font-weight:800; color:var(--text-light);">🦠 Parasitology Practical</span>
+                            <span style="font-size:1.2rem; font-weight:800; color:var(--text-light);">${paraSessionState.title || 'Practical Exam'}</span>
                         </div>
                         <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                            <span style="background:rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
+                            <span style="background:${badgeBgColor}; color:${badgeThemeColor}; border:1px solid ${badgeBorderColor}; padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
                                 Spot ${paraSessionState.spotIdx + 1} / ${totalSpots}
                             </span>
                             <span style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
@@ -13192,7 +13303,7 @@
                     <!-- Overall Progress Bar -->
                     <div style="width:100%;">
                         <div class="fc-progress-bar" style="height:6px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
-                            <div class="fc-progress-fill" style="width:${progressPct}%; height:100%; background:linear-gradient(90deg, #3b82f6, #10b981); transition:width 0.3s ease;"></div>
+                            <div class="fc-progress-fill" style="width:${progressPct}%; height:100%; background:${progressGradient}; transition:width 0.3s ease;"></div>
                         </div>
                     </div>
 
@@ -13231,13 +13342,15 @@
                     </div>
 
                     <!-- Spot Image Card (Below Question & Answer, Above Buttons) -->
-                    <div class="para-img-card" onclick="if(window.openImageLightbox) openImageLightbox('${imgSrc}');" title="Click to view full size image">
-                        <img src="${imgSrc}" id="para-spot-image-el" alt="Parasitology Spot ${paraSessionState.spotIdx + 1}"
-                             onerror="this.onerror=null; this.src='img/pa1.webp'; this.style.opacity='0.6';" />
-                        <div class="para-img-zoom-tag">
-                            <i class="ri-zoom-in-line"></i> Click image to zoom
+                    ${hasImg ? `
+                        <div class="para-img-card" onclick="if(window.openImageLightbox) openImageLightbox('${imgSrc}');" title="Click to view full size image">
+                            <img src="${imgSrc}" id="para-spot-image-el" alt="${paraSessionState.title} Spot ${paraSessionState.spotIdx + 1}"
+                                 onerror="this.onerror=null; this.closest('.para-img-card').style.display='none';" />
+                            <div class="para-img-zoom-tag">
+                                <i class="ri-zoom-in-line"></i> Click image to zoom
+                            </div>
                         </div>
-                    </div>
+                    ` : ''}
 
                     <!-- Action Buttons (Below Photo) -->
                     <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:0.25rem;">
@@ -13355,7 +13468,8 @@
         window.paraJumpToQuestion = paraJumpToQuestion;
 
         function paraFinishSession() {
-            localStorage.removeItem('medStorm_para_progress');
+            const key = paraSessionState.type === 'microbiology' ? 'medStorm_micro_progress' : 'medStorm_para_progress';
+            localStorage.removeItem(key);
             if (typeof showConfetti === 'function') showConfetti();
             _renderParaCompletionView();
         }
@@ -13368,18 +13482,30 @@
             container.style.alignItems = 'center';
             container.style.justifyContent = 'center';
 
+            const isMicro = paraSessionState.type === 'microbiology';
+            const totalSpots = paraSessionState.spots ? paraSessionState.spots.length : (isMicro ? 111 : 58);
+            let totalQs = 0;
+            if (paraSessionState.spots) {
+                paraSessionState.spots.forEach(s => { if (s && Array.isArray(s.questions)) totalQs += s.questions.length; });
+            }
+            if (totalQs === 0) totalQs = isMicro ? 403 : 230;
+
+            const name = isMicro ? 'Microbiology' : 'Parasitology';
+            const color = isMicro ? '#34d399' : '#60a5fa';
+            const btnGradient = isMicro ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+
             container.innerHTML = `
                 <div class="fc-results-wrap" style="transform: translateY(-10px); max-width:540px; text-align:center; padding:2rem;">
                     <div style="font-size:4.5rem; margin-bottom:1rem;">🏆</div>
-                    <div class="fc-results-title" style="font-size:2rem; margin-bottom:0.5rem; color:var(--text-light);">Practical Complete!</div>
+                    <div class="fc-results-title" style="font-size:2rem; margin-bottom:0.5rem; color:var(--text-light);">${name} Practical Complete!</div>
                     <p style="font-size:1.05rem; color:var(--text-gray); line-height:1.6; margin-bottom:1.5rem;">
-                        You have successfully reviewed all <b style="color:#60a5fa;">58 Parasitology Practical Spots</b> (230 questions)!
+                        You have successfully reviewed all <b style="color:${color};">${totalSpots} ${name} Practical Spots</b> (${totalQs} questions)!
                     </p>
                     <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
                         <button class="quiz-btn btn-secondary" onclick="exitParaSpotsSession()" style="padding:12px 24px; font-weight:700;">
                             <i class="ri-arrow-left-line"></i> Back to Decks
                         </button>
-                        <button class="quiz-btn btn-primary" onclick="startParaSpotsSession(true)" style="padding:12px 28px; font-weight:700; background:linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                        <button class="quiz-btn btn-primary" onclick="restartParaSpotsSession()" style="padding:12px 28px; font-weight:700; background:${btnGradient};">
                             <i class="ri-refresh-line"></i> Practice Again (Shuffle)
                         </button>
                     </div>
@@ -16700,7 +16826,7 @@
                 if (oldChunkCount > 1 && window.deleteDoc) {
                     const deletePromises = [];
                     for (let i = 1; i < oldChunkCount; i++) {
-                        deletePromises.push(window.deleteDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)).catch(() => {}));
+                        deletePromises.push(window.deleteDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)).catch(() => { }));
                     }
                     await Promise.all(deletePromises);
                 }
@@ -16723,7 +16849,7 @@
                 if (oldChunkCount > totalChunks && window.deleteDoc) {
                     const deletePromises = [];
                     for (let i = totalChunks; i < oldChunkCount; i++) {
-                        deletePromises.push(window.deleteDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)).catch(() => {}));
+                        deletePromises.push(window.deleteDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)).catch(() => { }));
                     }
                     await Promise.all(deletePromises);
                 }
