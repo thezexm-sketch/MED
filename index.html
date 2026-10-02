@@ -1503,6 +1503,34 @@
             border-color: #dc2626;
         }
 
+        .subtopic-child-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .subtopic-child-row .subtopic-btn {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .subtopic-child-row .subject-reset-btn {
+            margin-left: 0;
+        }
+
+        .subtopic-btn.is-completed {
+            border-color: rgba(16, 185, 129, 0.25);
+            background: rgba(16, 185, 129, 0.04);
+            opacity: 0.85;
+        }
+
+        .subtopic-btn.is-completed::before {
+            content: '\EB7B';
+            color: var(--primary-green);
+            opacity: 0.85;
+        }
+
         .weak-indicator {
             display: inline-flex;
             align-items: center;
@@ -9769,26 +9797,51 @@
                 weakHTML = `<span class="weak-indicator" title="Your accuracy here is ${weakInfo.accuracy}% — below your average of ${weakInfo.avg}%"><i class="ri-error-warning-fill"></i> Weak</span>`;
             }
 
-            btn.innerHTML = `<span style="flex:1; text-align:left; line-height: 1.4; padding-right:8px;">${displayLabel}${weakHTML}</span>
-                     <span style="color: var(--text-gray); font-size: 0.85rem;">${count}</span>`;
+            const countDisplay = count > 0
+                ? `<span style="color: var(--text-gray); font-size: 0.85rem; font-weight:700;">${count}</span>`
+                : `<span style="color: var(--primary-green); font-size: 0.82rem; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="ri-checkbox-circle-fill"></i> 0</span>`;
 
-            btn.onclick = () => {
-                btn.classList.toggle('active');
-                if (Session.selectedSubtopics.includes(value)) {
-                    Session.selectedSubtopics = Session.selectedSubtopics.filter(s => s !== value);
-                } else {
-                    Session.selectedSubtopics.push(value);
-                }
-                updateAvailableQuestionsCount();
-            };
+            btn.innerHTML = `<span style="flex:1; text-align:left; line-height: 1.4; padding-right:8px;">${displayLabel}${weakHTML}</span>
+                     ${countDisplay}`;
+
+            if (count === 0) {
+                btn.classList.add('is-completed');
+                btn.title = `${displayLabel} is completed! Click the red ↻ button to reset and solve again.`;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (window.showToast) {
+                        window.showToast(`${displayLabel} completed! Click the red ↻ button to reset and solve again.`, 'info');
+                    }
+                };
+            } else {
+                btn.onclick = () => {
+                    btn.classList.toggle('active');
+                    if (Session.selectedSubtopics.includes(value)) {
+                        Session.selectedSubtopics = Session.selectedSubtopics.filter(s => s !== value);
+                    } else {
+                        Session.selectedSubtopics.push(value);
+                    }
+                    updateAvailableQuestionsCount();
+                };
+            }
             return btn;
         }
 
         window.updateAvailableQuestionsCount = function () {
             let total = 0;
             document.querySelectorAll('.subtopic-btn.active').forEach(btn => {
-                if (btn.style.display !== 'none') {
+                const row = btn.closest('.subtopic-child-row') || btn;
+                if (row.style.display !== 'none') {
                     total += parseInt(btn.dataset.count || 0);
+                }
+            });
+            document.querySelectorAll('.group-checkbox:checked').forEach(cb => {
+                const group = cb.closest('.subtopic-group');
+                if (group && !group.querySelector('.subtopic-children') && group.style.display !== 'none') {
+                    const countSpan = group.querySelector('.subtopic-header span:nth-child(2)');
+                    if (countSpan) {
+                        total += parseInt(countSpan.textContent || '0');
+                    }
                 }
             });
 
@@ -9799,7 +9852,8 @@
             document.querySelectorAll('.subtopic-group').forEach(group => {
                 const header = group.querySelector('.subtopic-header');
                 const hasActiveBtn = group.querySelector('.subtopic-btn.active') !== null;
-                if (hasActiveBtn) {
+                const hasCheckedBox = group.querySelector('.group-checkbox:checked') !== null;
+                if (hasActiveBtn || hasCheckedBox) {
                     header.classList.add('active-group');
                 } else {
                     header.classList.remove('active-group');
@@ -9953,7 +10007,7 @@
             document.getElementById('premium-lock-modal').classList.remove('active');
         };
 
-        async function openStartModal(modName, isMistakes) {
+        async function openStartModal(modName, isMistakes, autoExpandGroupKey) {
             if (window.LOCKED_MODULES && window.LOCKED_MODULES[modName]) {
                 if (window.showToast) window.showToast(`${modName} module is currently locked 🔒`, 'error');
                 return;
@@ -10037,7 +10091,7 @@
                         headerContent.style.cssText = 'display:flex; align-items:center; flex: 1;';
                         headerContent.innerHTML = `
                             <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px; text-transform: uppercase;">${displayKey}</span>
-                            <span style="font-weight: 800; font-size: 1rem; color: var(--text-gray); margin-left: 12px;">${poolCount}</span>
+                            <span style="font-weight: 800; font-size: 1rem; color: ${poolCount > 0 ? 'var(--text-gray)' : 'var(--primary-green)'}; margin-left: 12px;">${poolCount > 0 ? poolCount : '<i class="ri-checkbox-circle-fill"></i> 0'}</span>
                         `;
 
                         const resetSubjectBtn = document.createElement('button');
@@ -10064,7 +10118,7 @@
                                 updateAvailableQuestionsCount();
                             };
                             header.onclick = (e) => {
-                                if (e.target === checkbox) return;
+                                if (e.target === checkbox || e.target.closest('.subject-reset-btn')) return;
                                 checkbox.checked = !checkbox.checked;
                                 if (checkbox.checked) {
                                     if (!Session.selectedSubtopics.includes(key)) Session.selectedSubtopics.push(key);
@@ -10084,12 +10138,34 @@
                         const sortedChildKeys = Object.keys(data).sort();
                         for (const childKey of sortedChildKeys) {
                             const childData = data[childKey];
-                            const pool = isMistakes ? childData.filter(q => AppState.progress[q.q] === 'wrong') : childData.filter(q => !AppState.progress[q.q]);
-                            if (pool.length > 0) {
-                                groupPoolCount += pool.length;
-                                const weakKey = `${key}___${childKey}`;
-                                childrenElements.push(createSubtopicBtn(childKey, pool.length, weakKey, weakSections[weakKey]));
-                            }
+                            const childQuestions = Array.isArray(childData) ? childData : (typeof extractAllQuestions === 'function' ? extractAllQuestions(childData) : []);
+                            if (childQuestions.length === 0) continue;
+
+                            const pool = isMistakes 
+                                ? childQuestions.filter(q => AppState.progress[q.q] === 'wrong') 
+                                : childQuestions.filter(q => !AppState.progress[q.q]);
+                            const childPoolCount = pool.length;
+                            groupPoolCount += childPoolCount;
+
+                            const weakKey = `${key}___${childKey}`;
+                            const childBtn = createSubtopicBtn(childKey, childPoolCount, weakKey, weakSections[weakKey]);
+                            const displayChildKey = childKey.replace(/^\d+\.\s*/, "");
+
+                            const resetLessonBtn = document.createElement('button');
+                            resetLessonBtn.className = 'subject-reset-btn';
+                            resetLessonBtn.title = `Reset ${displayChildKey}`;
+                            resetLessonBtn.innerHTML = '<i class="ri-restart-line"></i>';
+                            resetLessonBtn.onclick = (e) => {
+                                e.stopPropagation();
+                                resetSubject(modName, weakKey, displayChildKey);
+                            };
+
+                            const childRow = document.createElement('div');
+                            childRow.className = 'subtopic-child-row';
+                            childRow.appendChild(childBtn);
+                            childRow.appendChild(resetLessonBtn);
+
+                            childrenElements.push(childRow);
                         }
 
                         const groupDiv = document.createElement('div');
@@ -10115,9 +10191,13 @@
                         const hasWeakChild = childrenElements.some(el => el.querySelector('.weak-indicator'));
                         const weakGroupHTML = hasWeakChild ? ' <span class="weak-indicator" style="font-size:0.65rem; padding:1px 6px;"><i class="ri-error-warning-fill"></i></span>' : '';
 
+                        const groupCountDisplay = groupPoolCount > 0
+                            ? `<span style="font-weight: 800; font-size: 1rem; color: var(--text-gray); margin-left: 12px;">${groupPoolCount}</span>`
+                            : `<span style="font-weight: 800; font-size: 0.95rem; color: var(--primary-green); margin-left: 12px; display:inline-flex; align-items:center; gap:4px;"><i class="ri-checkbox-circle-fill"></i> 0</span>`;
+
                         headerContent.innerHTML = `
                             <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px; text-transform: uppercase;">${displayKey}${weakGroupHTML}</span>
-                            <span style="font-weight: 800; font-size: 1rem; color: var(--text-gray); margin-left: 12px;">${groupPoolCount}</span>
+                            ${groupCountDisplay}
                         `;
 
                         const resetSubjectBtn = document.createElement('button');
@@ -10142,38 +10222,40 @@
                         childrenContainer.className = 'subtopic-children';
                         childrenContainer.style.display = 'none';
 
-                        if (childrenElements.length === 0) {
-                            const emptyNotice = document.createElement('div');
-                            emptyNotice.style.cssText = 'padding: 12px; font-size: 0.85rem; color: var(--text-gray); text-align: center; grid-column: 1 / -1;';
-                            emptyNotice.innerHTML = `<i class="ri-checkbox-circle-fill" style="color: var(--primary-green); margin-right: 4px;"></i> All questions completed! Click <span style="color:var(--primary-red); font-weight:700;"><i class="ri-restart-line"></i></span> to reset.`;
-                            childrenContainer.appendChild(emptyNotice);
-                        }
-
                         const syncCheckbox = () => {
-                            const total = childrenElements.length;
+                            const selectableBtns = childrenElements
+                                .map(row => row.querySelector('.subtopic-btn'))
+                                .filter(btn => btn && parseInt(btn.dataset.count || '0') > 0);
+                            const total = selectableBtns.length;
                             if (total === 0) {
                                 checkbox.checked = false;
                                 checkbox.indeterminate = false;
                                 return;
                             }
-                            const active = childrenElements.filter(btn => btn.classList.contains('active')).length;
+                            const active = selectableBtns.filter(btn => btn.classList.contains('active')).length;
                             checkbox.checked = total > 0 && active === total;
                             checkbox.indeterminate = active > 0 && active < total;
                         };
-                        childrenElements.forEach(el => {
-                            const originalClick = el.onclick;
-                            el.onclick = (e) => {
-                                if (originalClick) originalClick(e);
-                                syncCheckbox();
-                            };
-                            childrenContainer.appendChild(el);
+
+                        childrenElements.forEach(row => {
+                            const btn = row.querySelector('.subtopic-btn');
+                            if (btn) {
+                                const origClick = btn.onclick;
+                                btn.onclick = (e) => {
+                                    if (origClick) origClick(e);
+                                    syncCheckbox();
+                                };
+                            }
+                            childrenContainer.appendChild(row);
                         });
 
                         checkbox.onclick = (e) => {
                             e.stopPropagation();
                             if (groupPoolCount === 0) return;
                             const isChecked = checkbox.checked;
-                            childrenElements.forEach(btn => {
+                            childrenElements.forEach(row => {
+                                const btn = row.querySelector('.subtopic-btn');
+                                if (!btn || parseInt(btn.dataset.count || '0') === 0) return;
                                 const isActive = btn.classList.contains('active');
                                 if (isChecked && !isActive) {
                                     btn.click();
@@ -10185,11 +10267,16 @@
                         };
 
                         header.onclick = (e) => {
-                            if (e.target === checkbox) return;
+                            if (e.target === checkbox || e.target.closest('.subject-reset-btn')) return;
                             const isHidden = childrenContainer.style.display === 'none';
                             childrenContainer.style.display = isHidden ? 'grid' : 'none';
                             chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
                         };
+
+                        if (autoExpandGroupKey && key === autoExpandGroupKey) {
+                            childrenContainer.style.display = 'grid';
+                            chevron.style.transform = 'rotate(180deg)';
+                        }
 
                         groupDiv.appendChild(header);
                         groupDiv.appendChild(childrenContainer);
@@ -10198,7 +10285,8 @@
                     }
                 }
 
-                const hasAnyAvailableQuestions = subGrid.querySelector('.subtopic-btn') !== null ||
+                const hasAnyAvailableQuestions = 
+                    Array.from(subGrid.querySelectorAll('.subtopic-btn')).some(btn => parseInt(btn.dataset.count || '0') > 0) ||
                     Array.from(subGrid.querySelectorAll('.subtopic-header span:nth-child(2)')).some(span => parseInt(span.textContent || '0') > 0);
 
                 if (!hasAnyAvailableQuestions && subGrid.children.length > 0) {
@@ -10209,7 +10297,7 @@
                             <i class="ri-checkbox-circle-fill"></i> ${isMistakes ? 'No mistakes recorded!' : 'All questions solved!'}
                         </div>
                         <p style="font-size:0.85rem; color:var(--text-gray); margin-bottom:0.75rem;">
-                            ${isMistakes ? 'You can reset mistakes per subject using the red <i class="ri-restart-line" style="color:var(--primary-red);"></i> button' : 'You can reset any subject individually using its red <i class="ri-restart-line" style="color:var(--primary-red);"></i> button, or reset the entire module:'}
+                            ${isMistakes ? 'You can reset mistakes per subject/lesson using the red <i class="ri-restart-line" style="color:var(--primary-red);"></i> button' : 'You can reset any subject or lesson individually using its red <i class="ri-restart-line" style="color:var(--primary-red);"></i> button, or reset the entire module:'}
                         </p>
                         ${!isMistakes ? `<button class="quiz-btn btn-secondary" style="display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; padding:6px 14px;" onclick="resetModule('${modName}', event)"><i class="ri-restart-line"></i> Reset Entire Module</button>` : ''}
                     `;
@@ -10247,12 +10335,13 @@
 
                 buttons.forEach(btn => {
                     const text = btn.innerText.toLowerCase();
+                    const row = btn.closest('.subtopic-child-row') || btn;
 
                     if (text.includes(input) || headerText.includes(input)) {
-                        btn.style.display = 'flex';
+                        row.style.display = 'flex';
                         hasMatch = true;
                     } else {
-                        btn.style.display = 'none';
+                        row.style.display = 'none';
                     }
                 });
 
@@ -10260,7 +10349,10 @@
                     group.style.display = 'flex';
                     if (childrenContainer) childrenContainer.style.display = 'none';
                     if (chev) chev.style.transform = 'rotate(0deg)';
-                    buttons.forEach(btn => btn.style.display = 'flex');
+                    buttons.forEach(btn => {
+                        const row = btn.closest('.subtopic-child-row') || btn;
+                        row.style.display = 'flex';
+                    });
                 } else {
                     group.style.display = (hasMatch || headerText.includes(input)) ? 'flex' : 'none';
                     if (hasMatch || headerText.includes(input)) {
@@ -10271,20 +10363,29 @@
             });
         };
         window.toggleSelectAll = function () {
-            const buttons = document.querySelectorAll('.subtopic-btn');
+            const allButtons = Array.from(document.querySelectorAll('.subtopic-btn'));
+            const selectableButtons = allButtons.filter(btn => {
+                const count = parseInt(btn.dataset.count || '0');
+                const row = btn.closest('.subtopic-child-row') || btn;
+                return count > 0 && row.style.display !== 'none';
+            });
             const selectAllBtn = document.getElementById('select-all-btn');
-            if (Session.selectedSubtopics.length < buttons.length) {
-                buttons.forEach(btn => {
-                    if (!btn.classList.contains('active') && btn.style.display !== 'none') {
+
+            if (selectableButtons.length === 0) return;
+
+            const activeSelectable = selectableButtons.filter(btn => btn.classList.contains('active'));
+
+            if (activeSelectable.length < selectableButtons.length) {
+                selectableButtons.forEach(btn => {
+                    if (!btn.classList.contains('active')) {
                         btn.click();
                     }
                 });
                 selectAllBtn.innerHTML = '<i class="ri-close-line"></i> Deselect All';
                 selectAllBtn.style.color = 'var(--primary-red)';
             } else {
-
-                buttons.forEach(btn => {
-                    if (btn.classList.contains('active') && btn.style.display !== 'none') {
+                selectableButtons.forEach(btn => {
+                    if (btn.classList.contains('active')) {
                         btn.click();
                     }
                 });
@@ -11462,8 +11563,14 @@
             targetResetModule = modName;
             targetResetSubjectKey = subjectKey;
 
+            const isLesson = subjectKey && subjectKey.includes('___');
+            const itemType = isLesson ? 'lesson' : 'subject';
             const modalText = document.getElementById('reset-modal-text');
-            modalText.innerHTML = `Are you sure you want to reset <b>ALL progress</b> for <span style="color: var(--accent); font-weight: bold;">${displayName}</span> in <span style="color: var(--accent); font-weight: bold;">${modName}</span>?`;
+            if (isResettingMistakes) {
+                modalText.innerHTML = `Are you sure you want to reset <b>MISTAKES only</b> for ${itemType} <span style="color: var(--accent); font-weight: bold;">${displayName}</span> in <span style="color: var(--accent); font-weight: bold;">${modName}</span>?`;
+            } else {
+                modalText.innerHTML = `Are you sure you want to reset <b>ALL progress</b> for ${itemType} <span style="color: var(--accent); font-weight: bold;">${displayName}</span> in <span style="color: var(--accent); font-weight: bold;">${modName}</span>?`;
+            }
 
             document.getElementById('reset-modal').classList.add('active');
         }
@@ -11478,8 +11585,17 @@
             if (!targetResetModule) return;
 
             let questionsToReset;
+            const isLesson = targetResetSubjectKey && targetResetSubjectKey.includes('___');
             if (targetResetSubjectKey) {
-                const subjectData = DB[targetResetModule][targetResetSubjectKey];
+                let subjectData;
+                if (isLesson) {
+                    const parts = targetResetSubjectKey.split('___');
+                    const pKey = parts[0];
+                    const cKey = parts[1];
+                    subjectData = (DB[targetResetModule] && DB[targetResetModule][pKey]) ? DB[targetResetModule][pKey][cKey] : [];
+                } else {
+                    subjectData = DB[targetResetModule][targetResetSubjectKey];
+                }
                 questionsToReset = extractAllQuestions(subjectData || []);
             } else {
                 questionsToReset = extractAllQuestions(DB[targetResetModule]);
@@ -11505,9 +11621,10 @@
             if (window.flushSync) window.flushSync().catch(e => console.warn("Reset sync failed:", e));
 
             if (targetResetSubjectKey) {
-                if (window.showToast) window.showToast('Subject progress reset!', 'success');
+                if (window.showToast) window.showToast(isLesson ? 'Lesson progress reset!' : 'Subject progress reset!', 'success');
                 if (typeof renderDashboard === 'function') renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
-                openStartModal(targetResetModule, isResettingMistakes);
+                const parentGroupToExpand = isLesson ? targetResetSubjectKey.split('___')[0] : null;
+                openStartModal(targetResetModule, isResettingMistakes, parentGroupToExpand);
             } else {
                 renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
             }
@@ -12816,27 +12933,6 @@
             document.querySelectorAll('.report-active').forEach(btn => {
                 btn.classList.remove('active', 'report-active');
             });
-        }
-        function createSubtopicBtn(label, count, value) {
-            const btn = document.createElement('div');
-            btn.className = 'subtopic-btn';
-            btn.dataset.count = count;
-
-            const displayLabel = label.replace(/^\d+\.\s*/, "");
-
-            btn.innerHTML = `<span style = "flex:1; text-align:left; line-height: 1.4; padding-right:8px;">${displayLabel}</span>
-                                            <span style="color: var(--text-gray); font-size: 0.85rem;">${count}</span>`;
-
-            btn.onclick = () => {
-                btn.classList.toggle('active');
-                if (Session.selectedSubtopics.includes(value)) {
-                    Session.selectedSubtopics = Session.selectedSubtopics.filter(s => s !== value);
-                } else {
-                    Session.selectedSubtopics.push(value);
-                }
-                updateAvailableQuestionsCount();
-            };
-            return btn;
         }
         async function sendReport() {
             const reason = document.getElementById('report-text').value.trim();
