@@ -17,6 +17,7 @@
     <script src="practical3.js"></script>
     <script src="practical_microbiology.js"></script>
     <script src="fid.js"></script>
+    <script src="practical_pharmacology.js"></script>
     <style>
         :root {
             --primary-green: #22c55e;
@@ -5135,6 +5136,227 @@
             transform: scale(1.05) rotate(3deg);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
         }
+
+        /* ============================================================
+           Open Book PDF Reference Panel (Pharmacology Practical)
+           ============================================================ */
+        .open-book-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(234, 88, 12, 0.25));
+            color: #fb923c;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            border: 1px solid rgba(249, 115, 22, 0.4);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.25s ease;
+        }
+
+        .open-book-btn:hover {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(234, 88, 12, 0.4));
+            color: #ffedd5;
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .open-book-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 50vw;
+            height: 100vh;
+            background: #0b1120;
+            border-left: 2px solid rgba(249, 115, 22, 0.4);
+            box-shadow: -15px 0 40px rgba(0, 0, 0, 0.65);
+            z-index: 99980;
+            display: none;
+            flex-direction: column;
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .open-book-panel.active {
+            display: flex !important;
+        }
+
+        .open-book-panel.wide {
+            width: 75vw;
+        }
+
+        .open-book-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 12px;
+        }
+
+        .open-book-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #f8fafc;
+        }
+
+        .open-book-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .open-book-ctrl-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .open-book-ctrl-btn:hover {
+            background: rgba(249, 115, 22, 0.2);
+            color: #fb923c;
+            border-color: rgba(249, 115, 22, 0.4);
+        }
+
+        .open-book-ctrl-btn.close-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .open-book-body {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #1e293b;
+        }
+
+        .open-book-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (min-width: 992px) {
+            body.open-book-active #view-quiz .quiz-container {
+                margin-right: 50vw;
+                max-width: calc(50vw - 40px);
+                transition: margin-right 0.3s ease, max-width 0.3s ease;
+            }
+
+            body.open-book-active.open-book-wide #view-quiz .quiz-container {
+                margin-right: 75vw;
+                max-width: calc(25vw - 20px);
+            }
+        }
+
+        @media (max-width: 991px) {
+            .open-book-panel {
+                width: 100vw !important;
+                height: 60vh;
+                top: auto;
+                bottom: 0;
+                border-left: none;
+                border-top: 2px solid rgba(249, 115, 22, 0.4);
+            }
+        }
+
+        .open-book-floating-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99970;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.45);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .open-book-floating-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 12px 30px rgba(249, 115, 22, 0.6);
+        }
+
+        /* ============================================================
+           Multi-Select Questions Styling
+           ============================================================ */
+        .option-btn.multi-option {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            text-align: left;
+            position: relative;
+        }
+
+        .option-btn.multi-option .opt-checkbox-icon {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn.multi-selected {
+            border-color: #3b82f6 !important;
+            background: rgba(59, 130, 246, 0.12) !important;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .option-btn.multi-selected .opt-checkbox-icon {
+            color: #60a5fa !important;
+        }
+
+        .multi-submit-wrapper {
+            margin-top: 18px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-submit-multi {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 10px 24px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit-multi:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, #34d399, #10b981);
+        }
     </style>
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
 </head>
@@ -6115,6 +6337,10 @@
                 </div>
 
                 <div class="quiz-actions" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button id="open-book-btn" class="open-book-btn" onclick="toggleOpenBookPdf()"
+                        title="Open Book PDF Reference" style="display: none;">
+                        <i class="ri-book-open-fill"></i><span>📖 Open Book</span>
+                    </button>
                     <div class="sync-status-indicator"
                         onclick="window.flushSync && window.flushSync(); window.flushVotes && window.flushVotes(); window.flushWeeklyMistakes && window.flushWeeklyMistakes();"
                         style="display: none; align-items: center; gap: 6px; font-size: 0.8rem; color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; cursor: pointer; transition: all 0.2s ease; user-select: none;"
@@ -6182,6 +6408,40 @@
                                     class="ri-arrow-right-line"></i></button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Floating Open Book Toggle Button -->
+            <button id="open-book-floating-btn" class="open-book-floating-btn" onclick="toggleOpenBookPdf(true)"
+                style="display: none;" title="Open Book Reference PDF">
+                <i class="ri-book-open-fill"></i>
+                <span>📖 Open Book PDF</span>
+            </button>
+
+            <!-- Open Book PDF Side Panel -->
+            <div id="open-book-panel" class="open-book-panel" style="display: none;">
+                <div class="open-book-header">
+                    <div class="open-book-title">
+                        <i class="ri-book-open-fill" style="color: #fb923c;"></i>
+                        <span>Pharmacology Open Book Reference</span>
+                    </div>
+                    <div class="open-book-controls">
+                        <button class="open-book-ctrl-btn" onclick="toggleOpenBookSplit()" title="Toggle Split View"
+                            id="open-book-expand-btn">
+                            <i class="ri-aspect-ratio-line"></i>
+                        </button>
+                        <a href="https://drive.google.com/file/d/1NKrJQsyrfsqZhSQjhsg0ibXJ9fRP4E_b/view?usp=sharing"
+                            target="_blank" class="open-book-ctrl-btn" title="Open in new window / tab">
+                            <i class="ri-external-link-line"></i> <span>New Tab</span>
+                        </a>
+                        <button class="open-book-ctrl-btn close-btn" onclick="toggleOpenBookPdf(false)"
+                            title="Close Reference">
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="open-book-body">
+                    <iframe id="open-book-iframe" src="" allow="autoplay" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
@@ -9160,7 +9420,7 @@
             globalStopwatch = setInterval(() => {
                 if (!Session.reviewing) {
                     secondsElapsed++;
-                    if (Session.settings.time === 0) {
+                    if (Session.settings.time === 0 && !window.pharmaExamTimer && Session.module !== 'pharma & community' && Session.module !== 'Pharmacology Practical') {
                         const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
                         const s = (secondsElapsed % 60).toString().padStart(2, '0');
                         const tEl = document.getElementById('timer-text');
@@ -10142,8 +10402,8 @@
                             const childQuestions = Array.isArray(childData) ? childData : (typeof extractAllQuestions === 'function' ? extractAllQuestions(childData) : []);
                             if (childQuestions.length === 0) continue;
 
-                            const pool = isMistakes 
-                                ? childQuestions.filter(q => AppState.progress[q.q] === 'wrong') 
+                            const pool = isMistakes
+                                ? childQuestions.filter(q => AppState.progress[q.q] === 'wrong')
                                 : childQuestions.filter(q => !AppState.progress[q.q]);
                             const childPoolCount = pool.length;
                             groupPoolCount += childPoolCount;
@@ -10286,7 +10546,7 @@
                     }
                 }
 
-                const hasAnyAvailableQuestions = 
+                const hasAnyAvailableQuestions =
                     Array.from(subGrid.querySelectorAll('.subtopic-btn')).some(btn => parseInt(btn.dataset.count || '0') > 0) ||
                     Array.from(subGrid.querySelectorAll('.subtopic-header span:nth-child(2)')).some(span => parseInt(span.textContent || '0') > 0);
 
@@ -10574,16 +10834,35 @@
             let typePrefix = '';
             if (Session.mode === 'favorites') typePrefix = '⭐ Favorites • ';
             else if (Session.mode === 'mistakes') typePrefix = '⚠️ Mistakes • ';
-            const modDisplayName = (q._module && Session.module === 'Favorites') ? q._module : Session.module;
-            document.getElementById('q-tag').textContent = `${typePrefix}${modDisplayName} • ${displayCategory} • ${Session.index + 1}/${Session.queue.length}`;
+            const modDisplayName = q._module || Session.module || 'pharma & community';
+            const isMulti = Array.isArray(q.a);
+            let multiBadge = isMulti ? ' <span style="background:#0f172a; color:#ffffff; border:1.5px solid #38bdf8; padding:3px 10px; border-radius:8px; font-size:0.75rem; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 6px rgba(0,0,0,0.35); vertical-align:middle; margin-left:6px;"><i class="ri-checkbox-multiple-line" style="color:#38bdf8; font-size:0.85rem;"></i> <span style="color:#ffffff;">Select all correct answers</span></span>' : '';
+            document.getElementById('q-tag').innerHTML = `${typePrefix}${modDisplayName} • ${displayCategory} • ${Session.index + 1}/${Session.queue.length}${multiBadge}`;
             if (Session.highlights && Session.highlights[q.q]) {
-
                 document.getElementById('q-text').innerHTML = Session.highlights[q.q];
             } else {
                 document.getElementById('q-text').textContent = q.q;
             }
             const qImg = document.getElementById('q-image');
-            if (q.img) { qImg.src = q.img; qImg.style.display = 'block'; qImg.onclick = () => openImageLightbox(q.img); } else qImg.style.display = 'none';
+            if (q.img) {
+                qImg.src = q.img;
+                qImg.style.display = 'block';
+                qImg.onclick = () => openImageLightbox(q.img);
+                qImg.onerror = function () {
+                    if (!this.dataset.fallbackTried) {
+                        this.dataset.fallbackTried = 'true';
+                        this.src = this.src.includes('img/') ? q.img.replace(/^img\//, '') : 'img/' + q.img;
+                    }
+                };
+            } else {
+                qImg.style.display = 'none';
+            }
+
+            if (Session.module === 'pharma & community' || Session.module === 'Pharmacology Practical' || q.pdf) {
+                if (typeof showOpenBookPdfTrigger === 'function') showOpenBookPdfTrigger(true);
+            } else {
+                if (typeof showOpenBookPdfTrigger === 'function') showOpenBookPdfTrigger(false);
+            }
 
             const box = document.getElementById('options-box'); box.innerHTML = '';
 
@@ -10599,14 +10878,23 @@
             document.getElementById('btn-next').disabled = false;
 
             const ans = Session.answers[Session.index];
+            window._tempMultiSelections = (Array.isArray(ans) ? [...ans] : []);
 
             q.o.forEach((optText, i) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'option-wrapper';
 
                 const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = optText;
+                btn.className = 'option-btn' + (isMulti ? ' multi-option' : '');
+
+                if (isMulti) {
+                    const isSelected = window._tempMultiSelections.includes(i);
+                    const checkIcon = isSelected ? 'ri-checkbox-fill' : 'ri-checkbox-blank-line';
+                    btn.innerHTML = `<i class="${checkIcon} opt-checkbox-icon"></i> <span>${optText}</span>`;
+                    if (isSelected) btn.classList.add('multi-selected');
+                } else {
+                    btn.textContent = optText;
+                }
 
                 const eliminateBtn = document.createElement('button');
                 eliminateBtn.className = 'eliminate-btn';
@@ -10619,39 +10907,89 @@
                     eliminateBtn.classList.toggle('active-x');
                 };
 
-                if (Session.reviewing) {
-                    btn.disabled = true;
-                    eliminateBtn.disabled = true;
-                    if (i === q.a) btn.classList.add('correct');
-                    if (ans === i && i !== q.a) btn.classList.add('wrong');
-                } else if (Session.quizMode === 'tutor' && ans !== null) {
-                    btn.disabled = true;
-                    eliminateBtn.disabled = true;
-                    if (i === q.a) btn.classList.add('correct');
-                    if (ans === i && i !== q.a && ans !== -1) btn.classList.add('wrong');
-                } else if (Session.quizMode === 'exam') {
-                    if (ans === i) {
-                        btn.classList.add('exam-selected');
-                        btn.style.borderColor = 'var(--primary-blue)';
-                        btn.style.background = 'rgba(59, 130, 246, 0.1)';
+                if (isMulti) {
+                    const isAnswered = (Session.quizMode === 'tutor' && ans !== null) || Session.reviewing;
+                    if (isAnswered) {
+                        btn.disabled = true;
+                        eliminateBtn.disabled = true;
+                        const userSelected = Array.isArray(ans) && ans.includes(i);
+                        const isCorrectOption = q.a.includes(i);
+                        if (isCorrectOption) {
+                            btn.classList.add('correct');
+                            const icon = btn.querySelector('.opt-checkbox-icon');
+                            if (icon) icon.className = 'ri-checkbox-circle-fill opt-checkbox-icon';
+                        }
+                        if (userSelected && !isCorrectOption) {
+                            btn.classList.add('wrong');
+                            const icon = btn.querySelector('.opt-checkbox-icon');
+                            if (icon) icon.className = 'ri-close-circle-fill opt-checkbox-icon';
+                        }
+                    } else if (Session.quizMode === 'exam') {
+                        const isSelected = Array.isArray(ans) && ans.includes(i);
+                        if (isSelected) {
+                            btn.classList.add('multi-selected');
+                            btn.classList.add('exam-selected');
+                            const icon = btn.querySelector('.opt-checkbox-icon');
+                            if (icon) icon.className = 'ri-checkbox-fill opt-checkbox-icon';
+                        }
+                        btn.onclick = () => {
+                            if (!btn.classList.contains('opt-eliminated')) {
+                                toggleMultiOption(i, btn, q);
+                            }
+                        };
+                    } else {
+                        btn.onclick = () => {
+                            if (!btn.classList.contains('opt-eliminated')) {
+                                toggleMultiOption(i, btn, q);
+                            }
+                        };
                     }
-                    btn.onclick = () => {
-                        if (!btn.classList.contains('opt-eliminated')) {
-                            handleAnswer(i, btn, q);
-                        }
-                    };
                 } else {
-                    btn.onclick = () => {
-                        if (!btn.classList.contains('opt-eliminated')) {
-                            handleAnswer(i, btn, q);
+                    if (Session.reviewing) {
+                        btn.disabled = true;
+                        eliminateBtn.disabled = true;
+                        if (i === q.a) btn.classList.add('correct');
+                        if (ans === i && i !== q.a) btn.classList.add('wrong');
+                    } else if (Session.quizMode === 'tutor' && ans !== null) {
+                        btn.disabled = true;
+                        eliminateBtn.disabled = true;
+                        if (i === q.a) btn.classList.add('correct');
+                        if (ans === i && i !== q.a && ans !== -1) btn.classList.add('wrong');
+                    } else if (Session.quizMode === 'exam') {
+                        if (ans === i) {
+                            btn.classList.add('exam-selected');
+                            btn.style.borderColor = 'var(--primary-blue)';
+                            btn.style.background = 'rgba(59, 130, 246, 0.1)';
                         }
-                    };
+                        btn.onclick = () => {
+                            if (!btn.classList.contains('opt-eliminated')) {
+                                handleAnswer(i, btn, q);
+                            }
+                        };
+                    } else {
+                        btn.onclick = () => {
+                            if (!btn.classList.contains('opt-eliminated')) {
+                                handleAnswer(i, btn, q);
+                            }
+                        };
+                    }
                 }
 
                 wrapper.appendChild(btn);
                 wrapper.appendChild(eliminateBtn);
                 box.appendChild(wrapper);
             });
+
+            if (isMulti && !Session.reviewing && (Session.quizMode !== 'tutor' || ans === null)) {
+                const submitWrap = document.createElement('div');
+                submitWrap.className = 'multi-submit-wrapper';
+                submitWrap.innerHTML = `
+                    <button id="btn-submit-multi" class="btn-submit-multi" onclick="submitMultiAnswer()">
+                        <i class="ri-checkbox-multiple-line"></i> تأكيد الإجابة (Submit Answer)
+                    </button>
+                `;
+                box.appendChild(submitWrap);
+            }
             if (Session.reviewing || (Session.quizMode === 'tutor' && ans !== null)) {
                 showVotePercentages(q.q, q.o.length, Session.index);
             }
@@ -10674,7 +11012,7 @@
             const noteBtn = document.getElementById('btn-note');
             noteBtn.classList.toggle('active', !!AppState.notes[q.q]); noteBtn.querySelector('i').className = AppState.notes[q.q] ? 'ri-file-text-fill' : 'ri-file-text-line';
 
-            if (Session.quizMode === 'tutor' && Session.settings.time > 0 && !Session.reviewing) startQuestionTimer();
+            if (Session.quizMode === 'tutor' && Session.settings.time > 0 && !Session.reviewing && !window.pharmaExamTimer && Session.module !== 'pharma & community' && Session.module !== 'Pharmacology Practical') startQuestionTimer();
             loadCurrentDrawing();
 
             if (Session.index + 1 < Session.queue.length) {
@@ -10951,6 +11289,161 @@
             }
         }
 
+        function toggleMultiOption(i, btn, q) {
+            if (Session.reviewing) return;
+            if (Session.quizMode === 'tutor' && Session.answers[Session.index] !== null) return;
+
+            window._tempMultiSelections = window._tempMultiSelections || [];
+            const idxInArr = window._tempMultiSelections.indexOf(i);
+            const icon = btn.querySelector('.opt-checkbox-icon');
+
+            if (idxInArr > -1) {
+                window._tempMultiSelections.splice(idxInArr, 1);
+                btn.classList.remove('multi-selected');
+                btn.classList.remove('exam-selected');
+                if (icon) icon.className = 'ri-checkbox-blank-line opt-checkbox-icon';
+            } else {
+                window._tempMultiSelections.push(i);
+                btn.classList.add('multi-selected');
+                if (Session.quizMode === 'exam') btn.classList.add('exam-selected');
+                if (icon) icon.className = 'ri-checkbox-fill opt-checkbox-icon';
+            }
+
+            if (Session.quizMode === 'exam') {
+                Session.answers[Session.index] = [...window._tempMultiSelections].sort((a, b) => a - b);
+            }
+        }
+        window.toggleMultiOption = toggleMultiOption;
+
+        function submitMultiAnswer() {
+            const q = Session.queue[Session.index];
+            if (!q || !Array.isArray(q.a)) return;
+
+            const selected = (window._tempMultiSelections || []).sort((a, b) => a - b);
+            if (selected.length === 0) {
+                if (window.showToast) window.showToast("يرجى اختيار إجابة واحدة على الأقل قبل التأكيد", "error");
+                else alert("Please select at least one option.");
+                return;
+            }
+
+            handleMultiAnswer(selected, q);
+        }
+        window.submitMultiAnswer = submitMultiAnswer;
+
+        function handleMultiAnswer(selected, q) {
+            if (Session.reviewing) return;
+            if (Session.quizMode === 'tutor' && Session.answers[Session.index] !== null) return;
+
+            let qActiveDuration = 0;
+            if (window._questionStartTime) {
+                const rawElapsed = (Date.now() - window._questionStartTime - _accumulatedInactiveTime) / 1000;
+                qActiveDuration = Math.max(2, Math.min(rawElapsed, 180));
+                _accumulatedInactiveTime = 0;
+                window._questionStartTime = Date.now();
+            }
+            if (!AppState.stats.activeSolvingTime) AppState.stats.activeSolvingTime = 0;
+            if (!AppState.stats.activeSolvingQuestionsCount) AppState.stats.activeSolvingQuestionsCount = 0;
+            if (qActiveDuration > 0) {
+                AppState.stats.activeSolvingTime += qActiveDuration;
+                AppState.stats.activeSolvingQuestionsCount++;
+            }
+
+            clearInterval(Session.timer);
+            Session.answers[Session.index] = selected;
+
+            document.querySelectorAll('#options-box .option-btn').forEach(b => b.disabled = true);
+            document.querySelectorAll('#options-box .eliminate-btn').forEach(b => b.disabled = true);
+            const submitBtn = document.getElementById('btn-submit-multi');
+            if (submitBtn) submitBtn.remove();
+
+            const today = new Date().toISOString().split('T')[0];
+            if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
+            if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
+            if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
+
+            const currentYear = String(AppState.year || '1');
+            const yCorrectKey = `correct_y${currentYear}`;
+            const yWrongKey = `wrong_y${currentYear}`;
+
+            const isNonScoringMode = (Session.mode === 'mistakes' || Session.mode === 'favorites' || document.body.getAttribute('data-mode') === 'mistakes');
+            const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
+
+            const correctSorted = [...q.a].sort((a, b) => a - b);
+            const isCorrect = (selected.length === correctSorted.length && selected.every((v, i) => v === correctSorted[i]));
+
+            if (isCorrect) {
+                Session.score++;
+                AppState.progress[q.q] = 'correct';
+                if (isFirstAttempt) {
+                    AppState.stats.attemptedQuestions[q.q] = 'correct';
+                    AppState.stats.dailyProgress[today].correct = (AppState.stats.dailyProgress[today].correct || 0) + 1;
+                    AppState.stats.dailyProgress[today][yCorrectKey] = (AppState.stats.dailyProgress[today][yCorrectKey] || 0) + 1;
+                }
+            } else {
+                AppState.progress[q.q] = 'wrong';
+                if (isFirstAttempt) {
+                    AppState.stats.attemptedQuestions[q.q] = 'wrong';
+                    AppState.stats.dailyProgress[today].wrong = (AppState.stats.dailyProgress[today].wrong || 0) + 1;
+                    AppState.stats.dailyProgress[today][yWrongKey] = (AppState.stats.dailyProgress[today][yWrongKey] || 0) + 1;
+                }
+                if (typeof recordMistake === 'function') {
+                    recordMistake(q, Session.module, selected);
+                }
+            }
+
+            const batchFields = { progress: AppState.progress, stats: AppState.stats };
+            if (isFirstAttempt && Session.module && !Session.module.toLowerCase().trim().includes('terminology')) {
+                AppState.totalQuestionsSolved = (AppState.totalQuestionsSolved || 0) + 1;
+                localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
+                batchFields.totalQuestionsSolved = AppState.totalQuestionsSolved;
+            }
+
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+            if (window.saveBatchUserData) {
+                window.saveBatchUserData(batchFields);
+            }
+
+            const optBtns = document.querySelectorAll('#options-box .option-btn');
+            optBtns.forEach((btn, idx) => {
+                const icon = btn.querySelector('.opt-checkbox-icon');
+                const isSelected = selected.includes(idx);
+                const isCorrectOption = q.a.includes(idx);
+
+                if (isCorrectOption) {
+                    btn.classList.add('correct');
+                    if (icon) icon.className = 'ri-checkbox-circle-fill opt-checkbox-icon';
+                }
+                if (isSelected && !isCorrectOption) {
+                    btn.classList.add('wrong');
+                    if (icon) icon.className = 'ri-close-circle-fill opt-checkbox-icon';
+                }
+            });
+
+            if (isCorrect) {
+                if (window.confetti) {
+                    try { confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } }); } catch (e) { }
+                }
+            } else {
+                const box = document.getElementById('options-box');
+                if (box) {
+                    box.classList.add('shake');
+                    setTimeout(() => box.classList.remove('shake'), 800);
+                }
+            }
+
+            const aiBtn = document.getElementById('ai-explain-btn');
+            if (aiBtn) {
+                aiBtn.classList.remove('hidden');
+                aiBtn.style.display = 'inline-flex';
+            }
+
+            if (!Session.answers.includes(null) && !Session.reviewing) {
+                setTimeout(() => { finishQuiz(); }, 1000);
+            }
+        }
+        window.handleMultiAnswer = handleMultiAnswer;
+
         function hashQuestion(text) {
             let hash = 0;
             for (let i = 0; i < text.length; i++) {
@@ -11208,6 +11701,9 @@
         }
         function finishQuiz() {
             clearQuizCanvas();
+            if (typeof toggleOpenBookPdf === 'function') toggleOpenBookPdf(false);
+            if (typeof showOpenBookPdfTrigger === 'function') showOpenBookPdfTrigger(false);
+            if (window.pharmaExamTimer) { clearInterval(window.pharmaExamTimer); window.pharmaExamTimer = null; }
             try { clearInterval(globalStopwatch); } catch (e) { }
             try { clearInterval(Session.timer); } catch (e) { }
             try {
@@ -11247,7 +11743,9 @@
 
                     Session.queue.forEach((q, i) => {
                         const ans = Session.answers[i];
-                        const isCorrect = (ans !== null && ans === q.a);
+                        const isCorrect = Array.isArray(q.a)
+                            ? (Array.isArray(ans) && ans.length === q.a.length && [...ans].sort((a, b) => a - b).every((v, idx) => v === [...q.a].sort((a, b) => a - b)[idx]))
+                            : (ans !== null && ans === q.a);
                         const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
 
                         if (isCorrect) {
@@ -11507,6 +12005,9 @@
 
         function confirmExitQuiz() {
             closeExitModal();
+            if (typeof toggleOpenBookPdf === 'function') toggleOpenBookPdf(false);
+            if (typeof showOpenBookPdfTrigger === 'function') showOpenBookPdfTrigger(false);
+            if (window.pharmaExamTimer) { clearInterval(window.pharmaExamTimer); window.pharmaExamTimer = null; }
             saveSessionProgress();
             clearInterval(Session.timer);
             clearInterval(globalStopwatch);
@@ -11520,7 +12021,10 @@
                 const box = document.createElement('div'); box.className = 'q-box'; if (Session.index === i) box.classList.add('active');
                 if (Session.answers[i] !== null) {
                     if (Session.reviewing || Session.quizMode === 'tutor') {
-                        box.classList.add(Session.answers[i] === q.a ? 'correct' : 'wrong');
+                        const isCorrect = Array.isArray(q.a)
+                            ? (Array.isArray(Session.answers[i]) && Session.answers[i].length === q.a.length && [...Session.answers[i]].sort((a, b) => a - b).every((v, idx) => v === [...q.a].sort((a, b) => a - b)[idx]))
+                            : (Session.answers[i] === q.a);
+                        box.classList.add(isCorrect ? 'correct' : 'wrong');
                     } else if (Session.quizMode === 'exam') {
                         box.classList.add('answered');
                     }
@@ -13228,6 +13732,34 @@
         }
         window.loadMicroParaSimulationFromDB = loadMicroParaSimulationFromDB;
 
+        async function loadPharmacologyPracticalFromDB() {
+            try {
+                const cached = localStorage.getItem('medStorm_cache_pharma_practical');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        window.pharmacologyPracticalQuestions = parsed;
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_pharmacology_mcqs"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const qs = data.questionsList || data.questions || data.spots;
+                        if (Array.isArray(qs) && qs.length > 0) {
+                            window.pharmacologyPracticalQuestions = qs;
+                            try {
+                                localStorage.setItem('medStorm_cache_pharma_practical', JSON.stringify(qs));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load pharmacology practical from DB:", e);
+            }
+        }
+        window.loadPharmacologyPracticalFromDB = loadPharmacologyPracticalFromDB;
+
         async function renderFlashcards() {
             const container = document.getElementById('flashcards-container');
             if (!container) return;
@@ -13240,7 +13772,8 @@
             const p1 = typeof loadParasitologySpotsFromDB === 'function' ? loadParasitologySpotsFromDB() : Promise.resolve();
             const p2 = typeof loadMicrobiologySpotsFromDB === 'function' ? loadMicrobiologySpotsFromDB() : Promise.resolve();
             const p3 = typeof loadMicroParaSimulationFromDB === 'function' ? loadMicroParaSimulationFromDB() : Promise.resolve();
-            Promise.all([p1, p2, p3]).then(() => {
+            const p4 = typeof loadPharmacologyPracticalFromDB === 'function' ? loadPharmacologyPracticalFromDB() : Promise.resolve();
+            Promise.all([p1, p2, p3, p4]).then(() => {
                 const curY = String((AppState && AppState.year) || '1');
                 if (curY === '3') _fcShowCover();
             }).catch(() => { });
@@ -13272,7 +13805,6 @@
                 return;
             }
 
-            // Parasitology metrics
             const paraSpotsCount = (window.parasitologySpots && window.parasitologySpots.length) ? window.parasitologySpots.length : 58;
             let paraTotalQs = 230;
             if (window.parasitologySpots && Array.isArray(window.parasitologySpots)) {
@@ -13283,7 +13815,6 @@
                 if (counted > 0) paraTotalQs = counted;
             }
 
-            // Microbiology metrics
             const microSpotsCount = (window.microbiologySpots && window.microbiologySpots.length) ? window.microbiologySpots.length : 111;
             let microTotalQs = 403;
             if (window.microbiologySpots && Array.isArray(window.microbiologySpots)) {
@@ -13294,7 +13825,6 @@
                 if (counted > 0) microTotalQs = counted;
             }
 
-            // Micro & Para Simulation metrics
             const simSpotsCount = (window.microParaSpots && window.microParaSpots.length) ? window.microParaSpots.length : 20;
             let simTotalQs = 40;
             if (window.microParaSpots && Array.isArray(window.microParaSpots)) {
@@ -13305,14 +13835,17 @@
                 if (counted > 0) simTotalQs = counted;
             }
 
+            const pharmaList = window.pharmacologyPracticalQuestions || [];
+            const pharmaQsCount = pharmaList.length || 5;
+
             container.innerHTML = `
                 <div style="text-align: center; margin-bottom: 2rem;">
                     <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.4rem;">🔬 3rd Year Practical Exams</h2>
                     <p style="color: var(--text-gray); font-size: 0.95rem; margin: 0;">Interactive spot-by-spot exams with question steps, answers, image zooming, and timed simulations.</p>
                 </div>
-                <div style="display: flex; justify-content: center; align-items: stretch; gap: 24px; flex-wrap: wrap; width: 100%; max-width: 1180px; margin: 0 auto; padding: 10px 0;">
+                <div style="display: flex; justify-content: center; align-items: stretch; gap: 24px; flex-wrap: wrap; width: 100%; max-width: 1480px; margin: 0 auto; padding: 10px 0;">
                     <!-- Parasitology Card -->
-                    <div class="fc-cover-wrap" style="width: 350px; position: relative; margin: 0;">
+                    <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
                         <button class="reset-btn" onclick="resetParaSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
 
                         <div class="fc-cover-deck" onclick="startPracticalSession('parasitology')">
@@ -13331,14 +13864,14 @@
                     </div>
 
                     <!-- Microbiology Card -->
-                    <div class="fc-cover-wrap" style="width: 350px; position: relative; margin: 0;">
+                    <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
                         <button class="reset-btn" onclick="resetMicroSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
 
                         <div class="fc-cover-deck" onclick="startPracticalSession('microbiology')">
                             <div class="fc-cover-shadow"></div>
                             <div class="fc-cover-shadow"></div>
-                            <div class="fc-cover-front" style="background: linear-gradient(145deg, #0e2a22 0%, #091a15 100%); border: 1.5px solid #10b981; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(16, 185, 129, 0.25);">
-                                <div class="fc-cover-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">${microSpotsCount} spots • ${microTotalQs} Qs</div>
+                            <div class="fc-cover-front" style="background: linear-gradient(145deg, #0e2a22 0%, #091a15 100%); border: 1.5px solid #10b981; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(168, 85, 247, 0.25);">
+                                <div class="fc-cover-badge" style="background: rgba(168, 85, 247, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">${microSpotsCount} spots • ${microTotalQs} Qs</div>
                                 <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🧫</div>
                                 <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🧫 Microbiology Practical</div>
                                 <div class="fc-cover-sub" style="color: #94a3b8;">Spot-by-Spot Interactive Practical</div>
@@ -13350,7 +13883,7 @@
                     </div>
 
                     <!-- Micro & Para Exam Simulation Card -->
-                    <div class="fc-cover-wrap" style="width: 350px; position: relative; margin: 0;">
+                    <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
                         <button class="reset-btn" onclick="resetSimSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
 
                         <div class="fc-cover-deck" onclick="startPracticalSession('simulation')">
@@ -13365,6 +13898,25 @@
                         </div>
                         <button class="fc-start-btn" onclick="startPracticalSession('simulation')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #a855f7, #7e22ce); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);">
                             <i class="ri-timer-flash-fill"></i> Start Exam Simulation (40m)
+                        </button>
+                    </div>
+
+                    <!-- Pharma & Community Practical MCQ Card -->
+                    <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                        <button class="reset-btn" onclick="resetPharmaPracticalProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+
+                        <div class="fc-cover-deck" onclick="startPharmaPracticalSession()">
+                            <div class="fc-cover-shadow"></div>
+                            <div class="fc-cover-shadow"></div>
+                            <div class="fc-cover-front" style="background: linear-gradient(145deg, #2b170c 0%, #150b06 100%); border: 1.5px solid #f59e0b; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(245, 158, 11, 0.25);">
+                                <div class="fc-cover-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">${pharmaQsCount} MCQs • 📖 Open Book PDF • ⏱️ 20m</div>
+                                <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">💊</div>
+                                <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.2rem; font-weight: 800;">💊 pharma & community</div>
+                                <div class="fc-cover-sub" style="color: #cbd5e1;">Timed Practical Exam • 20 Min Timer</div>
+                            </div>
+                        </div>
+                        <button class="fc-start-btn" onclick="startPharmaPracticalSession()" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);">
+                            <i class="ri-timer-flash-fill"></i> Start Exam Simulation (20m)
                         </button>
                     </div>
                 </div>
@@ -13408,6 +13960,191 @@
             _fcShowCover();
         }
         window.resetSimSpotsProgress = resetSimSpotsProgress;
+
+        function resetPharmaPracticalProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your pharma & community practical progress?")) return;
+            if (window.pharmaExamTimer) { clearInterval(window.pharmaExamTimer); window.pharmaExamTimer = null; }
+            const list = window.pharmacologyPracticalQuestions || [];
+            if (AppState && AppState.progress) {
+                list.forEach(q => {
+                    if (q && q.q) delete AppState.progress[q.q];
+                });
+                localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+                if (window.saveUserData) window.saveUserData('progress', AppState.progress);
+            }
+            if (window.showToast) window.showToast('pharma & community progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetPharmaPracticalProgress = resetPharmaPracticalProgress;
+
+        const GOOGLE_DRIVE_PDF_EMBED_URL = "https://drive.google.com/file/d/1NKrJQsyrfsqZhSQjhsg0ibXJ9fRP4E_b/preview";
+
+        function showOpenBookPdfTrigger(show) {
+            const btn = document.getElementById('open-book-btn');
+            const floatBtn = document.getElementById('open-book-floating-btn');
+            if (btn) btn.style.display = show ? 'inline-flex' : 'none';
+            if (floatBtn) floatBtn.style.display = show ? 'inline-flex' : 'none';
+        }
+        window.showOpenBookPdfTrigger = showOpenBookPdfTrigger;
+
+        function toggleOpenBookPdf(forceState) {
+            const panel = document.getElementById('open-book-panel');
+            const iframe = document.getElementById('open-book-iframe');
+            const floatBtn = document.getElementById('open-book-floating-btn');
+            if (!panel) return;
+
+            const willOpen = (typeof forceState === 'boolean') ? forceState : !panel.classList.contains('active');
+
+            if (willOpen) {
+                if (iframe && (!iframe.src || iframe.src === 'about:blank' || !iframe.src.includes('drive.google.com'))) {
+                    iframe.src = GOOGLE_DRIVE_PDF_EMBED_URL;
+                }
+                panel.style.display = 'flex';
+                panel.classList.add('active');
+                document.body.classList.add('open-book-active');
+                if (floatBtn) floatBtn.style.display = 'none';
+            } else {
+                panel.style.display = 'none';
+                panel.classList.remove('active');
+                document.body.classList.remove('open-book-active');
+                document.body.classList.remove('open-book-wide');
+                if (floatBtn && (Session.module === 'pharma & community' || Session.module === 'Pharmacology Practical')) {
+                    floatBtn.style.display = 'inline-flex';
+                }
+            }
+        }
+        window.toggleOpenBookPdf = toggleOpenBookPdf;
+
+        function toggleOpenBookSplit() {
+            const panel = document.getElementById('open-book-panel');
+            if (panel) {
+                panel.classList.toggle('wide');
+                document.body.classList.toggle('open-book-wide');
+                const isWide = panel.classList.contains('wide');
+                const icon = panel.querySelector('.open-book-ctrl-btn i.ri-aspect-ratio-line, .open-book-ctrl-btn i.ri-fullscreen-line, .open-book-ctrl-btn i.ri-fullscreen-exit-line');
+                if (icon) icon.className = isWide ? 'ri-fullscreen-exit-line' : 'ri-aspect-ratio-line';
+            }
+        }
+        window.toggleOpenBookSplit = toggleOpenBookSplit;
+
+        let pharmaExamTimer = null;
+        function startPharmaExamTimer() {
+            if (window.pharmaExamTimer) {
+                clearInterval(window.pharmaExamTimer);
+                window.pharmaExamTimer = null;
+            }
+            const pill = document.getElementById('main-quiz-timer');
+            const timerTextEl = document.getElementById('timer-text');
+            if (pill) {
+                pill.classList.remove('hidden', 'warning');
+            }
+
+            function updateDisplay() {
+                if (Session.reviewing) {
+                    if (window.pharmaExamTimer) {
+                        clearInterval(window.pharmaExamTimer);
+                        window.pharmaExamTimer = null;
+                    }
+                    return;
+                }
+                const elapsed = Math.floor((Date.now() - (Session.pharmaStartTime || Date.now())) / 1000);
+                const duration = Session.pharmaDurationSec || 1200;
+                const rem = Math.max(0, duration - elapsed);
+                Session.examTimeLeft = rem;
+
+                const m = Math.floor(rem / 60).toString().padStart(2, '0');
+                const s = (rem % 60).toString().padStart(2, '0');
+                if (timerTextEl) timerTextEl.innerText = `${m}:${s}`;
+
+                if (rem <= 120 && rem > 0) {
+                    if (pill) pill.classList.add('warning');
+                } else if (pill && rem > 120) {
+                    pill.classList.remove('warning');
+                }
+
+                if (rem <= 0) {
+                    clearInterval(window.pharmaExamTimer);
+                    window.pharmaExamTimer = null;
+                    if (typeof showToast === 'function') {
+                        showToast("⏰ انتهى وقت امتحان pharma & community (20 دقيقة)!", "warning");
+                    } else {
+                        alert("⏰ Time is up! (20 Minutes Simulation Finished)");
+                    }
+                    finishQuiz();
+                }
+            }
+
+            updateDisplay();
+            window.pharmaExamTimer = setInterval(updateDisplay, 1000);
+        }
+        window.startPharmaExamTimer = startPharmaExamTimer;
+
+        function startPharmaPracticalSession(forceRestart = false) {
+            const questions = window.pharmacologyPracticalQuestions;
+            if (!questions || !Array.isArray(questions) || questions.length === 0) {
+                const s = document.createElement('script');
+                s.src = 'practical_pharmacology.js';
+                s.onload = () => {
+                    if (window.pharmacologyPracticalQuestions && window.pharmacologyPracticalQuestions.length > 0) {
+                        startPharmaPracticalSession(forceRestart);
+                    } else {
+                        alert("Could not load Pharmacology questions data.");
+                    }
+                };
+                s.onerror = () => alert("Failed to load practical_pharmacology.js file.");
+                document.head.appendChild(s);
+                return;
+            }
+
+            if (typeof DB !== 'undefined') {
+                DB['pharma & community'] = questions;
+                DB['Pharmacology Practical'] = questions;
+            }
+
+            Session.module = 'pharma & community';
+            Session.mode = 'normal';
+            Session.quizMode = 'tutor';
+            Session.selectedSubtopics = [];
+            Session.pharmaStartTime = Date.now();
+            Session.pharmaDurationSec = 1200;
+            Session.examDurationSec = 1200;
+            Session.examTimeLeft = 1200;
+            Session.settings = { count: questions.length, time: 1200 };
+            Session.queue = [...questions];
+            Session.answers = new Array(questions.length).fill(null);
+            Session.questionTimes = new Array(questions.length).fill(0);
+            Session.index = 0;
+            Session.score = 0;
+            Session.reviewing = false;
+            Session.drawings = {};
+            Session.highlights = {};
+
+            document.body.removeAttribute('data-mode');
+            document.body.classList.add('focus-mode');
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
+
+            const quizView = document.getElementById('view-quiz');
+            if (quizView) {
+                quizView.style.display = 'flex';
+                quizView.classList.add('active');
+            }
+
+            startSession();
+            startPharmaExamTimer();
+            loadQuestion();
+
+            if (typeof showOpenBookPdfTrigger === 'function') {
+                showOpenBookPdfTrigger(true);
+            }
+            if (typeof toggleOpenBookPdf === 'function') {
+                toggleOpenBookPdf(true);
+            }
+        }
+        window.startPharmaPracticalSession = startPharmaPracticalSession;
 
         let simTimerInterval = null;
         function _startSimulationTimer() {
