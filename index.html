@@ -6506,6 +6506,11 @@
                             style="padding:8px 16px; border-radius:8px; border:1px solid transparent; background:transparent; color:var(--text-gray); font-weight:600; font-size:0.86rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
                             <i class="ri-edit-2-line"></i> Edit Questions
                         </button>
+                        <button onclick="openDownloadQuestionsModal()" id="admin-btn-download-questions"
+                            style="padding:8px 16px; border-radius:8px; border:1px solid rgba(16, 185, 129, 0.35); background:rgba(16, 185, 129, 0.08); color:var(--accent); font-weight:700; font-size:0.86rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s cubic-bezier(0.16, 1, 0.3, 1);"
+                            title="Download module questions as .js file directly from Firebase">
+                            <i class="ri-download-cloud-2-line"></i> Download Questions JS
+                        </button>
                         <button onclick="adminTab('modules')" id="admin-tab-modules"
                             style="padding:8px 16px; border-radius:8px; border:1px solid transparent; background:transparent; color:var(--text-gray); font-weight:600; font-size:0.86rem; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
                             <i class="ri-lock-2-line"></i> Lock Modules
@@ -6776,6 +6781,12 @@
                         <input type="text" id="editor-search-input" placeholder="Search question text..."
                             oninput="handleEditorSearch()"
                             style="flex: 1; min-width: 220px; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-darker); color: white; font-size: 15px; outline: none;">
+                        <button type="button" onclick="openDownloadQuestionsModal(document.getElementById('editor-module-select').value)"
+                            id="editor-btn-download-js"
+                            style="padding: 10px 16px; border-radius: 8px; border: 1px solid var(--accent); background: rgba(16, 185, 129, 0.15); color: var(--accent); font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; transition: all 0.2s;"
+                            title="Download questions for selected module as .js file">
+                            <i class="ri-download-2-line"></i> Download Questions JS
+                        </button>
                     </div>
 
                     <div id="editor-results-container"></div>
@@ -6828,6 +6839,69 @@
             <input type="text" id="ai-input" class="ai-input" placeholder="Ask ASA..."
                 onkeydown="if(event.key === 'Enter') sendAIMessage()">
             <button class="ai-send-btn" onclick="sendAIMessage()"><i class="ri-send-plane-fill"></i></button>
+        </div>
+    </div>
+
+    <!-- Modal: Download Questions JS -->
+    <div class="modal-overlay" id="download-questions-modal" style="z-index: 100000;">
+        <div class="modal" style="max-width: 540px; border-radius: 16px;">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--accent); display:flex; align-items:center; gap:8px;">
+                    <i class="ri-download-cloud-2-line"></i> Download Questions JS
+                </h3>
+                <button class="modal-close" onclick="closeDownloadQuestionsModal()"><i class="ri-close-line"></i></button>
+            </div>
+            <p style="color: var(--text-gray); font-size: 0.88rem; margin-bottom: 16px; line-height: 1.5;">
+                Select a module to fetch the freshest questions directly from Firebase and download them formatted as a clean <code>.js</code> file (matching the <code>foundclu.js</code> format with latest updates & edits).
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
+                        Select Module:
+                    </label>
+                    <select id="download-modal-module-select" onchange="onDownloadModalModuleChanged()"
+                        style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-darker); color: var(--text-light); font-size: 0.92rem; outline: none;">
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
+                            JS Variable Name:
+                        </label>
+                        <input type="text" id="download-modal-var-name" placeholder="e.g. FOUNDATION_QUESTIONS"
+                            style="width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-darker); color: var(--text-light); font-size: 0.88rem; outline: none; font-family: monospace;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
+                            Download File Name:
+                        </label>
+                        <input type="text" id="download-modal-file-name" placeholder="e.g. found.js"
+                            style="width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-darker); color: var(--text-light); font-size: 0.88rem; outline: none; font-family: monospace;">
+                    </div>
+                </div>
+
+                <div id="download-modal-status-box"
+                    style="padding: 11px 14px; border-radius: 8px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); font-size: 0.84rem; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+                    <i class="ri-information-line" style="font-size: 1.15rem; flex-shrink: 0;"></i>
+                    <span id="download-modal-status-text">Ready to fetch freshest version directly from Firebase.</span>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                    <button class="quiz-btn btn-secondary" style="flex: 1; min-width: 90px;" onclick="closeDownloadQuestionsModal()">
+                        Cancel
+                    </button>
+                    <button class="quiz-btn btn-secondary" style="flex: 1.2; min-width: 120px;" id="btn-copy-download-js" onclick="copyDownloadedJSCode()" title="Copy JS code to clipboard">
+                        <i class="ri-file-copy-line"></i> Copy JS Code
+                    </button>
+                    <button class="quiz-btn" id="btn-execute-download-js"
+                        style="flex: 1.8; min-width: 180px; background: var(--accent); color: white; border: none; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"
+                        onclick="executeDownloadQuestionsJS()">
+                        <i class="ri-download-2-line"></i> Download .js File
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -17989,6 +18063,8 @@
                 throw new Error("Firestore connection not available.");
             }
 
+            editorAllData[docId]._sessionEdited = true;
+
             const cleanData = JSON.parse(JSON.stringify(editorAllData[docId]));
             delete cleanData._isChunked;
             delete cleanData._chunkCount;
@@ -18733,6 +18809,377 @@
             }
         });
 
+        // =========================================================================
+        // MODULE QUESTIONS JS DOWNLOAD SYSTEM
+        // =========================================================================
+
+        const MODULE_DOWNLOAD_CONFIG = [
+            // Standard Academic Modules
+            { id: 'foundation_questions', name: 'Foundation', varName: 'FOUNDATION_QUESTIONS', fileName: 'found.js', category: 'Academic' },
+            { id: 'terminology_questions', name: 'Terminology', varName: 'TERMINOLOGY_QUESTIONS', fileName: 'terminology.js', category: 'Academic' },
+            { id: 'blood_questions', name: 'Blood', varName: 'BLOOD_QUESTIONS', fileName: 'blood.js', category: 'Academic' },
+            { id: 'msk_questions', name: 'MSK', varName: 'MSK_QUESTIONS', fileName: 'MSK.js', category: 'Academic' },
+            { id: 'cvs_questions', name: 'CVS', varName: 'CVS_QUESTIONS', fileName: 'cvs.js', category: 'Academic' },
+            { id: 'cns_questions', name: 'CNS', varName: 'CNS_QUESTIONS', fileName: 'cnscl.js', category: 'Academic' },
+            { id: 'endocrine_questions', name: 'Endocrine', varName: 'ENDOCRINE_QUESTIONS', fileName: 'endocrine.js', category: 'Academic' },
+            { id: 'genital_questions', name: 'Genital', varName: 'GENITAL_QUESTIONS', fileName: 'genital.js', category: 'Academic' },
+            { id: 'urinary_questions', name: 'Urinary', varName: 'URINARY_QUESTIONS', fileName: 'urinary.js', category: 'Academic' },
+            { id: 'egu_questions', name: 'EGU', varName: 'EGU_QUESTIONS', fileName: 'egu.js', category: 'Academic' },
+            { id: 'git_questions', name: 'GIT', varName: 'GIT_QUESTIONS', fileName: 'gitcl.js', category: 'Academic' },
+            { id: 'communication_step_1_questions', name: 'Communication Step 1', varName: 'communication_step_1', fileName: 'communication_step_1.js', category: 'Skills' },
+            { id: 'communication_step_2_questions', name: 'Communication Step 2', varName: 'communication_step_2', fileName: 'communication_step_2.js', category: 'Skills' },
+            { id: 'professionalism_questions', name: 'Professionalism', varName: 'professionalism', fileName: 'professionalism.js', category: 'Skills' },
+            // Concepts & Past Exams
+            { id: 'c1_pharmacology_questions', name: 'Concept 1 Pharmacology', varName: 'CONCEPT_1_PHARMACOLOGY', fileName: 'c1_pharma.js', category: 'Concepts' },
+            { id: 'c1_pathology_questions', name: 'Concept 1 Pathology', varName: 'CONCEPT_1_PATHOLOGY', fileName: 'c1_pathology.js', category: 'Concepts' },
+            { id: 'c1_genetics_questions', name: 'Concept 1 Genetics', varName: 'CONCEPT_1_GENETICS', fileName: 'c1_genetics.js', category: 'Concepts' },
+            { id: 'c1_past_exams_questions', name: 'Concept 1 Past Exams', varName: 'CONCEPT_1_PAST_EXAMS', fileName: 'c1_past_exams.js', category: 'Concepts' },
+            { id: 'c2_pharmacology_questions', name: 'Concept 2 Pharmacology', varName: 'C2_Pharma', fileName: 'c2_pharma.js', category: 'Concepts' },
+            { id: 'c2_pathology_questions', name: 'Concept 2 Pathology', varName: 'C2_Pathology', fileName: 'c2_pathology.js', category: 'Concepts' },
+            { id: 'c2_past_exams_questions', name: 'Concept 2 Past Exams', varName: 'C2_PREVIOUS_EXAMS', fileName: 'c2_past_exams.js', category: 'Concepts' },
+            // ID Modules (id1_pha matches foundclu.js exactly)
+            { id: 'id1_questions', name: 'ID1', varName: 'id1_pha', fileName: 'foundclu.js', category: 'ID Modules' },
+            { id: 'id2_questions', name: 'ID2', varName: 'ID2_QUESTIONS', fileName: 'id2.js', category: 'ID Modules' },
+            // Practical Modules
+            { id: 'practical_parasitology_spots', name: 'Practical Parasitology Spots', varName: 'PARASITOLOGY_SPOTS', fileName: 'practical_parasitology.js', category: 'Practical' },
+            { id: 'practical_microbiology_spots', name: 'Practical Microbiology Spots', varName: 'MICROBIOLOGY_SPOTS', fileName: 'practical_microbiology.js', category: 'Practical' },
+            { id: 'practical_micro_para_simulation', name: 'Practical Simulation', varName: 'SIMULATION_QUESTIONS', fileName: 'practical_simulation.js', category: 'Practical' },
+            { id: 'practical_pharmacology_mcqs', name: 'Practical Pharmacology MCQs', varName: 'PHARMACOLOGY_PRACTICAL', fileName: 'practical_pharmacology.js', category: 'Practical' }
+        ];
+
+        function populateDownloadModuleSelect() {
+            const select = document.getElementById('download-modal-module-select');
+            if (!select) return;
+            if (select.children.length > 0) return;
+
+            const categories = {};
+            MODULE_DOWNLOAD_CONFIG.forEach(cfg => {
+                const cat = cfg.category || 'Other';
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push(cfg);
+            });
+
+            let html = '';
+            for (const catName in categories) {
+                html += `<optgroup label="── ${catName} ──">`;
+                categories[catName].forEach(cfg => {
+                    html += `<option value="${cfg.id}">${cfg.name} (${cfg.fileName})</option>`;
+                });
+                html += `</optgroup>`;
+            }
+            select.innerHTML = html;
+        }
+
+        window.openDownloadQuestionsModal = function (preselectedDocId) {
+            const modal = document.getElementById('download-questions-modal');
+            if (!modal) return;
+
+            populateDownloadModuleSelect();
+
+            const select = document.getElementById('download-modal-module-select');
+            if (select) {
+                if (preselectedDocId && preselectedDocId !== 'all') {
+                    select.value = preselectedDocId;
+                } else if (!select.value) {
+                    select.value = 'foundation_questions';
+                }
+            }
+
+            onDownloadModalModuleChanged();
+            modal.classList.add('active');
+        };
+
+        window.closeDownloadQuestionsModal = function () {
+            const modal = document.getElementById('download-questions-modal');
+            if (modal) modal.classList.remove('active');
+        };
+
+        window.onDownloadModalModuleChanged = function () {
+            const select = document.getElementById('download-modal-module-select');
+            if (!select) return;
+            const docId = select.value;
+            const cfg = MODULE_DOWNLOAD_CONFIG.find(m => m.id === docId) || {};
+
+            const varInput = document.getElementById('download-modal-var-name');
+            const fileInput = document.getElementById('download-modal-file-name');
+            const statusText = document.getElementById('download-modal-status-text');
+
+            if (varInput) {
+                varInput.value = cfg.varName || (docId.toUpperCase().replace('_QUESTIONS', '') + '_QUESTIONS');
+            }
+            if (fileInput) {
+                fileInput.value = cfg.fileName || (docId.replace('_questions', '') + '.js');
+            }
+            if (statusText) {
+                statusText.innerHTML = `Ready to fetch <b>${cfg.name || docId}</b> directly from Firebase (with latest edits & chunks).`;
+            }
+        };
+
+        function formatQuestionSingleLine(q) {
+            const parts = [];
+            parts.push(`q: ${JSON.stringify(q.q || '')}`);
+            const opts = Array.isArray(q.o) ? '[' + q.o.map(opt => JSON.stringify(opt)).join(', ') + ']' : '[]';
+            parts.push(`o: ${opts}`);
+            parts.push(`a: ${typeof q.a === 'number' ? q.a : 0}`);
+            if (q.img) parts.push(`img: ${JSON.stringify(q.img)}`);
+            if (q.exp) parts.push(`exp: ${JSON.stringify(q.exp)}`);
+            for (const k of Object.keys(q)) {
+                if (!['q', 'o', 'a', 'img', 'exp'].includes(k)) {
+                    parts.push(`${JSON.stringify(k)}: ${JSON.stringify(q[k])}`);
+                }
+            }
+            return `{ ${parts.join(', ')} }`;
+        }
+
+        function isQuestionObject(item) {
+            return item && typeof item === 'object' && ('q' in item);
+        }
+
+        function serializeDataToJS(val, indentLevel = 0) {
+            const indent = '    '.repeat(indentLevel);
+            const childIndent = '    '.repeat(indentLevel + 1);
+
+            if (Array.isArray(val)) {
+                if (val.length === 0) return '[]';
+                if (val.some(isQuestionObject)) {
+                    const lines = val.map(q => childIndent + (isQuestionObject(q) ? formatQuestionSingleLine(q) : serializeDataToJS(q, indentLevel + 1)) + ',');
+                    return '[\n' + lines.join('\n') + '\n' + indent + ']';
+                }
+                const lines = val.map(item => childIndent + serializeDataToJS(item, indentLevel + 1) + ',');
+                return '[\n' + lines.join('\n') + '\n' + indent + ']';
+            }
+
+            if (val && typeof val === 'object') {
+                const keys = Object.keys(val).filter(k => k !== '_isChunked' && k !== '_chunkCount');
+                if (keys.length === 0) return '{}';
+                const lines = keys.map(k => {
+                    const formattedKey = JSON.stringify(k);
+                    const formattedVal = serializeDataToJS(val[k], indentLevel + 1);
+                    return childIndent + formattedKey + ': ' + formattedVal + ',';
+                });
+                return '{\n' + lines.join('\n') + '\n' + indent + '}';
+            }
+
+            return JSON.stringify(val);
+        }
+
+        function formatQuestionsFile(varName, data) {
+            const cleanData = JSON.parse(JSON.stringify(data));
+            delete cleanData._isChunked;
+            delete cleanData._chunkCount;
+            return `const ${varName} = ${serializeDataToJS(cleanData, 0)};\n`;
+        }
+
+        function countTotalQuestions(obj) {
+            let count = 0;
+            if (!obj) return 0;
+            if (Array.isArray(obj)) {
+                obj.forEach(item => {
+                    if (item && typeof item === 'object' && 'q' in item) count++;
+                    else if (typeof item === 'object') count += countTotalQuestions(item);
+                });
+                return count;
+            }
+            if (typeof obj === 'object') {
+                for (const k in obj) {
+                    count += countTotalQuestions(obj[k]);
+                }
+            }
+            return count;
+        }
+
+        async function fetchLatestModuleQuestionsForDownload(docId) {
+            if (!window.db || !window.doc || !window.getDoc) {
+                throw new Error("Firestore connection is not available.");
+            }
+
+            // Always fetch fresh directly from Firestore content/<docId>
+            const docRef = window.doc(window.db, "content", docId);
+            const snap = await window.getDoc(docRef);
+
+            let data = null;
+            let wasChunked = false;
+
+            if (snap && snap.exists()) {
+                data = snap.data();
+                if (data && data._isChunked && data._chunkCount > 1) {
+                    wasChunked = true;
+                    const chunkPromises = [];
+                    for (let i = 1; i < data._chunkCount; i++) {
+                        chunkPromises.push(window.getDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)));
+                    }
+                    const chunkSnaps = await Promise.all(chunkPromises);
+                    let mergedData = data;
+                    delete mergedData._isChunked;
+                    delete mergedData._chunkCount;
+                    chunkSnaps.forEach(cSnap => {
+                        if (cSnap.exists()) {
+                            const cData = cSnap.data();
+                            delete cData._isChunked;
+                            delete cData._chunkCount;
+                            mergedData = mergeChunkObjects(mergedData, cData);
+                        }
+                    });
+                    data = mergedData;
+                }
+            } else {
+                if (editorAllData[docId]) {
+                    data = editorAllData[docId];
+                } else {
+                    const modDocMap = window.MODULE_KEY_TO_DOC_ID || {};
+                    let modKey = Object.keys(modDocMap).find(k => modDocMap[k] === docId);
+                    if (modKey && window.DB && window.DB[modKey]) {
+                        data = window.DB[modKey];
+                    }
+                }
+            }
+
+            if (!data) {
+                throw new Error(`Could not find questions for "${docId}" in Firebase or local database.`);
+            }
+
+            // If the user made edits in the current active editor session, incorporate them so latest edits are guaranteed
+            if (editorAllData[docId] && editorAllData[docId]._sessionEdited) {
+                data = editorAllData[docId];
+            } else {
+                editorAllData[docId] = data;
+            }
+
+            let finalQuestions = data.questionsList ? data.questionsList : data;
+            delete finalQuestions._isChunked;
+            delete finalQuestions._chunkCount;
+
+            return { data: finalQuestions, wasChunked };
+        }
+
+        function triggerFileDownload(filename, textContent) {
+            const blob = new Blob([textContent], { type: 'application/javascript;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 150);
+        }
+
+        window.executeDownloadQuestionsJS = async function () {
+            const select = document.getElementById('download-modal-module-select');
+            const varInput = document.getElementById('download-modal-var-name');
+            const fileInput = document.getElementById('download-modal-file-name');
+            const btn = document.getElementById('btn-execute-download-js');
+            const statusText = document.getElementById('download-modal-status-text');
+
+            const docId = select ? select.value : 'foundation_questions';
+            const varName = (varInput ? varInput.value.trim() : '') || 'QUESTIONS_DATA';
+            const fileName = (fileInput ? fileInput.value.trim() : '') || (docId + '.js');
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block;"></i> Fetching from Firebase...';
+            }
+            if (statusText) {
+                statusText.innerHTML = '<i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block;"></i> Fetching latest questions & assembling chunks...';
+            }
+
+            try {
+                const result = await fetchLatestModuleQuestionsForDownload(docId);
+                const questionsData = result.data;
+                const totalCount = countTotalQuestions(questionsData);
+
+                if (statusText) {
+                    statusText.innerHTML = '<i class="ri-code-line"></i> Formatting JavaScript file...';
+                }
+
+                const jsContent = formatQuestionsFile(varName, questionsData);
+
+                triggerFileDownload(fileName, jsContent);
+
+                if (statusText) {
+                    statusText.innerHTML = `✅ Successfully downloaded <b>${fileName}</b> (${totalCount} questions)!`;
+                }
+                if (window.showToast) {
+                    window.showToast(`Downloaded ${fileName} (${totalCount} questions) successfully! 🎉`, 'success');
+                }
+
+                if (btn) {
+                    btn.innerHTML = '<i class="ri-check-line"></i> Downloaded!';
+                    btn.style.background = '#10B981';
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="ri-download-2-line"></i> Download .js File';
+                        btn.disabled = false;
+                        btn.style.background = '';
+                    }, 2500);
+                }
+            } catch (err) {
+                console.error('Download questions error:', err);
+                if (statusText) {
+                    statusText.innerHTML = `<span style="color:#ef4444;">❌ Error: ${err.message || err}</span>`;
+                }
+                alert('Failed to download questions from Firebase: ' + (err.message || err));
+                if (btn) {
+                    btn.innerHTML = '<i class="ri-download-2-line"></i> Download .js File';
+                    btn.disabled = false;
+                }
+            }
+        };
+
+        window.copyDownloadedJSCode = async function () {
+            const select = document.getElementById('download-modal-module-select');
+            const varInput = document.getElementById('download-modal-var-name');
+            const btn = document.getElementById('btn-copy-download-js');
+            const statusText = document.getElementById('download-modal-status-text');
+
+            const docId = select ? select.value : 'foundation_questions';
+            const varName = (varInput ? varInput.value.trim() : '') || 'QUESTIONS_DATA';
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="ri-loader-4-line" style="animation:spin 1s linear infinite; display:inline-block;"></i> Fetching...';
+            }
+
+            try {
+                const result = await fetchLatestModuleQuestionsForDownload(docId);
+                const questionsData = result.data;
+                const totalCount = countTotalQuestions(questionsData);
+                const jsContent = formatQuestionsFile(varName, questionsData);
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(jsContent);
+                } else {
+                    fallbackCopyText(jsContent);
+                }
+
+                if (statusText) {
+                    statusText.innerHTML = `📋 Copied <b>${varName}</b> (${totalCount} questions) to clipboard!`;
+                }
+                if (window.showToast) {
+                    window.showToast(`Copied ${varName} JS code to clipboard! 📋`, 'success');
+                }
+
+                if (btn) {
+                    btn.innerHTML = '<i class="ri-check-line"></i> Copied!';
+                    btn.style.borderColor = '#10B981';
+                    btn.style.color = '#10B981';
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="ri-file-copy-line"></i> Copy JS Code';
+                        btn.disabled = false;
+                        btn.style.borderColor = '';
+                        btn.style.color = '';
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('Copy questions error:', err);
+                alert('Failed to copy questions: ' + (err.message || err));
+                if (btn) {
+                    btn.innerHTML = '<i class="ri-file-copy-line"></i> Copy JS Code';
+                    btn.disabled = false;
+                }
+            }
+        };
     </script>
     <div class="modal-overlay" id="reset-modal" style="z-index: 100000;">
         <div class="modal"
