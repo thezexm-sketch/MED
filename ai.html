@@ -1984,65 +1984,112 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
+            z-index: 25;
+            position: relative;
         }
 
         .voice-gender-toggle {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             color: #cbd5e1;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 10px;
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 4px;
-            transition: 0.2s;
+            min-height: 44px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: all 0.2s ease;
         }
 
-        .voice-gender-toggle:hover {
-            background: rgba(56, 189, 248, 0.15);
-            border-color: rgba(56, 189, 248, 0.4);
+        .voice-gender-toggle:hover,
+        .voice-gender-toggle:active {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: rgba(56, 189, 248, 0.5);
             color: #38bdf8;
         }
 
         .voice-minimize-btn {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 1.3rem;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: #cbd5e1;
+            font-size: 1.55rem;
             cursor: pointer;
-            padding: 4px;
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 30;
         }
 
-        .voice-minimize-btn:hover {
+        .voice-minimize-btn i {
+            pointer-events: none;
+            line-height: 1;
+            font-weight: 900;
+            display: block;
+        }
+
+        .voice-minimize-btn:hover,
+        .voice-minimize-btn:active {
             color: #38bdf8;
-            background: rgba(56, 189, 248, 0.12);
+            background: rgba(56, 189, 248, 0.25);
+            border-color: rgba(56, 189, 248, 0.6);
+            transform: scale(1.06);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
         }
 
         .voice-close-btn {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 1.4rem;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: #cbd5e1;
+            font-size: 1.55rem;
             cursor: pointer;
-            padding: 4px;
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 30;
         }
 
-        .voice-close-btn:hover {
+        .voice-close-btn i {
+            pointer-events: none;
+            line-height: 1;
+            display: block;
+        }
+
+        .voice-close-btn:hover,
+        .voice-close-btn:active {
             color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.6);
+            transform: scale(1.06);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
         }
 
         /* Player Control Bar */
@@ -2748,8 +2795,70 @@
             align-items: center;
             justify-content: center;
             user-select: none;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
             animation: bubbleEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @media (max-width: 1024px) {
+            .voice-floating-bubble {
+                bottom: calc(95px + env(safe-area-inset-bottom, 0px));
+                right: calc(18px + env(safe-area-inset-right, 0px));
+                width: 64px;
+                height: 64px;
+            }
+            .voice-tutor-profile {
+                min-width: 0;
+                flex: 1;
+                overflow: hidden;
+            }
+            .voice-tutor-titles {
+                min-width: 0;
+                flex: 1;
+                overflow: hidden;
+            }
+            .voice-tutor-titles h3 {
+                font-size: 0.96rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .voice-tutor-titles p {
+                max-width: 220px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .voice-tutor-header {
+                padding: 12px 14px;
+                gap: 8px;
+            }
+            .voice-tutor-titles p {
+                display: none;
+            }
+            .voice-gender-toggle span {
+                font-size: 0.74rem;
+            }
+            .voice-player-bar {
+                padding: 10px 14px;
+                overflow: hidden;
+            }
+            .voice-player-top {
+                gap: 8px;
+            }
+            .voice-visualizer {
+                display: none;
+            }
+            .voice-floating-bubble {
+                bottom: calc(105px + env(safe-area-inset-bottom, 0px));
+                right: calc(14px + env(safe-area-inset-right, 0px));
+                width: 60px;
+                height: 60px;
+            }
         }
 
         .voice-floating-bubble:hover {
@@ -8048,15 +8157,20 @@
                     </div>
                 </div>
                 <div class="voice-header-actions">
-                    <button class="voice-gender-toggle" id="voice-gender-toggle" onclick="toggleVoiceGender()"
-                        title="تبديل صوت الدكتور / الدكتورة">
+                    <button type="button" class="voice-gender-toggle" id="voice-gender-toggle" onclick="toggleVoiceGender()"
+                        title="تبديل صوت الدكتور / الدكتورة" aria-label="تبديل صوت الدكتور / الدكتورة">
                         <span id="voice-gender-label">👨‍⚕️ دكتور</span>
                     </button>
-                    <button class="voice-minimize-btn" onclick="minimizeAIVoiceTutorModal()"
-                        title="تصغير إلى ودجت عائم (Minimize)">
+                    <button type="button" class="voice-minimize-btn" id="voice-minimize-btn"
+                        onclick="minimizeAIVoiceTutorModal(event)"
+                        title="تصغير إلى ودجت عائم (Minimize)"
+                        aria-label="تصغير إلى ودجت عائم">
                         <i class="ri-subtract-line"></i>
                     </button>
-                    <button class="voice-close-btn" onclick="closeAIVoiceTutorModal()" title="إغلاق">
+                    <button type="button" class="voice-close-btn" id="voice-close-btn"
+                        onclick="closeAIVoiceTutorModal(event)"
+                        title="إغلاق"
+                        aria-label="إغلاق">
                         <i class="ri-close-line"></i>
                     </button>
                 </div>
@@ -8156,6 +8270,21 @@
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- Floating AI Voice Tutor Widget (When Minimized) -->
+    <div id="voice-floating-bubble" class="voice-floating-bubble state-generating" onclick="restoreAIVoiceTutorModal()" style="display: none;" title="دكتور AI الصوتي - اضغط للفتح">
+        <div class="bubble-glow-ring"></div>
+        <div class="bubble-inner">
+            <div class="bubble-icon-row">
+                <span class="bubble-icon">🩺</span>
+                <div class="bubble-mini-waves" id="bubble-mini-waves">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+            <div class="bubble-status-label" id="bubble-status-text">12%</div>
+        </div>
+        <div class="bubble-pill-badge" id="bubble-badge">جاري التحميل 12%</div>
     </div>
 
     <div class="modal-overlay" id="download-questions-modal" style="z-index: 100000;">
@@ -8634,7 +8763,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence, addDoc, increment, writeBatch, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocFromServer, getDocsFromServer, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence, addDoc, increment, writeBatch, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        window.getDocFromServer = getDocFromServer;
+        window.getDocsFromServer = getDocsFromServer;
         window.firestoreIncrement = increment;
         window.writeBatch = writeBatch;
         window.onSnapshot = onSnapshot;
@@ -8933,7 +9064,7 @@
             if (immediate) {
                 syncTimer = setTimeout(window.flushSync, 50);
             } else {
-                syncTimer = setTimeout(window.flushSync, 15000);
+                syncTimer = setTimeout(window.flushSync, 2000);
             }
         };
 
@@ -8947,7 +9078,7 @@
             if (immediate) {
                 syncTimer = setTimeout(window.flushSync, 50);
             } else {
-                syncTimer = setTimeout(window.flushSync, 15000);
+                syncTimer = setTimeout(window.flushSync, 2000);
             }
         };
 
@@ -8960,22 +9091,59 @@
             }
         });
 
+        // Flush immediately when app is hidden or closed (mobile tab switch, screen lock)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && window.flushSync) {
+                window.flushSync();
+            }
+        });
+        window.addEventListener('pagehide', () => {
+            if (window.flushSync) window.flushSync();
+        });
+
         async function loadUserData(user) {
             try {
                 const userRef = doc(db, "users", user.uid);
 
+                // Always fetch the freshest user state from server first (bypassing local cache)
+                let snap = null;
+                try {
+                    snap = await getDocFromServer(userRef);
+                } catch (serverErr) {
+                    console.warn("Could not fetch user data directly from server (offline?), reading cache:", serverErr);
+                    try { snap = await getDoc(userRef); } catch (e) { snap = null; }
+                }
+
+                const serverData = (snap && snap.exists()) ? snap.data() : {};
+
+                // If unsaved local changes exist, merge with server rather than blindly overwriting server data
                 if (localStorage.getItem('medStorm_unsaved_changes') === 'true') {
-                    console.log("Unsaved local changes detected. Recovering and syncing...");
+                    console.log("Unsaved local changes detected. Merging and syncing with server...");
                     const recoveredData = {};
                     try {
                         const prog = localStorage.getItem('medStormProgress');
-                        if (prog !== null) recoveredData.progress = JSON.parse(prog);
+                        if (prog !== null) {
+                            const localProg = JSON.parse(prog) || {};
+                            recoveredData.progress = Object.assign({}, serverData.progress || {}, localProg);
+                        }
                         const favs = localStorage.getItem('medStormFavorites');
-                        if (favs !== null) recoveredData.favorites = JSON.parse(favs);
+                        if (favs !== null) {
+                            const localFavs = JSON.parse(favs) || {};
+                            recoveredData.favorites = Object.assign({}, serverData.favorites || {}, localFavs);
+                        }
                         const nts = localStorage.getItem('medStormNotes');
-                        if (nts !== null) recoveredData.notes = JSON.parse(nts);
+                        if (nts !== null) {
+                            const localNotes = JSON.parse(nts) || {};
+                            recoveredData.notes = Object.assign({}, serverData.notes || {}, localNotes);
+                        }
                         const sts = localStorage.getItem('medStormStats');
-                        if (sts !== null) recoveredData.stats = JSON.parse(sts);
+                        if (sts !== null) {
+                            const localStats = JSON.parse(sts) || {};
+                            const sAtt = (serverData.stats && serverData.stats.attemptedQuestions) || {};
+                            const lAtt = localStats.attemptedQuestions || {};
+                            recoveredData.stats = Object.assign({}, serverData.stats || {}, localStats);
+                            recoveredData.stats.attemptedQuestions = Object.assign({}, sAtt, lAtt);
+                        }
                         const hist = localStorage.getItem('medStormExamsHistory');
                         if (hist !== null) recoveredData.examsHistory = JSON.parse(hist);
                         const pend = localStorage.getItem('medStormPendingExams');
@@ -8986,14 +9154,15 @@
                                 await updateDoc(userRef, recoveredData);
                             } catch (e) {
                                 if (e.code === 'not-found') {
-                                    await setDoc(userRef, recoveredData);
+                                    await setDoc(userRef, recoveredData, { merge: true });
                                 }
                             }
                             localStorage.removeItem('medStorm_unsaved_changes');
-                            console.log("Recovery sync complete!");
+                            console.log("Cross-device recovery merge complete!");
+                            Object.assign(serverData, recoveredData);
                         }
                     } catch (e) {
-                        console.error("Recovery failed:", e);
+                        console.error("Recovery merge failed:", e);
                     }
                 }
 
@@ -9009,9 +9178,8 @@
                     }
                 }
 
-                const snap = await getDoc(userRef);
-                if (snap.exists()) {
-                    const data = snap.data();
+                if (serverData && Object.keys(serverData).length > 0) {
+                    const data = serverData;
 
                     if (data.progress !== undefined) { AppState.progress = data.progress || {}; localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); }
                     if (data.favorites !== undefined) { AppState.favorites = data.favorites || {}; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); }
@@ -9154,36 +9322,82 @@
                         window.activeUserListener = null;
                     }
                     window.activeUserListener = window.onSnapshot(userRef, (docSnap) => {
-                        if (docSnap.exists()) {
-                            const snapData = docSnap.data();
+                        if (!docSnap.exists()) return;
+                        // Avoid echoing local pending writes that are already in memory
+                        if (docSnap.metadata && docSnap.metadata.hasPendingWrites) return;
 
-                            let changed = false;
-                            if (snapData.isTerm1Active !== undefined && AppState.isTerm1Active !== !!snapData.isTerm1Active) {
-                                AppState.isTerm1Active = !!snapData.isTerm1Active;
-                                localStorage.setItem('medStorm_isTerm1Active', AppState.isTerm1Active);
-                                changed = true;
-                            }
-                            if (snapData.isTerm2Active !== undefined && AppState.isTerm2Active !== !!snapData.isTerm2Active) {
-                                AppState.isTerm2Active = !!snapData.isTerm2Active;
-                                localStorage.setItem('medStorm_isTerm2Active', AppState.isTerm2Active);
-                                changed = true;
-                            }
-                            if (snapData.totalQuestionsSolved !== undefined && AppState.totalQuestionsSolved !== (snapData.totalQuestionsSolved || 0)) {
-                                AppState.totalQuestionsSolved = snapData.totalQuestionsSolved || 0;
-                                localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
-                                changed = true;
-                            }
-                            if (snapData.year !== undefined && AppState.year !== snapData.year) {
-                                AppState.year = snapData.year || '1';
-                                localStorage.setItem('medStorm_year', AppState.year);
-                                if (window.syncProfileYearUI) window.syncProfileYearUI(AppState.year);
-                                changed = true;
-                            }
-                            if (changed) {
-                                if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
-                                if (!document.body.classList.contains('focus-mode') && typeof window.renderDashboard === 'function') {
-                                    window.renderDashboard();
+                        const snapData = docSnap.data();
+                        let changed = false;
+
+                        // Real-time synchronization for solved questions / progress from other devices
+                        if (snapData.progress && JSON.stringify(snapData.progress) !== JSON.stringify(AppState.progress)) {
+                            AppState.progress = Object.assign({}, AppState.progress, snapData.progress);
+                            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+                            changed = true;
+                        }
+                        if (snapData.stats && JSON.stringify(snapData.stats) !== JSON.stringify(AppState.stats)) {
+                            AppState.stats = snapData.stats;
+                            if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
+                            if (AppState.progress) {
+                                for (const [k, v] of Object.entries(AppState.progress)) {
+                                    if (!AppState.stats.attemptedQuestions[k]) AppState.stats.attemptedQuestions[k] = v;
                                 }
+                            }
+                            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+                            changed = true;
+                        }
+                        if (snapData.favorites && JSON.stringify(snapData.favorites) !== JSON.stringify(AppState.favorites)) {
+                            AppState.favorites = snapData.favorites;
+                            localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
+                            changed = true;
+                        }
+                        if (snapData.notes && JSON.stringify(snapData.notes) !== JSON.stringify(AppState.notes)) {
+                            AppState.notes = snapData.notes;
+                            localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
+                            changed = true;
+                        }
+                        if (snapData.examsHistory && JSON.stringify(snapData.examsHistory) !== JSON.stringify(AppState.examsHistory)) {
+                            AppState.examsHistory = snapData.examsHistory;
+                            localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory));
+                            changed = true;
+                        }
+                        if (snapData.pendingExams && JSON.stringify(snapData.pendingExams) !== JSON.stringify(AppState.pendingExams)) {
+                            AppState.pendingExams = snapData.pendingExams;
+                            localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams));
+                            changed = true;
+                        }
+                        if (snapData.points !== undefined && AppState.points !== snapData.points) {
+                            AppState.points = snapData.points;
+                            localStorage.setItem('medStormPoints', AppState.points);
+                            changed = true;
+                        }
+                        if (snapData.isTerm1Active !== undefined && AppState.isTerm1Active !== !!snapData.isTerm1Active) {
+                            AppState.isTerm1Active = !!snapData.isTerm1Active;
+                            localStorage.setItem('medStorm_isTerm1Active', AppState.isTerm1Active);
+                            changed = true;
+                        }
+                        if (snapData.isTerm2Active !== undefined && AppState.isTerm2Active !== !!snapData.isTerm2Active) {
+                            AppState.isTerm2Active = !!snapData.isTerm2Active;
+                            localStorage.setItem('medStorm_isTerm2Active', AppState.isTerm2Active);
+                            changed = true;
+                        }
+                        if (snapData.totalQuestionsSolved !== undefined && AppState.totalQuestionsSolved !== (snapData.totalQuestionsSolved || 0)) {
+                            AppState.totalQuestionsSolved = snapData.totalQuestionsSolved || 0;
+                            localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
+                            changed = true;
+                        }
+                        if (snapData.year !== undefined && AppState.year !== snapData.year) {
+                            AppState.year = snapData.year || '1';
+                            localStorage.setItem('medStorm_year', AppState.year);
+                            if (window.syncProfileYearUI) window.syncProfileYearUI(AppState.year);
+                            changed = true;
+                        }
+
+                        if (changed) {
+                            console.log("[Cross-Device Sync] Live data update received from another device!");
+                            if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
+                            if (!document.body.classList.contains('focus-mode') && typeof window.renderDashboard === 'function') {
+                                window.renderDashboard();
                             }
                         }
                     });
@@ -10285,15 +10499,20 @@
             'ID2': { total: 0 }
         };
 
-        async function checkServerMetadata() {
-            if (serverMetadata) {
-                window.serverMetadata = serverMetadata;
-                return serverMetadata;
-            }
+        async function checkServerMetadata(forceServer = true) {
             try {
-                const metaPromise = getDoc(doc(db, "content", "metadata"));
-                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 3000));
-                const metaSnap = await Promise.race([metaPromise, timeoutPromise]);
+                let metaSnap;
+                if (forceServer) {
+                    try {
+                        const metaPromise = getDocFromServer(doc(db, "content", "metadata"));
+                        const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 4000));
+                        metaSnap = await Promise.race([metaPromise, timeoutPromise]);
+                    } catch (e) {
+                        metaSnap = await getDoc(doc(db, "content", "metadata"));
+                    }
+                } else {
+                    metaSnap = await getDoc(doc(db, "content", "metadata"));
+                }
                 if (metaSnap && metaSnap.exists()) {
                     serverMetadata = metaSnap.data();
                     window.serverMetadata = serverMetadata;
@@ -10307,15 +10526,29 @@
             await loadAllCachedModulesFromIDB();
             if (typeof window.renderDashboard === "function") window.renderDashboard();
 
-            checkServerMetadata().then(async (meta) => {
-                if (!meta) return;
+            // Real-time metadata listener: instant update when admin edits any question
+            if (window.activeMetadataListener) {
+                window.activeMetadataListener();
+                window.activeMetadataListener = null;
+            }
+            window.activeMetadataListener = onSnapshot(doc(db, "content", "metadata"), async (metaSnap) => {
+                if (!metaSnap.exists()) return;
+                const meta = metaSnap.data();
+                serverMetadata = meta;
+                window.serverMetadata = meta;
+
                 try {
                     const cachedMeta = await getIDBCache('__modules_metadata__');
                     const serverUpdatedAt = meta['modules_metadata_updatedAt'];
                     if (!cachedMeta || !cachedMeta.updatedAt || (serverUpdatedAt && serverUpdatedAt > cachedMeta.updatedAt)) {
-                        const metaSnap = await getDoc(doc(db, "content", "modules_metadata"));
-                        if (metaSnap.exists()) {
-                            const rMeta = metaSnap.data();
+                        let rMetaSnap;
+                        try {
+                            rMetaSnap = await getDocFromServer(doc(db, "content", "modules_metadata"));
+                        } catch (e) {
+                            rMetaSnap = await getDoc(doc(db, "content", "modules_metadata"));
+                        }
+                        if (rMetaSnap && rMetaSnap.exists()) {
+                            const rMeta = rMetaSnap.data();
                             window.DB_METADATA = Object.assign({}, window.DB_METADATA, rMeta);
                             await setIDBCache('__modules_metadata__', { data: rMeta, updatedAt: serverUpdatedAt || Date.now() });
                             if (typeof window.renderDashboard === "function") window.renderDashboard();
@@ -10326,12 +10559,27 @@
                         const docId = MODULE_KEY_TO_DOC_ID[modKey];
                         const serverDocUpdatedAt = meta[docId + '_updatedAt'];
                         const cachedDocUpdatedAt = cachedModuleUpdatedAts[modKey] || 0;
-                        if (cachedDocUpdatedAt && serverDocUpdatedAt && serverDocUpdatedAt > cachedDocUpdatedAt) {
-                            console.log(`[Auto-Sync] Update detected on server for ${modKey}. Syncing in background...`);
+                        if (serverDocUpdatedAt && (!cachedDocUpdatedAt || serverDocUpdatedAt !== cachedDocUpdatedAt)) {
+                            console.log(`[Admin Update Detected] Live update for module ${modKey}! Syncing questions from server...`);
                             await fetchSingleModuleFromDB(modKey, true);
                         }
                     }
                 } catch (e) { }
+            }, (err) => {
+                console.warn("Live metadata listener failed, falling back to one-time check:", err);
+            });
+
+            // Initial check directly from server
+            checkServerMetadata(true).then(async (meta) => {
+                if (!meta) return;
+                for (const modKey in MODULE_KEY_TO_DOC_ID) {
+                    const docId = MODULE_KEY_TO_DOC_ID[modKey];
+                    const serverDocUpdatedAt = meta[docId + '_updatedAt'];
+                    const cachedDocUpdatedAt = cachedModuleUpdatedAts[modKey] || 0;
+                    if (serverDocUpdatedAt && (!cachedDocUpdatedAt || serverDocUpdatedAt !== cachedDocUpdatedAt)) {
+                        await fetchSingleModuleFromDB(modKey, true);
+                    }
+                }
             }).catch(() => { });
         }
 
@@ -10418,6 +10666,8 @@
 
             if (!forceRefresh) {
                 if (DB[moduleKey] && Object.keys(DB[moduleKey]).length > 0) {
+                    // Check in background if server has newer updatedAt
+                    checkForModuleUpdateInBackground(mod, cachedModuleUpdatedAts[moduleKey] || 0);
                     return DB[moduleKey];
                 }
 
@@ -10432,29 +10682,38 @@
                 const fallbackData = getGlobalFallbackModule(moduleKey);
                 if (fallbackData && Object.keys(fallbackData).length > 0) {
                     DB[moduleKey] = fallbackData;
-                    cachedModuleUpdatedAts[moduleKey] = Date.now();
-                    setIDBCache(moduleKey, { data: fallbackData, updatedAt: Date.now() });
-                    checkForModuleUpdateInBackground(mod, 0);
+                    cachedModuleUpdatedAts[moduleKey] = 1;
+                    setIDBCache(moduleKey, { data: fallbackData, updatedAt: 1 });
+                    checkForModuleUpdateInBackground(mod, 1);
                     return DB[moduleKey];
                 }
             }
 
             try {
                 const fetchPromise = (async () => {
-                    const docSnap = await getDoc(doc(db, "content", mod.id));
-                    if (docSnap.exists()) {
+                    let docSnap;
+                    try {
+                        docSnap = await getDocFromServer(doc(db, "content", mod.id));
+                    } catch (netErr) {
+                        console.warn(`getDocFromServer failed for ${mod.id}, fallback to getDoc:`, netErr);
+                        docSnap = await getDoc(doc(db, "content", mod.id));
+                    }
+                    if (docSnap && docSnap.exists()) {
                         let data = docSnap.data();
                         if (data && data._isChunked && data._chunkCount > 1) {
                             const chunkPromises = [];
                             for (let i = 1; i < data._chunkCount; i++) {
-                                chunkPromises.push(getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)));
+                                chunkPromises.push(
+                                    getDocFromServer(doc(db, "content", `${mod.id}_chunk_${i}`))
+                                        .catch(() => getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)))
+                                );
                             }
                             const chunkSnaps = await Promise.all(chunkPromises);
                             let mergedData = data;
                             delete mergedData._isChunked;
                             delete mergedData._chunkCount;
                             chunkSnaps.forEach(cSnap => {
-                                if (cSnap.exists()) {
+                                if (cSnap && cSnap.exists()) {
                                     const cData = cSnap.data();
                                     delete cData._isChunked;
                                     delete cData._chunkCount;
@@ -10469,12 +10728,17 @@
                         cachedModuleUpdatedAts[moduleKey] = syncTime;
                         await setIDBCache(moduleKey, { data: finalData, updatedAt: syncTime });
                         if (typeof window.renderDashboard === "function") window.renderDashboard();
+                        if (typeof Session !== 'undefined' && Session && Session.queue && Session.module === moduleKey) {
+                            if (typeof loadQuestion === 'function') {
+                                loadQuestion();
+                            }
+                        }
                         return finalData;
                     }
                     return null;
                 })();
 
-                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Network timeout")), 6000));
+                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Network timeout")), 8000));
                 await Promise.race([fetchPromise, timeoutPromise]);
             } catch (e) {
                 console.warn(`Fetch module ${moduleKey} network timeout or error:`, e);
@@ -10487,9 +10751,10 @@
 
         async function checkForModuleUpdateInBackground(mod, cachedUpdatedAt) {
             try {
-                if (!serverMetadata) await checkServerMetadata();
+                if (!serverMetadata) await checkServerMetadata(true);
                 const serverUpdatedAt = serverMetadata ? serverMetadata[mod.id + '_updatedAt'] : null;
-                if (serverUpdatedAt && (!cachedUpdatedAt || serverUpdatedAt > cachedUpdatedAt)) {
+                if (serverUpdatedAt && (!cachedUpdatedAt || serverUpdatedAt !== cachedUpdatedAt)) {
+                    console.log(`[Background Check] Update found on server for ${mod.key}. Pulling new questions...`);
                     await fetchSingleModuleFromDB(mod.key, true);
                 }
             } catch (e) { }
@@ -16605,6 +16870,10 @@
         let voiceProgressTimer = null;
         let currentVoiceProgress = 0;
 
+        // Session history of questions with voice explanations
+        let voiceTutorHistory = [];
+        let voiceHistoryIndex = -1;
+
         // In-memory fast cache
         let voiceTutorMemoryCache = {};
 
@@ -16700,24 +16969,386 @@
             }
         }
 
+        // Setup instant touch and click handler for voice modal header buttons
+        function bindInstantVoiceTap(elem, callback) {
+            if (!elem || elem._instantTapBound) return;
+            elem._instantTapBound = true;
+
+            let startX = 0, startY = 0, startTime = 0;
+            let isTracking = false;
+            let lastTrigger = 0;
+
+            const trigger = (e) => {
+                const now = Date.now();
+                if (now - lastTrigger < 320) return;
+                lastTrigger = now;
+                if (e && e.stopPropagation) e.stopPropagation();
+                if (e && e.cancelable && e.type !== 'pointerdown') e.preventDefault();
+                callback(e);
+            };
+
+            // 1. Pointer Events (Modern Tablets, iPadOS 13+, Android Touch, Stylus/Pen, PC Mouse)
+            elem.addEventListener('pointerdown', (e) => {
+                isTracking = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startTime = Date.now();
+            }, { passive: true });
+
+            elem.addEventListener('pointerup', (e) => {
+                if (!isTracking) return;
+                isTracking = false;
+                const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+                const elapsed = Date.now() - startTime;
+                if (dist < 15 && elapsed < 600) {
+                    trigger(e);
+                }
+            }, { passive: false });
+
+            elem.addEventListener('pointercancel', () => {
+                isTracking = false;
+            }, { passive: true });
+
+            // 2. Touch Events Fallback (Older WebKit / Safari mobile)
+            elem.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length === 1) {
+                    isTracking = true;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    startTime = Date.now();
+                }
+            }, { passive: true });
+
+            elem.addEventListener('touchend', (e) => {
+                if (!isTracking) return;
+                isTracking = false;
+                const touch = e.changedTouches ? e.changedTouches[0] : null;
+                if (touch) {
+                    const dist = Math.hypot(touch.clientX - startX, touch.clientY - startY);
+                    const elapsed = Date.now() - startTime;
+                    if (dist < 15 && elapsed < 600) {
+                        trigger(e);
+                    }
+                }
+            }, { passive: false });
+
+            // 3. Click Fallback
+            elem.addEventListener('click', (e) => {
+                trigger(e);
+            });
+        }
+
+        function setupVoiceHeaderButtons() {
+            const minBtn = document.getElementById('voice-minimize-btn');
+            const closeBtn = document.getElementById('voice-close-btn');
+            const genderBtn = document.getElementById('voice-gender-toggle');
+
+            if (minBtn) bindInstantVoiceTap(minBtn, (e) => minimizeAIVoiceTutorModal(e));
+            if (closeBtn) bindInstantVoiceTap(closeBtn, (e) => closeAIVoiceTutorModal(e));
+            if (genderBtn) bindInstantVoiceTap(genderBtn, (e) => toggleVoiceGender(e));
+        }
+        window.setupVoiceHeaderButtons = setupVoiceHeaderButtons;
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupVoiceHeaderButtons);
+        } else {
+            setupVoiceHeaderButtons();
+        }
+
         function openAIVoiceTutorModal() {
             const modal = document.getElementById('ai-voice-tutor-modal');
+            const bubble = document.getElementById('voice-floating-bubble');
+            if (bubble) bubble.style.display = 'none';
             if (modal) {
                 modal.style.display = 'flex';
                 modal.classList.add('active');
             }
+            setupVoiceHeaderButtons();
         }
         window.openAIVoiceTutorModal = openAIVoiceTutorModal;
 
-        function closeAIVoiceTutorModal() {
+        function closeAIVoiceTutorModal(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
             const modal = document.getElementById('ai-voice-tutor-modal');
+            const bubble = document.getElementById('voice-floating-bubble');
             if (modal) {
                 modal.style.display = 'none';
                 modal.classList.remove('active');
             }
+            if (bubble) {
+                bubble.style.display = 'none';
+            }
             stopVoiceAudio();
         }
         window.closeAIVoiceTutorModal = closeAIVoiceTutorModal;
+
+        let _lastMinimizeTime = 0;
+        function minimizeAIVoiceTutorModal(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const now = Date.now();
+            if (now - _lastMinimizeTime < 250) return;
+            _lastMinimizeTime = now;
+
+            const modal = document.getElementById('ai-voice-tutor-modal');
+            const bubble = document.getElementById('voice-floating-bubble');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('active');
+            }
+            if (bubble) {
+                bubble.style.display = 'flex';
+                updateVoiceBubbleVisual();
+                initDraggableVoiceBubble();
+            }
+        }
+        window.minimizeAIVoiceTutorModal = minimizeAIVoiceTutorModal;
+
+        let _lastRestoreTime = 0;
+        function restoreAIVoiceTutorModal(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const now = Date.now();
+            if (now - _lastRestoreTime < 250) return;
+            _lastRestoreTime = now;
+
+            if (window._voiceBubbleJustDragged) {
+                window._voiceBubbleJustDragged = false;
+                return;
+            }
+            openAIVoiceTutorModal();
+        }
+        window.restoreAIVoiceTutorModal = restoreAIVoiceTutorModal;
+
+        // Initialize Draggable Floating Bubble with Tablet & Touch Support
+        function initDraggableVoiceBubble() {
+            const bubble = document.getElementById('voice-floating-bubble');
+            if (!bubble || bubble._dragInitialized) return;
+            bubble._dragInitialized = true;
+
+            let isDragging = false;
+            let startX = 0, startY = 0, origX = 0, origY = 0;
+            let moved = false;
+            let touchStartTime = 0;
+
+            const getPoint = (e) => {
+                if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                if (e.changedTouches && e.changedTouches.length > 0) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                return { x: e.clientX, y: e.clientY };
+            };
+
+            const onPointerDown = (e) => {
+                const pt = getPoint(e);
+                if (pt.x === undefined || pt.y === undefined) return;
+
+                isDragging = true;
+                moved = false;
+                touchStartTime = Date.now();
+                startX = pt.x;
+                startY = pt.y;
+                const rect = bubble.getBoundingClientRect();
+                origX = rect.left;
+                origY = rect.top;
+
+                if (window.PointerEvent && e.pointerId !== undefined && bubble.setPointerCapture) {
+                    try { bubble.setPointerCapture(e.pointerId); } catch (err) { }
+                }
+
+                document.addEventListener('mousemove', onPointerMove, { passive: false });
+                document.addEventListener('mouseup', onPointerUp);
+                document.addEventListener('touchmove', onPointerMove, { passive: false });
+                document.addEventListener('touchend', onPointerUp);
+                document.addEventListener('touchcancel', onPointerUp);
+                if (window.PointerEvent) {
+                    document.addEventListener('pointermove', onPointerMove, { passive: false });
+                    document.addEventListener('pointerup', onPointerUp);
+                    document.addEventListener('pointercancel', onPointerUp);
+                }
+            };
+
+            const onPointerMove = (e) => {
+                if (!isDragging) return;
+                const pt = getPoint(e);
+                if (pt.x === undefined || pt.y === undefined) return;
+
+                const dx = pt.x - startX;
+                const dy = pt.y - startY;
+
+                // 12px movement threshold ensures tablet finger tap doesn't trigger drag
+                if (!moved && (Math.abs(dx) > 12 || Math.abs(dy) > 12)) {
+                    moved = true;
+                }
+
+                if (moved) {
+                    if (e.cancelable) e.preventDefault();
+                    bubble.style.position = 'fixed';
+                    bubble.style.right = 'auto';
+                    bubble.style.bottom = 'auto';
+                    const maxLeft = Math.max(10, window.innerWidth - bubble.offsetWidth - 10);
+                    const maxTop = Math.max(10, window.innerHeight - bubble.offsetHeight - 10);
+                    const newLeft = Math.max(10, Math.min(maxLeft, origX + dx));
+                    const newTop = Math.max(10, Math.min(maxTop, origY + dy));
+                    bubble.style.left = `${newLeft}px`;
+                    bubble.style.top = `${newTop}px`;
+                }
+            };
+
+            const onPointerUp = (e) => {
+                if (isDragging) {
+                    const elapsed = Date.now() - touchStartTime;
+                    if (moved) {
+                        window._voiceBubbleJustDragged = true;
+                        setTimeout(() => { window._voiceBubbleJustDragged = false; }, 300);
+                    } else if (elapsed < 500) {
+                        // Genuine tap/touch on tablet or mobile screen: restore modal immediately!
+                        restoreAIVoiceTutorModal(e);
+                    }
+                }
+                isDragging = false;
+                document.removeEventListener('mousemove', onPointerMove);
+                document.removeEventListener('mouseup', onPointerUp);
+                document.removeEventListener('touchmove', onPointerMove);
+                document.removeEventListener('touchend', onPointerUp);
+                document.removeEventListener('touchcancel', onPointerUp);
+                if (window.PointerEvent) {
+                    document.removeEventListener('pointermove', onPointerMove);
+                    document.removeEventListener('pointerup', onPointerUp);
+                    document.removeEventListener('pointercancel', onPointerUp);
+                }
+            };
+
+            if (window.PointerEvent) {
+                bubble.addEventListener('pointerdown', onPointerDown);
+            } else {
+                bubble.addEventListener('mousedown', onPointerDown);
+                bubble.addEventListener('touchstart', onPointerDown, { passive: false });
+            }
+        }
+
+        // Live visual synchronization of the circular bubble
+        function updateVoiceBubbleVisual(customPct = null) {
+            const bubble = document.getElementById('voice-floating-bubble');
+            if (!bubble) return;
+
+            const statusTextEl = document.getElementById('bubble-status-text');
+            const badgeEl = document.getElementById('bubble-badge');
+            const isPlaying = (currentVoiceAudio && !currentVoiceAudio.paused) || (window.speechSynthesis && window.speechSynthesis.speaking && !window.speechSynthesis.paused);
+
+            if (isVoiceGenerating) {
+                const pctVal = Math.min(99, Math.max(1, Math.round(customPct !== null ? customPct : (currentVoiceProgress || 12))));
+                bubble.classList.remove('state-finished');
+                bubble.classList.add('state-generating');
+                bubble.classList.remove('state-playing');
+                if (statusTextEl) statusTextEl.innerText = `${pctVal}%`;
+                if (badgeEl) badgeEl.innerText = `جاري التحميل ${pctVal}%`;
+            } else {
+                bubble.classList.remove('state-generating');
+                bubble.classList.add('state-finished');
+                if (isPlaying) {
+                    bubble.classList.add('state-playing');
+                } else {
+                    bubble.classList.remove('state-playing');
+                }
+                if (statusTextEl) statusTextEl.innerText = isPlaying ? 'شغال 🔊' : 'جاهز ✓';
+                if (badgeEl) badgeEl.innerText = isPlaying ? '🎙️ شغال الآن...' : 'جاهز ✓ انقر للفتح';
+            }
+        }
+        window.updateVoiceBubbleVisual = updateVoiceBubbleVisual;
+
+        // --- Voice Tutor Questions History Navigation ---
+        function recordVoiceHistory(entry) {
+            if (!entry || !entry.qText) return;
+            const existingIdx = voiceTutorHistory.findIndex(h => h.qText.trim() === entry.qText.trim());
+            if (existingIdx !== -1) {
+                voiceTutorHistory[existingIdx] = { ...voiceTutorHistory[existingIdx], ...entry };
+                voiceHistoryIndex = existingIdx;
+            } else {
+                voiceTutorHistory.push(entry);
+                voiceHistoryIndex = voiceTutorHistory.length - 1;
+            }
+            updateVoiceHistoryUI();
+        }
+
+        function updateVoiceHistoryUI() {
+            const navBar = document.getElementById('voice-history-nav');
+            if (!navBar) return;
+
+            const total = voiceTutorHistory.length;
+            if (total <= 1) {
+                navBar.style.display = 'none';
+                return;
+            }
+
+            navBar.style.display = 'flex';
+            const counterEl = document.getElementById('voice-nav-counter');
+            const prevBtn = document.getElementById('voice-nav-prev');
+            const nextBtn = document.getElementById('voice-nav-next');
+
+            if (counterEl) {
+                counterEl.innerHTML = `سؤال <b>${voiceHistoryIndex + 1}</b> من <b>${total}</b>`;
+            }
+
+            if (prevBtn) {
+                prevBtn.disabled = (voiceHistoryIndex <= 0);
+            }
+            if (nextBtn) {
+                nextBtn.disabled = (voiceHistoryIndex >= total - 1);
+            }
+        }
+        window.updateVoiceHistoryUI = updateVoiceHistoryUI;
+
+        function navigateVoiceHistory(dir) {
+            if (voiceTutorHistory.length <= 1) return;
+            const targetIdx = voiceHistoryIndex + dir;
+            if (targetIdx < 0 || targetIdx >= voiceTutorHistory.length) return;
+
+            stopVoiceAudio();
+            voiceHistoryIndex = targetIdx;
+            const item = voiceTutorHistory[voiceHistoryIndex];
+            if (!item) return;
+
+            activeTutorContext = {
+                qText: item.qText,
+                options: item.options,
+                correct: item.correct,
+                userAns: item.userAns,
+                imgUrl: item.imgUrl
+            };
+
+            // Switch current question card
+            renderVoiceQuestionCard(item.qText, item.options, item.correct, item.userAns, item.imgUrl);
+
+            // Switch body explanation HTML
+            const bodyEl = document.getElementById('voice-tutor-body');
+            if (bodyEl && item.html) {
+                bodyEl.innerHTML = item.html;
+            }
+
+            // Update status text
+            const statusSub = document.getElementById('voice-status-sub');
+            if (statusSub) {
+                statusSub.innerText = item.audioUrl ? "🎙️ استمع الآن لشرح وكبسولة دكتور AI" : "🔊 شرح مسجل مسبقاً";
+            }
+
+            // Sync main exam view in background if question is in Session.queue
+            try {
+                if (typeof Session !== 'undefined' && Session && Session.queue) {
+                    const qInSessionIdx = Session.queue.findIndex(sq => sq.q && sq.q.trim() === item.qText.trim());
+                    if (qInSessionIdx !== -1 && typeof loadQuestion === 'function' && Session.index !== qInSessionIdx) {
+                        Session.index = qInSessionIdx;
+                        loadQuestion();
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not sync exam question with history:", e);
+            }
+
+            // Set up and play audio
+            if (item.audioUrl || item.rawText) {
+                setupAndPlayVoiceAudio(item.audioUrl, item.rawText);
+            }
+
+            updateVoiceHistoryUI();
+            updateVoiceBubbleVisual();
+        }
+        window.navigateVoiceHistory = navigateVoiceHistory;
 
         function stopVoiceAudio() {
             if (currentVoiceAudio) {
@@ -16770,6 +17401,7 @@
                 if (isPlaying) avatar.classList.add('speaking');
                 else avatar.classList.remove('speaking');
             }
+            updateVoiceBubbleVisual();
         }
 
         function setVisualizerPlaying(isPlaying) {
@@ -16834,6 +17466,7 @@
 
         // --- Real Progress Bar Tracker ---
         function renderVoiceProgress(activeStage, pct, subText, etaText) {
+            updateVoiceBubbleVisual(pct);
             const bodyEl = document.getElementById('voice-tutor-body');
             if (!bodyEl) return;
 
@@ -16930,6 +17563,7 @@
         function finishVoiceProgressBar() {
             clearInterval(voiceProgressTimer);
             setVoiceProgressStage(4, 100, "اكتمل التجهيز! جاري بدء الاستماع...", "جاهز!");
+            updateVoiceBubbleVisual(100);
         }
 
         function toggleVoiceQuestionCard() {
@@ -17151,7 +17785,16 @@
                 if (cached) {
                     bodyEl.innerHTML = cached.html;
                     if (statusSub) statusSub.innerText = "تم تحميل الشرح الصوتي من الذاكرة الفورية ⚡";
+                    recordVoiceHistory({
+                        qText, options, correct, userAns, imgUrl,
+                        html: cached.html,
+                        rawText: cached.rawText,
+                        audioUrl: cached.audioUrl,
+                        cacheKey
+                    });
+                    finishVoiceProgressBar();
                     setupAndPlayVoiceAudio(cached.audioUrl, cached.rawText);
+                    updateVoiceBubbleVisual(100);
                     return;
                 }
             }
@@ -17272,6 +17915,15 @@ ${correctDisplay}
                 // Format cards
                 const formattedHTML = formatTutorHTML(explanationText);
 
+                // Record in history for previous/next navigation
+                recordVoiceHistory({
+                    qText, options, correct, userAns, imgUrl,
+                    html: formattedHTML,
+                    rawText: cleanSpeechText,
+                    audioUrl: audioUrl,
+                    cacheKey
+                });
+
                 // Save to IndexedDB non-blocking persistent cache
                 await saveCachedVoiceTutor(cacheKey, {
                     html: formattedHTML,
@@ -17284,6 +17936,7 @@ ${correctDisplay}
                     bodyEl.innerHTML = formattedHTML;
                     if (statusSub) statusSub.innerText = audioUrl ? "🎙️ استمع الآن لشرح وكبسولة دكتور AI" : "🔊 يتم القراءة بالصوت المتاح في الجهاز";
                     setupAndPlayVoiceAudio(audioUrl, cleanSpeechText);
+                    updateVoiceBubbleVisual();
                 }, 300);
 
             } catch (err) {
@@ -17299,6 +17952,7 @@ ${correctDisplay}
             } finally {
                 isVoiceGenerating = false;
                 setVoiceButtonsLoading(false);
+                updateVoiceBubbleVisual();
             }
         };
 
@@ -20430,8 +21084,13 @@ ${correctDisplay}
             if (editorAllData[docId]) return true;
             try {
                 const docRef = window.doc(window.db, "content", docId);
-                const snap = await window.getDoc(docRef);
-                if (snap.exists()) {
+                let snap;
+                try {
+                    snap = await (window.getDocFromServer ? window.getDocFromServer(docRef) : window.getDoc(docRef));
+                } catch (e) {
+                    snap = await window.getDoc(docRef);
+                }
+                if (snap && snap.exists()) {
                     let data = snap.data();
                     let originalChunkCount = 1;
                     let wasChunked = false;
@@ -20441,7 +21100,11 @@ ${correctDisplay}
                         originalChunkCount = data._chunkCount;
                         const chunkPromises = [];
                         for (let i = 1; i < data._chunkCount; i++) {
-                            chunkPromises.push(window.getDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)));
+                            const cRef = window.doc(window.db, "content", `${docId}_chunk_${i}`);
+                            chunkPromises.push(
+                                (window.getDocFromServer ? window.getDocFromServer(cRef) : window.getDoc(cRef))
+                                    .catch(() => window.getDoc(cRef))
+                            );
                         }
                         const chunkSnaps = await Promise.all(chunkPromises);
                         let mergedData = data;
