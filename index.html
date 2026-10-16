@@ -7278,7 +7278,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence, addDoc, increment, writeBatch, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocFromServer, getDocsFromServer, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence, addDoc, increment, writeBatch, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        window.getDocFromServer = getDocFromServer;
+        window.getDocsFromServer = getDocsFromServer;
         window.firestoreIncrement = increment;
         window.writeBatch = writeBatch;
         window.onSnapshot = onSnapshot;
@@ -7577,7 +7579,7 @@
             if (immediate) {
                 syncTimer = setTimeout(window.flushSync, 50);
             } else {
-                syncTimer = setTimeout(window.flushSync, 15000);
+                syncTimer = setTimeout(window.flushSync, 2000);
             }
         };
 
@@ -7591,7 +7593,7 @@
             if (immediate) {
                 syncTimer = setTimeout(window.flushSync, 50);
             } else {
-                syncTimer = setTimeout(window.flushSync, 15000);
+                syncTimer = setTimeout(window.flushSync, 2000);
             }
         };
 
@@ -7604,22 +7606,59 @@
             }
         });
 
+        // Flush immediately when app is hidden or closed (mobile tab switch, screen lock)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && window.flushSync) {
+                window.flushSync();
+            }
+        });
+        window.addEventListener('pagehide', () => {
+            if (window.flushSync) window.flushSync();
+        });
+
         async function loadUserData(user) {
             try {
                 const userRef = doc(db, "users", user.uid);
 
+                // Always fetch the freshest user state from server first (bypassing local cache)
+                let snap = null;
+                try {
+                    snap = await getDocFromServer(userRef);
+                } catch (serverErr) {
+                    console.warn("Could not fetch user data directly from server (offline?), reading cache:", serverErr);
+                    try { snap = await getDoc(userRef); } catch (e) { snap = null; }
+                }
+
+                const serverData = (snap && snap.exists()) ? snap.data() : {};
+
+                // If unsaved local changes exist, merge with server rather than blindly overwriting server data
                 if (localStorage.getItem('medStorm_unsaved_changes') === 'true') {
-                    console.log("Unsaved local changes detected. Recovering and syncing...");
+                    console.log("Unsaved local changes detected. Merging and syncing with server...");
                     const recoveredData = {};
                     try {
                         const prog = localStorage.getItem('medStormProgress');
-                        if (prog !== null) recoveredData.progress = JSON.parse(prog);
+                        if (prog !== null) {
+                            const localProg = JSON.parse(prog) || {};
+                            recoveredData.progress = Object.assign({}, serverData.progress || {}, localProg);
+                        }
                         const favs = localStorage.getItem('medStormFavorites');
-                        if (favs !== null) recoveredData.favorites = JSON.parse(favs);
+                        if (favs !== null) {
+                            const localFavs = JSON.parse(favs) || {};
+                            recoveredData.favorites = Object.assign({}, serverData.favorites || {}, localFavs);
+                        }
                         const nts = localStorage.getItem('medStormNotes');
-                        if (nts !== null) recoveredData.notes = JSON.parse(nts);
+                        if (nts !== null) {
+                            const localNotes = JSON.parse(nts) || {};
+                            recoveredData.notes = Object.assign({}, serverData.notes || {}, localNotes);
+                        }
                         const sts = localStorage.getItem('medStormStats');
-                        if (sts !== null) recoveredData.stats = JSON.parse(sts);
+                        if (sts !== null) {
+                            const localStats = JSON.parse(sts) || {};
+                            const sAtt = (serverData.stats && serverData.stats.attemptedQuestions) || {};
+                            const lAtt = localStats.attemptedQuestions || {};
+                            recoveredData.stats = Object.assign({}, serverData.stats || {}, localStats);
+                            recoveredData.stats.attemptedQuestions = Object.assign({}, sAtt, lAtt);
+                        }
                         const hist = localStorage.getItem('medStormExamsHistory');
                         if (hist !== null) recoveredData.examsHistory = JSON.parse(hist);
                         const pend = localStorage.getItem('medStormPendingExams');
@@ -7630,14 +7669,15 @@
                                 await updateDoc(userRef, recoveredData);
                             } catch (e) {
                                 if (e.code === 'not-found') {
-                                    await setDoc(userRef, recoveredData);
+                                    await setDoc(userRef, recoveredData, { merge: true });
                                 }
                             }
                             localStorage.removeItem('medStorm_unsaved_changes');
-                            console.log("Recovery sync complete!");
+                            console.log("Cross-device recovery merge complete!");
+                            Object.assign(serverData, recoveredData);
                         }
                     } catch (e) {
-                        console.error("Recovery failed:", e);
+                        console.error("Recovery merge failed:", e);
                     }
                 }
 
@@ -7653,9 +7693,8 @@
                     }
                 }
 
-                const snap = await getDoc(userRef);
-                if (snap.exists()) {
-                    const data = snap.data();
+                if (serverData && Object.keys(serverData).length > 0) {
+                    const data = serverData;
 
                     if (data.progress !== undefined) { AppState.progress = data.progress || {}; localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); }
                     if (data.favorites !== undefined) { AppState.favorites = data.favorites || {}; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); }
@@ -7800,8 +7839,50 @@
                     window.activeUserListener = window.onSnapshot(userRef, (docSnap) => {
                         if (docSnap.exists()) {
                             const snapData = docSnap.data();
-
                             let changed = false;
+
+                            // Real-time synchronization for solved questions / progress from other devices
+                            if (snapData.progress && JSON.stringify(snapData.progress) !== JSON.stringify(AppState.progress)) {
+                                AppState.progress = Object.assign({}, AppState.progress, snapData.progress);
+                                localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+                                changed = true;
+                            }
+                            if (snapData.stats && JSON.stringify(snapData.stats) !== JSON.stringify(AppState.stats)) {
+                                AppState.stats = snapData.stats;
+                                if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
+                                if (AppState.progress) {
+                                    for (const [k, v] of Object.entries(AppState.progress)) {
+                                        if (!AppState.stats.attemptedQuestions[k]) AppState.stats.attemptedQuestions[k] = v;
+                                    }
+                                }
+                                localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+                                changed = true;
+                            }
+                            if (snapData.favorites && JSON.stringify(snapData.favorites) !== JSON.stringify(AppState.favorites)) {
+                                AppState.favorites = snapData.favorites;
+                                localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
+                                changed = true;
+                            }
+                            if (snapData.notes && JSON.stringify(snapData.notes) !== JSON.stringify(AppState.notes)) {
+                                AppState.notes = snapData.notes;
+                                localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
+                                changed = true;
+                            }
+                            if (snapData.examsHistory && JSON.stringify(snapData.examsHistory) !== JSON.stringify(AppState.examsHistory)) {
+                                AppState.examsHistory = snapData.examsHistory;
+                                localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory));
+                                changed = true;
+                            }
+                            if (snapData.pendingExams && JSON.stringify(snapData.pendingExams) !== JSON.stringify(AppState.pendingExams)) {
+                                AppState.pendingExams = snapData.pendingExams;
+                                localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams));
+                                changed = true;
+                            }
+                            if (snapData.points !== undefined && AppState.points !== snapData.points) {
+                                AppState.points = snapData.points;
+                                localStorage.setItem('medStormPoints', AppState.points);
+                                changed = true;
+                            }
                             if (snapData.isTerm1Active !== undefined && AppState.isTerm1Active !== !!snapData.isTerm1Active) {
                                 AppState.isTerm1Active = !!snapData.isTerm1Active;
                                 localStorage.setItem('medStorm_isTerm1Active', AppState.isTerm1Active);
@@ -7823,7 +7904,9 @@
                                 if (window.syncProfileYearUI) window.syncProfileYearUI(AppState.year);
                                 changed = true;
                             }
+
                             if (changed) {
+                                console.log("[Cross-Device Sync] Live data update received from another device!");
                                 if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
                                 if (!document.body.classList.contains('focus-mode') && typeof window.renderDashboard === 'function') {
                                     window.renderDashboard();
@@ -8929,15 +9012,20 @@
             'ID2': { total: 0 }
         };
 
-        async function checkServerMetadata() {
-            if (serverMetadata) {
-                window.serverMetadata = serverMetadata;
-                return serverMetadata;
-            }
+        async function checkServerMetadata(forceServer = true) {
             try {
-                const metaPromise = getDoc(doc(db, "content", "metadata"));
-                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 3000));
-                const metaSnap = await Promise.race([metaPromise, timeoutPromise]);
+                let metaSnap;
+                if (forceServer) {
+                    try {
+                        const metaPromise = getDocFromServer(doc(db, "content", "metadata"));
+                        const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 4000));
+                        metaSnap = await Promise.race([metaPromise, timeoutPromise]);
+                    } catch (e) {
+                        metaSnap = await getDoc(doc(db, "content", "metadata"));
+                    }
+                } else {
+                    metaSnap = await getDoc(doc(db, "content", "metadata"));
+                }
                 if (metaSnap && metaSnap.exists()) {
                     serverMetadata = metaSnap.data();
                     window.serverMetadata = serverMetadata;
@@ -8951,15 +9039,29 @@
             await loadAllCachedModulesFromIDB();
             if (typeof window.renderDashboard === "function") window.renderDashboard();
 
-            checkServerMetadata().then(async (meta) => {
-                if (!meta) return;
+            // Real-time metadata listener: instant update when admin edits any question
+            if (window.activeMetadataListener) {
+                window.activeMetadataListener();
+                window.activeMetadataListener = null;
+            }
+            window.activeMetadataListener = onSnapshot(doc(db, "content", "metadata"), async (metaSnap) => {
+                if (!metaSnap.exists()) return;
+                const meta = metaSnap.data();
+                serverMetadata = meta;
+                window.serverMetadata = meta;
+
                 try {
                     const cachedMeta = await getIDBCache('__modules_metadata__');
                     const serverUpdatedAt = meta['modules_metadata_updatedAt'];
                     if (!cachedMeta || !cachedMeta.updatedAt || (serverUpdatedAt && serverUpdatedAt > cachedMeta.updatedAt)) {
-                        const metaSnap = await getDoc(doc(db, "content", "modules_metadata"));
-                        if (metaSnap.exists()) {
-                            const rMeta = metaSnap.data();
+                        let rMetaSnap;
+                        try {
+                            rMetaSnap = await getDocFromServer(doc(db, "content", "modules_metadata"));
+                        } catch (e) {
+                            rMetaSnap = await getDoc(doc(db, "content", "modules_metadata"));
+                        }
+                        if (rMetaSnap && rMetaSnap.exists()) {
+                            const rMeta = rMetaSnap.data();
                             window.DB_METADATA = Object.assign({}, window.DB_METADATA, rMeta);
                             await setIDBCache('__modules_metadata__', { data: rMeta, updatedAt: serverUpdatedAt || Date.now() });
                             if (typeof window.renderDashboard === "function") window.renderDashboard();
@@ -8970,12 +9072,27 @@
                         const docId = MODULE_KEY_TO_DOC_ID[modKey];
                         const serverDocUpdatedAt = meta[docId + '_updatedAt'];
                         const cachedDocUpdatedAt = cachedModuleUpdatedAts[modKey] || 0;
-                        if (cachedDocUpdatedAt && serverDocUpdatedAt && serverDocUpdatedAt > cachedDocUpdatedAt) {
-                            console.log(`[Auto-Sync] Update detected on server for ${modKey}. Syncing in background...`);
+                        if (serverDocUpdatedAt && (!cachedDocUpdatedAt || serverDocUpdatedAt !== cachedDocUpdatedAt)) {
+                            console.log(`[Admin Update Detected] Live update for module ${modKey}! Syncing questions from server...`);
                             await fetchSingleModuleFromDB(modKey, true);
                         }
                     }
                 } catch (e) { }
+            }, (err) => {
+                console.warn("Live metadata listener failed, falling back to one-time check:", err);
+            });
+
+            // Initial check directly from server
+            checkServerMetadata(true).then(async (meta) => {
+                if (!meta) return;
+                for (const modKey in MODULE_KEY_TO_DOC_ID) {
+                    const docId = MODULE_KEY_TO_DOC_ID[modKey];
+                    const serverDocUpdatedAt = meta[docId + '_updatedAt'];
+                    const cachedDocUpdatedAt = cachedModuleUpdatedAts[modKey] || 0;
+                    if (serverDocUpdatedAt && (!cachedDocUpdatedAt || serverDocUpdatedAt !== cachedDocUpdatedAt)) {
+                        await fetchSingleModuleFromDB(modKey, true);
+                    }
+                }
             }).catch(() => { });
         }
 
@@ -9062,6 +9179,8 @@
 
             if (!forceRefresh) {
                 if (DB[moduleKey] && Object.keys(DB[moduleKey]).length > 0) {
+                    // Check in background if server has newer updatedAt
+                    checkForModuleUpdateInBackground(mod, cachedModuleUpdatedAts[moduleKey] || 0);
                     return DB[moduleKey];
                 }
 
@@ -9076,29 +9195,38 @@
                 const fallbackData = getGlobalFallbackModule(moduleKey);
                 if (fallbackData && Object.keys(fallbackData).length > 0) {
                     DB[moduleKey] = fallbackData;
-                    cachedModuleUpdatedAts[moduleKey] = Date.now();
-                    setIDBCache(moduleKey, { data: fallbackData, updatedAt: Date.now() });
-                    checkForModuleUpdateInBackground(mod, 0);
+                    cachedModuleUpdatedAts[moduleKey] = 1;
+                    setIDBCache(moduleKey, { data: fallbackData, updatedAt: 1 });
+                    checkForModuleUpdateInBackground(mod, 1);
                     return DB[moduleKey];
                 }
             }
 
             try {
                 const fetchPromise = (async () => {
-                    const docSnap = await getDoc(doc(db, "content", mod.id));
-                    if (docSnap.exists()) {
+                    let docSnap;
+                    try {
+                        docSnap = await getDocFromServer(doc(db, "content", mod.id));
+                    } catch (netErr) {
+                        console.warn(`getDocFromServer failed for ${mod.id}, fallback to getDoc:`, netErr);
+                        docSnap = await getDoc(doc(db, "content", mod.id));
+                    }
+                    if (docSnap && docSnap.exists()) {
                         let data = docSnap.data();
                         if (data && data._isChunked && data._chunkCount > 1) {
                             const chunkPromises = [];
                             for (let i = 1; i < data._chunkCount; i++) {
-                                chunkPromises.push(getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)));
+                                chunkPromises.push(
+                                    getDocFromServer(doc(db, "content", `${mod.id}_chunk_${i}`))
+                                        .catch(() => getDoc(doc(db, "content", `${mod.id}_chunk_${i}`)))
+                                );
                             }
                             const chunkSnaps = await Promise.all(chunkPromises);
                             let mergedData = data;
                             delete mergedData._isChunked;
                             delete mergedData._chunkCount;
                             chunkSnaps.forEach(cSnap => {
-                                if (cSnap.exists()) {
+                                if (cSnap && cSnap.exists()) {
                                     const cData = cSnap.data();
                                     delete cData._isChunked;
                                     delete cData._chunkCount;
@@ -9113,12 +9241,17 @@
                         cachedModuleUpdatedAts[moduleKey] = syncTime;
                         await setIDBCache(moduleKey, { data: finalData, updatedAt: syncTime });
                         if (typeof window.renderDashboard === "function") window.renderDashboard();
+                        if (typeof Session !== 'undefined' && Session && Session.queue && Session.module === moduleKey) {
+                            if (typeof loadQuestion === 'function') {
+                                loadQuestion();
+                            }
+                        }
                         return finalData;
                     }
                     return null;
                 })();
 
-                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Network timeout")), 6000));
+                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Network timeout")), 8000));
                 await Promise.race([fetchPromise, timeoutPromise]);
             } catch (e) {
                 console.warn(`Fetch module ${moduleKey} network timeout or error:`, e);
@@ -9131,9 +9264,10 @@
 
         async function checkForModuleUpdateInBackground(mod, cachedUpdatedAt) {
             try {
-                if (!serverMetadata) await checkServerMetadata();
+                if (!serverMetadata) await checkServerMetadata(true);
                 const serverUpdatedAt = serverMetadata ? serverMetadata[mod.id + '_updatedAt'] : null;
-                if (serverUpdatedAt && (!cachedUpdatedAt || serverUpdatedAt > cachedUpdatedAt)) {
+                if (serverUpdatedAt && (!cachedUpdatedAt || serverUpdatedAt !== cachedUpdatedAt)) {
+                    console.log(`[Background Check] Update found on server for ${mod.key}. Pulling new questions...`);
                     await fetchSingleModuleFromDB(mod.key, true);
                 }
             } catch (e) { }
@@ -18165,8 +18299,13 @@
             if (editorAllData[docId]) return true;
             try {
                 const docRef = window.doc(window.db, "content", docId);
-                const snap = await window.getDoc(docRef);
-                if (snap.exists()) {
+                let snap;
+                try {
+                    snap = await (window.getDocFromServer ? window.getDocFromServer(docRef) : window.getDoc(docRef));
+                } catch (e) {
+                    snap = await window.getDoc(docRef);
+                }
+                if (snap && snap.exists()) {
                     let data = snap.data();
                     let originalChunkCount = 1;
                     let wasChunked = false;
@@ -18176,7 +18315,11 @@
                         originalChunkCount = data._chunkCount;
                         const chunkPromises = [];
                         for (let i = 1; i < data._chunkCount; i++) {
-                            chunkPromises.push(window.getDoc(window.doc(window.db, "content", `${docId}_chunk_${i}`)));
+                            const cRef = window.doc(window.db, "content", `${docId}_chunk_${i}`);
+                            chunkPromises.push(
+                                (window.getDocFromServer ? window.getDocFromServer(cRef) : window.getDoc(cRef))
+                                    .catch(() => window.getDoc(cRef))
+                            );
                         }
                         const chunkSnaps = await Promise.all(chunkPromises);
                         let mergedData = data;
