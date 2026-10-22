@@ -3681,7 +3681,20 @@
 
         #view-flashcards.in-session,
         #view-flashcards:has(.para-session-wrap) {
-            padding: 1rem 1.25rem 4rem !important;
+            padding: 0.65rem 1rem 3rem !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        body.focus-mode #view-flashcards {
+            padding: 0.65rem 1rem 3rem !important;
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* Practical Year Tabs */
@@ -3734,7 +3747,7 @@
             padding: 0 4px;
             display: flex;
             flex-direction: column;
-            gap: 0.85rem;
+            gap: 0.65rem;
             animation: fadeIn 0.25s ease;
         }
 
@@ -3746,7 +3759,7 @@
             flex-wrap: wrap;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 14px;
         }
 
@@ -3839,7 +3852,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.25rem 1.5rem;
+            padding: 1.1rem 1.35rem;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
@@ -8250,7 +8263,8 @@
             }
             if (typeof _fcShowCover === 'function') {
                 const fcView = document.getElementById('view-flashcards');
-                if (fcView && (fcView.classList.contains('active') || fcView.style.display === 'block')) {
+                const inSession = Boolean(document.getElementById('para-session-wrap'));
+                if (!inSession && fcView && (fcView.classList.contains('active') || fcView.style.display === 'block')) {
                     _fcShowCover();
                 }
             }
@@ -8406,7 +8420,8 @@
             if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
             if (typeof _fcShowCover === 'function') {
                 const fcView = document.getElementById('view-flashcards');
-                if (fcView && (fcView.classList.contains('active') || fcView.style.display === 'block')) {
+                const inSession = Boolean(document.getElementById('para-session-wrap'));
+                if (!inSession && fcView && (fcView.classList.contains('active') || fcView.style.display === 'block')) {
                     _fcShowCover();
                 }
             }
@@ -14112,17 +14127,25 @@
             const p7 = typeof loadAnatomySpotsFromDB === 'function' ? loadAnatomySpotsFromDB() : Promise.resolve();
             Promise.all([p1, p2, p3, p4, p5, p6, p7]).then(() => {
                 const curY = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
-                if (curY === '3' || curY === '2') _fcShowCover();
+                const inSession = Boolean(document.getElementById('para-session-wrap'));
+                if (!inSession && (curY === '3' || curY === '2')) _fcShowCover();
             }).catch(() => { });
 
             if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
                 window.loadAllFlashcards().catch(e => console.warn("Background practical load failed:", e));
             }
 
-            _fcShowCover();
+            if (!document.getElementById('para-session-wrap')) {
+                _fcShowCover();
+            }
         }
 
-        function _fcShowCover() {
+        function _fcShowCover(force = false) {
+            const wrap = document.getElementById('para-session-wrap');
+            if (!force && wrap && paraSessionState && Array.isArray(paraSessionState.spots) && paraSessionState.spots.length > 0) {
+                return;
+            }
+            document.body.classList.remove('focus-mode');
             const container = document.getElementById('flashcards-container');
             if (!container) return;
             const fcView = document.getElementById('view-flashcards');
@@ -14845,6 +14868,7 @@
                                 paraSessionState.timeRemaining = 2400;
                             }
                         }
+                        document.body.classList.add('focus-mode');
                         _renderParaSessionView();
                         return;
                     }
@@ -14864,6 +14888,7 @@
                 timeRemaining: 2400
             };
 
+            document.body.classList.add('focus-mode');
             _saveParaProgress();
             _renderParaSessionView();
         }
@@ -14899,9 +14924,10 @@
         function exitParaSpotsSession() {
             if (simTimerInterval) { clearInterval(simTimerInterval); simTimerInterval = null; }
             _saveParaProgress();
+            document.body.classList.remove('focus-mode');
             const fcView = document.getElementById('view-flashcards');
             if (fcView) fcView.classList.remove('in-session');
-            _fcShowCover();
+            _fcShowCover(true);
         }
         window.exitParaSpotsSession = exitParaSpotsSession;
 
@@ -14913,233 +14939,237 @@
         window.restartParaSpotsSession = restartParaSpotsSession;
 
         function _renderParaSessionView() {
-            const container = document.getElementById('flashcards-container');
-            if (!container || !paraSessionState.spots || paraSessionState.spots.length === 0) return;
+            try {
+                document.body.classList.add('focus-mode');
+                const container = document.getElementById('flashcards-container');
+                if (!container || !paraSessionState || !paraSessionState.spots || paraSessionState.spots.length === 0) return;
 
-            container.style.display = 'block';
-            const fcView = document.getElementById('view-flashcards');
-            if (fcView) fcView.classList.add('in-session');
+                container.style.display = 'block';
+                container.style.minHeight = 'auto';
+                const fcView = document.getElementById('view-flashcards');
+                if (fcView) fcView.classList.add('in-session');
 
-            const isMicro = paraSessionState.type === 'microbiology';
-            const isSim = paraSessionState.type === 'simulation';
-            const isBio = paraSessionState.type === 'bio';
-            const isHisto = paraSessionState.type === 'histo';
-            const isPhysio = paraSessionState.type === 'physio';
-            const isAnatomy = paraSessionState.type === 'anatomy';
-
-            const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
-            if (!currentSpot) {
-                _renderParaCompletionView();
-                return;
-            }
-
-            const totalSpots = paraSessionState.spots.length;
-            const currentQuestions = currentSpot.questions || [];
-            const totalQs = currentQuestions.length;
-            const qIdx = paraSessionState.qIdx;
-            const currentQ = currentQuestions[qIdx] || { question: "No question available", answer: "N/A" };
-
-            const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : '';
-            const imgSrc = rawImg.startsWith('img/') || rawImg.startsWith('http') || rawImg.startsWith('/') ? rawImg : (rawImg ? 'img/' + rawImg : '');
-            const hasImg = Boolean(imgSrc);
-
-            const isAnswerImage = Boolean(
-                currentSpot.isAnswerImage ||
-                currentSpot.imageAsAnswer ||
-                currentQ.isAnswerImage ||
-                currentQ.imageAsAnswer ||
-                (isBio && (
-                    rawImg.includes('spot4.webp') ||
-                    rawImg.includes('spot5.webp') ||
-                    rawImg.includes('spot6.webp') ||
-                    rawImg.includes('spot35.webp') ||
-                    rawImg.includes('spot40.webp') ||
-                    rawImg.includes('spot48-49.webp')
-                ))
-            );
-
-            function formatParaAnswerText(str) {
-                if (!str) return '';
-                let s = String(str);
-                s = s.replace(/([:\?])\s+(1\.\s+)/g, '$1\n$2');
-                s = s.replace(/([.;])\s+(\d+\.\s+)/g, '$1\n$2');
-                s = s.replace(/([.;:])\s+([a-zA-Z][\.\)]\s+)/g, '$1\n$2');
-                s = s.replace(/\s*\|\s*/g, '\n');
-                return s;
-            }
-
-            function formatParaQuestionText(str) {
-                if (!str) return '';
-                let s = String(str);
-                let m = s.match(/^(.*?)[\s]*\(\s*([A-Da-d]\))\s*(.*?)\)[\s\.]*$/);
-                if (m) {
-                    const qPart = m[1].trim();
-                    const firstOpt = m[2];
-                    const rest = m[3];
-                    const opts = (firstOpt + ' ' + rest).split(/,\s*(?=[B-Db-d]\))/).map(x => x.trim());
-                    return qPart + '\n' + opts.join('\n');
+                const totalSpots = paraSessionState.spots.length;
+                if (typeof paraSessionState.spotIdx !== 'number' || isNaN(paraSessionState.spotIdx) || paraSessionState.spotIdx < 0 || paraSessionState.spotIdx >= totalSpots) {
+                    paraSessionState.spotIdx = 0;
                 }
-                m = s.match(/^(.*?)[\s]*\(\s*([a-dA-D1-4][\.\-]\s*.*)\)[\s\.]*$/);
-                if (m) {
-                    const qPart = m[1].trim();
-                    const rawOpts = m[2].trim();
-                    let opts = null;
-                    if (/^[a-d]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[b-d]\.\s*)/).map(x => x.trim());
-                    else if (/^[A-D]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[B-D]\.\s*)/).map(x => x.trim());
-                    else if (/^[A-D]\-/.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[B-D]\-\s*)/).map(x => x.trim());
-                    else if (/^[1-4]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[2-4]\.\s*)/).map(x => x.trim());
-                    if (opts && opts.length > 1) {
+
+                const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
+                if (!currentSpot) {
+                    _renderParaCompletionView();
+                    return;
+                }
+
+                const currentQuestions = (currentSpot && Array.isArray(currentSpot.questions)) ? currentSpot.questions : [];
+                const totalQs = currentQuestions.length;
+                if (typeof paraSessionState.qIdx !== 'number' || isNaN(paraSessionState.qIdx) || paraSessionState.qIdx < 0 || (totalQs > 0 && paraSessionState.qIdx >= totalQs)) {
+                    paraSessionState.qIdx = 0;
+                }
+                const qIdx = paraSessionState.qIdx;
+                const currentQ = currentQuestions[qIdx] || { question: "No question available", answer: "N/A" };
+
+                const isMicro = paraSessionState.type === 'microbiology';
+                const isSim = paraSessionState.type === 'simulation';
+                const isBio = paraSessionState.type === 'bio';
+                const isHisto = paraSessionState.type === 'histo';
+                const isPhysio = paraSessionState.type === 'physio';
+                const isAnatomy = paraSessionState.type === 'anatomy';
+
+                const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : '';
+                const imgSrc = rawImg.startsWith('img/') || rawImg.startsWith('http') || rawImg.startsWith('/') ? rawImg : (rawImg ? 'img/' + rawImg : '');
+                const hasImg = Boolean(imgSrc);
+
+                const isAnswerImage = Boolean(
+                    currentSpot.isAnswerImage ||
+                    currentSpot.imageAsAnswer ||
+                    currentQ.isAnswerImage ||
+                    currentQ.imageAsAnswer ||
+                    (isBio && (
+                        rawImg.includes('spot4.webp') ||
+                        rawImg.includes('spot5.webp') ||
+                        rawImg.includes('spot6.webp') ||
+                        rawImg.includes('spot35.webp') ||
+                        rawImg.includes('spot40.webp') ||
+                        rawImg.includes('spot48-49.webp')
+                    ))
+                );
+
+                function formatParaAnswerText(str) {
+                    if (!str) return '';
+                    let s = String(str);
+                    s = s.replace(/([:\?])\s+(1\.\s+)/g, '$1\n$2');
+                    s = s.replace(/([.;])\s+(\d+\.\s+)/g, '$1\n$2');
+                    s = s.replace(/([.;:])\s+([a-zA-Z][\.\)]\s+)/g, '$1\n$2');
+                    s = s.replace(/\s*\|\s*/g, '\n');
+                    return s;
+                }
+
+                function formatParaQuestionText(str) {
+                    if (!str) return '';
+                    let s = String(str);
+                    let m = s.match(/^(.*?)[\s]*\(\s*([A-Da-d]\))\s*(.*?)\)[\s\.]*$/);
+                    if (m) {
+                        const qPart = m[1].trim();
+                        const firstOpt = m[2];
+                        const rest = m[3];
+                        const opts = (firstOpt + ' ' + rest).split(/,\s*(?=[B-Db-d]\))/).map(x => x.trim());
                         return qPart + '\n' + opts.join('\n');
                     }
+                    m = s.match(/^(.*?)[\s]*\(\s*([a-dA-D1-4][\.\-]\s*.*)\)[\s\.]*$/);
+                    if (m) {
+                        const qPart = m[1].trim();
+                        const rawOpts = m[2].trim();
+                        let opts = null;
+                        if (/^[a-d]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[b-d]\.\s*)/).map(x => x.trim());
+                        else if (/^[A-D]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[B-D]\.\s*)/).map(x => x.trim());
+                        else if (/^[A-D]\-/.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[B-D]\-\s*)/).map(x => x.trim());
+                        else if (/^[1-4]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[2-4]\.\s*)/).map(x => x.trim());
+                        if (opts && opts.length > 1) {
+                            return qPart + '\n' + opts.join('\n');
+                        }
+                    }
+                    if (s.includes(' | ')) {
+                        s = s.replace(/:\s+(a\.\s+)/, ':\n$1').replace(/\s*\|\s*/g, '\n');
+                    }
+                    return s;
                 }
-                if (s.includes(' | ')) {
-                    s = s.replace(/:\s+(a\.\s+)/, ':\n$1').replace(/\s*\|\s*/g, '\n');
+
+                const qText = (isBio && rawImg.includes('spot47.webp')) ? '' : (currentQ.question || '');
+                const hasQText = Boolean(qText && String(qText).trim());
+                const currentAnsStr = String(currentQ.answer || '');
+
+                const progressPct = Math.round(((paraSessionState.spotIdx) / totalSpots) * 100);
+                let badgeThemeColor = isMicro ? '#34d399' : '#60a5fa';
+                let badgeBgColor = isMicro ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)';
+                let badgeBorderColor = isMicro ? 'rgba(16,185,129,0.3)' : 'rgba(59,130,246,0.3)';
+                let progressGradient = isMicro ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #3b82f6, #10b981)';
+
+                if (isSim) {
+                    badgeThemeColor = '#c084fc';
+                    badgeBgColor = 'rgba(168,85,247,0.15)';
+                    badgeBorderColor = 'rgba(168,85,247,0.35)';
+                    progressGradient = 'linear-gradient(90deg, #a855f7, #ec4899)';
+                } else if (isBio) {
+                    badgeThemeColor = '#38bdf8';
+                    badgeBgColor = 'rgba(14, 165, 233, 0.15)';
+                    badgeBorderColor = 'rgba(14, 165, 233, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #0ea5e9, #38bdf8)';
+                } else if (isHisto) {
+                    badgeThemeColor = '#f472b6';
+                    badgeBgColor = 'rgba(236, 72, 153, 0.15)';
+                    badgeBorderColor = 'rgba(236, 72, 153, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #ec4899, #f43f5e)';
+                } else if (isPhysio) {
+                    badgeThemeColor = '#fbbf24';
+                    badgeBgColor = 'rgba(245, 158, 11, 0.15)';
+                    badgeBorderColor = 'rgba(245, 158, 11, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+                } else if (isAnatomy) {
+                    badgeThemeColor = '#c084fc';
+                    badgeBgColor = 'rgba(168, 85, 247, 0.15)';
+                    badgeBorderColor = 'rgba(168, 85, 247, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #a855f7, #c084fc)';
                 }
-                return s;
-            }
 
-            const qText = (isBio && rawImg.includes('spot47.webp')) ? '' : (currentQ.question || '');
-            const hasQText = Boolean(qText && qText.trim());
-
-            const progressPct = Math.round(((paraSessionState.spotIdx) / totalSpots) * 100);
-            let badgeThemeColor = isMicro ? '#34d399' : '#60a5fa';
-            let badgeBgColor = isMicro ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)';
-            let badgeBorderColor = isMicro ? 'rgba(16,185,129,0.3)' : 'rgba(59,130,246,0.3)';
-            let progressGradient = isMicro ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #3b82f6, #10b981)';
-
-            if (isSim) {
-                badgeThemeColor = '#c084fc';
-                badgeBgColor = 'rgba(168,85,247,0.15)';
-                badgeBorderColor = 'rgba(168,85,247,0.35)';
-                progressGradient = 'linear-gradient(90deg, #a855f7, #ec4899)';
-            } else if (isBio) {
-                badgeThemeColor = '#38bdf8';
-                badgeBgColor = 'rgba(14, 165, 233, 0.15)';
-                badgeBorderColor = 'rgba(14, 165, 233, 0.35)';
-                progressGradient = 'linear-gradient(90deg, #0ea5e9, #38bdf8)';
-            } else if (isHisto) {
-                badgeThemeColor = '#f472b6';
-                badgeBgColor = 'rgba(236, 72, 153, 0.15)';
-                badgeBorderColor = 'rgba(236, 72, 153, 0.35)';
-                progressGradient = 'linear-gradient(90deg, #ec4899, #f43f5e)';
-            } else if (isPhysio) {
-                badgeThemeColor = '#fbbf24';
-                badgeBgColor = 'rgba(245, 158, 11, 0.15)';
-                badgeBorderColor = 'rgba(245, 158, 11, 0.35)';
-                progressGradient = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
-            } else if (isAnatomy) {
-                badgeThemeColor = '#c084fc';
-                badgeBgColor = 'rgba(168, 85, 247, 0.15)';
-                badgeBorderColor = 'rgba(168, 85, 247, 0.35)';
-                progressGradient = 'linear-gradient(90deg, #a855f7, #c084fc)';
-            }
-
-            let nextBtnGradient = isSim ? 'linear-gradient(135deg, #a855f7, #7e22ce)' : (isMicro ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)');
-            let nextBtnShadow = isSim ? 'rgba(168,85,247,0.35)' : 'rgba(16,185,129,0.35)';
-            if (isBio) {
-                nextBtnGradient = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
-                nextBtnShadow = 'rgba(14,165,233,0.35)';
-            } else if (isHisto) {
-                nextBtnGradient = 'linear-gradient(135deg, #ec4899, #be185d)';
-                nextBtnShadow = 'rgba(236,72,153,0.35)';
-            } else if (isPhysio) {
-                nextBtnGradient = 'linear-gradient(135deg, #f59e0b, #d97706)';
-                nextBtnShadow = 'rgba(245,158,11,0.35)';
-            } else if (isAnatomy) {
-                nextBtnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
-                nextBtnShadow = 'rgba(168,85,247,0.35)';
-            }
-
-            const stepperHTML = currentQuestions.map((_, i) => {
-                let cls = 'para-q-step-dot';
-                let icon = '';
-                if (i === qIdx) {
-                    cls += ' active';
-                    icon = '<i class="ri-play-fill" style="margin-right:2px;"></i>';
-                } else if (i < qIdx) {
-                    cls += ' done';
-                    icon = '<i class="ri-check-line" style="margin-right:2px;"></i>';
+                let nextBtnGradient = isSim ? 'linear-gradient(135deg, #a855f7, #7e22ce)' : (isMicro ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)');
+                let nextBtnShadow = isSim ? 'rgba(168,85,247,0.35)' : 'rgba(16,185,129,0.35)';
+                if (isBio) {
+                    nextBtnGradient = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+                    nextBtnShadow = 'rgba(14,165,233,0.35)';
+                } else if (isHisto) {
+                    nextBtnGradient = 'linear-gradient(135deg, #ec4899, #be185d)';
+                    nextBtnShadow = 'rgba(236,72,153,0.35)';
+                } else if (isPhysio) {
+                    nextBtnGradient = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                    nextBtnShadow = 'rgba(245,158,11,0.35)';
+                } else if (isAnatomy) {
+                    nextBtnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
+                    nextBtnShadow = 'rgba(168,85,247,0.35)';
                 }
-                return `<button class="${cls}" onclick="paraJumpToQuestion(${i})" title="Question ${i + 1}">${icon}Q${i + 1}</button>`;
-            }).join('');
 
-            container.innerHTML = `
-                <div class="para-session-wrap" id="para-session-wrap">
-                    <!-- Session Header -->
-                    <div class="para-session-header">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <button class="action-icon-btn" onclick="exitParaSpotsSession()" title="Back to Decks" style="width:38px; height:38px; font-size:1.15rem;">
-                                <i class="ri-arrow-left-line"></i>
-                            </button>
-                            <span style="font-size:1.2rem; font-weight:800; color:var(--text-light);">${paraSessionState.title || 'Practical Exam'}</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                            ${isSim ? `
-                                <div id="para-sim-timer" style="display:flex; align-items:center; gap:6px; background:rgba(239, 68, 68, 0.15); color:#f87171; border:1.5px solid rgba(239, 68, 68, 0.4); padding:4px 14px; border-radius:20px; font-weight:800; font-size:0.95rem; font-variant-numeric:tabular-nums; box-shadow:0 0 14px rgba(239,68,68,0.2);">
-                                    <i class="ri-timer-flash-line" style="font-size:1.1rem; color:#ef4444;"></i>
-                                    <span id="para-timer-display" style="letter-spacing:1px;">40:00</span>
-                                </div>
-                            ` : ''}
-                            <span style="background:${badgeBgColor}; color:${badgeThemeColor}; border:1px solid ${badgeBorderColor}; padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
-                                Spot ${paraSessionState.spotIdx + 1} / ${totalSpots}
-                            </span>
-                            <span style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
-                                Question ${qIdx + 1} / ${totalQs}
-                            </span>
-                            <button class="action-icon-btn" onclick="restartParaSpotsSession()" title="Reshuffle & Restart" style="width:34px; height:34px;">
-                                <i class="ri-refresh-line"></i>
-                            </button>
-                        </div>
-                    </div>
+                const stepperHTML = currentQuestions.map((_, i) => {
+                    let cls = 'para-q-step-dot';
+                    let icon = '';
+                    if (i === qIdx) {
+                        cls += ' active';
+                        icon = '<i class="ri-play-fill" style="margin-right:2px;"></i>';
+                    } else if (i < qIdx) {
+                        cls += ' done';
+                        icon = '<i class="ri-check-line" style="margin-right:2px;"></i>';
+                    }
+                    return `<button class="${cls}" onclick="paraJumpToQuestion(${i})" title="Question ${i + 1}">${icon}Q${i + 1}</button>`;
+                }).join('');
 
-                    <!-- Overall Progress Bar -->
-                    <div style="width:100%;">
-                        <div class="fc-progress-bar" style="height:6px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
-                            <div class="fc-progress-fill" style="width:${progressPct}%; height:100%; background:${progressGradient}; transition:width 0.3s ease;"></div>
+                container.innerHTML = `
+                    <div class="para-session-wrap" id="para-session-wrap">
+                        <!-- Session Header -->
+                        <div class="para-session-header">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <button class="action-icon-btn" onclick="exitParaSpotsSession()" title="Back to Decks" style="width:38px; height:38px; font-size:1.15rem;">
+                                    <i class="ri-arrow-left-line"></i>
+                                </button>
+                                <span style="font-size:1.2rem; font-weight:800; color:var(--text-light);">${paraSessionState.title || 'Practical Exam'}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                                ${isSim ? `
+                                    <div id="para-sim-timer" style="display:flex; align-items:center; gap:6px; background:rgba(239, 68, 68, 0.15); color:#f87171; border:1.5px solid rgba(239, 68, 68, 0.4); padding:4px 14px; border-radius:20px; font-weight:800; font-size:0.95rem; font-variant-numeric:tabular-nums; box-shadow:0 0 14px rgba(239,68,68,0.2);">
+                                        <i class="ri-timer-flash-line" style="font-size:1.1rem; color:#ef4444;"></i>
+                                        <span id="para-timer-display" style="letter-spacing:1px;">40:00</span>
+                                    </div>
+                                ` : ''}
+                                <span style="background:${badgeBgColor}; color:${badgeThemeColor}; border:1px solid ${badgeBorderColor}; padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
+                                    Spot ${paraSessionState.spotIdx + 1} / ${totalSpots}
+                                </span>
+                                <span style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
+                                    Question ${qIdx + 1} / ${totalQs}
+                                </span>
+                                <button class="action-icon-btn" onclick="restartParaSpotsSession()" title="Reshuffle & Restart" style="width:34px; height:34px;">
+                                    <i class="ri-refresh-line"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Questions in Spot Stepper (Only if multiple questions) -->
-                    ${totalQs > 1 ? `
-                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.05em;">
-                            Questions in this spot:
-                        </span>
-                        <div class="para-q-stepper">
-                            ${stepperHTML}
+                        <!-- Overall Progress Bar -->
+                        <div style="width:100%;">
+                            <div class="fc-progress-bar" style="height:6px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
+                                <div class="fc-progress-fill" style="width:${progressPct}%; height:100%; background:${progressGradient}; transition:width 0.3s ease;"></div>
+                            </div>
                         </div>
-                    </div>
-                    ` : ''}
 
-                    <!-- Question Card -->
-                    <div class="para-question-card" id="para-question-box">
+                        <!-- Questions in Spot Stepper (Only if multiple questions) -->
                         ${totalQs > 1 ? `
-                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
-                            <span style="font-size:0.8rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em;">
-                                Question ${qIdx + 1} of ${totalQs}
+                        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                            <span style="font-size:0.8rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.05em;">
+                                Questions in this spot:
                             </span>
+                            <div class="para-q-stepper">
+                                ${stepperHTML}
+                            </div>
                         </div>
                         ` : ''}
-                        <div style="font-size:1.3rem; font-weight:700; color:var(--text-light); line-height:1.5; white-space: pre-line;" id="para-q-text-el">
-                            ${hasQText ? formatParaQuestionText(qText) : '<span style="font-size:1.05rem; font-weight:600; color:var(--text-gray); font-style:italic;"><i class="ri-image-line" style="vertical-align:middle; margin-right:4px;"></i> Refer to the image below</span>'}
-                        </div>
-                    </div>
 
-                    <!-- Answer Card Container (Below Question) -->
-                    <div id="para-answer-container" style="display:${paraSessionState.showAnswer ? 'block' : 'none'};">
-                        <div class="para-answer-card">
-                            <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:800; color:var(--primary-green); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.6rem;">
-                                <i class="ri-checkbox-circle-fill" style="font-size:1.15rem;"></i> Correct Answer
+                        <!-- Question Card -->
+                        <div class="para-question-card" id="para-question-box">
+                            <div style="font-size:1.25rem; font-weight:700; color:var(--text-light); line-height:1.55; white-space: pre-line;" id="para-q-text-el">
+                                ${hasQText ? formatParaQuestionText(qText) : '<span style="font-size:1.05rem; font-weight:600; color:var(--text-gray); font-style:italic;"><i class="ri-image-line" style="vertical-align:middle; margin-right:4px;"></i> Refer to the image below</span>'}
                             </div>
-                            ${currentQ.answer && currentQ.answer.trim() ? `
-                                <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el">
-                                    ${formatParaAnswerText(currentQ.answer)}
+                        </div>
+
+                        <!-- Answer Card Container (Below Question) -->
+                        <div id="para-answer-container" style="display:${paraSessionState.showAnswer ? 'block' : 'none'};">
+                            <div class="para-answer-card">
+                                <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:800; color:var(--primary-green); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.6rem;">
+                                    <i class="ri-checkbox-circle-fill" style="font-size:1.15rem;"></i> Correct Answer
                                 </div>
-                            ` : (!isAnswerImage ? `
-                                <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el">
-                                    <span style="color:#94a3b8; font-style:italic;">Self-evaluation / Written exam station</span>
-                                </div>
-                            ` : '')}
+                                ${currentAnsStr.trim() ? `
+                                    <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el">
+                                        ${formatParaAnswerText(currentAnsStr)}
+                                    </div>
+                                ` : (!isAnswerImage ? `
+                                    <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el">
+                                        <span style="color:#94a3b8; font-style:italic;">Self-evaluation / Written exam station</span>
+                                    </div>
+                                ` : '')}
                             ${isAnswerImage && hasImg ? `
                                 <div class="para-img-card" onclick="if(window.openImageLightbox) openImageLightbox('${imgSrc}');" title="Click to view full size image" style="margin-top:0.5rem;">
                                     <img src="${imgSrc}" id="para-spot-image-el" alt="${paraSessionState.title} Spot ${paraSessionState.spotIdx + 1}"
@@ -15203,7 +15233,10 @@
             if (isSim) {
                 _startSimulationTimer();
             }
+        } catch (err) {
+            console.error("Error in _renderParaSessionView:", err);
         }
+    }
 
         function paraShowAnswer() {
             paraSessionState.showAnswer = true;
@@ -15299,6 +15332,7 @@
 
         function _renderParaCompletionView() {
             if (simTimerInterval) { clearInterval(simTimerInterval); simTimerInterval = null; }
+            document.body.classList.remove('focus-mode');
             const container = document.getElementById('flashcards-container');
             if (!container) return;
             container.style.display = 'flex';
