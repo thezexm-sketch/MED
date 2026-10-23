@@ -21,6 +21,7 @@
     <script src="bio.js"></script>
     <script src="physio.js"></script>
     <script src="anatomy.js"></script>
+    <script src="anatomyat.js"></script>
     <style>
         :root {
             --primary-green: #22c55e;
@@ -3852,12 +3853,14 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.1rem 1.35rem;
+            padding: 0.95rem 1.35rem;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         #para-q-text-el {
             white-space: pre-line;
+            margin: 0;
+            padding: 0;
         }
 
         .para-answer-card {
@@ -14102,7 +14105,39 @@
                 console.warn("Could not load anatomy practical spots from DB:", e);
             }
         }
-        window.loadAnatomySpotsFromDB = loadAnatomySpotsFromDB;
+        async function loadAtlasSpotsFromDB() {
+            try {
+                if (!window.eguAtlasSpots || !Array.isArray(window.eguAtlasSpots) || window.eguAtlasSpots.length === 0) {
+                    const cached = localStorage.getItem('medStorm_cache_atlas_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.eguAtlasSpots = parsed;
+                            window.atlasSpots = parsed;
+                            window.anatomyAtlasSpots = parsed;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_atlas_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.eguAtlasSpots = spots;
+                            window.atlasSpots = spots;
+                            window.anatomyAtlasSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_atlas_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load atlas anatomy spots from DB:", e);
+            }
+        }
+        window.loadAtlasSpotsFromDB = loadAtlasSpotsFromDB;
 
         window.setPracticalYear = function(year) {
             window.currentPracticalYear = String(year);
@@ -14125,7 +14160,8 @@
             const p5 = typeof loadBioSpotsFromDB === 'function' ? loadBioSpotsFromDB() : Promise.resolve();
             const p6 = typeof loadPhysioSpotsFromDB === 'function' ? loadPhysioSpotsFromDB() : Promise.resolve();
             const p7 = typeof loadAnatomySpotsFromDB === 'function' ? loadAnatomySpotsFromDB() : Promise.resolve();
-            Promise.all([p1, p2, p3, p4, p5, p6, p7]).then(() => {
+            const p8 = typeof loadAtlasSpotsFromDB === 'function' ? loadAtlasSpotsFromDB() : Promise.resolve();
+            Promise.all([p1, p2, p3, p4, p5, p6, p7, p8]).then(() => {
                 const curY = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
                 const inSession = Boolean(document.getElementById('para-session-wrap'));
                 if (!inSession && (curY === '3' || curY === '2')) _fcShowCover();
@@ -14188,6 +14224,15 @@
                     });
                 }
 
+                const atlasList = (window.eguAtlasSpots && window.eguAtlasSpots.length) ? window.eguAtlasSpots : ((window.atlasSpots && window.atlasSpots.length) ? window.atlasSpots : ((window.anatomyAtlasSpots && window.anatomyAtlasSpots.length) ? window.anatomyAtlasSpots : []));
+                const atlasSpotsCount = atlasList.length || 0;
+                let atlasTotalQs = 0;
+                if (atlasList.length > 0) {
+                    atlasList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) atlasTotalQs += s.questions.length;
+                    });
+                }
+
                 const histoSpotsCount = (window.histoSpots && window.histoSpots.length) ? window.histoSpots.length : 0;
 
                 container.innerHTML = `
@@ -14207,17 +14252,17 @@
                                         <h3 style="font-size: 1.6rem; font-weight: 800; color: #f8fafc; margin: 0;">🩺 EGU Practical</h3>
                                         <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); padding: 3px 12px; border-radius: 20px; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.5px;">EGU MODULE</span>
                                     </div>
-                                    <p style="color: var(--text-gray); font-size: 0.92rem; margin: 4px 0 0 0;">Endocrine, Genital &amp; Urinary • 4 Subject Cards (HISTO, PHYSIO, BIO, ANATOMY)</p>
+                                    <p style="color: var(--text-gray); font-size: 0.92rem; margin: 4px 0 0 0;">Endocrine, Genital &amp; Urinary • 5 Subject Cards (HISTO, PHYSIO, BIO, ANATOMY, ATLAS ANATOMY)</p>
                                 </div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--border-color); padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
-                                    <i class="ri-stack-line" style="color: var(--accent);"></i> 4 Subjects
+                                    <i class="ri-stack-line" style="color: var(--accent);"></i> 5 Subjects
                                 </span>
                             </div>
                         </div>
 
-                        <!-- 4 Cards Flex Row Inside Big EGU -->
+                        <!-- Cards Flex Row Inside Big EGU -->
                         <div style="display: flex; justify-content: center; align-items: stretch; gap: 24px; flex-wrap: wrap; width: 100%; margin: 0 auto; padding: 10px 0;">
                             <!-- HISTO Card -->
                             <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
@@ -14295,6 +14340,26 @@
                                 </div>
                                 <button class="fc-start-btn" onclick="startPracticalSession('anatomy')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #a855f7, #7e22ce); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);">
                                     <i class="ri-play-fill"></i> Start ANATOMY Practical
+                                </button>
+                            </div>
+
+                            <!-- ATLAS ANATOMY Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${atlasSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetAtlasSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('atlas')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #092e2b 0%, #051a18 100%); border: 1.5px solid #14b8a6; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(20, 184, 166, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(20, 184, 166, 0.2); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.4);">${atlasSpotsCount > 0 ? `${atlasSpotsCount} spots • ${atlasTotalQs} Qs` : '📖 Atlas Anatomy'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">📖</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">📖 ATLAS ANATOMY</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Atlas Spots &amp; High-Yield Dissections</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('atlas')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #14b8a6, #0d9488); box-shadow: 0 8px 20px rgba(20, 184, 166, 0.4);">
+                                    <i class="ri-play-fill"></i> Start ATLAS Practical
                                 </button>
                             </div>
                         </div>
@@ -14477,10 +14542,20 @@
         }
         window.resetAnatomySpotsProgress = resetAnatomySpotsProgress;
 
+        function resetAtlasSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Atlas Anatomy Practical progress?")) return;
+            localStorage.removeItem('medStorm_atlas_progress');
+            if (window.showToast) window.showToast('Atlas Anatomy progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetAtlasSpotsProgress = resetAtlasSpotsProgress;
+
         window.startBioSpotsSession = (force) => startPracticalSession('bio', force);
         window.startHistoSpotsSession = (force) => startPracticalSession('histo', force);
         window.startPhysioSpotsSession = (force) => startPracticalSession('physio', force);
         window.startAnatomySpotsSession = (force) => startPracticalSession('anatomy', force);
+        window.startAtlasSpotsSession = (force) => startPracticalSession('atlas', force);
 
         function resetParaSpotsProgress(event) {
             if (event) event.stopPropagation();
@@ -14747,7 +14822,8 @@
             const isHisto = (type === 'histo' || type === 'histology');
             const isPhysio = (type === 'physio' || type === 'physiology');
             const isAnatomy = (type === 'anatomy');
-            const isYear2 = (isBio || isHisto || isPhysio || isAnatomy);
+            const isAtlas = (type === 'atlas' || type === 'atlas_anatomy' || type === 'anatomy_atlas');
+            const isYear2 = (isBio || isHisto || isPhysio || isAnatomy || isAtlas);
 
             if (curYear === '2' && !isYear2) {
                 alert("There is no practical questions available.");
@@ -14807,11 +14883,20 @@
                 storageKey = 'medStorm_anatomy_progress';
                 sessionTitle = '🦴 ANATOMY Practical (EGU)';
                 sessionIcon = '🦴';
+            } else if (isAtlas) {
+                targetVar = 'eguAtlasSpots';
+                scriptSrc = 'anatomyat.js';
+                storageKey = 'medStorm_atlas_progress';
+                sessionTitle = '📖 ATLAS ANATOMY Practical (EGU)';
+                sessionIcon = '📖';
             }
 
             let spots = window[targetVar];
             if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
                 spots = window.physiologySpots || window.physioSpots;
+            }
+            if (isAtlas && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                spots = window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots;
             }
             if (!spots || !Array.isArray(spots) || spots.length === 0) {
                 if (isHisto) {
@@ -14825,7 +14910,7 @@
                 const s = document.createElement('script');
                 s.src = scriptSrc;
                 s.onload = () => {
-                    const loaded = window[targetVar] || (isPhysio ? (window.physiologySpots || window.physioSpots) : null);
+                    const loaded = window[targetVar] || (isPhysio ? (window.physiologySpots || window.physioSpots) : (isAtlas ? (window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots) : null));
                     if (loaded && loaded.length > 0) {
                         startPracticalSession(type, forceRestart);
                     } else {
@@ -14906,6 +14991,7 @@
                 else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
                 else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
                 else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
+                else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
 
                 localStorage.setItem(key, JSON.stringify({
                     type: paraSessionState.type,
@@ -14974,6 +15060,7 @@
                 const isHisto = paraSessionState.type === 'histo';
                 const isPhysio = paraSessionState.type === 'physio';
                 const isAnatomy = paraSessionState.type === 'anatomy';
+                const isAtlas = (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy');
 
                 const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : '';
                 const imgSrc = rawImg.startsWith('img/') || rawImg.startsWith('http') || rawImg.startsWith('/') ? rawImg : (rawImg ? 'img/' + rawImg : '');
@@ -14996,24 +15083,24 @@
 
                 function formatParaAnswerText(str) {
                     if (!str) return '';
-                    let s = String(str);
+                    let s = String(str).trim();
                     s = s.replace(/([:\?])\s+(1\.\s+)/g, '$1\n$2');
                     s = s.replace(/([.;])\s+(\d+\.\s+)/g, '$1\n$2');
                     s = s.replace(/([.;:])\s+([a-zA-Z][\.\)]\s+)/g, '$1\n$2');
                     s = s.replace(/\s*\|\s*/g, '\n');
-                    return s;
+                    return s.trim();
                 }
 
                 function formatParaQuestionText(str) {
                     if (!str) return '';
-                    let s = String(str);
+                    let s = String(str).trim();
                     let m = s.match(/^(.*?)[\s]*\(\s*([A-Da-d]\))\s*(.*?)\)[\s\.]*$/);
                     if (m) {
                         const qPart = m[1].trim();
                         const firstOpt = m[2];
                         const rest = m[3];
                         const opts = (firstOpt + ' ' + rest).split(/,\s*(?=[B-Db-d]\))/).map(x => x.trim());
-                        return qPart + '\n' + opts.join('\n');
+                        return (qPart ? qPart + '\n' : '') + opts.join('\n');
                     }
                     m = s.match(/^(.*?)[\s]*\(\s*([a-dA-D1-4][\.\-]\s*.*)\)[\s\.]*$/);
                     if (m) {
@@ -15025,13 +15112,13 @@
                         else if (/^[A-D]\-/.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[B-D]\-\s*)/).map(x => x.trim());
                         else if (/^[1-4]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[2-4]\.\s*)/).map(x => x.trim());
                         if (opts && opts.length > 1) {
-                            return qPart + '\n' + opts.join('\n');
+                            return (qPart ? qPart + '\n' : '') + opts.join('\n');
                         }
                     }
                     if (s.includes(' | ')) {
                         s = s.replace(/:\s+(a\.\s+)/, ':\n$1').replace(/\s*\|\s*/g, '\n');
                     }
-                    return s;
+                    return s.trim();
                 }
 
                 const qText = (isBio && rawImg.includes('spot47.webp')) ? '' : (currentQ.question || '');
@@ -15069,6 +15156,11 @@
                     badgeBgColor = 'rgba(168, 85, 247, 0.15)';
                     badgeBorderColor = 'rgba(168, 85, 247, 0.35)';
                     progressGradient = 'linear-gradient(90deg, #a855f7, #c084fc)';
+                } else if (isAtlas) {
+                    badgeThemeColor = '#2dd4bf';
+                    badgeBgColor = 'rgba(20, 184, 166, 0.15)';
+                    badgeBorderColor = 'rgba(20, 184, 166, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #0d9488, #14b8a6)';
                 }
 
                 let nextBtnGradient = isSim ? 'linear-gradient(135deg, #a855f7, #7e22ce)' : (isMicro ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)');
@@ -15085,6 +15177,9 @@
                 } else if (isAnatomy) {
                     nextBtnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
                     nextBtnShadow = 'rgba(168,85,247,0.35)';
+                } else if (isAtlas) {
+                    nextBtnGradient = 'linear-gradient(135deg, #14b8a6, #0d9488)';
+                    nextBtnShadow = 'rgba(20,184,166,0.35)';
                 }
 
                 const stepperHTML = currentQuestions.map((_, i) => {
@@ -15150,9 +15245,7 @@
 
                         <!-- Question Card -->
                         <div class="para-question-card" id="para-question-box">
-                            <div style="font-size:1.25rem; font-weight:700; color:var(--text-light); line-height:1.55; white-space: pre-line;" id="para-q-text-el">
-                                ${hasQText ? formatParaQuestionText(qText) : '<span style="font-size:1.05rem; font-weight:600; color:var(--text-gray); font-style:italic;"><i class="ri-image-line" style="vertical-align:middle; margin-right:4px;"></i> Refer to the image below</span>'}
-                            </div>
+                            <div style="font-size:1.25rem; font-weight:700; color:var(--text-light); line-height:1.55; white-space: pre-line;" id="para-q-text-el">${hasQText ? formatParaQuestionText(qText).trim() : '<span style="font-size:1.05rem; font-weight:600; color:var(--text-gray); font-style:italic;"><i class="ri-image-line" style="vertical-align:middle; margin-right:4px;"></i> Refer to the image below</span>'}</div>
                         </div>
 
                         <!-- Answer Card Container (Below Question) -->
@@ -15162,13 +15255,9 @@
                                     <i class="ri-checkbox-circle-fill" style="font-size:1.15rem;"></i> Correct Answer
                                 </div>
                                 ${currentAnsStr.trim() ? `
-                                    <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el">
-                                        ${formatParaAnswerText(currentAnsStr)}
-                                    </div>
+                                    <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el">${formatParaAnswerText(currentAnsStr).trim()}</div>
                                 ` : (!isAnswerImage ? `
-                                    <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el">
-                                        <span style="color:#94a3b8; font-style:italic;">Self-evaluation / Written exam station</span>
-                                    </div>
+                                    <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el"><span style="color:#94a3b8; font-style:italic;">Self-evaluation / Written exam station</span></div>
                                 ` : '')}
                             ${isAnswerImage && hasImg ? `
                                 <div class="para-img-card" onclick="if(window.openImageLightbox) openImageLightbox('${imgSrc}');" title="Click to view full size image" style="margin-top:0.5rem;">
@@ -15324,6 +15413,7 @@
             else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
             else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
             else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
+            else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
             localStorage.removeItem(key);
             if (typeof showConfetti === 'function') showConfetti();
             _renderParaCompletionView();
@@ -15345,6 +15435,7 @@
             const isHisto = paraSessionState.type === 'histo';
             const isPhysio = paraSessionState.type === 'physio';
             const isAnatomy = paraSessionState.type === 'anatomy';
+            const isAtlas = (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy');
 
             const totalSpots = paraSessionState.spots ? paraSessionState.spots.length : (isSim ? 20 : (isMicro ? 111 : (isBio ? 68 : 58)));
             let totalQs = 0;
@@ -15380,6 +15471,10 @@
                 name = 'Anatomy Practical';
                 color = '#a855f7';
                 btnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
+            } else if (isAtlas) {
+                name = 'Atlas Anatomy Practical';
+                color = '#2dd4bf';
+                btnGradient = 'linear-gradient(135deg, #14b8a6, #0d9488)';
             }
 
             container.innerHTML = `
