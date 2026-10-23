@@ -18,6 +18,11 @@
     <script src="practical_microbiology.js"></script>
     <script src="fid.js"></script>
     <script src="practical_pharmacology.js"></script>
+    <script src="bio.js"></script>
+    <script src="physio.js"></script>
+    <script src="anatomy.js"></script>
+    <script src="anatomyat.js"></script>
+    <script src="histoslides.js"></script>
     <style>
         :root {
             --primary-green: #22c55e;
@@ -3676,6 +3681,24 @@
             overflow-y: auto;
         }
 
+        #view-flashcards.in-session,
+        #view-flashcards:has(.para-session-wrap) {
+            padding: 0.65rem 1rem 3rem !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        body.focus-mode #view-flashcards {
+            padding: 0.65rem 1rem 3rem !important;
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         /* Practical Year Tabs */
         .practical-year-tabs {
             display: flex;
@@ -3721,12 +3744,12 @@
         /* Spot Practical Session */
         .para-session-wrap {
             width: 100%;
-            max-width: 820px;
+            max-width: 860px;
             margin: 0 auto;
-            padding: 5px 12px;
+            padding: 0 4px;
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 0.65rem;
             animation: fadeIn 0.25s ease;
         }
 
@@ -3738,8 +3761,8 @@
             flex-wrap: wrap;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
-            padding: 12px 18px;
-            border-radius: 16px;
+            padding: 8px 14px;
+            border-radius: 14px;
         }
 
         .para-img-card {
@@ -3831,8 +3854,14 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 0.95rem 1.35rem;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #para-q-text-el {
+            white-space: pre-line;
+            margin: 0;
+            padding: 0;
         }
 
         .para-answer-card {
@@ -6781,7 +6810,8 @@
                         <input type="text" id="editor-search-input" placeholder="Search question text..."
                             oninput="handleEditorSearch()"
                             style="flex: 1; min-width: 220px; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-darker); color: white; font-size: 15px; outline: none;">
-                        <button type="button" onclick="openDownloadQuestionsModal(document.getElementById('editor-module-select').value)"
+                        <button type="button"
+                            onclick="openDownloadQuestionsModal(document.getElementById('editor-module-select').value)"
                             id="editor-btn-download-js"
                             style="padding: 10px 16px; border-radius: 8px; border: 1px solid var(--accent); background: rgba(16, 185, 129, 0.15); color: var(--accent); font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; transition: all 0.2s;"
                             title="Download questions for selected module as .js file">
@@ -6849,15 +6879,18 @@
                 <h3 class="modal-title" style="color: var(--accent); display:flex; align-items:center; gap:8px;">
                     <i class="ri-download-cloud-2-line"></i> Download Questions JS
                 </h3>
-                <button class="modal-close" onclick="closeDownloadQuestionsModal()"><i class="ri-close-line"></i></button>
+                <button class="modal-close" onclick="closeDownloadQuestionsModal()"><i
+                        class="ri-close-line"></i></button>
             </div>
             <p style="color: var(--text-gray); font-size: 0.88rem; margin-bottom: 16px; line-height: 1.5;">
-                Select a module to fetch the freshest questions directly from Firebase and download them formatted as a clean <code>.js</code> file (matching the <code>foundclu.js</code> format with latest updates & edits).
+                Select a module to fetch the freshest questions directly from Firebase and download them formatted as a
+                clean <code>.js</code> file (matching the <code>foundclu.js</code> format with latest updates & edits).
             </p>
 
             <div style="display: flex; flex-direction: column; gap: 14px;">
                 <div>
-                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
+                    <label
+                        style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
                         Select Module:
                     </label>
                     <select id="download-modal-module-select" onchange="onDownloadModalModuleChanged()"
@@ -6867,14 +6900,16 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
-                        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
+                        <label
+                            style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
                             JS Variable Name:
                         </label>
                         <input type="text" id="download-modal-var-name" placeholder="e.g. FOUNDATION_QUESTIONS"
                             style="width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-darker); color: var(--text-light); font-size: 0.88rem; outline: none; font-family: monospace;">
                     </div>
                     <div>
-                        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
+                        <label
+                            style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">
                             Download File Name:
                         </label>
                         <input type="text" id="download-modal-file-name" placeholder="e.g. found.js"
@@ -6889,10 +6924,12 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-                    <button class="quiz-btn btn-secondary" style="flex: 1; min-width: 90px;" onclick="closeDownloadQuestionsModal()">
+                    <button class="quiz-btn btn-secondary" style="flex: 1; min-width: 90px;"
+                        onclick="closeDownloadQuestionsModal()">
                         Cancel
                     </button>
-                    <button class="quiz-btn btn-secondary" style="flex: 1.2; min-width: 120px;" id="btn-copy-download-js" onclick="copyDownloadedJSCode()" title="Copy JS code to clipboard">
+                    <button class="quiz-btn btn-secondary" style="flex: 1.2; min-width: 120px;"
+                        id="btn-copy-download-js" onclick="copyDownloadedJSCode()" title="Copy JS code to clipboard">
                         <i class="ri-file-copy-line"></i> Copy JS Code
                     </button>
                     <button class="quiz-btn" id="btn-execute-download-js"
@@ -8230,7 +8267,8 @@
             }
             if (typeof _fcShowCover === 'function') {
                 const fcView = document.getElementById('view-flashcards');
-                if (fcView && (fcView.classList.contains('active') || fcView.style.display === 'block')) {
+                const inSession = Boolean(document.getElementById('para-session-wrap'));
+                if (!inSession && fcView && (fcView.classList.contains('active') || fcView.style.display === 'block')) {
                     _fcShowCover();
                 }
             }
@@ -8299,6 +8337,7 @@
                     });
                 }
                 AppState.year = year;
+                window.currentPracticalYear = year;
                 localStorage.setItem('medStorm_year', year);
                 window.isPendingGoogleYearChoice = false;
 
@@ -8329,6 +8368,7 @@
         window.updateProfileYear = async (newYear) => {
             if (!window.currentUserId) return;
             AppState.year = newYear;
+            window.currentPracticalYear = newYear;
             localStorage.setItem('medStorm_year', newYear);
             const allowedModules = newYear === '2' ?
                 ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS', 'Communication Step 2', 'Professionalism'] :
@@ -8377,10 +8417,18 @@
                 console.warn("Could not save updated year to DB:", e);
             }
 
+            if (window.syncProfileYearUI) window.syncProfileYearUI(newYear);
             if (typeof window.renderDashboard === 'function') {
                 window.renderDashboard();
             }
             if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
+            if (typeof _fcShowCover === 'function') {
+                const fcView = document.getElementById('view-flashcards');
+                const inSession = Boolean(document.getElementById('para-session-wrap'));
+                if (!inSession && fcView && (fcView.classList.contains('active') || fcView.style.display === 'block')) {
+                    _fcShowCover();
+                }
+            }
         };
         (function () {
             const field = document.getElementById('signup-username');
@@ -9778,7 +9826,7 @@
                 renderFavorites();
             } else if (mode === 'flashcards') {
                 document.getElementById('nav-flashcards').classList.add('active');
-                document.getElementById('page-title').textContent = 'Flashcards';
+                document.getElementById('page-title').textContent = 'Practical';
                 document.getElementById('view-flashcards').classList.add('active');
                 document.getElementById('view-flashcards').style.display = 'block';
                 renderFlashcards();
@@ -13968,6 +14016,167 @@
         }
         window.loadPharmacologyPracticalFromDB = loadPharmacologyPracticalFromDB;
 
+        async function loadBioSpotsFromDB() {
+            try {
+                if (!window.bioSpots || !Array.isArray(window.bioSpots) || window.bioSpots.length === 0) {
+                    const cached = localStorage.getItem('medStorm_cache_bio_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.bioSpots = parsed;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_bio_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.bioSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_bio_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load bio practical spots from DB:", e);
+            }
+        }
+        window.loadBioSpotsFromDB = loadBioSpotsFromDB;
+
+        async function loadPhysioSpotsFromDB() {
+            try {
+                if (!window.physiologySpots || !Array.isArray(window.physiologySpots) || window.physiologySpots.length === 0) {
+                    const cached = localStorage.getItem('medStorm_cache_physio_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.physiologySpots = parsed;
+                            window.physioSpots = parsed;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_physio_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.physiologySpots = spots;
+                            window.physioSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_physio_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load physio practical spots from DB:", e);
+            }
+        }
+        window.loadPhysioSpotsFromDB = loadPhysioSpotsFromDB;
+
+        async function loadAnatomySpotsFromDB() {
+            try {
+                if (!window.anatomySpots || !Array.isArray(window.anatomySpots) || window.anatomySpots.length === 0) {
+                    const cached = localStorage.getItem('medStorm_cache_anatomy_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.anatomySpots = parsed;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_anatomy_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.anatomySpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_anatomy_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load anatomy practical spots from DB:", e);
+            }
+        }
+        async function loadAtlasSpotsFromDB() {
+            try {
+                if (!window.eguAtlasSpots || !Array.isArray(window.eguAtlasSpots) || window.eguAtlasSpots.length === 0) {
+                    const cached = localStorage.getItem('medStorm_cache_atlas_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.eguAtlasSpots = parsed;
+                            window.atlasSpots = parsed;
+                            window.anatomyAtlasSpots = parsed;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_atlas_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.eguAtlasSpots = spots;
+                            window.atlasSpots = spots;
+                            window.anatomyAtlasSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_atlas_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load atlas anatomy spots from DB:", e);
+            }
+        }
+        async function loadHistoSpotsFromDB() {
+            try {
+                if (!window.histoslides || !Array.isArray(window.histoslides) || window.histoslides.length === 0) {
+                    const cached = localStorage.getItem('medStorm_cache_histo_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.histoslides = parsed;
+                            window.histoSpots = parsed;
+                            window.histoSlides = parsed;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_histo_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.histoslides = spots;
+                            window.histoSpots = spots;
+                            window.histoSlides = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_histo_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load histology practical spots from DB:", e);
+            }
+        }
+        window.loadHistoSpotsFromDB = loadHistoSpotsFromDB;
+
+        window.setPracticalYear = function(year) {
+            window.currentPracticalYear = String(year);
+            _fcShowCover();
+        };
+
         async function renderFlashcards() {
             const container = document.getElementById('flashcards-container');
             if (!container) return;
@@ -13981,28 +14190,225 @@
             const p2 = typeof loadMicrobiologySpotsFromDB === 'function' ? loadMicrobiologySpotsFromDB() : Promise.resolve();
             const p3 = typeof loadMicroParaSimulationFromDB === 'function' ? loadMicroParaSimulationFromDB() : Promise.resolve();
             const p4 = typeof loadPharmacologyPracticalFromDB === 'function' ? loadPharmacologyPracticalFromDB() : Promise.resolve();
-            Promise.all([p1, p2, p3, p4]).then(() => {
-                const curY = String((AppState && AppState.year) || '1');
-                if (curY === '3') _fcShowCover();
+            const p5 = typeof loadBioSpotsFromDB === 'function' ? loadBioSpotsFromDB() : Promise.resolve();
+            const p6 = typeof loadPhysioSpotsFromDB === 'function' ? loadPhysioSpotsFromDB() : Promise.resolve();
+            const p7 = typeof loadAnatomySpotsFromDB === 'function' ? loadAnatomySpotsFromDB() : Promise.resolve();
+            const p8 = typeof loadAtlasSpotsFromDB === 'function' ? loadAtlasSpotsFromDB() : Promise.resolve();
+            const p9 = typeof loadHistoSpotsFromDB === 'function' ? loadHistoSpotsFromDB() : Promise.resolve();
+            Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9]).then(() => {
+                const curY = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
+                const inSession = Boolean(document.getElementById('para-session-wrap'));
+                if (!inSession && (curY === '3' || curY === '2')) _fcShowCover();
             }).catch(() => { });
 
             if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
                 window.loadAllFlashcards().catch(e => console.warn("Background practical load failed:", e));
             }
 
-            _fcShowCover();
+            if (!document.getElementById('para-session-wrap')) {
+                _fcShowCover();
+            }
         }
 
-        function _fcShowCover() {
+        function _fcShowCover(force = false) {
+            const wrap = document.getElementById('para-session-wrap');
+            if (!force && wrap && paraSessionState && Array.isArray(paraSessionState.spots) && paraSessionState.spots.length > 0) {
+                return;
+            }
+            document.body.classList.remove('focus-mode');
             const container = document.getElementById('flashcards-container');
             if (!container) return;
+            const fcView = document.getElementById('view-flashcards');
+            if (fcView) fcView.classList.remove('in-session');
             container.style.display = 'flex';
             container.style.flexDirection = 'column';
             container.style.alignItems = 'center';
             container.style.justifyContent = 'center';
             container.style.width = '100%';
 
-            const curYear = String((AppState && AppState.year) || '1');
+            const curYear = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
+
+            if (curYear === '2') {
+                const bioList = (window.bioSpots && Array.isArray(window.bioSpots)) ? window.bioSpots : [];
+                const bioSpotsCount = bioList.length || 68;
+                let bioTotalQs = 112;
+                if (bioList.length > 0) {
+                    let counted = 0;
+                    bioList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) bioTotalQs = counted;
+                }
+
+                const physioList = (window.physiologySpots && window.physiologySpots.length) ? window.physiologySpots : ((window.physioSpots && window.physioSpots.length) ? window.physioSpots : []);
+                const physioSpotsCount = physioList.length || 0;
+                let physioTotalQs = 0;
+                if (physioList.length > 0) {
+                    physioList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) physioTotalQs += s.questions.length;
+                    });
+                }
+
+                const anatomyList = (window.anatomySpots && window.anatomySpots.length) ? window.anatomySpots : [];
+                const anatomySpotsCount = anatomyList.length || 0;
+                let anatomyTotalQs = 0;
+                if (anatomyList.length > 0) {
+                    anatomyList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) anatomyTotalQs += s.questions.length;
+                    });
+                }
+
+                const atlasList = (window.eguAtlasSpots && window.eguAtlasSpots.length) ? window.eguAtlasSpots : ((window.atlasSpots && window.atlasSpots.length) ? window.atlasSpots : ((window.anatomyAtlasSpots && window.anatomyAtlasSpots.length) ? window.anatomyAtlasSpots : []));
+                const atlasSpotsCount = atlasList.length || 0;
+                let atlasTotalQs = 0;
+                if (atlasList.length > 0) {
+                    atlasList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) atlasTotalQs += s.questions.length;
+                    });
+                }
+
+                const histoList = (window.histoslides && window.histoslides.length) ? window.histoslides : ((window.histoSpots && window.histoSpots.length) ? window.histoSpots : []);
+                const histoSpotsCount = histoList.length || 0;
+                let histoTotalQs = 0;
+                if (histoList.length > 0) {
+                    histoList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) histoTotalQs += s.questions.length;
+                    });
+                }
+
+                container.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.4rem;">🔬 2nd Year Practical Exams</h2>
+                        <p style="color: var(--text-gray); font-size: 0.95rem; margin: 0;">Interactive spot-by-spot exams with question steps, answers, image zooming, and self-evaluation.</p>
+                    </div>
+
+                    <!-- EGU Big Card Container -->
+                    <div class="egu-big-card" style="width: 100%; max-width: 1520px; margin: 0 auto; background: linear-gradient(145deg, rgba(31, 41, 36, 0.6) 0%, rgba(15, 23, 42, 0.75) 100%); border: 1.5px solid rgba(34, 197, 94, 0.35); border-radius: 24px; padding: 28px 24px 34px 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08); position: relative;">
+                        <!-- EGU Big Card Header -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-left: 8px; padding-right: 8px;">
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #22c55e, #15803d); display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 8px 22px rgba(34, 197, 94, 0.35); border: 1px solid rgba(255, 255, 255, 0.15);">🩺</div>
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                        <h3 style="font-size: 1.6rem; font-weight: 800; color: #f8fafc; margin: 0;">🩺 EGU Practical</h3>
+                                        <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); padding: 3px 12px; border-radius: 20px; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.5px;">EGU MODULE</span>
+                                    </div>
+                                    <p style="color: var(--text-gray); font-size: 0.92rem; margin: 4px 0 0 0;">Endocrine, Genital &amp; Urinary • 5 Subject Cards (HISTO, PHYSIO, BIO, ANATOMY, ATLAS ANATOMY)</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--border-color); padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                                    <i class="ri-stack-line" style="color: var(--accent);"></i> 5 Subjects
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Cards Flex Row Inside Big EGU -->
+                        <div style="display: flex; justify-content: center; align-items: stretch; gap: 24px; flex-wrap: wrap; width: 100%; margin: 0 auto; padding: 10px 0;">
+                            <!-- HISTO Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${histoSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetHistoSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('histo')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #2b1120 0%, #170912 100%); border: 1.5px solid #ec4899; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(236, 72, 153, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4);">${histoSpotsCount > 0 ? `${histoSpotsCount} spots • ${histoTotalQs} Qs` : '🔬 Histology'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🔬</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🔬 HISTO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Histology Spots &amp; Slides</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('histo')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #ec4899, #be185d); box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);">
+                                    <i class="ri-play-fill"></i> Start HISTO Practical
+                                </button>
+                            </div>
+
+                            <!-- PHYSIO Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${physioSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetPhysioSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('physio')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #2b1d0c 0%, #150e05 100%); border: 1.5px solid #f59e0b; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(245, 158, 11, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">${physioSpotsCount > 0 ? `${physioSpotsCount} spots • ${physioTotalQs} Qs` : '⚡ Physiology'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">⚡</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">⚡ PHYSIO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Physiology Clinical Stations</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('physio')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);">
+                                    <i class="ri-play-fill"></i> Start PHYSIO Practical
+                                </button>
+                            </div>
+
+                            <!-- BIO Card (With bio.js questions) -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                <button class="reset-btn" onclick="resetBioSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+
+                                <div class="fc-cover-deck" onclick="startPracticalSession('bio')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #0c2333 0%, #06131c 100%); border: 1.5px solid #0ea5e9; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(14, 165, 233, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4);">${bioSpotsCount} spots • ${bioTotalQs} Qs</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🧪</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🧪 BIO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Spot-by-Spot Interactive Practical</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('bio')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);">
+                                    <i class="ri-play-fill"></i> Start Practical Session
+                                </button>
+                            </div>
+
+                            <!-- ANATOMY Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${anatomySpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetAnatomySpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('anatomy')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #241432 0%, #130a1c 100%); border: 1.5px solid #a855f7; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(168, 85, 247, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4);">${anatomySpotsCount > 0 ? `${anatomySpotsCount} spots • ${anatomyTotalQs} Qs` : '🦴 Anatomy'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦴</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🦴 ANATOMY Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Gross Anatomy &amp; Models</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('anatomy')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #a855f7, #7e22ce); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);">
+                                    <i class="ri-play-fill"></i> Start ANATOMY Practical
+                                </button>
+                            </div>
+
+                            <!-- ATLAS ANATOMY Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${atlasSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetAtlasSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('atlas')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #092e2b 0%, #051a18 100%); border: 1.5px solid #14b8a6; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(20, 184, 166, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(20, 184, 166, 0.2); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.4);">${atlasSpotsCount > 0 ? `${atlasSpotsCount} spots • ${atlasTotalQs} Qs` : '📖 Atlas Anatomy'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">📖</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">📖 ATLAS ANATOMY</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Atlas Spots &amp; High-Yield Dissections</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('atlas')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #14b8a6, #0d9488); box-shadow: 0 8px 20px rgba(20, 184, 166, 0.4);">
+                                    <i class="ri-play-fill"></i> Start ATLAS Practical
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
             if (curYear !== '3') {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 4rem 1.5rem; color: #94a3b8; max-width: 500px; margin: 2rem auto;">
@@ -14140,6 +14546,57 @@
             qIdx: 0,
             showAnswer: false
         };
+
+        function resetBioSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Biochemistry Practical progress?")) return;
+            localStorage.removeItem('medStorm_bio_progress');
+            if (window.showToast) window.showToast('Biochemistry progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetBioSpotsProgress = resetBioSpotsProgress;
+
+        function resetHistoSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Histology Practical progress?")) return;
+            localStorage.removeItem('medStorm_histo_progress');
+            if (window.showToast) window.showToast('Histology progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetHistoSpotsProgress = resetHistoSpotsProgress;
+
+        function resetPhysioSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Physiology Practical progress?")) return;
+            localStorage.removeItem('medStorm_physio_progress');
+            if (window.showToast) window.showToast('Physiology progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetPhysioSpotsProgress = resetPhysioSpotsProgress;
+
+        function resetAnatomySpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Anatomy Practical progress?")) return;
+            localStorage.removeItem('medStorm_anatomy_progress');
+            if (window.showToast) window.showToast('Anatomy progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetAnatomySpotsProgress = resetAnatomySpotsProgress;
+
+        function resetAtlasSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Atlas Anatomy Practical progress?")) return;
+            localStorage.removeItem('medStorm_atlas_progress');
+            if (window.showToast) window.showToast('Atlas Anatomy progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetAtlasSpotsProgress = resetAtlasSpotsProgress;
+
+        window.startBioSpotsSession = (force) => startPracticalSession('bio', force);
+        window.startHistoSpotsSession = (force) => startPracticalSession('histo', force);
+        window.startPhysioSpotsSession = (force) => startPracticalSession('physio', force);
+        window.startAnatomySpotsSession = (force) => startPracticalSession('anatomy', force);
+        window.startAtlasSpotsSession = (force) => startPracticalSession('atlas', force);
 
         function resetParaSpotsProgress(event) {
             if (event) event.stopPropagation();
@@ -14401,8 +14858,23 @@
         }
 
         function startPracticalSession(type = 'parasitology', forceRestart = false) {
-            const curYear = String((AppState && AppState.year) || '1');
-            if (curYear !== '3') {
+            const curYear = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
+            const isBio = (type === 'bio' || type === 'biochemistry');
+            const isHisto = (type === 'histo' || type === 'histology');
+            const isPhysio = (type === 'physio' || type === 'physiology');
+            const isAnatomy = (type === 'anatomy');
+            const isAtlas = (type === 'atlas' || type === 'atlas_anatomy' || type === 'anatomy_atlas');
+            const isYear2 = (isBio || isHisto || isPhysio || isAnatomy || isAtlas);
+
+            if (curYear === '2' && !isYear2) {
+                alert("There is no practical questions available.");
+                return;
+            }
+            if (curYear === '3' && isYear2) {
+                alert("There is no practical questions available.");
+                return;
+            }
+            if (curYear !== '3' && curYear !== '2') {
                 alert("There is no practical questions available.");
                 return;
             }
@@ -14428,19 +14900,60 @@
                 storageKey = 'medStorm_sim_progress';
                 sessionTitle = '⏱️ micro & para exam simulation';
                 sessionIcon = '⏱️';
+            } else if (isBio) {
+                targetVar = 'bioSpots';
+                scriptSrc = 'bio.js';
+                storageKey = 'medStorm_bio_progress';
+                sessionTitle = '🧪 BIO Practical (EGU)';
+                sessionIcon = '🧪';
+            } else if (isHisto) {
+                targetVar = 'histoSpots';
+                scriptSrc = 'histoslides.js';
+                storageKey = 'medStorm_histo_progress';
+                sessionTitle = '🔬 HISTO Practical (EGU)';
+                sessionIcon = '🔬';
+            } else if (isPhysio) {
+                targetVar = 'physioSpots';
+                scriptSrc = 'physio.js';
+                storageKey = 'medStorm_physio_progress';
+                sessionTitle = '⚡ PHYSIO Practical (EGU)';
+                sessionIcon = '⚡';
+            } else if (isAnatomy) {
+                targetVar = 'anatomySpots';
+                scriptSrc = 'anatomy.js';
+                storageKey = 'medStorm_anatomy_progress';
+                sessionTitle = '🦴 ANATOMY Practical (EGU)';
+                sessionIcon = '🦴';
+            } else if (isAtlas) {
+                targetVar = 'eguAtlasSpots';
+                scriptSrc = 'anatomyat.js';
+                storageKey = 'medStorm_atlas_progress';
+                sessionTitle = '📖 ATLAS ANATOMY Practical (EGU)';
+                sessionIcon = '📖';
             }
 
             let spots = window[targetVar];
+            if (isHisto && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                spots = window.histoslides || window.histoSpots || window.histoSlides;
+            }
+            if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                spots = window.physiologySpots || window.physioSpots;
+            }
+            if (isAtlas && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                spots = window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots;
+            }
             if (!spots || !Array.isArray(spots) || spots.length === 0) {
                 const s = document.createElement('script');
                 s.src = scriptSrc;
                 s.onload = () => {
-                    if (window[targetVar] && window[targetVar].length > 0) {
+                    const loaded = window[targetVar] || (isHisto ? (window.histoslides || window.histoSpots || window.histoSlides) : (isPhysio ? (window.physiologySpots || window.physioSpots) : (isAtlas ? (window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots) : null)));
+                    if (loaded && loaded.length > 0) {
                         startPracticalSession(type, forceRestart);
                     } else {
-                        alert(`Could not load ${isSim ? 'Simulation' : (isMicro ? 'Microbiology' : 'Parasitology')} spots data.`);
+                        alert(`Could not load ${sessionTitle} data.`);
                     }
                 };
+                s.onerror = () => alert(`Failed to load ${scriptSrc} file.`);
                 document.head.appendChild(s);
                 return;
             }
@@ -14476,6 +14989,7 @@
                                 paraSessionState.timeRemaining = 2400;
                             }
                         }
+                        document.body.classList.add('focus-mode');
                         _renderParaSessionView();
                         return;
                     }
@@ -14495,6 +15009,7 @@
                 timeRemaining: 2400
             };
 
+            document.body.classList.add('focus-mode');
             _saveParaProgress();
             _renderParaSessionView();
         }
@@ -14508,6 +15023,11 @@
                 let key = 'medStorm_para_progress';
                 if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
                 else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
+                else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
+                else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
+                else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
+                else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
+                else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
 
                 localStorage.setItem(key, JSON.stringify({
                     type: paraSessionState.type,
@@ -14526,7 +15046,10 @@
         function exitParaSpotsSession() {
             if (simTimerInterval) { clearInterval(simTimerInterval); simTimerInterval = null; }
             _saveParaProgress();
-            _fcShowCover();
+            document.body.classList.remove('focus-mode');
+            const fcView = document.getElementById('view-flashcards');
+            if (fcView) fcView.classList.remove('in-session');
+            _fcShowCover(true);
         }
         window.exitParaSpotsSession = exitParaSpotsSession;
 
@@ -14538,127 +15061,254 @@
         window.restartParaSpotsSession = restartParaSpotsSession;
 
         function _renderParaSessionView() {
-            const container = document.getElementById('flashcards-container');
-            if (!container || !paraSessionState.spots || paraSessionState.spots.length === 0) return;
+            try {
+                document.body.classList.add('focus-mode');
+                const container = document.getElementById('flashcards-container');
+                if (!container || !paraSessionState || !paraSessionState.spots || paraSessionState.spots.length === 0) return;
 
-            container.style.display = 'block';
+                container.style.display = 'block';
+                container.style.minHeight = 'auto';
+                const fcView = document.getElementById('view-flashcards');
+                if (fcView) fcView.classList.add('in-session');
 
-            const isMicro = paraSessionState.type === 'microbiology';
-            const isSim = paraSessionState.type === 'simulation';
-            const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
-            if (!currentSpot) {
-                _renderParaCompletionView();
-                return;
-            }
-
-            const totalSpots = paraSessionState.spots.length;
-            const currentQuestions = currentSpot.questions || [];
-            const totalQs = currentQuestions.length;
-            const qIdx = paraSessionState.qIdx;
-            const currentQ = currentQuestions[qIdx] || { question: "No question available", answer: "N/A" };
-
-            const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : '';
-            const imgSrc = rawImg.startsWith('img/') || rawImg.startsWith('http') || rawImg.startsWith('/') ? rawImg : (rawImg ? 'img/' + rawImg : '');
-            const hasImg = Boolean(imgSrc);
-
-            const progressPct = Math.round(((paraSessionState.spotIdx) / totalSpots) * 100);
-            let badgeThemeColor = isMicro ? '#34d399' : '#60a5fa';
-            let badgeBgColor = isMicro ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)';
-            let badgeBorderColor = isMicro ? 'rgba(16,185,129,0.3)' : 'rgba(59,130,246,0.3)';
-            let progressGradient = isMicro ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #3b82f6, #10b981)';
-
-            if (isSim) {
-                badgeThemeColor = '#c084fc';
-                badgeBgColor = 'rgba(168,85,247,0.15)';
-                badgeBorderColor = 'rgba(168,85,247,0.35)';
-                progressGradient = 'linear-gradient(90deg, #a855f7, #ec4899)';
-            }
-
-            const stepperHTML = currentQuestions.map((_, i) => {
-                let cls = 'para-q-step-dot';
-                let icon = '';
-                if (i === qIdx) {
-                    cls += ' active';
-                    icon = '<i class="ri-play-fill" style="margin-right:2px;"></i>';
-                } else if (i < qIdx) {
-                    cls += ' done';
-                    icon = '<i class="ri-check-line" style="margin-right:2px;"></i>';
+                const totalSpots = paraSessionState.spots.length;
+                if (typeof paraSessionState.spotIdx !== 'number' || isNaN(paraSessionState.spotIdx) || paraSessionState.spotIdx < 0 || paraSessionState.spotIdx >= totalSpots) {
+                    paraSessionState.spotIdx = 0;
                 }
-                return `<button class="${cls}" onclick="paraJumpToQuestion(${i})" title="Question ${i + 1}">${icon}Q${i + 1}</button>`;
-            }).join('');
 
-            container.innerHTML = `
-                <div class="para-session-wrap" id="para-session-wrap">
-                    <!-- Session Header -->
-                    <div class="para-session-header">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <button class="action-icon-btn" onclick="exitParaSpotsSession()" title="Back to Decks" style="width:38px; height:38px; font-size:1.15rem;">
-                                <i class="ri-arrow-left-line"></i>
-                            </button>
-                            <span style="font-size:1.2rem; font-weight:800; color:var(--text-light);">${paraSessionState.title || 'Practical Exam'}</span>
+                const currentSpot = paraSessionState.spots[paraSessionState.spotIdx];
+                if (!currentSpot) {
+                    _renderParaCompletionView();
+                    return;
+                }
+
+                const currentQuestions = (currentSpot && Array.isArray(currentSpot.questions)) ? currentSpot.questions : [];
+                const totalQs = currentQuestions.length;
+                if (typeof paraSessionState.qIdx !== 'number' || isNaN(paraSessionState.qIdx) || paraSessionState.qIdx < 0 || (totalQs > 0 && paraSessionState.qIdx >= totalQs)) {
+                    paraSessionState.qIdx = 0;
+                }
+                const qIdx = paraSessionState.qIdx;
+                const currentQ = currentQuestions[qIdx] || { question: "No question available", answer: "N/A" };
+
+                const isMicro = paraSessionState.type === 'microbiology';
+                const isSim = paraSessionState.type === 'simulation';
+                const isBio = paraSessionState.type === 'bio';
+                const isHisto = paraSessionState.type === 'histo';
+                const isPhysio = paraSessionState.type === 'physio';
+                const isAnatomy = paraSessionState.type === 'anatomy';
+                const isAtlas = (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy');
+
+                const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : '';
+                const imgSrc = rawImg.startsWith('img/') || rawImg.startsWith('http') || rawImg.startsWith('/') ? rawImg : (rawImg ? 'img/' + rawImg : '');
+                const hasImg = Boolean(imgSrc);
+
+                const isAnswerImage = Boolean(
+                    currentSpot.isAnswerImage ||
+                    currentSpot.imageAsAnswer ||
+                    currentQ.isAnswerImage ||
+                    currentQ.imageAsAnswer ||
+                    (isBio && (
+                        rawImg.includes('spot4.webp') ||
+                        rawImg.includes('spot5.webp') ||
+                        rawImg.includes('spot6.webp') ||
+                        rawImg.includes('spot35.webp') ||
+                        rawImg.includes('spot40.webp') ||
+                        rawImg.includes('spot48-49.webp')
+                    ))
+                );
+
+                function formatParaAnswerText(str) {
+                    if (!str) return '';
+                    let s = String(str).trim();
+                    s = s.replace(/([:\?])\s+(1\.\s+)/g, '$1\n$2');
+                    s = s.replace(/([.;])\s+(\d+\.\s+)/g, '$1\n$2');
+                    s = s.replace(/([.;:])\s+([a-zA-Z][\.\)]\s+)/g, '$1\n$2');
+                    s = s.replace(/\s*\|\s*/g, '\n');
+                    return s.trim();
+                }
+
+                function formatParaQuestionText(str) {
+                    if (!str) return '';
+                    let s = String(str).trim();
+                    let m = s.match(/^(.*?)[\s]*\(\s*([A-Da-d]\))\s*(.*?)\)[\s\.]*$/);
+                    if (m) {
+                        const qPart = m[1].trim();
+                        const firstOpt = m[2];
+                        const rest = m[3];
+                        const opts = (firstOpt + ' ' + rest).split(/,\s*(?=[B-Db-d]\))/).map(x => x.trim());
+                        return (qPart ? qPart + '\n' : '') + opts.join('\n');
+                    }
+                    m = s.match(/^(.*?)[\s]*\(\s*([a-dA-D1-4][\.\-]\s*.*)\)[\s\.]*$/);
+                    if (m) {
+                        const qPart = m[1].trim();
+                        const rawOpts = m[2].trim();
+                        let opts = null;
+                        if (/^[a-d]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[b-d]\.\s*)/).map(x => x.trim());
+                        else if (/^[A-D]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[B-D]\.\s*)/).map(x => x.trim());
+                        else if (/^[A-D]\-/.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[B-D]\-\s*)/).map(x => x.trim());
+                        else if (/^[1-4]\./.test(rawOpts)) opts = rawOpts.split(/,\s*(?=[2-4]\.\s*)/).map(x => x.trim());
+                        if (opts && opts.length > 1) {
+                            return (qPart ? qPart + '\n' : '') + opts.join('\n');
+                        }
+                    }
+                    if (s.includes(' | ')) {
+                        s = s.replace(/:\s+(a\.\s+)/, ':\n$1').replace(/\s*\|\s*/g, '\n');
+                    }
+                    return s.trim();
+                }
+
+                const qText = (isBio && rawImg.includes('spot47.webp')) ? '' : (currentQ.question || '');
+                const hasQText = Boolean(qText && String(qText).trim());
+                const currentAnsStr = String(currentQ.answer || '');
+
+                const progressPct = Math.round(((paraSessionState.spotIdx) / totalSpots) * 100);
+                let badgeThemeColor = isMicro ? '#34d399' : '#60a5fa';
+                let badgeBgColor = isMicro ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)';
+                let badgeBorderColor = isMicro ? 'rgba(16,185,129,0.3)' : 'rgba(59,130,246,0.3)';
+                let progressGradient = isMicro ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #3b82f6, #10b981)';
+
+                if (isSim) {
+                    badgeThemeColor = '#c084fc';
+                    badgeBgColor = 'rgba(168,85,247,0.15)';
+                    badgeBorderColor = 'rgba(168,85,247,0.35)';
+                    progressGradient = 'linear-gradient(90deg, #a855f7, #ec4899)';
+                } else if (isBio) {
+                    badgeThemeColor = '#38bdf8';
+                    badgeBgColor = 'rgba(14, 165, 233, 0.15)';
+                    badgeBorderColor = 'rgba(14, 165, 233, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #0ea5e9, #38bdf8)';
+                } else if (isHisto) {
+                    badgeThemeColor = '#f472b6';
+                    badgeBgColor = 'rgba(236, 72, 153, 0.15)';
+                    badgeBorderColor = 'rgba(236, 72, 153, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #ec4899, #f43f5e)';
+                } else if (isPhysio) {
+                    badgeThemeColor = '#fbbf24';
+                    badgeBgColor = 'rgba(245, 158, 11, 0.15)';
+                    badgeBorderColor = 'rgba(245, 158, 11, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+                } else if (isAnatomy) {
+                    badgeThemeColor = '#c084fc';
+                    badgeBgColor = 'rgba(168, 85, 247, 0.15)';
+                    badgeBorderColor = 'rgba(168, 85, 247, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #a855f7, #c084fc)';
+                } else if (isAtlas) {
+                    badgeThemeColor = '#2dd4bf';
+                    badgeBgColor = 'rgba(20, 184, 166, 0.15)';
+                    badgeBorderColor = 'rgba(20, 184, 166, 0.35)';
+                    progressGradient = 'linear-gradient(90deg, #0d9488, #14b8a6)';
+                }
+
+                let nextBtnGradient = isSim ? 'linear-gradient(135deg, #a855f7, #7e22ce)' : (isMicro ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)');
+                let nextBtnShadow = isSim ? 'rgba(168,85,247,0.35)' : 'rgba(16,185,129,0.35)';
+                if (isBio) {
+                    nextBtnGradient = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+                    nextBtnShadow = 'rgba(14,165,233,0.35)';
+                } else if (isHisto) {
+                    nextBtnGradient = 'linear-gradient(135deg, #ec4899, #be185d)';
+                    nextBtnShadow = 'rgba(236,72,153,0.35)';
+                } else if (isPhysio) {
+                    nextBtnGradient = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                    nextBtnShadow = 'rgba(245,158,11,0.35)';
+                } else if (isAnatomy) {
+                    nextBtnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
+                    nextBtnShadow = 'rgba(168,85,247,0.35)';
+                } else if (isAtlas) {
+                    nextBtnGradient = 'linear-gradient(135deg, #14b8a6, #0d9488)';
+                    nextBtnShadow = 'rgba(20,184,166,0.35)';
+                }
+
+                const stepperHTML = currentQuestions.map((_, i) => {
+                    let cls = 'para-q-step-dot';
+                    let icon = '';
+                    if (i === qIdx) {
+                        cls += ' active';
+                        icon = '<i class="ri-play-fill" style="margin-right:2px;"></i>';
+                    } else if (i < qIdx) {
+                        cls += ' done';
+                        icon = '<i class="ri-check-line" style="margin-right:2px;"></i>';
+                    }
+                    return `<button class="${cls}" onclick="paraJumpToQuestion(${i})" title="Question ${i + 1}">${icon}Q${i + 1}</button>`;
+                }).join('');
+
+                container.innerHTML = `
+                    <div class="para-session-wrap" id="para-session-wrap">
+                        <!-- Session Header -->
+                        <div class="para-session-header">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <button class="action-icon-btn" onclick="exitParaSpotsSession()" title="Back to Decks" style="width:38px; height:38px; font-size:1.15rem;">
+                                    <i class="ri-arrow-left-line"></i>
+                                </button>
+                                <span style="font-size:1.2rem; font-weight:800; color:var(--text-light);">${paraSessionState.title || 'Practical Exam'}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                                ${isSim ? `
+                                    <div id="para-sim-timer" style="display:flex; align-items:center; gap:6px; background:rgba(239, 68, 68, 0.15); color:#f87171; border:1.5px solid rgba(239, 68, 68, 0.4); padding:4px 14px; border-radius:20px; font-weight:800; font-size:0.95rem; font-variant-numeric:tabular-nums; box-shadow:0 0 14px rgba(239,68,68,0.2);">
+                                        <i class="ri-timer-flash-line" style="font-size:1.1rem; color:#ef4444;"></i>
+                                        <span id="para-timer-display" style="letter-spacing:1px;">40:00</span>
+                                    </div>
+                                ` : ''}
+                                <span style="background:${badgeBgColor}; color:${badgeThemeColor}; border:1px solid ${badgeBorderColor}; padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
+                                    Spot ${paraSessionState.spotIdx + 1} / ${totalSpots}
+                                </span>
+                                <span style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
+                                    Question ${qIdx + 1} / ${totalQs}
+                                </span>
+                                <button class="action-icon-btn" onclick="restartParaSpotsSession()" title="Reshuffle & Restart" style="width:34px; height:34px;">
+                                    <i class="ri-refresh-line"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                            ${isSim ? `
-                                <div id="para-sim-timer" style="display:flex; align-items:center; gap:6px; background:rgba(239, 68, 68, 0.15); color:#f87171; border:1.5px solid rgba(239, 68, 68, 0.4); padding:4px 14px; border-radius:20px; font-weight:800; font-size:0.95rem; font-variant-numeric:tabular-nums; box-shadow:0 0 14px rgba(239,68,68,0.2);">
-                                    <i class="ri-timer-flash-line" style="font-size:1.1rem; color:#ef4444;"></i>
-                                    <span id="para-timer-display" style="letter-spacing:1px;">40:00</span>
+
+                        <!-- Overall Progress Bar -->
+                        <div style="width:100%;">
+                            <div class="fc-progress-bar" style="height:6px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
+                                <div class="fc-progress-fill" style="width:${progressPct}%; height:100%; background:${progressGradient}; transition:width 0.3s ease;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Questions in Spot Stepper (Only if multiple questions) -->
+                        ${totalQs > 1 ? `
+                        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                            <span style="font-size:0.8rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.05em;">
+                                Questions in this spot:
+                            </span>
+                            <div class="para-q-stepper">
+                                ${stepperHTML}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <!-- Question Card -->
+                        <div class="para-question-card" id="para-question-box">
+                            <div style="font-size:1.25rem; font-weight:700; color:var(--text-light); line-height:1.55; white-space: pre-line;" id="para-q-text-el">${hasQText ? formatParaQuestionText(qText).trim() : '<span style="font-size:1.05rem; font-weight:600; color:var(--text-gray); font-style:italic;"><i class="ri-image-line" style="vertical-align:middle; margin-right:4px;"></i> Refer to the image below</span>'}</div>
+                        </div>
+
+                        <!-- Answer Card Container (Below Question) -->
+                        <div id="para-answer-container" style="display:${paraSessionState.showAnswer ? 'block' : 'none'};">
+                            <div class="para-answer-card">
+                                <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:800; color:var(--primary-green); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.6rem;">
+                                    <i class="ri-checkbox-circle-fill" style="font-size:1.15rem;"></i> Correct Answer
+                                </div>
+                                ${currentAnsStr.trim() ? `
+                                    <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el">${formatParaAnswerText(currentAnsStr).trim()}</div>
+                                ` : (!isAnswerImage ? `
+                                    <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6; margin-bottom:0.75rem; white-space: pre-line;" id="para-ans-text-el"><span style="color:#94a3b8; font-style:italic;">Self-evaluation / Written exam station</span></div>
+                                ` : '')}
+                            ${isAnswerImage && hasImg ? `
+                                <div class="para-img-card" onclick="if(window.openImageLightbox) openImageLightbox('${imgSrc}');" title="Click to view full size image" style="margin-top:0.5rem;">
+                                    <img src="${imgSrc}" id="para-spot-image-el" alt="${paraSessionState.title} Spot ${paraSessionState.spotIdx + 1}"
+                                         onerror="this.onerror=null; this.closest('.para-img-card').style.display='none';" />
+                                    <div class="para-img-zoom-tag">
+                                        <i class="ri-zoom-in-line"></i> Click image to zoom
+                                    </div>
                                 </div>
                             ` : ''}
-                            <span style="background:${badgeBgColor}; color:${badgeThemeColor}; border:1px solid ${badgeBorderColor}; padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
-                                Spot ${paraSessionState.spotIdx + 1} / ${totalSpots}
-                            </span>
-                            <span style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:4px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
-                                Question ${qIdx + 1} / ${totalQs}
-                            </span>
-                            <button class="action-icon-btn" onclick="restartParaSpotsSession()" title="Reshuffle & Restart" style="width:34px; height:34px;">
-                                <i class="ri-refresh-line"></i>
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Overall Progress Bar -->
-                    <div style="width:100%;">
-                        <div class="fc-progress-bar" style="height:6px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
-                            <div class="fc-progress-fill" style="width:${progressPct}%; height:100%; background:${progressGradient}; transition:width 0.3s ease;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Questions in Spot Stepper -->
-                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.05em;">
-                            Questions in this spot:
-                        </span>
-                        <div class="para-q-stepper">
-                            ${stepperHTML}
-                        </div>
-                    </div>
-
-                    <!-- Question Card -->
-                    <div class="para-question-card" id="para-question-box">
-                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
-                            <span style="font-size:0.8rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em;">
-                                Question ${qIdx + 1} of ${totalQs}
-                            </span>
-                        </div>
-                        <div style="font-size:1.3rem; font-weight:700; color:var(--text-light); line-height:1.5;" id="para-q-text-el">
-                            ${currentQ.question}
-                        </div>
-                    </div>
-
-                    <!-- Answer Card Container (Below Question) -->
-                    <div id="para-answer-container" style="display:${paraSessionState.showAnswer ? 'block' : 'none'};">
-                        <div class="para-answer-card">
-                            <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:800; color:var(--primary-green); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.6rem;">
-                                <i class="ri-checkbox-circle-fill" style="font-size:1.15rem;"></i> Correct Answer
-                            </div>
-                            <div style="font-size:1.25rem; font-weight:700; color:#ECFDF5; line-height:1.6;" id="para-ans-text-el">
-                                ${currentQ.answer && currentQ.answer.trim() ? currentQ.answer : '<span style="color:#94a3b8; font-style:italic;">Self-evaluation / Written exam station</span>'}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Spot Image Card (Below Question & Answer, Above Buttons) -->
-                    ${hasImg ? `
+                    <!-- Spot Image Card (Below Question & Answer, Above Buttons) - for Question Images -->
+                    ${hasImg && !isAnswerImage ? `
                         <div class="para-img-card" onclick="if(window.openImageLightbox) openImageLightbox('${imgSrc}');" title="Click to view full size image">
                             <img src="${imgSrc}" id="para-spot-image-el" alt="${paraSessionState.title} Spot ${paraSessionState.spotIdx + 1}"
                                  onerror="this.onerror=null; this.closest('.para-img-card').style.display='none';" />
@@ -14691,12 +15341,12 @@
                                 </button>
                             ` : (paraSessionState.spotIdx < totalSpots - 1 ? `
                                 <button class="quiz-btn btn-primary" onclick="paraNextSpot()" id="para-btn-next"
-                                        style="padding:12px 28px; font-weight:700; border-radius:12px; background:${isSim ? 'linear-gradient(135deg, #a855f7, #7e22ce)' : (isMicro ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)')}; box-shadow:0 6px 20px ${isSim ? 'rgba(168,85,247,0.35)' : 'rgba(16,185,129,0.35)'};">
+                                        style="padding:12px 28px; font-weight:700; border-radius:12px; background:${nextBtnGradient}; box-shadow:0 6px 20px ${nextBtnShadow};">
                                     Next Spot (${paraSessionState.spotIdx + 2}/${totalSpots}) <i class="ri-skip-forward-fill"></i>
                                 </button>
                             ` : `
                                 <button class="quiz-btn btn-primary" onclick="paraFinishSession()" id="para-btn-next"
-                                        style="padding:12px 28px; font-weight:700; border-radius:12px; background:${isSim ? 'linear-gradient(135deg, #a855f7, #7e22ce)' : 'linear-gradient(135deg, #10B981, #059669)'}; box-shadow:0 6px 20px ${isSim ? 'rgba(168,85,247,0.35)' : 'rgba(16,185,129,0.35)'};">
+                                        style="padding:12px 28px; font-weight:700; border-radius:12px; background:${nextBtnGradient}; box-shadow:0 6px 20px ${nextBtnShadow};">
                                     Finish Practical <i class="ri-trophy-fill"></i>
                                 </button>
                             `)}
@@ -14708,7 +15358,10 @@
             if (isSim) {
                 _startSimulationTimer();
             }
+        } catch (err) {
+            console.error("Error in _renderParaSessionView:", err);
         }
+    }
 
         function paraShowAnswer() {
             paraSessionState.showAnswer = true;
@@ -14792,6 +15445,11 @@
             let key = 'medStorm_para_progress';
             if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
             else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
+            else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
+            else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
+            else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
+            else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
+            else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
             localStorage.removeItem(key);
             if (typeof showConfetti === 'function') showConfetti();
             _renderParaCompletionView();
@@ -14800,6 +15458,7 @@
 
         function _renderParaCompletionView() {
             if (simTimerInterval) { clearInterval(simTimerInterval); simTimerInterval = null; }
+            document.body.classList.remove('focus-mode');
             const container = document.getElementById('flashcards-container');
             if (!container) return;
             container.style.display = 'flex';
@@ -14808,12 +15467,18 @@
 
             const isMicro = paraSessionState.type === 'microbiology';
             const isSim = paraSessionState.type === 'simulation';
-            const totalSpots = paraSessionState.spots ? paraSessionState.spots.length : (isSim ? 20 : (isMicro ? 111 : 58));
+            const isBio = paraSessionState.type === 'bio';
+            const isHisto = paraSessionState.type === 'histo';
+            const isPhysio = paraSessionState.type === 'physio';
+            const isAnatomy = paraSessionState.type === 'anatomy';
+            const isAtlas = (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy');
+
+            const totalSpots = paraSessionState.spots ? paraSessionState.spots.length : (isSim ? 20 : (isMicro ? 111 : (isBio ? 68 : 58)));
             let totalQs = 0;
             if (paraSessionState.spots) {
                 paraSessionState.spots.forEach(s => { if (s && Array.isArray(s.questions)) totalQs += s.questions.length; });
             }
-            if (totalQs === 0) totalQs = isSim ? 40 : (isMicro ? 403 : 230);
+            if (totalQs === 0) totalQs = isSim ? 40 : (isMicro ? 403 : (isBio ? 112 : 230));
 
             let name = 'Parasitology';
             let color = '#60a5fa';
@@ -14826,6 +15491,26 @@
                 name = 'micro & para exam simulation';
                 color = '#c084fc';
                 btnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
+            } else if (isBio) {
+                name = 'Biochemistry Practical';
+                color = '#38bdf8';
+                btnGradient = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+            } else if (isHisto) {
+                name = 'Histology Practical';
+                color = '#ec4899';
+                btnGradient = 'linear-gradient(135deg, #ec4899, #be185d)';
+            } else if (isPhysio) {
+                name = 'Physiology Practical';
+                color = '#f59e0b';
+                btnGradient = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            } else if (isAnatomy) {
+                name = 'Anatomy Practical';
+                color = '#a855f7';
+                btnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
+            } else if (isAtlas) {
+                name = 'Atlas Anatomy Practical';
+                color = '#2dd4bf';
+                btnGradient = 'linear-gradient(135deg, #14b8a6, #0d9488)';
             }
 
             container.innerHTML = `
