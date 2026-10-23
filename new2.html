@@ -22,6 +22,7 @@
     <script src="physio.js"></script>
     <script src="anatomy.js"></script>
     <script src="anatomyat.js"></script>
+    <script src="histoslides.js"></script>
     <style>
         :root {
             --primary-green: #22c55e;
@@ -14137,7 +14138,39 @@
                 console.warn("Could not load atlas anatomy spots from DB:", e);
             }
         }
-        window.loadAtlasSpotsFromDB = loadAtlasSpotsFromDB;
+        async function loadHistoSpotsFromDB() {
+            try {
+                if (!window.histoslides || !Array.isArray(window.histoslides) || window.histoslides.length === 0) {
+                    const cached = localStorage.getItem('medStorm_cache_histo_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.histoslides = parsed;
+                            window.histoSpots = parsed;
+                            window.histoSlides = parsed;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_histo_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.histoslides = spots;
+                            window.histoSpots = spots;
+                            window.histoSlides = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_histo_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load histology practical spots from DB:", e);
+            }
+        }
+        window.loadHistoSpotsFromDB = loadHistoSpotsFromDB;
 
         window.setPracticalYear = function(year) {
             window.currentPracticalYear = String(year);
@@ -14161,7 +14194,8 @@
             const p6 = typeof loadPhysioSpotsFromDB === 'function' ? loadPhysioSpotsFromDB() : Promise.resolve();
             const p7 = typeof loadAnatomySpotsFromDB === 'function' ? loadAnatomySpotsFromDB() : Promise.resolve();
             const p8 = typeof loadAtlasSpotsFromDB === 'function' ? loadAtlasSpotsFromDB() : Promise.resolve();
-            Promise.all([p1, p2, p3, p4, p5, p6, p7, p8]).then(() => {
+            const p9 = typeof loadHistoSpotsFromDB === 'function' ? loadHistoSpotsFromDB() : Promise.resolve();
+            Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9]).then(() => {
                 const curY = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
                 const inSession = Boolean(document.getElementById('para-session-wrap'));
                 if (!inSession && (curY === '3' || curY === '2')) _fcShowCover();
@@ -14233,7 +14267,14 @@
                     });
                 }
 
-                const histoSpotsCount = (window.histoSpots && window.histoSpots.length) ? window.histoSpots.length : 0;
+                const histoList = (window.histoslides && window.histoslides.length) ? window.histoslides : ((window.histoSpots && window.histoSpots.length) ? window.histoSpots : []);
+                const histoSpotsCount = histoList.length || 0;
+                let histoTotalQs = 0;
+                if (histoList.length > 0) {
+                    histoList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) histoTotalQs += s.questions.length;
+                    });
+                }
 
                 container.innerHTML = `
                     <div style="text-align: center; margin-bottom: 2rem;">
@@ -14273,7 +14314,7 @@
                                     <div class="fc-cover-shadow"></div>
                                     <div class="fc-cover-shadow"></div>
                                     <div class="fc-cover-front" style="background: linear-gradient(145deg, #2b1120 0%, #170912 100%); border: 1.5px solid #ec4899; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(236, 72, 153, 0.25);">
-                                        <div class="fc-cover-badge" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4);">${histoSpotsCount > 0 ? `${histoSpotsCount} spots` : '🔬 Histology'}</div>
+                                        <div class="fc-cover-badge" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4);">${histoSpotsCount > 0 ? `${histoSpotsCount} spots • ${histoTotalQs} Qs` : '🔬 Histology'}</div>
                                         <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🔬</div>
                                         <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🔬 HISTO Practical</div>
                                         <div class="fc-cover-sub" style="color: #94a3b8;">Histology Spots &amp; Slides</div>
@@ -14867,7 +14908,7 @@
                 sessionIcon = '🧪';
             } else if (isHisto) {
                 targetVar = 'histoSpots';
-                scriptSrc = 'histo.js';
+                scriptSrc = 'histoslides.js';
                 storageKey = 'medStorm_histo_progress';
                 sessionTitle = '🔬 HISTO Practical (EGU)';
                 sessionIcon = '🔬';
@@ -14892,6 +14933,9 @@
             }
 
             let spots = window[targetVar];
+            if (isHisto && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                spots = window.histoslides || window.histoSpots || window.histoSlides;
+            }
             if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
                 spots = window.physiologySpots || window.physioSpots;
             }
@@ -14899,18 +14943,10 @@
                 spots = window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots;
             }
             if (!spots || !Array.isArray(spots) || spots.length === 0) {
-                if (isHisto) {
-                    if (window.showToast) {
-                        window.showToast(`${sessionIcon} ${sessionTitle} questions will be added soon!`, 'info');
-                    } else {
-                        alert(`${sessionIcon} ${sessionTitle} questions will be added soon!`);
-                    }
-                    return;
-                }
                 const s = document.createElement('script');
                 s.src = scriptSrc;
                 s.onload = () => {
-                    const loaded = window[targetVar] || (isPhysio ? (window.physiologySpots || window.physioSpots) : (isAtlas ? (window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots) : null));
+                    const loaded = window[targetVar] || (isHisto ? (window.histoslides || window.histoSpots || window.histoSlides) : (isPhysio ? (window.physiologySpots || window.physioSpots) : (isAtlas ? (window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots) : null)));
                     if (loaded && loaded.length > 0) {
                         startPracticalSession(type, forceRestart);
                     } else {
