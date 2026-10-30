@@ -14172,7 +14172,7 @@
         }
         window.loadHistoSpotsFromDB = loadHistoSpotsFromDB;
 
-        window.setPracticalYear = function(year) {
+        window.setPracticalYear = function (year) {
             window.currentPracticalYear = String(year);
             _fcShowCover();
         };
@@ -15355,13 +15355,13 @@
                 </div>
             `;
 
-            if (isSim) {
-                _startSimulationTimer();
+                if (isSim) {
+                    _startSimulationTimer();
+                }
+            } catch (err) {
+                console.error("Error in _renderParaSessionView:", err);
             }
-        } catch (err) {
-            console.error("Error in _renderParaSessionView:", err);
         }
-    }
 
         function paraShowAnswer() {
             paraSessionState.showAnswer = true;
@@ -16731,11 +16731,23 @@
         }
         window.handleAdminUserSearch = handleAdminUserSearch;
 
+        function escapeHTML(str) {
+            if (str == null) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        window.escapeHTML = escapeHTML;
+
         async function loadAdminFeedback() {
+            const list = document.getElementById('admin-feedback-list');
+            if (!list) return;
+
             try {
                 const snap = await window.getDocs(window.collection(window.db, 'feedback'));
-                const list = document.getElementById('admin-feedback-list');
-                if (!list) return;
                 if (snap.empty) {
                     list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">No feedback yet.</div>';
                     return;
@@ -16743,32 +16755,62 @@
                 const items = [];
                 snap.forEach(d => items.push({ id: d.id, ...d.data() }));
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                list.innerHTML = items.map(item => {
-                    const date = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown date';
-                    return `<div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1.1rem 1.25rem; margin-bottom:0.75rem;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                <span style="font-size:0.85rem; font-weight:700; color:var(--text-light);"><i class="ri-user-smile-line" style="color:var(--accent);"></i> ${item.username || 'Anonymous'}</span>
-                                ${item.userEmail ? `<span style="font-size:0.75rem; color:var(--text-gray);">(${item.userEmail})</span>` : ''}
-                                <span style="font-size:0.75rem; color:var(--text-gray); opacity:0.8;">• ${date}</span>
-                            </div>
-                            <button onclick="adminDeleteFeedback('${item.id}', event)" 
-                                    style="padding:5px 12px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.35); 
-                                           background:rgba(239, 68, 68, 0.08); color:var(--primary-red); 
-                                           font-weight:700; font-size:0.78rem; cursor:pointer; display:inline-flex; 
-                                           align-items:center; gap:5px; transition:all 0.2s;" 
-                                    onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'" 
-                                    onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'"
-                                    title="Delete feedback forever">
-                                <i class="ri-delete-bin-line"></i> Delete
-                            </button>
-                        </div>
-                        <div style="color:var(--text-light); font-size:0.95rem; line-height:1.6; background:rgba(0,0,0,0.15); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); white-space:pre-wrap;">${item.message || item.text || ''}</div>
-                    </div>`;
-                }).join('');
+
+                list.innerHTML = '';
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.style.cssText = 'background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1.1rem 1.25rem; margin-bottom:0.75rem;';
+
+                    const header = document.createElement('div');
+                    header.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;';
+
+                    const metaGroup = document.createElement('div');
+                    metaGroup.style.cssText = 'display:flex; align-items:center; gap:8px; flex-wrap:wrap;';
+
+                    const userSpan = document.createElement('span');
+                    userSpan.style.cssText = 'font-size:0.85rem; font-weight:700; color:var(--text-light);';
+                    const userIcon = document.createElement('i');
+                    userIcon.className = 'ri-user-smile-line';
+                    userIcon.style.color = 'var(--accent)';
+                    userSpan.appendChild(userIcon);
+                    userSpan.appendChild(document.createTextNode(' ' + (item.username || 'Anonymous')));
+                    metaGroup.appendChild(userSpan);
+
+                    if (item.userEmail) {
+                        const emailSpan = document.createElement('span');
+                        emailSpan.style.cssText = 'font-size:0.75rem; color:var(--text-gray);';
+                        emailSpan.textContent = `(${item.userEmail})`;
+                        metaGroup.appendChild(emailSpan);
+                    }
+
+                    const dateSpan = document.createElement('span');
+                    dateSpan.style.cssText = 'font-size:0.75rem; color:var(--text-gray); opacity:0.8;';
+                    const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown date';
+                    dateSpan.textContent = `• ${dateStr}`;
+                    metaGroup.appendChild(dateSpan);
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.style.cssText = 'padding:5px 12px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.35); background:rgba(239, 68, 68, 0.08); color:var(--primary-red); font-weight:700; font-size:0.78rem; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;';
+                    deleteBtn.title = 'Delete feedback forever';
+                    deleteBtn.innerHTML = '<i class="ri-delete-bin-line"></i> Delete';
+                    deleteBtn.onmouseover = () => { deleteBtn.style.background = 'rgba(239, 68, 68, 0.2)'; };
+                    deleteBtn.onmouseout = () => { deleteBtn.style.background = 'rgba(239, 68, 68, 0.08)'; };
+                    deleteBtn.onclick = (e) => adminDeleteFeedback(item.id, e);
+
+                    header.appendChild(metaGroup);
+                    header.appendChild(deleteBtn);
+
+                    const body = document.createElement('div');
+                    body.style.cssText = 'color:var(--text-light); font-size:0.95rem; line-height:1.6; background:rgba(0,0,0,0.15); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); white-space:pre-wrap;';
+                    body.textContent = item.message || item.text || '';
+
+                    card.appendChild(header);
+                    card.appendChild(body);
+                    list.appendChild(card);
+                });
             } catch (e) {
-                const list = document.getElementById('admin-feedback-list');
-                if (list) list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">No feedback yet.</div>';
+                console.error("Error loading admin feedback:", e);
+                list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">Failed to load feedback. Check permissions or network.</div>';
             }
         }
 
@@ -17888,8 +17930,6 @@
             if (tab === 'editor' && !window.editorLoaded) { window.editorLoaded = true; loadEditorData(); }
             if (tab === 'modules') adminRenderLockedModules();
         }
-
-        const escapeHTML = (str) => typeof str === 'string' ? str.replace(/"/g, '&quot;') : (str || '');
 
         let adminMistakesCache = {};
         let currentMistakesModule = 'all';
