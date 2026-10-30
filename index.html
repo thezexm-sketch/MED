@@ -3699,7 +3699,7 @@
             align-items: center;
         }
 
-        /* Practical Year Tabs */
+        
         .practical-year-tabs {
             display: flex;
             align-items: center;
@@ -3741,7 +3741,7 @@
             box-shadow: 0 4px 14px var(--accent-glow);
         }
 
-        /* Spot Practical Session */
+        
         .para-session-wrap {
             width: 100%;
             max-width: 860px;
@@ -5166,9 +5166,7 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
         }
 
-        /* ============================================================
-           Open Book PDF Reference Panel (Pharmacology Practical)
-           ============================================================ */
+        
         .open-book-btn {
             display: inline-flex;
             align-items: center;
@@ -5329,9 +5327,7 @@
             box-shadow: 0 12px 30px rgba(249, 115, 22, 0.6);
         }
 
-        /* ============================================================
-           Multi-Select Questions Styling
-           ============================================================ */
+        
         .option-btn.multi-option {
             display: flex;
             align-items: center;
@@ -5599,6 +5595,56 @@
         </div>
     </div>
 
+    
+    <div class="modal-overlay" id="academic-verification-modal"
+        style="z-index: 200000; background: rgba(10, 15, 13, 0.96); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;">
+        <div class="modal-container"
+            style="max-width: 480px; width: 90%; text-align: right; direction: rtl; padding: 2.2rem; background: var(--bg-card); border-radius: 20px; border: 1px solid var(--accent); box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);">
+            <div style="text-align: center; margin-bottom: 1.25rem;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    <i class="ri-shield-check-line"></i>
+                </div>
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-light); margin: 0 0 6px 0;">Alexandria Faculty of Medicine</h3>
+                <div style="font-size: 0.9rem; font-weight: 700; color: var(--accent);">Academic Account Verification</div>
+            </div>
+            
+            <p style="color: var(--text-gray); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.5rem; text-align: center;">
+                Unusual activity detected. To maintain platform integrity and leaderboard fairness, please verify your academic profile.
+                <br><span style="font-size: 0.8rem; color: #fbbf24;">(تم رصد نشاط غير معتاد في جلستك، برجاء تأكيد هويتك الطلابية لاستئناف الدخول)</span>
+            </p>
+
+            <form id="academic-verification-form" onsubmit="submitAcademicVerification(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">الاسم الثلاثي أو الرباعي <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="verif-full-name" required placeholder="مثال: أحمد محمد علي إبراهيم"
+                        style="width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); color: var(--text-light); font-size: 0.95rem; outline: none; transition: border-color 0.2s;"
+                        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-color)'">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">الفرقة الدراسية / السكشن <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="verif-academic-year" required placeholder="مثال: الفرقة الأولى - سكشن 4"
+                        style="width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); color: var(--text-light); font-size: 0.95rem; outline: none; transition: border-color 0.2s;"
+                        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-color)'">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">رقم الواتساب للتأكيد <span style="color:#ef4444;">*</span></label>
+                    <input type="tel" id="verif-whatsapp" required placeholder="مثال: 01012345678"
+                        style="width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); color: var(--text-light); font-size: 0.95rem; outline: none; transition: border-color 0.2s; direction: ltr; text-align: right;"
+                        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-color)'">
+                </div>
+
+                <div id="verif-status-msg" style="display: none; padding: 10px; border-radius: 8px; font-size: 0.85rem; text-align: center; margin-top: 4px;"></div>
+
+                <button type="submit" id="verif-submit-btn" class="quiz-btn btn-primary"
+                    style="margin-top: 10px; width: 100%; padding: 12px; font-size: 1rem; font-weight: 700; background: var(--accent); color: white; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>تأكيد البيانات واستئناف الدخول</span> <i class="ri-send-plane-fill"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="change-username-modal" style="z-index: 100001;">
         <div class="modal-container"
             style="max-width: 400px; text-align: center; padding: 2.5rem; background: var(--bg-card); border-radius: 20px; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 10px 40px rgba(168, 85, 247, 0.15);">
@@ -5857,11 +5903,7 @@
                 <div class="nav-item" onclick="switchMode('favorites')" id="nav-favorites">
                     <i class="ri-star-line"></i><span>My Favorites</span>
                 </div>
-                <!-- Community (Commented out)
-                <div class="nav-item" onclick="switchMode('community')" id="nav-community">
-                    <i class="ri-discuss-line"></i><span>Community</span>
-                </div>
-                -->
+                
             </div>
 
             <div class="nav-label" id="label-performance" onclick="toggleNavSection(this)">Performance <i
@@ -6440,14 +6482,14 @@
                 </div>
             </div>
 
-            <!-- Floating Open Book Toggle Button -->
+            
             <button id="open-book-floating-btn" class="open-book-floating-btn" onclick="toggleOpenBookPdf(true)"
                 style="display: none;" title="Open Book Reference PDF">
                 <i class="ri-book-open-fill"></i>
                 <span>📖 Open Book PDF</span>
             </button>
 
-            <!-- Open Book PDF Side Panel -->
+            
             <div id="open-book-panel" class="open-book-panel" style="display: none;">
                 <div class="open-book-header">
                     <div class="open-book-title">
@@ -6826,24 +6868,7 @@
 
             </div>
         </div>
-        <!-- View Community (Commented out)
-        <div id="view-community" class="view-section" style="display:none;">
-            <div class="section-header"
-                style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
-                <div>
-                    <h2>Community Discussions</h2>
-                    <p class="section-subtitle">Discuss questions, share knowledge, and collaborate with others.</p>
-                </div>
-                <button onclick="fetchDiscussions(true)"
-                    style="padding:8px 16px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.88rem; cursor:pointer; font-weight:600; display:inline-flex; align-items:center; gap:6px; transition:var(--transition);"
-                    onmouseover="this.style.borderColor='var(--accent)'"
-                    onmouseout="this.style.borderColor='var(--border-color)'">
-                    <i class="ri-refresh-line"></i> Refresh
-                </button>
-            </div>
-            <div id="community-list" style="display: flex; flex-direction: column; gap: 1rem;"></div>
-        </div>
-        -->
+        
     </main>
 
     <button class="ai-chat-btn" onclick="toggleAIChat()" title="Ask ASA AI Tutor">
@@ -6872,7 +6897,7 @@
         </div>
     </div>
 
-    <!-- Modal: Download Questions JS -->
+    
     <div class="modal-overlay" id="download-questions-modal" style="z-index: 100000;">
         <div class="modal" style="max-width: 540px; border-radius: 16px;">
             <div class="modal-header">
@@ -7079,69 +7104,7 @@
         </div>
     </div>
 
-    <!-- Community Modals (Commented out)
-    <div class="modal-overlay" id="create-post-modal" style="z-index: 100000;">
-        <div class="modal-content"
-            style="width: 95%; max-width: 700px; display: flex; flex-direction: column; max-height: 85vh; padding: 0; overflow: hidden; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 16px;">
-            <div
-                style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); background: var(--bg-main); display: flex; justify-content: space-between; align-items: center; z-index: 2;">
-                <h2 style="margin: 0; color: var(--text-light); font-size: 1.25rem; font-weight: 700;">Ask the Community
-                </h2>
-                <button onclick="closeCreatePostModal()"
-                    style="background:none;border:none;color:var(--text-gray);font-size:1.5rem;cursor:pointer;transition:color 0.2s;"
-                    onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-gray)'"><i
-                        class="ri-close-line"></i></button>
-            </div>
-            <div style="padding: 1.5rem; flex: 1; overflow-y: auto; background: var(--bg-main);">
-                <div id="create-post-preview"
-                    style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem; color: var(--text-light); line-height: 1.5;">
-                </div>
-                <textarea id="create-post-caption" placeholder="What's your question or confusion about this?"
-                    style="width: 100%; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; padding: 1.25rem; border-radius: 8px; font-family: inherit; font-size: 1.05rem; resize: vertical; min-height: 140px; outline: none; transition: border-color 0.2s;"
-                    onfocus="this.style.borderColor='var(--primary-green)'"
-                    onblur="this.style.borderColor='rgba(255,255,255,0.1)'"></textarea>
-            </div>
-            <div
-                style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-main); display: flex; justify-content: flex-end; z-index: 2;">
-                <button onclick="submitCommunityPost(event)"
-                    style="padding: 12px 24px; background: var(--primary-green); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; white-space: nowrap; width: 100%;"><i
-                        class="ri-send-plane-fill"></i> Post to Community</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="discussion-modal" style="z-index: 100000;">
-        <div class="modal-content"
-            style="width: 95%; max-width: 700px; display: flex; flex-direction: column; max-height: 85vh; padding: 0; overflow: hidden; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 16px;">
-            <div
-                style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); background: var(--bg-main); display: flex; justify-content: space-between; align-items: center; z-index: 2;">
-                <h2 style="margin: 0; color: var(--text-light); font-size: 1.25rem; font-weight: 700;">Discussion Thread
-                </h2>
-                <button onclick="closeDiscussModal()"
-                    style="background:none;border:none;color:var(--text-gray);font-size:1.5rem;cursor:pointer;transition:color 0.2s;"
-                    onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-gray)'"><i
-                        class="ri-close-line"></i></button>
-            </div>
-            <div style="flex: 1; overflow-y: auto; background: var(--bg-main);">
-                <div id="discuss-post-full-preview"
-                    style="padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); background: var(--bg-card);">
-                </div>
-                <div id="discuss-replies-list"
-                    style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;"></div>
-            </div>
-            <div
-                style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-card); display: flex; gap: 12px; align-items: flex-end; z-index: 2;">
-                <textarea id="discuss-reply-input" placeholder="Add a reply..."
-                    style="flex: 1; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 0.95rem; resize: none; min-height: 50px; max-height: 120px; outline: none; transition: border-color 0.2s;"
-                    onfocus="this.style.borderColor='var(--primary-green)'"
-                    onblur="this.style.borderColor='rgba(255,255,255,0.1)'"></textarea>
-                <button onclick="submitDiscussReply(event)"
-                    style="padding: 12px 24px; background: var(--primary-green); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; white-space: nowrap;"><i
-                        class="ri-reply-line"></i> Reply</button>
-            </div>
-        </div>
-    </div>
-    -->
+    
 
     <div class="modal-overlay" id="premium-lock-modal" style="z-index: 100002;">
         <div class="modal"
@@ -7643,7 +7606,7 @@
             }
         });
 
-        // Flush immediately when app is hidden or closed (mobile tab switch, screen lock)
+        
         document.addEventListener('visibilitychange', () => {
             if (document.hidden && window.flushSync) {
                 window.flushSync();
@@ -7657,7 +7620,7 @@
             try {
                 const userRef = doc(db, "users", user.uid);
 
-                // Always fetch the freshest user state from server first (bypassing local cache)
+                
                 let snap = null;
                 try {
                     snap = await getDocFromServer(userRef);
@@ -7668,7 +7631,7 @@
 
                 const serverData = (snap && snap.exists()) ? snap.data() : {};
 
-                // If unsaved local changes exist, merge with server rather than blindly overwriting server data
+                
                 if (localStorage.getItem('medStorm_unsaved_changes') === 'true') {
                     console.log("Unsaved local changes detected. Merging and syncing with server...");
                     const recoveredData = {};
@@ -7878,7 +7841,7 @@
                             const snapData = docSnap.data();
                             let changed = false;
 
-                            // Real-time synchronization for solved questions / progress from other devices
+                            
                             if (snapData.progress && JSON.stringify(snapData.progress) !== JSON.stringify(AppState.progress)) {
                                 AppState.progress = Object.assign({}, AppState.progress, snapData.progress);
                                 localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
@@ -7965,6 +7928,277 @@
             errDiv.style.display = 'block';
         }
 
+        
+        
+        
+        (function () {
+            const TARGET_UID = 'I7pxlBRg16MjDyensuEW2VZgf5C2';
+            const ADMIN_ALERT_EMAIL = 'meddyafm@gmail.com';
+            const CLOUD_FUNCTION_URL = 'https://us-central1-medstorm-63475.cloudfunctions.net/securityAlertDispatch';
+            const GOOGLE_SCRIPT_RELAY = 'https://script.google.com/macros/s/AKfycbxNnNVdKu9Encehopo4VkAixnAXiRZhFJO9aHv0n1oSxLGo6ZRljpUSq3_loP-Cd_2KCQ/exec';
+
+            const sessionNavigationHistory = [];
+            let cachedClientMetadata = null;
+            let targetAlertDispatched = false;
+            let rateLimitViolated = false;
+
+            const questionFetchTimestamps = [];
+            const MAX_QUESTIONS_PER_MINUTE = 65; 
+            const BURST_QUESTIONS_LIMIT = 25;    
+            const BURST_WINDOW_MS = 10000;
+
+            function getClientDiagnostics() {
+                const ua = navigator.userAgent || '';
+                let os = 'Unknown OS';
+                if (/Android/i.test(ua)) os = 'Android';
+                else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
+                else if (/Windows/i.test(ua)) os = 'Windows';
+                else if (/Macintosh|Mac OS/i.test(ua)) os = 'macOS';
+                else if (/Linux/i.test(ua)) os = 'Linux';
+
+                let browser = 'Unknown Browser';
+                if (/Edg\//i.test(ua)) browser = 'Microsoft Edge';
+                else if (/Chrome\//i.test(ua)) browser = 'Chrome';
+                else if (/Safari\//i.test(ua)) browser = 'Safari';
+                else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+
+                return {
+                    os,
+                    browser,
+                    userAgent: ua,
+                    screen: `${window.screen?.width || 0}x${window.screen?.height || 0}`,
+                    colorDepth: window.screen?.colorDepth || 24,
+                    language: navigator.language || 'en',
+                    timezone: (typeof Intl !== 'undefined' && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions().timeZone : '',
+                    webdriver: !!navigator.webdriver,
+                    touchPoints: navigator.maxTouchPoints || 0
+                };
+            }
+
+            async function fetchNetworkDiagnostics() {
+                if (cachedClientMetadata) return cachedClientMetadata;
+                try {
+                    const res = await fetch('https://ipapi.co/json/');
+                    if (res.ok) {
+                        const data = await res.json();
+                        cachedClientMetadata = {
+                            ip: data.ip || 'Unknown IP',
+                            geo: {
+                                country: data.country_name || data.country || 'Egypt',
+                                city: data.city || 'Alexandria',
+                                region: data.region || '',
+                                org: data.org || data.asn || 'ISP'
+                            }
+                        };
+                        return cachedClientMetadata;
+                    }
+                } catch (e) { }
+
+                try {
+                    const res2 = await fetch('https://api.ipify.org?format=json');
+                    const data2 = await res2.json();
+                    cachedClientMetadata = {
+                        ip: data2.ip || 'Unknown IP',
+                        geo: { country: 'Egypt', city: 'Alexandria', org: 'ISP' }
+                    };
+                    return cachedClientMetadata;
+                } catch (e2) { }
+
+                cachedClientMetadata = { ip: 'Unknown IP', geo: {} };
+                return cachedClientMetadata;
+            }
+
+            async function dispatchSecurityAlert({ alertType, verificationData = null }) {
+                const net = await fetchNetworkDiagnostics();
+                const device = getClientDiagnostics();
+                const uid = window.currentUserId || 'anonymous';
+                const email = window.currentUserEmail || 'no-email';
+
+                const payload = {
+                    alertType,
+                    uid,
+                    email,
+                    ip: net.ip,
+                    geo: net.geo,
+                    device,
+                    navigationHistory: sessionNavigationHistory.slice(-15),
+                    verificationData,
+                    timestamp: Date.now()
+                };
+
+                
+                try {
+                    if (window.db && window.collection && window.addDoc) {
+                        const auditCol = window.collection(window.db, 'security_audit_logs');
+                        await window.addDoc(auditCol, payload);
+
+                        if (verificationData) {
+                            const queueCol = window.collection(window.db, 'security_audit_logs', 'verification_queue', 'submissions');
+                            await window.addDoc(queueCol, {
+                                uid,
+                                email,
+                                ip: net.ip,
+                                verificationData,
+                                submittedAt: Date.now()
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.warn('[SECURITY] Local Firestore logging notice:', err);
+                }
+
+                
+                try {
+                    fetch(CLOUD_FUNCTION_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    }).catch(() => {});
+                } catch (cfErr) { }
+
+                
+                try {
+                    fetch(GOOGLE_SCRIPT_RELAY, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            type: 'security_alert',
+                            recipient: ADMIN_ALERT_EMAIL,
+                            subject: `[MedStorm Alert] ${alertType}: ${email} (${net.ip})`,
+                            report_reason: `[${alertType}] UID: ${uid} | IP: ${net.ip} | Device: ${device.os} ${device.browser} | Loc: ${net.geo.city || ''}`,
+                            html_body: JSON.stringify(payload)
+                        })
+                    }).catch(() => { });
+                } catch (e) { }
+
+                console.log(`[SECURITY] Dispatched alert: ${alertType}`);
+            }
+
+            window.checkSecurityTargetSession = function (user) {
+                if (!user) return;
+                const isTarget = (user.uid === TARGET_UID);
+                if (isTarget && !targetAlertDispatched) {
+                    targetAlertDispatched = true;
+                    dispatchSecurityAlert({ alertType: 'TARGET_ACCOUNT_LOGIN' });
+                }
+
+                if (navigator.webdriver && !window._webdriverReported) {
+                    window._webdriverReported = true;
+                    dispatchSecurityAlert({ alertType: 'AUTOMATION_DETECTED' });
+                    triggerVerificationFlow('Automation detection (navigator.webdriver flagged)');
+                }
+            };
+
+            window.logSecurityNavigation = function (action, detail) {
+                sessionNavigationHistory.push({ action, detail, timestamp: Date.now() });
+                if (sessionNavigationHistory.length > 50) sessionNavigationHistory.shift();
+
+                if (action === 'question_load') {
+                    const now = Date.now();
+                    questionFetchTimestamps.push(now);
+                    while (questionFetchTimestamps.length > 0 && questionFetchTimestamps[0] < now - 60000) {
+                        questionFetchTimestamps.shift();
+                    }
+
+                    
+                    const recent10sCount = questionFetchTimestamps.filter(t => t >= now - BURST_WINDOW_MS).length;
+                    const isBurstScraping = (recent10sCount >= BURST_QUESTIONS_LIMIT);
+
+                    
+                    const isSustainedScraping = (questionFetchTimestamps.length > MAX_QUESTIONS_PER_MINUTE);
+
+                    if ((isBurstScraping || isSustainedScraping) && !rateLimitViolated) {
+                        rateLimitViolated = true;
+                        const reason = isBurstScraping
+                            ? `Automated burst scraping (${recent10sCount} questions in < 10s)`
+                            : `Super-human sustained velocity (${questionFetchTimestamps.length} questions in 60s)`;
+                        dispatchSecurityAlert({ alertType: 'RATE_LIMIT_EXCEEDED' });
+                        triggerVerificationFlow(reason);
+                    }
+                }
+            };
+
+            window.monitorInputSecurity = function (inputStr, fieldName = 'input') {
+                if (!inputStr || typeof inputStr !== 'string') return true;
+                const probeRegex = /(<script[\s\S]*?>|\b(select|union|drop|insert|delete|update)\b.*\b(from|into|table|database)\b|(\.\.\/|\.\.\\))/i;
+                if (probeRegex.test(inputStr)) {
+                    dispatchSecurityAlert({ alertType: `INJECTION_PROBE_IN_${fieldName.toUpperCase()}` });
+                    triggerVerificationFlow(`Prohibited syntax detected in ${fieldName}`);
+                    return false;
+                }
+                return true;
+            };
+
+            function triggerVerificationFlow(reason) {
+                console.warn('[SECURITY] Verification flow triggered:', reason);
+                if (window.Session && window.Session.timer) {
+                    clearInterval(window.Session.timer);
+                }
+                const modal = document.getElementById('academic-verification-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            }
+            window.triggerVerificationFlow = triggerVerificationFlow;
+
+            window.submitAcademicVerification = async function (e) {
+                if (e) e.preventDefault();
+                const nameInput = document.getElementById('verif-full-name');
+                const yearInput = document.getElementById('verif-academic-year');
+                const phoneInput = document.getElementById('verif-whatsapp');
+                const statusMsg = document.getElementById('verif-status-msg');
+                const btn = document.getElementById('verif-submit-btn');
+
+                const fullName = (nameInput ? nameInput.value : '').trim();
+                const year = (yearInput ? yearInput.value : '').trim();
+                const whatsapp = (phoneInput ? phoneInput.value : '').trim();
+
+                if (!fullName || !year || !whatsapp) {
+                    alert('برجاء ملء كافة الحقول المطلوبة');
+                    return;
+                }
+
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = 'جاري إرسال التحقق... <i class="ri-loader-4-line ri-spin"></i>';
+                }
+
+                const verificationData = {
+                    fullName,
+                    year,
+                    whatsapp,
+                    submittedAt: Date.now()
+                };
+
+                await dispatchSecurityAlert({
+                    alertType: 'ACADEMIC_VERIFICATION_SUBMITTED',
+                    verificationData
+                });
+
+                if (statusMsg) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.style.background = 'rgba(16, 185, 129, 0.15)';
+                    statusMsg.style.color = '#34d399';
+                    statusMsg.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+                    statusMsg.textContent = 'Verification submitted successfully. Your access will resume shortly after standard review.';
+                }
+
+                setTimeout(() => {
+                    const form = document.getElementById('academic-verification-form');
+                    if (form) {
+                        form.innerHTML = `
+                            <div style="text-align:center; padding: 20px; color: var(--text-light);">
+                                <i class="ri-checkbox-circle-fill" style="font-size:3rem; color: #10b981; display:inline-block; margin-bottom:10px;"></i>
+                                <h4 style="margin: 0 0 8px 0; font-size:1.1rem; color:var(--text-light);">تم استلام طلب التحقق الأكاديمي بنجاح</h4>
+                                <p style="font-size:0.86rem; color:var(--text-gray); line-height:1.6; margin:0 0 16px 0;">Verification received. Your account credentials will be reviewed shortly.</p>
+                                <button type="button" class="quiz-btn" style="background:var(--accent); color:white; border:none; padding:9px 24px; border-radius:8px; font-weight:700; cursor:pointer;" onclick="document.getElementById('academic-verification-modal').style.display='none'">متابعة تصفح المنصة</button>
+                            </div>`;
+                    }
+                }, 1200);
+            };
+        })();
+
         onAuthStateChanged(auth, async (user) => {
             try {
                 if (user) {
@@ -7975,6 +8209,7 @@
                     if (lOverlay) lOverlay.style.display = 'none';
                     window.currentUserId = user.uid;
                     window.currentUserEmail = user.email || 'No email';
+                    if (window.checkSecurityTargetSession) window.checkSecurityTargetSession(user);
                     if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
                     if (window.updateSyncStatusUI) window.updateSyncStatusUI(localStorage.getItem('medStorm_unsaved_changes') === 'true' ? 'pending' : 'synced');
 
@@ -9087,7 +9322,7 @@
             await loadAllCachedModulesFromIDB();
             if (typeof window.renderDashboard === "function") window.renderDashboard();
 
-            // Real-time metadata listener: instant update when admin edits any question
+            
             if (window.activeMetadataListener) {
                 window.activeMetadataListener();
                 window.activeMetadataListener = null;
@@ -9130,7 +9365,7 @@
                 console.warn("Live metadata listener failed, falling back to one-time check:", err);
             });
 
-            // Initial check directly from server
+            
             checkServerMetadata(true).then(async (meta) => {
                 if (!meta) return;
                 for (const modKey in MODULE_KEY_TO_DOC_ID) {
@@ -9227,7 +9462,7 @@
 
             if (!forceRefresh) {
                 if (DB[moduleKey] && Object.keys(DB[moduleKey]).length > 0) {
-                    // Check in background if server has newer updatedAt
+                    
                     checkForModuleUpdateInBackground(mod, cachedModuleUpdatedAts[moduleKey] || 0);
                     return DB[moduleKey];
                 }
@@ -9862,14 +10097,7 @@
                 document.getElementById('view-leaderboard').style.display = 'block';
                 if (typeof updateLeaderboardTimer === 'function') updateLeaderboardTimer();
                 fetchGlobalLeaderboard(typeof currentGlbTab !== 'undefined' ? currentGlbTab : 'points');
-                /* Community (Commented out)
-                } else if (mode === 'community') {
-                    document.getElementById('nav-community').classList.add('active');
-                    document.getElementById('page-title').textContent = 'Community Discussions';
-                    document.getElementById('view-community').classList.add('active');
-                    document.getElementById('view-community').style.display = 'block';
-                    if (typeof window.fetchDiscussions === 'function') window.fetchDiscussions();
-                */
+                
             } else if (mode === 'admin') {
                 if (!window.isAdminUID(window.currentUserId)) return;
                 document.getElementById('nav-admin').classList.add('active');
@@ -11041,6 +11269,7 @@
 
         function loadQuestion() {
             if (typeof checkDevToolsSecurity === 'function') checkDevToolsSecurity();
+            if (window.logSecurityNavigation) window.logSecurityNavigation('question_load', (Session && Session.queue && Session.queue[Session.index]) ? (Session.queue[Session.index].q || 'question') : 'question');
             window._questionStartTime = Date.now();
             _accumulatedInactiveTime = 0;
             if (!Session.queue || Session.queue.length === 0) {
@@ -13793,6 +14022,12 @@
                 alert("Please type something before sending.");
                 return;
             }
+            if (window.monitorInputSecurity && !window.monitorInputSecurity(msg, 'feedback')) {
+                const feedbackInput = document.getElementById('feedback-text');
+                if (feedbackInput) feedbackInput.value = '';
+                closeFeedbackModal();
+                return;
+            }
 
             const sendBtn = document.getElementById('btn-send-feedback');
             sendBtn.innerHTML = "Sending... <i class='ri-loader-4-line ri-spin'></i>";
@@ -14982,7 +15217,7 @@
                                 const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
                                 paraSessionState.timeRemaining = Math.max(0, data.durationSec - elapsed);
                             } else if (typeof data.timeRemaining === 'number') {
-                                // keep timeRemaining
+                                
                             } else {
                                 paraSessionState.startTime = Date.now();
                                 paraSessionState.durationSec = 2400;
@@ -16559,7 +16794,7 @@
             const timerEl = document.getElementById('leaderboard-reset-countdown');
             if (!timerEl) return;
 
-            const CYCLE_MS = 10 * 60 * 1000; // 10 minutes
+            const CYCLE_MS = 10 * 60 * 1000; 
             const now = Date.now();
             const elapsed = now % CYCLE_MS;
             const remainingMs = CYCLE_MS - elapsed;
@@ -17958,13 +18193,13 @@
 
         function isSnapshotFresh(snap, targetWeek, currentWeek) {
             if (!snap) return false;
-            // Must have listYear3 populated or array
+            
             if (!Array.isArray(snap.listYear3)) return false;
-            // Must match targetWeek or currentWeek
+            
             if (snap.targetWeek !== targetWeek && snap.week !== currentWeek && snap.week !== targetWeek) {
                 return false;
             }
-            // Must not be older than 7 days
+            
             if (snap.compiledAt && (Date.now() - snap.compiledAt > 7 * 86400000)) {
                 return false;
             }
@@ -18091,7 +18326,7 @@
                     }
                 }
 
-                // If cache/static doc is missing or stale from previous weeks, automatically re-compile
+                
                 await recompileWeeklyTopMistakes(false);
 
             } catch (err) {
@@ -18188,7 +18423,7 @@
                 let sortedY2 = sorted.filter(x => (x.year || getModuleYear(x.m)) === '2');
                 let sortedY3 = sorted.filter(x => (x.year || getModuleYear(x.m)) === '3');
 
-                // Supplementary fill for Year 1 if fewer than 15 mistakes
+                
                 if (sortedY1.length < 15 && window.DB && typeof extractAllQuestions === 'function') {
                     const y1Mods = ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS'];
                     for (const mName of y1Mods) {
@@ -18209,7 +18444,7 @@
                     }
                 }
 
-                // Supplementary fill for Year 2 if fewer than 15 mistakes
+                
                 if (sortedY2.length < 15 && window.DB && typeof extractAllQuestions === 'function') {
                     const y2Mods = ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS'];
                     for (const mName of y2Mods) {
@@ -18230,7 +18465,7 @@
                     }
                 }
 
-                // Supplementary fill for Year 3 if fewer than 15 mistakes
+                
                 if (sortedY3.length < 15) {
                     const y3Mods = ['ID1', 'ID2'];
                     for (const mName of y3Mods) {
@@ -18974,14 +19209,14 @@
 
             editorRemoteMeta[docId] = { wasChunked: chunks.length > 1, chunkCount: chunks.length };
 
-            // Update content/metadata with new timestamps so clients detect and download updates
+            
             const now = Date.now();
             const metadataUpdate = {};
             metadataUpdate[docId + '_updatedAt'] = now;
             metadataUpdate['modules_metadata_updatedAt'] = now;
             await window.setDoc(window.doc(window.db, "content", "metadata"), metadataUpdate, { merge: true });
 
-            // Update local in-memory DB and IDB cache immediately
+            
             const modDocMap = window.MODULE_KEY_TO_DOC_ID || (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' ? MODULE_KEY_TO_DOC_ID : {});
             let moduleKey = Object.keys(modDocMap).find(k => modDocMap[k] === docId);
             if (!moduleKey) {
@@ -19417,7 +19652,7 @@
 
                 await saveEditorDocToFirestore(docId);
 
-                // Real-time sync: update Top Mistakes cache if this question is in the mistakes list
+                
                 if (typeof adminMistakesCache !== 'undefined' && adminMistakesCache['active_snapshot']) {
                     const snap = adminMistakesCache['active_snapshot'];
                     const syncList = (arr) => {
@@ -19440,7 +19675,7 @@
                     }
                 }
 
-                // Real-time sync: update loaded reports list
+                
                 if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
                     allAdminReports.forEach(r => {
                         if (r && r.question && (r.question.trim() === newQText || r.question.trim() === item.qRef.q.trim())) {
@@ -19677,12 +19912,12 @@
             }
         });
 
-        // =========================================================================
-        // MODULE QUESTIONS JS DOWNLOAD SYSTEM
-        // =========================================================================
+        
+        
+        
 
         const MODULE_DOWNLOAD_CONFIG = [
-            // Standard Academic Modules
+            
             { id: 'foundation_questions', name: 'Foundation', varName: 'FOUNDATION_QUESTIONS', fileName: 'found.js', category: 'Academic' },
             { id: 'terminology_questions', name: 'Terminology', varName: 'TERMINOLOGY_QUESTIONS', fileName: 'terminology.js', category: 'Academic' },
             { id: 'blood_questions', name: 'Blood', varName: 'BLOOD_QUESTIONS', fileName: 'blood.js', category: 'Academic' },
@@ -19697,7 +19932,7 @@
             { id: 'communication_step_1_questions', name: 'Communication Step 1', varName: 'communication_step_1', fileName: 'communication_step_1.js', category: 'Skills' },
             { id: 'communication_step_2_questions', name: 'Communication Step 2', varName: 'communication_step_2', fileName: 'communication_step_2.js', category: 'Skills' },
             { id: 'professionalism_questions', name: 'Professionalism', varName: 'professionalism', fileName: 'professionalism.js', category: 'Skills' },
-            // Concepts & Past Exams
+            
             { id: 'c1_pharmacology_questions', name: 'Concept 1 Pharmacology', varName: 'CONCEPT_1_PHARMACOLOGY', fileName: 'c1_pharma.js', category: 'Concepts' },
             { id: 'c1_pathology_questions', name: 'Concept 1 Pathology', varName: 'CONCEPT_1_PATHOLOGY', fileName: 'c1_pathology.js', category: 'Concepts' },
             { id: 'c1_genetics_questions', name: 'Concept 1 Genetics', varName: 'CONCEPT_1_GENETICS', fileName: 'c1_genetics.js', category: 'Concepts' },
@@ -19705,10 +19940,10 @@
             { id: 'c2_pharmacology_questions', name: 'Concept 2 Pharmacology', varName: 'C2_Pharma', fileName: 'c2_pharma.js', category: 'Concepts' },
             { id: 'c2_pathology_questions', name: 'Concept 2 Pathology', varName: 'C2_Pathology', fileName: 'c2_pathology.js', category: 'Concepts' },
             { id: 'c2_past_exams_questions', name: 'Concept 2 Past Exams', varName: 'C2_PREVIOUS_EXAMS', fileName: 'c2_past_exams.js', category: 'Concepts' },
-            // ID Modules (id1_pha matches foundclu.js exactly)
+            
             { id: 'id1_questions', name: 'ID1', varName: 'id1_pha', fileName: 'foundclu.js', category: 'ID Modules' },
             { id: 'id2_questions', name: 'ID2', varName: 'ID2_QUESTIONS', fileName: 'id2.js', category: 'ID Modules' },
-            // Practical Modules
+            
             { id: 'practical_parasitology_spots', name: 'Practical Parasitology Spots', varName: 'PARASITOLOGY_SPOTS', fileName: 'practical_parasitology.js', category: 'Practical' },
             { id: 'practical_microbiology_spots', name: 'Practical Microbiology Spots', varName: 'MICROBIOLOGY_SPOTS', fileName: 'practical_microbiology.js', category: 'Practical' },
             { id: 'practical_micro_para_simulation', name: 'Practical Simulation', varName: 'SIMULATION_QUESTIONS', fileName: 'practical_simulation.js', category: 'Practical' },
@@ -19861,7 +20096,7 @@
                 throw new Error("Firestore connection is not available.");
             }
 
-            // Always fetch fresh directly from Firestore content/<docId>
+            
             const docRef = window.doc(window.db, "content", docId);
             const snap = await window.getDoc(docRef);
 
@@ -19906,7 +20141,7 @@
                 throw new Error(`Could not find questions for "${docId}" in Firebase or local database.`);
             }
 
-            // If the user made edits in the current active editor session, incorporate them so latest edits are guaranteed
+            
             if (editorAllData[docId] && editorAllData[docId]._sessionEdited) {
                 data = editorAllData[docId];
             } else {
@@ -20267,527 +20502,7 @@
             }
         });
 
-        /* =========================================================================
-           COMMUNITY FEATURES (Temporarily commented out - preserved for future use)
-           =========================================================================
-        let currentDiscussPostId = null;
-        let pendingPostData = null;
-
-        function getAuthorName() {
-            if (typeof AppState !== 'undefined' && AppState.username) return AppState.username;
-            if (typeof window._getInternalAppState === 'function') {
-                const state = window._getInternalAppState();
-                if (state.username) return state.username;
-            }
-            return 'Anonymous User';
-        }
-
-        function getAuthorAvatar(name) {
-            if (window.currentUserId) {
-                const lsAvatar = localStorage.getItem('medStorm_avatar_' + window.currentUserId);
-                if (lsAvatar && lsAvatar !== 'img/default_avatar.webp') {
-                    return lsAvatar;
-                }
-            }
-            if (typeof AppState !== 'undefined' && AppState.profilePicUrl && AppState.profilePicUrl !== 'img/default_avatar.webp') {
-                return AppState.profilePicUrl;
-            }
-            if (typeof window._getInternalAppState === 'function') {
-                const state = window._getInternalAppState();
-                if (state.profilePicUrl && state.profilePicUrl !== 'img/default_avatar.webp') return state.profilePicUrl;
-            }
-            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'A')}&background=random&color=fff`;
-        }
-
-        function openCreatePostModal() {
-            if (!window.currentUserId) return alert('Please login to ask the community.');
-            let qObj = null;
-            if (typeof Session !== 'undefined' && Session.queue && Session.queue[Session.index]) {
-                qObj = Session.queue[Session.index];
-            }
-            if (!qObj || !qObj.q) {
-                alert('No question found to discuss.');
-                return;
-            }
-
-            let mod = typeof Session !== 'undefined' ? Session.module : 'General';
-            let correctAnsStr = typeof qObj.a === 'number' && qObj.o ? qObj.o[qObj.a] : (qObj.a || 'Unknown');
-
-            let userAnsIdx = null;
-            if (typeof Session !== 'undefined' && Session.answers && Session.answers[Session.index] !== undefined && Session.answers[Session.index] !== null) {
-                userAnsIdx = Session.answers[Session.index];
-            }
-
-            let userSelectedAnsStr = (userAnsIdx !== null && qObj.o && qObj.o[userAnsIdx]) ? qObj.o[userAnsIdx] : null;
-
-            let choicesHtml = '';
-            if (qObj.o && Array.isArray(qObj.o)) {
-                choicesHtml = `<div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">` +
-                    qObj.o.map((opt, i) => {
-                        let bg = 'rgba(0,0,0,0.2)';
-                        let border = 'rgba(255,255,255,0.1)';
-                        let icon = '';
-                        if (userAnsIdx !== null) {
-                            if (i === qObj.a) {
-                                bg = 'rgba(46, 213, 115, 0.2)';
-                                border = 'var(--primary-green)';
-                                icon = '<i class="ri-check-line" style="margin-right:5px;"></i>';
-                            } else if (i === userAnsIdx) {
-                                bg = 'rgba(235, 77, 75, 0.2)';
-                                border = 'var(--primary-red)';
-                                icon = '<i class="ri-close-line" style="margin-right:5px;"></i>';
-                            }
-                        }
-                        return `<div style="padding: 10px 12px; border-radius: 8px; background: ${bg}; border: 1px solid ${border}; font-size: 0.95rem;">${icon}${opt}</div>`;
-                    }).join('') + `</div>`;
-            }
-
-            const authorName = getAuthorName();
-
-            pendingPostData = {
-                questionText: qObj.q,
-                questionImage: qObj.img || null,
-                choices: qObj.o || [],
-                correctAnswerIndex: qObj.a,
-                correctAnswerStr: correctAnsStr,
-                userAnswerIndex: userAnsIdx,
-                userAnswerStr: userSelectedAnsStr,
-                module: mod,
-                subtopic: (typeof Session !== 'undefined' && Session.selectedSubtopics && Session.selectedSubtopics.length > 0) ? Session.selectedSubtopics.join(', ') : 'General',
-                authorName: authorName,
-                authorAvatar: getAuthorAvatar(authorName)
-            };
-
-            let previewHtml = `
-                <div style="font-size: 0.8rem; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px;">${mod} Question</div>
-                <div style="font-size: 1.1rem; font-weight: 600; color: white;">${qObj.q}</div>
-                ${qObj.img ? `<img src="${qObj.img}" style="max-height: 150px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); object-fit: contain;">` : ''}
-                ${choicesHtml}
-            `;
-
-            document.getElementById('create-post-preview').innerHTML = previewHtml;
-            document.getElementById('create-post-caption').value = '';
-            document.getElementById('create-post-modal').style.display = 'flex';
-        }
-
-        function closeCreatePostModal() {
-            document.getElementById('create-post-modal').style.display = 'none';
-            pendingPostData = null;
-        }
-
-        async function submitCommunityPost(e) {
-            e.preventDefault();
-            if (!pendingPostData) return;
-            const caption = document.getElementById('create-post-caption').value.trim();
-            if (!caption) return alert('Please write a question or caption for the community.');
-
-            const btn = e.target;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite; display: inline-block;"></i> Posting...';
-
-            try {
-                const post = {
-                    ...pendingPostData,
-                    caption: caption,
-                    authorId: window.currentUserId,
-                    createdAt: Date.now(),
-                    replyCount: 0,
-                    score: 0,
-                    upvotes: [],
-                    downvotes: []
-                };
-
-                await window.addDoc(window.collection(window.db, "discussions"), post);
-                closeCreatePostModal();
-                btn.disabled = false;
-                btn.innerHTML = '<i class="ri-send-plane-fill"></i> Post to Community';
-                fetchDiscussions(true);
-                switchMode('community');
-            } catch (err) {
-                console.error(err);
-                alert('Error creating post: ' + err.message + '\n\nMake sure your Firebase Rules allow authenticated users to write to the "discussions" collection.');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="ri-send-plane-fill"></i> Post to Community';
-            }
-        }
-
-        async function fetchDiscussions(forceRefresh = false) {
-            const container = document.getElementById('community-list');
-            if (!container) return;
-
-            if (discussionsCache.length === 0 || forceRefresh) {
-                container.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; padding: 4rem;"><div class="loading-dots-container" style="font-size: 1.1rem;"><span>Loading Discussions</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
-
-                try {
-                    const q = window.query(window.collection(window.db, "discussions"), window.orderBy("createdAt", "desc"), window.limit(50));
-                    const snap = await window.getDocs(q);
-                    discussionsCache = [];
-                    snap.forEach(doc => {
-                        discussionsCache.push({ id: doc.id, ...doc.data() });
-                    });
-                } catch (e) {
-                    console.error("Discussions fetch error:", e);
-                    container.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--text-gray);">Failed to load discussions. Make sure Firebase Rules are updated for "discussions" collection.</div>';
-                    return;
-                }
-            }
-
-            if (discussionsCache.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 4rem 2rem; color: var(--text-gray); background: var(--bg-card); border-radius: 16px; border: 1px dashed var(--border-color);">
-                        <i class="ri-discuss-line" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: var(--accent); opacity: 0.8;"></i>
-                        <h3 style="color: var(--text-light); margin-bottom: 0.5rem; font-size: 1.25rem;">No Discussions Yet</h3>
-                        <p style="max-width: 400px; margin: 0 auto; line-height: 1.5; font-size: 0.95rem;">Be the first to start a conversation! When solving questions, tap the <i class="ri-chat-1-line" style="color:var(--accent);"></i> icon to ask the community for help.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '';
-            discussionsCache.forEach(post => {
-                const docId = post.id;
-                const data = post;
-                const authorInitial = (data.authorName || 'A')[0].toUpperCase();
-                const formattedTime = new Date(data.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-                const upvotes = data.upvotes || [];
-                const downvotes = data.downvotes || [];
-                const score = data.score !== undefined ? data.score : (upvotes.length - downvotes.length);
-
-                const hasUpvoted = window.currentUserId && upvotes.includes(window.currentUserId);
-                const hasDownvoted = window.currentUserId && downvotes.includes(window.currentUserId);
-
-                html += `
-                    <div class="community-post-card" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
-                            <div style="display:flex;align-items:center;gap:12px;">
-                                <img src="${data.authorAvatar || `https://ui-avatars.com/api/?name=${authorInitial}&background=random`}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--border-color);" onerror="this.src='img/default_avatar.webp'">
-                                <div>
-                                    <div style="font-weight:700;color:var(--text-light);font-size:0.95rem;">${data.authorName || 'Anonymous Student'}</div>
-                                    <div style="font-size:0.8rem;color:var(--text-gray);">${formattedTime} • <span style="color:var(--accent);">${data.module}</span></div>
-                                </div>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:8px;">
-                                <span style="font-size:0.75rem;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,0.05);color:var(--text-gray);border:1px solid var(--border-color);">${data.subtopic || 'General'}</span>
-                                ${data.authorId === window.currentUserId ? `<button onclick="deleteCommunityPost('${docId}')" style="background:none;border:none;color:var(--text-gray);cursor:pointer;font-size:1.2rem;transition:color 0.2s;" onmouseover="this.style.color='var(--primary-red)'" onmouseout="this.style.color='var(--text-gray)'" title="Delete Post"><i class="ri-delete-bin-line"></i></button>` : ''}
-                            </div>
-                        </div>
-
-                        <div style="font-size:1.05rem;color:var(--text-light);line-height:1.5;margin-bottom:1.25rem;font-weight:500;">
-                            ${data.caption}
-                        </div>
-
-                        <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:1rem;margin-bottom:1.25rem;">
-                            <div style="font-size:0.75rem;color:var(--text-gray);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Original Question:</div>
-                            <div style="font-size:0.95rem;color:var(--text-light);line-height:1.4;">${data.questionText}</div>
-                            ${data.questionImage ? `<img src="${data.questionImage}" style="max-height:120px;border-radius:6px;margin-top:8px;border:1px solid rgba(255,255,255,0.1);object-fit:contain;">` : ''}
-                        </div>
-
-                        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.05);padding-top:1rem;">
-                            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.15);padding:4px 8px;border-radius:20px;border:1px solid var(--border-color);">
-                                <button onclick="voteDiscussPost('${docId}', 'up')" style="background:none;border:none;color:${hasUpvoted ? 'var(--primary-green)' : 'var(--text-gray)'};cursor:pointer;font-size:1.1rem;display:flex;align-items:center;"><i class="${hasUpvoted ? 'ri-arrow-up-circle-fill' : 'ri-arrow-up-circle-line'}"></i></button>
-                                <span style="font-weight:700;font-size:0.85rem;color:${score > 0 ? 'var(--primary-green)' : (score < 0 ? 'var(--primary-red)' : 'var(--text-light)')};min-width:18px;text-align:center;">${score}</span>
-                                <button onclick="voteDiscussPost('${docId}', 'down')" style="background:none;border:none;color:${hasDownvoted ? 'var(--primary-red)' : 'var(--text-gray)'};cursor:pointer;font-size:1.1rem;display:flex;align-items:center;"><i class="${hasDownvoted ? 'ri-arrow-down-circle-fill' : 'ri-arrow-down-circle-line'}"></i></button>
-                            </div>
-
-                            <button onclick="openDiscussModal('${docId}')" style="background:transparent;border:1px solid var(--border-color);color:var(--text-light);padding:6px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)';" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-light)';">
-                                <i class="ri-chat-3-line"></i> ${data.replyCount || 0} Comments
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        async function openDiscussModal(postId) {
-            currentDiscussPostId = postId;
-            const post = discussionsCache.find(p => p.id === postId);
-            if (!post) return;
-
-            const modal = document.getElementById('discussion-modal');
-            const previewContainer = document.getElementById('discuss-post-full-preview');
-            const repliesContainer = document.getElementById('discuss-replies-list');
-
-            const formattedTime = new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-            let choicesHtml = '';
-            if (post.choices && Array.isArray(post.choices)) {
-                choicesHtml = `<div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px;">` +
-                    post.choices.map((opt, i) => {
-                        let bg = 'rgba(0,0,0,0.2)';
-                        let border = 'rgba(255,255,255,0.05)';
-                        let icon = '';
-                        if (post.userAnswerIndex !== null && post.userAnswerIndex !== undefined) {
-                            if (i === post.correctAnswerIndex) {
-                                bg = 'rgba(46, 213, 115, 0.15)';
-                                border = 'var(--primary-green)';
-                                icon = '<i class="ri-check-line" style="margin-right:5px; color:var(--primary-green);"></i>';
-                            } else if (i === post.userAnswerIndex) {
-                                bg = 'rgba(235, 77, 75, 0.15)';
-                                border = 'var(--primary-red)';
-                                icon = '<i class="ri-close-line" style="margin-right:5px; color:var(--primary-red);"></i>';
-                            }
-                        }
-                        return `<div style="padding: 6px 10px; border-radius: 6px; background: ${bg}; border: 1px solid ${border}; font-size: 0.85rem; color: var(--text-light);">${icon}${opt}</div>`;
-                    }).join('') + `</div>`;
-            }
-
-            previewContainer.innerHTML = `
-                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
-                    <img src="${post.authorAvatar || 'img/default_avatar.webp'}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" onerror="this.src='img/default_avatar.webp'">
-                    <div>
-                        <div style="font-weight: 700; color: var(--text-light); font-size: 0.95rem;">${post.authorName || 'Anonymous'}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-gray);">${formattedTime} • ${post.module}</div>
-                    </div>
-                </div>
-                <div style="font-size: 1.05rem; color: var(--text-light); margin-bottom: 1rem; line-height: 1.4;">${post.caption}</div>
-                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px;">
-                    <div style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Question:</div>
-                    <div style="font-size: 0.9rem; color: var(--text-light);">${post.questionText}</div>
-                    ${post.questionImage ? `<img src="${post.questionImage}" style="max-height: 120px; border-radius: 6px; margin-top: 8px; object-fit: contain;">` : ''}
-                    ${choicesHtml}
-                </div>
-            `;
-
-            repliesContainer.innerHTML = '<div style="display:flex; justify-content:center; padding: 2rem;"><div class="loading-dots-container" style="font-size: 0.95rem;"><span>Loading Comments</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
-            modal.style.display = 'flex';
-
-            try {
-                const q = window.query(window.collection(window.db, "discussions", postId, "replies"), window.orderBy("createdAt", "asc"));
-                const snap = await window.getDocs(q);
-                let rHtml = '';
-                if (snap.empty) {
-                    repliesContainer.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 2rem;">No comments yet. Start the conversation!</div>';
-                    return;
-                }
-                snap.forEach(docSnap => {
-                    const r = docSnap.data();
-                    const rId = docSnap.id;
-                    const rTime = new Date(r.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-                    const upvotes = r.upvotes || [];
-                    const downvotes = r.downvotes || [];
-                    const score = r.score !== undefined ? r.score : (upvotes.length - downvotes.length);
-                    const hasUpvoted = window.currentUserId && upvotes.includes(window.currentUserId);
-                    const hasDownvoted = window.currentUserId && downvotes.includes(window.currentUserId);
-
-                    rHtml += `
-                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-                                <div style="display: flex; gap: 8px; align-items: center;">
-                                    <img src="${r.authorAvatar || 'img/default_avatar.webp'}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" onerror="this.src='img/default_avatar.webp'">
-                                    <div>
-                                        <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-light);">${r.authorName || 'Anonymous'}</span>
-                                        <span style="font-size: 0.7rem; color: var(--text-gray); margin-left: 6px;">${rTime}</span>
-                                    </div>
-                                </div>
-                                ${r.authorId === window.currentUserId ? `<button onclick="deleteDiscussReply('${rId}')" style="background:none;border:none;color:var(--text-gray);cursor:pointer;font-size:0.9rem;" title="Delete reply"><i class="ri-delete-bin-line"></i></button>` : ''}
-                            </div>
-                            <div style="font-size: 0.9rem; color: var(--text-light); line-height: 1.4; margin-bottom: 8px; padding-left: 36px;">${r.text}</div>
-                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; padding-right: 4px;">
-                                <button class="upvote-btn" onclick="voteDiscussReply('${rId}', 'up')" style="background:none;border:none;color:${hasUpvoted ? 'var(--primary-green)' : 'var(--text-gray)'};cursor:pointer;font-size:0.95rem;"><i class="${hasUpvoted ? 'ri-arrow-up-circle-fill' : 'ri-arrow-up-circle-line'}"></i></button>
-                                <span class="score-span" style="font-size:0.75rem;font-weight:700;color:${score > 0 ? 'var(--primary-green)' : (score < 0 ? 'var(--primary-red)' : 'var(--text-light)')};min-width:14px;text-align:center;">${score}</span>
-                                <button class="downvote-btn" onclick="voteDiscussReply('${rId}', 'down')" style="background:none;border:none;color:${hasDownvoted ? 'var(--primary-red)' : 'var(--text-gray)'};cursor:pointer;font-size:0.95rem;"><i class="${hasDownvoted ? 'ri-arrow-down-circle-fill' : 'ri-arrow-down-circle-line'}"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                repliesContainer.innerHTML = rHtml;
-            } catch (e) {
-                console.error("Replies fetch error:", e);
-                repliesContainer.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 1rem;">Failed to load comments.</div>';
-            }
-        }
-
-        function closeDiscussModal() {
-            document.getElementById('discussion-modal').style.display = 'none';
-            currentDiscussPostId = null;
-        }
-
-        async function submitDiscussReply(e) {
-            e.preventDefault();
-            if (!currentDiscussPostId) return;
-            const input = document.getElementById('discuss-reply-input');
-            const text = input.value.trim();
-            if (!text) return;
-
-            const btn = e.target;
-            btn.disabled = true;
-
-            try {
-                const authorName = getAuthorName();
-                const reply = {
-                    text: text,
-                    authorId: window.currentUserId,
-                    authorName: authorName,
-                    authorAvatar: getAuthorAvatar(authorName),
-                    createdAt: Date.now(),
-                    upvotes: [],
-                    downvotes: [],
-                    score: 0
-                };
-
-                await window.addDoc(window.collection(window.db, "discussions", currentDiscussPostId, "replies"), reply);
-
-                try {
-                    await window.updateDoc(window.doc(window.db, "discussions", currentDiscussPostId), {
-                        replyCount: window.increment(1)
-                    });
-                } catch (e) { }
-
-                input.value = '';
-                btn.disabled = false;
-                openDiscussModal(currentDiscussPostId);
-                fetchDiscussions(true);
-            } catch (err) {
-                console.error(err);
-                alert('Failed to post reply: ' + err.message + '\n\nMake sure your Firebase Rules allow creating documents in subcollections.');
-                btn.disabled = false;
-            }
-        }
-
-        async function voteDiscussPost(postId, type) {
-            if (!window.currentUserId) return alert('Please login to vote.');
-            try {
-                const postRef = window.doc(window.db, "discussions", postId);
-                const postSnap = await window.getDoc(postRef);
-                if (!postSnap.exists()) return;
-
-                const data = postSnap.data();
-                let upvotes = data.upvotes || [];
-                let downvotes = data.downvotes || [];
-                const uid = window.currentUserId;
-
-                if (type === 'up') {
-                    if (upvotes.includes(uid)) {
-                        upvotes = upvotes.filter(id => id !== uid);
-                    } else {
-                        upvotes.push(uid);
-                        downvotes = downvotes.filter(id => id !== uid);
-                    }
-                } else if (type === 'down') {
-                    if (downvotes.includes(uid)) {
-                        downvotes = downvotes.filter(id => id !== uid);
-                    } else {
-                        downvotes.push(uid);
-                        upvotes = upvotes.filter(id => id !== uid);
-                    }
-                }
-
-                const score = upvotes.length - downvotes.length;
-
-                const cached = discussionsCache.find(p => p.id === postId);
-                if (cached) {
-                    cached.upvotes = upvotes;
-                    cached.downvotes = downvotes;
-                    cached.score = score;
-                    fetchDiscussions(false);
-                }
-
-                await window.updateDoc(postRef, {
-                    upvotes: upvotes,
-                    downvotes: downvotes,
-                    score: score
-                });
-            } catch (e) {
-                console.error(e);
-                alert('Failed to vote. Please ask the admin to update Firebase Rules: "allow update: if request.auth != null;" for discussions!');
-            }
-        }
-
-        async function voteDiscussReply(replyId, type) {
-            if (!window.currentUserId) return alert('Please login to vote.');
-            if (!currentDiscussPostId) return;
-
-            try {
-                const replyRef = window.doc(window.db, "discussions", currentDiscussPostId, "replies", replyId);
-                const replySnap = await window.getDoc(replyRef);
-                if (!replySnap.exists()) return;
-
-                const data = replySnap.data();
-                let upvotes = data.upvotes || [];
-                let downvotes = data.downvotes || [];
-                const uid = window.currentUserId;
-
-                if (type === 'up') {
-                    if (upvotes.includes(uid)) {
-                        upvotes = upvotes.filter(id => id !== uid);
-                    } else {
-                        upvotes.push(uid);
-                        downvotes = downvotes.filter(id => id !== uid);
-                    }
-                } else if (type === 'down') {
-                    if (downvotes.includes(uid)) {
-                        downvotes = downvotes.filter(id => id !== uid);
-                    } else {
-                        downvotes.push(uid);
-                        upvotes = upvotes.filter(id => id !== uid);
-                    }
-                }
-
-                const score = upvotes.length - downvotes.length;
-
-                const btnContainer = event.target.closest('div');
-                if (btnContainer) {
-                    const upBtn = btnContainer.querySelector('.upvote-btn');
-                    const downBtn = btnContainer.querySelector('.downvote-btn');
-                    const scoreSpan = btnContainer.querySelector('.score-span');
-
-                    if (type === 'up') {
-                        upBtn.style.color = upvotes.includes(uid) ? 'var(--primary-green)' : 'var(--text-gray)';
-                        upBtn.innerHTML = upvotes.includes(uid) ? '<i class="ri-arrow-up-circle-fill"></i>' : '<i class="ri-arrow-up-circle-line"></i>';
-                        downBtn.style.color = 'var(--text-gray)';
-                        downBtn.innerHTML = '<i class="ri-arrow-down-circle-line"></i>';
-                    } else {
-                        downBtn.style.color = downvotes.includes(uid) ? 'var(--primary-red)' : 'var(--text-gray)';
-                        downBtn.innerHTML = downvotes.includes(uid) ? '<i class="ri-arrow-down-circle-fill"></i>' : '<i class="ri-arrow-down-circle-line"></i>';
-                        upBtn.style.color = 'var(--text-gray)';
-                        upBtn.innerHTML = '<i class="ri-arrow-up-circle-line"></i>';
-                    }
-                    scoreSpan.textContent = score;
-                    scoreSpan.style.color = score > 0 ? 'var(--primary-green)' : (score < 0 ? 'var(--primary-red)' : 'var(--text-light)');
-                }
-
-                await window.updateDoc(replyRef, {
-                    upvotes: upvotes,
-                    downvotes: downvotes,
-                    score: score
-                });
-            } catch (e) {
-                console.error(e);
-                alert('Failed to vote. Please ask the admin to update Firebase Rules: "allow update: if request.auth != null;" for discussions and replies!');
-            }
-        }
-        async function deleteCommunityPost(postId) {
-            if (!confirm('Are you sure you want to delete this post?')) return;
-            try {
-                await window.deleteDoc(window.doc(window.db, "discussions", postId));
-                fetchDiscussions(true);
-                document.getElementById('discussion-modal').style.display = 'none';
-            } catch (e) {
-                console.error(e);
-                alert('Error deleting post: ' + e.message + '\n\nIf this is a permission error, make sure you are deleting your own post, and that your Firebase rules are correctly published.');
-            }
-        }
-
-        async function deleteDiscussReply(replyId) {
-            if (!currentDiscussPostId) return;
-            if (!confirm('Are you sure you want to delete this reply?')) return;
-            try {
-                await window.deleteDoc(window.doc(window.db, "discussions", currentDiscussPostId, "replies", replyId));
-                try {
-                    await window.updateDoc(window.doc(window.db, "discussions", currentDiscussPostId), {
-                        replyCount: window.increment(-1)
-                    });
-                } catch (e) { }
-            } catch (e) {
-                console.error(e);
-                alert('Error deleting reply: ' + e.message + '\n\nMake sure your Firebase Rules are correctly published.');
-            }
-        }
-        */
+        
 
         document.addEventListener('contextmenu', function (e) {
             if (e.target && e.target.closest && e.target.closest('#view-quiz, #quiz-screen, #exam-screen, .quiz-container, .question-card, .question-box, .choices-container, .question-text')) {
