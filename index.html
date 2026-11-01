@@ -3699,7 +3699,7 @@
             align-items: center;
         }
 
-        
+        /* Practical Year Tabs */
         .practical-year-tabs {
             display: flex;
             align-items: center;
@@ -3741,7 +3741,7 @@
             box-shadow: 0 4px 14px var(--accent-glow);
         }
 
-        
+        /* Spot Practical Session */
         .para-session-wrap {
             width: 100%;
             max-width: 860px;
@@ -5166,7 +5166,9 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
         }
 
-        
+        /* ============================================================
+           Open Book PDF Reference Panel (Pharmacology Practical)
+           ============================================================ */
         .open-book-btn {
             display: inline-flex;
             align-items: center;
@@ -5327,7 +5329,9 @@
             box-shadow: 0 12px 30px rgba(249, 115, 22, 0.6);
         }
 
-        
+        /* ============================================================
+           Multi-Select Questions Styling
+           ============================================================ */
         .option-btn.multi-option {
             display: flex;
             align-items: center;
@@ -5595,56 +5599,6 @@
         </div>
     </div>
 
-    
-    <div class="modal-overlay" id="academic-verification-modal"
-        style="z-index: 200000; background: rgba(10, 15, 13, 0.96); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;">
-        <div class="modal-container"
-            style="max-width: 480px; width: 90%; text-align: right; direction: rtl; padding: 2.2rem; background: var(--bg-card); border-radius: 20px; border: 1px solid var(--accent); box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);">
-            <div style="text-align: center; margin-bottom: 1.25rem;">
-                <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                    <i class="ri-shield-check-line"></i>
-                </div>
-                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-light); margin: 0 0 6px 0;">Alexandria Faculty of Medicine</h3>
-                <div style="font-size: 0.9rem; font-weight: 700; color: var(--accent);">Academic Account Verification</div>
-            </div>
-            
-            <p style="color: var(--text-gray); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.5rem; text-align: center;">
-                Unusual activity detected. To maintain platform integrity and leaderboard fairness, please verify your academic profile.
-                <br><span style="font-size: 0.8rem; color: #fbbf24;">(تم رصد نشاط غير معتاد في جلستك، برجاء تأكيد هويتك الطلابية لاستئناف الدخول)</span>
-            </p>
-
-            <form id="academic-verification-form" onsubmit="submitAcademicVerification(event)" style="display: flex; flex-direction: column; gap: 12px;">
-                <div>
-                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">الاسم الثلاثي أو الرباعي <span style="color:#ef4444;">*</span></label>
-                    <input type="text" id="verif-full-name" required placeholder="مثال: أحمد محمد علي إبراهيم"
-                        style="width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); color: var(--text-light); font-size: 0.95rem; outline: none; transition: border-color 0.2s;"
-                        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-color)'">
-                </div>
-
-                <div>
-                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">الفرقة الدراسية / السكشن <span style="color:#ef4444;">*</span></label>
-                    <input type="text" id="verif-academic-year" required placeholder="مثال: الفرقة الأولى - سكشن 4"
-                        style="width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); color: var(--text-light); font-size: 0.95rem; outline: none; transition: border-color 0.2s;"
-                        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-color)'">
-                </div>
-
-                <div>
-                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-light); margin-bottom: 6px;">رقم الواتساب للتأكيد <span style="color:#ef4444;">*</span></label>
-                    <input type="tel" id="verif-whatsapp" required placeholder="مثال: 01012345678"
-                        style="width: 100%; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); color: var(--text-light); font-size: 0.95rem; outline: none; transition: border-color 0.2s; direction: ltr; text-align: right;"
-                        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border-color)'">
-                </div>
-
-                <div id="verif-status-msg" style="display: none; padding: 10px; border-radius: 8px; font-size: 0.85rem; text-align: center; margin-top: 4px;"></div>
-
-                <button type="submit" id="verif-submit-btn" class="quiz-btn btn-primary"
-                    style="margin-top: 10px; width: 100%; padding: 12px; font-size: 1rem; font-weight: 700; background: var(--accent); color: white; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>تأكيد البيانات واستئناف الدخول</span> <i class="ri-send-plane-fill"></i>
-                </button>
-            </form>
-        </div>
-    </div>
-
     <div class="modal-overlay" id="change-username-modal" style="z-index: 100001;">
         <div class="modal-container"
             style="max-width: 400px; text-align: center; padding: 2.5rem; background: var(--bg-card); border-radius: 20px; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 10px 40px rgba(168, 85, 247, 0.15);">
@@ -5903,7 +5857,11 @@
                 <div class="nav-item" onclick="switchMode('favorites')" id="nav-favorites">
                     <i class="ri-star-line"></i><span>My Favorites</span>
                 </div>
-                
+                <!-- Community (Commented out)
+                <div class="nav-item" onclick="switchMode('community')" id="nav-community">
+                    <i class="ri-discuss-line"></i><span>Community</span>
+                </div>
+                -->
             </div>
 
             <div class="nav-label" id="label-performance" onclick="toggleNavSection(this)">Performance <i
@@ -6482,14 +6440,14 @@
                 </div>
             </div>
 
-            
+            <!-- Floating Open Book Toggle Button -->
             <button id="open-book-floating-btn" class="open-book-floating-btn" onclick="toggleOpenBookPdf(true)"
                 style="display: none;" title="Open Book Reference PDF">
                 <i class="ri-book-open-fill"></i>
                 <span>📖 Open Book PDF</span>
             </button>
 
-            
+            <!-- Open Book PDF Side Panel -->
             <div id="open-book-panel" class="open-book-panel" style="display: none;">
                 <div class="open-book-header">
                     <div class="open-book-title">
@@ -6868,7 +6826,24 @@
 
             </div>
         </div>
-        
+        <!-- View Community (Commented out)
+        <div id="view-community" class="view-section" style="display:none;">
+            <div class="section-header"
+                style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h2>Community Discussions</h2>
+                    <p class="section-subtitle">Discuss questions, share knowledge, and collaborate with others.</p>
+                </div>
+                <button onclick="fetchDiscussions(true)"
+                    style="padding:8px 16px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-light); font-size:0.88rem; cursor:pointer; font-weight:600; display:inline-flex; align-items:center; gap:6px; transition:var(--transition);"
+                    onmouseover="this.style.borderColor='var(--accent)'"
+                    onmouseout="this.style.borderColor='var(--border-color)'">
+                    <i class="ri-refresh-line"></i> Refresh
+                </button>
+            </div>
+            <div id="community-list" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+        </div>
+        -->
     </main>
 
     <button class="ai-chat-btn" onclick="toggleAIChat()" title="Ask ASA AI Tutor">
@@ -6897,7 +6872,7 @@
         </div>
     </div>
 
-    
+    <!-- Modal: Download Questions JS -->
     <div class="modal-overlay" id="download-questions-modal" style="z-index: 100000;">
         <div class="modal" style="max-width: 540px; border-radius: 16px;">
             <div class="modal-header">
@@ -7104,7 +7079,69 @@
         </div>
     </div>
 
-    
+    <!-- Community Modals (Commented out)
+    <div class="modal-overlay" id="create-post-modal" style="z-index: 100000;">
+        <div class="modal-content"
+            style="width: 95%; max-width: 700px; display: flex; flex-direction: column; max-height: 85vh; padding: 0; overflow: hidden; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 16px;">
+            <div
+                style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); background: var(--bg-main); display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+                <h2 style="margin: 0; color: var(--text-light); font-size: 1.25rem; font-weight: 700;">Ask the Community
+                </h2>
+                <button onclick="closeCreatePostModal()"
+                    style="background:none;border:none;color:var(--text-gray);font-size:1.5rem;cursor:pointer;transition:color 0.2s;"
+                    onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-gray)'"><i
+                        class="ri-close-line"></i></button>
+            </div>
+            <div style="padding: 1.5rem; flex: 1; overflow-y: auto; background: var(--bg-main);">
+                <div id="create-post-preview"
+                    style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem; color: var(--text-light); line-height: 1.5;">
+                </div>
+                <textarea id="create-post-caption" placeholder="What's your question or confusion about this?"
+                    style="width: 100%; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; padding: 1.25rem; border-radius: 8px; font-family: inherit; font-size: 1.05rem; resize: vertical; min-height: 140px; outline: none; transition: border-color 0.2s;"
+                    onfocus="this.style.borderColor='var(--primary-green)'"
+                    onblur="this.style.borderColor='rgba(255,255,255,0.1)'"></textarea>
+            </div>
+            <div
+                style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-main); display: flex; justify-content: flex-end; z-index: 2;">
+                <button onclick="submitCommunityPost(event)"
+                    style="padding: 12px 24px; background: var(--primary-green); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; white-space: nowrap; width: 100%;"><i
+                        class="ri-send-plane-fill"></i> Post to Community</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="discussion-modal" style="z-index: 100000;">
+        <div class="modal-content"
+            style="width: 95%; max-width: 700px; display: flex; flex-direction: column; max-height: 85vh; padding: 0; overflow: hidden; background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 16px;">
+            <div
+                style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); background: var(--bg-main); display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+                <h2 style="margin: 0; color: var(--text-light); font-size: 1.25rem; font-weight: 700;">Discussion Thread
+                </h2>
+                <button onclick="closeDiscussModal()"
+                    style="background:none;border:none;color:var(--text-gray);font-size:1.5rem;cursor:pointer;transition:color 0.2s;"
+                    onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--text-gray)'"><i
+                        class="ri-close-line"></i></button>
+            </div>
+            <div style="flex: 1; overflow-y: auto; background: var(--bg-main);">
+                <div id="discuss-post-full-preview"
+                    style="padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); background: var(--bg-card);">
+                </div>
+                <div id="discuss-replies-list"
+                    style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;"></div>
+            </div>
+            <div
+                style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-card); display: flex; gap: 12px; align-items: flex-end; z-index: 2;">
+                <textarea id="discuss-reply-input" placeholder="Add a reply..."
+                    style="flex: 1; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 0.95rem; resize: none; min-height: 50px; max-height: 120px; outline: none; transition: border-color 0.2s;"
+                    onfocus="this.style.borderColor='var(--primary-green)'"
+                    onblur="this.style.borderColor='rgba(255,255,255,0.1)'"></textarea>
+                <button onclick="submitDiscussReply(event)"
+                    style="padding: 12px 24px; background: var(--primary-green); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; white-space: nowrap;"><i
+                        class="ri-reply-line"></i> Reply</button>
+            </div>
+        </div>
+    </div>
+    -->
 
     <div class="modal-overlay" id="premium-lock-modal" style="z-index: 100002;">
         <div class="modal"
@@ -7278,12 +7315,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        import { getFirestore, doc, getDoc, getDocFromServer, getDocsFromServer, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence, addDoc, increment, writeBatch, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocFromServer, getDocsFromServer, setDoc, collection, getDocs, updateDoc, query, where, orderBy, limit, enableIndexedDbPersistence, addDoc, increment, writeBatch, onSnapshot, deleteDoc, FieldPath, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         window.getDocFromServer = getDocFromServer;
         window.getDocsFromServer = getDocsFromServer;
         window.firestoreIncrement = increment;
         window.writeBatch = writeBatch;
         window.onSnapshot = onSnapshot;
+        window.FieldPath = FieldPath;
+        window.deleteField = deleteField;
         window.doc = doc;
         window.getDoc = getDoc;
         window.setDoc = setDoc;
@@ -7409,7 +7448,7 @@
                 img.onload = async function () {
                     const canvas = document.createElement('canvas');
                     let width = img.width, height = img.height;
-                    const maxSize = 250;
+                    const maxSize = 120;
 
                     if (width > height) {
                         if (width > maxSize) { height *= maxSize / width; width = maxSize; }
@@ -7420,7 +7459,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    const base64 = canvas.toDataURL('image/jpeg', 0.8);
+                    const base64 = canvas.toDataURL('image/jpeg', 0.7);
 
                     window.setAvatarUI(base64);
                     localStorage.setItem('medStorm_avatar_' + window.currentUserId, base64);
@@ -7476,10 +7515,282 @@
         }
         window.updateSyncStatusUI = updateSyncStatusUI;
 
+        // Phase 2: Core ID, Compaction & Granular Write Helpers
+        function generateQuestionId() {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            let id = '';
+            const bytes = new Uint8Array(12);
+            if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+                crypto.getRandomValues(bytes);
+                for (let i = 0; i < 12; i++) id += chars[bytes[i] % chars.length];
+            } else {
+                for (let i = 0; i < 12; i++) id += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return id;
+        }
+        window.generateQuestionId = generateQuestionId;
+
+        function assignQuestionIdsRecursively(obj) {
+            if (!obj) return;
+            if (Array.isArray(obj)) {
+                for (let i = 0; i < obj.length; i++) {
+                    const item = obj[i];
+                    if (item && typeof item === 'object') {
+                        if (item.q !== undefined && item.o !== undefined) {
+                            if (!item.id || typeof item.id !== 'string' || item.id.length < 8) {
+                                item.id = generateQuestionId();
+                            }
+                        } else {
+                            assignQuestionIdsRecursively(item);
+                        }
+                    }
+                }
+            } else if (typeof obj === 'object') {
+                for (const k of Object.keys(obj)) {
+                    if (k === '_isChunked' || k === '_chunkCount') continue;
+                    assignQuestionIdsRecursively(obj[k]);
+                }
+            }
+        }
+        window.assignQuestionIdsRecursively = assignQuestionIdsRecursively;
+
+        function sanitizeFirestoreFieldKey(key) {
+            if (!key || typeof key !== 'string') return 'unknown_q';
+            const trimmed = key.trim();
+            if (!trimmed) return 'empty_q';
+            if (trimmed.length > 400) {
+                let hash = 0;
+                for (let i = 0; i < trimmed.length; i++) {
+                    hash = ((hash << 5) - hash) + trimmed.charCodeAt(i);
+                    hash |= 0;
+                }
+                return trimmed.slice(0, 300) + '_' + Math.abs(hash);
+            }
+            return trimmed;
+        }
+        window.sanitizeFirestoreFieldKey = sanitizeFirestoreFieldKey;
+
+        function getQuestionStatus(q) {
+            if (!q) return null;
+            if (q.id && AppState.progress && AppState.progress[q.id]) return AppState.progress[q.id];
+            if (q.q && AppState.progress && AppState.progress[q.q]) return AppState.progress[q.q];
+            return null;
+        }
+        window.getQuestionStatus = getQuestionStatus;
+
+        function getQuestionFavorite(q) {
+            if (!q || !AppState.favorites) return false;
+            return !!((q.id && AppState.favorites[q.id]) || (q.q && AppState.favorites[q.q]));
+        }
+        window.getQuestionFavorite = getQuestionFavorite;
+
+        function getQuestionNote(q) {
+            if (!q || !AppState.notes) return '';
+            return (q.id && AppState.notes[q.id]) || (q.q && AppState.notes[q.q]) || '';
+        }
+        window.getQuestionNote = getQuestionNote;
+
+        function compactQueue(queue) {
+            if (!Array.isArray(queue)) return [];
+            return queue.map(q => {
+                if (!q) return null;
+                return {
+                    id: q.id || '',
+                    q: q.q || '',
+                    m: q._module || (typeof Session !== 'undefined' && Session && Session.module) || ''
+                };
+            }).filter(Boolean);
+        }
+        window.compactQueue = compactQueue;
+
+        function compactDrawings(drawings) {
+            if (!drawings || typeof drawings !== 'object') return {};
+            const compact = {};
+            for (const [k, d] of Object.entries(drawings)) {
+                if (!d || typeof d !== 'string') continue;
+                if (d.length > 25000) {
+                    compact[k] = d.slice(0, 25000);
+                } else {
+                    compact[k] = d;
+                }
+            }
+            return compact;
+        }
+        window.compactDrawings = compactDrawings;
+
+        function compactExamsHistory(history) {
+            if (!Array.isArray(history)) return [];
+            return history.map(item => {
+                if (!item || typeof item !== 'object') return null;
+                const copy = { ...item };
+                delete copy.drawings; // Strip drawings completely from examsHistory
+                if (Array.isArray(copy.queue)) {
+                    copy.queue = compactQueue(copy.queue);
+                }
+                return copy;
+            }).filter(Boolean);
+        }
+        window.compactExamsHistory = compactExamsHistory;
+
+        function compactPendingExams(pending) {
+            if (!Array.isArray(pending)) return [];
+            return pending.map(item => {
+                if (!item || typeof item !== 'object') return null;
+                const copy = { ...item };
+                if (Array.isArray(copy.queue)) {
+                    copy.queue = compactQueue(copy.queue);
+                }
+                if (copy.drawings) {
+                    copy.drawings = compactDrawings(copy.drawings);
+                }
+                return copy;
+            }).filter(Boolean);
+        }
+        window.compactPendingExams = compactPendingExams;
+
+        function isCompactQueue(queue) {
+            if (!Array.isArray(queue) || queue.length === 0) return false;
+            return !queue[0].o || !Array.isArray(queue[0].o);
+        }
+        window.isCompactQueue = isCompactQueue;
+
+        async function hydrateCompactQueue(queue, defaultModule) {
+            if (!Array.isArray(queue) || queue.length === 0) return null;
+            if (queue[0] && Array.isArray(queue[0].o)) {
+                return JSON.parse(JSON.stringify(queue));
+            }
+
+            const neededMods = new Set();
+            queue.forEach(item => {
+                const m = item.m || item._module || defaultModule;
+                if (m && m !== 'Favorites') neededMods.add(m);
+            });
+            if (defaultModule && defaultModule !== 'Favorites') {
+                neededMods.add(defaultModule);
+            }
+
+            for (const modName of neededMods) {
+                if (!DB[modName] || Object.keys(DB[modName]).length === 0) {
+                    if (window.showToast) window.showToast(`Loading ${modName}... ⏳`, 'info');
+                    try {
+                        await window.fetchSingleModuleFromDB(modName);
+                    } catch (e) {
+                        console.warn(`Failed to load module ${modName} during queue hydration:`, e);
+                    }
+                    if (!DB[modName] || Object.keys(DB[modName]).length === 0) {
+                        if (window.showToast) window.showToast(`Could not load ${modName} questions. Check your internet connection.`, 'error');
+                        return null;
+                    }
+                }
+            }
+
+            const qMapById = new Map();
+            const qMapByText = new Map();
+
+            neededMods.forEach(modName => {
+                if (DB[modName] && typeof extractAllQuestions === 'function') {
+                    const all = extractAllQuestions(DB[modName]);
+                    all.forEach(q => {
+                        if (q.id) qMapById.set(q.id, { q, modName });
+                        if (q.q) qMapByText.set(q.q, { q, modName });
+                    });
+                }
+            });
+
+            const hydrated = [];
+            for (const item of queue) {
+                const modName = item.m || item._module || defaultModule;
+                let matched = null;
+                if (item.id && qMapById.has(item.id)) {
+                    matched = qMapById.get(item.id);
+                } else if (item.q && qMapByText.has(item.q)) {
+                    matched = qMapByText.get(item.q);
+                }
+
+                if (matched) {
+                    const fullQ = JSON.parse(JSON.stringify(matched.q));
+                    fullQ._module = matched.modName;
+                    if (item.id && !fullQ.id) fullQ.id = item.id;
+                    hydrated.push(fullQ);
+                } else {
+                    hydrated.push({
+                        id: item.id || '',
+                        q: item.q || 'Question no longer available in bank',
+                        o: ['Option A', 'Option B', 'Option C', 'Option D'],
+                        a: 0,
+                        _module: modName,
+                        _deleted: true
+                    });
+                }
+            }
+
+            return hydrated;
+        }
+        window.hydrateCompactQueue = hydrateCompactQueue;
+
+        function recordQuestionAttempt(q, isCorrect, isFirstAttempt, today, yCorrectKey, yWrongKey) {
+            if (!q) return;
+            const qKey = q.id || q.q;
+            const status = isCorrect ? 'correct' : 'wrong';
+
+            AppState.progress[qKey] = status;
+            if (q.id && q.q && AppState.progress[q.q] && q.id !== q.q) {
+                delete AppState.progress[q.q];
+            }
+
+            if (!window.pendingQuestionDeltas) window.pendingQuestionDeltas = {};
+            window.pendingQuestionDeltas[qKey] = {
+                status: status,
+                isFirstAttempt: isFirstAttempt,
+                qId: q.id || '',
+                qText: q.q || ''
+            };
+
+            if (isFirstAttempt) {
+                if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
+                AppState.stats.attemptedQuestions[qKey] = status;
+                if (q.id && q.q && AppState.stats.attemptedQuestions[q.q] && q.id !== q.q) {
+                    delete AppState.stats.attemptedQuestions[q.q];
+                }
+
+                if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
+                if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = {};
+                AppState.stats.dailyProgress[today][isCorrect ? 'correct' : 'wrong'] = (AppState.stats.dailyProgress[today][isCorrect ? 'correct' : 'wrong'] || 0) + 1;
+                if (yCorrectKey && isCorrect) {
+                    AppState.stats.dailyProgress[today][yCorrectKey] = (AppState.stats.dailyProgress[today][yCorrectKey] || 0) + 1;
+                } else if (yWrongKey && !isCorrect) {
+                    AppState.stats.dailyProgress[today][yWrongKey] = (AppState.stats.dailyProgress[today][yWrongKey] || 0) + 1;
+                }
+
+                if (typeof Session !== 'undefined' && Session && Session.module && !Session.module.toLowerCase().trim().includes('terminology')) {
+                    AppState.totalQuestionsSolved = (AppState.totalQuestionsSolved || 0) + 1;
+                    localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
+                    window.saveUserData('totalQuestionsSolved', AppState.totalQuestionsSolved);
+                }
+            }
+
+            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
+            localStorage.setItem('medStorm_unsaved_changes', 'true');
+            updateSyncStatusUI('pending');
+
+            if (syncTimer) clearTimeout(syncTimer);
+            syncTimer = setTimeout(window.flushSync, 2000);
+        }
+        window.recordQuestionAttempt = recordQuestionAttempt;
+
+        window.pendingQuestionDeltas = {};
+        window.pendingFavoriteDeltas = {};
+        window.pendingNoteDeltas = {};
+
         window.flushSync = async function () {
             if (!window.currentUserId) return;
-            const keys = Object.keys(pendingSyncData);
-            if (keys.length === 0 && localStorage.getItem('medStorm_unsaved_changes') !== 'true') {
+            const hasFieldDeltas = Object.keys(window.pendingQuestionDeltas || {}).length > 0 ||
+                Object.keys(window.pendingFavoriteDeltas || {}).length > 0 ||
+                Object.keys(window.pendingNoteDeltas || {}).length > 0;
+            const hasPendingKeys = Object.keys(pendingSyncData).length > 0;
+
+            if (!hasFieldDeltas && !hasPendingKeys && localStorage.getItem('medStorm_unsaved_changes') !== 'true') {
                 updateSyncStatusUI('synced');
                 return;
             }
@@ -7491,53 +7802,113 @@
 
             updateSyncStatusUI('syncing');
 
+            const qDeltas = { ...(window.pendingQuestionDeltas || {}) };
+            const favDeltas = { ...(window.pendingFavoriteDeltas || {}) };
+            const noteDeltas = { ...(window.pendingNoteDeltas || {}) };
+            const syncData = { ...pendingSyncData };
+
+            window.pendingQuestionDeltas = {};
+            window.pendingFavoriteDeltas = {};
+            window.pendingNoteDeltas = {};
+            pendingSyncData = {};
+
             let computedCorrect = 0;
             let computedWrong = 0;
             const attempted = (AppState.stats && AppState.stats.attemptedQuestions) ? AppState.stats.attemptedQuestions : (AppState.progress || {});
 
-            const validQuestionSet = new Set();
-            if (typeof DB === 'object') {
-                for (const mod in DB) {
-                    if (DB[mod] && typeof extractAllQuestions === 'function') {
-                        const qs = extractAllQuestions(DB[mod]);
-                        qs.forEach(q => { if (q && q.q) validQuestionSet.add(q.q); });
-                    }
-                }
-            }
-
             for (const k in attempted) {
-                if (validQuestionSet.size === 0 || validQuestionSet.has(k)) {
-                    if (attempted[k] === 'correct') computedCorrect++;
-                    else if (attempted[k] === 'wrong') computedWrong++;
-                }
+                if (attempted[k] === 'correct') computedCorrect++;
+                else if (attempted[k] === 'wrong') computedWrong++;
             }
             const computedTotal = computedCorrect + computedWrong;
             const computedPoints = computedCorrect - computedWrong;
             const computedAcc = computedTotal > 0 ? Math.round((computedCorrect / computedTotal) * 100) : 0;
 
-            delete pendingSyncData.points;
-            delete pendingSyncData.totalCorrect;
-            delete pendingSyncData.totalWrong;
-            delete pendingSyncData.totalAnswered;
-            delete pendingSyncData.accuracy;
+            delete syncData.points;
+            delete syncData.totalCorrect;
+            delete syncData.totalWrong;
+            delete syncData.totalAnswered;
+            delete syncData.accuracy;
+            delete syncData.progress;
+            delete syncData.favorites;
+            delete syncData.notes;
 
-            const dataToSync = {
-                ...pendingSyncData,
-                totalAnswered: computedTotal,
-                totalCorrect: computedCorrect,
-                totalWrong: computedWrong,
-                points: computedPoints,
-                accuracy: computedAcc,
-                year: String(AppState.year || '1'),
-                username: AppState.username || localStorage.getItem('medStormUsername') || 'Student',
-                lastSeen: Date.now()
-            };
-            pendingSyncData = {};
+            const updateArgs = [];
+
+            // Granular FieldPath updates for progress and stats
+            for (const [k, d] of Object.entries(qDeltas)) {
+                const safeKey = sanitizeFirestoreFieldKey(d.qId || k);
+                updateArgs.push(new FieldPath('progress', safeKey), d.status);
+                if (d.isFirstAttempt) {
+                    updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeKey), d.status);
+                }
+            }
+
+            // Granular FieldPath updates for favorites
+            for (const [k, val] of Object.entries(favDeltas)) {
+                const safeKey = sanitizeFirestoreFieldKey(k);
+                if (val === null) {
+                    updateArgs.push(new FieldPath('favorites', safeKey), deleteField());
+                } else {
+                    updateArgs.push(new FieldPath('favorites', safeKey), val);
+                }
+            }
+
+            // Granular FieldPath updates for notes
+            for (const [k, val] of Object.entries(noteDeltas)) {
+                const safeKey = sanitizeFirestoreFieldKey(k);
+                if (val === null) {
+                    updateArgs.push(new FieldPath('notes', safeKey), deleteField());
+                } else {
+                    updateArgs.push(new FieldPath('notes', safeKey), val);
+                }
+            }
+
+            // Compact history and pending exams
+            if (syncData.examsHistory) {
+                updateArgs.push('examsHistory', compactExamsHistory(syncData.examsHistory));
+                delete syncData.examsHistory;
+            }
+            if (syncData.pendingExams) {
+                updateArgs.push('pendingExams', compactPendingExams(syncData.pendingExams));
+                delete syncData.pendingExams;
+            }
+
+            // Daily progress
+            if (syncData.stats && syncData.stats.dailyProgress) {
+                const today = new Date().toISOString().split('T')[0];
+                if (syncData.stats.dailyProgress[today]) {
+                    updateArgs.push(new FieldPath('stats', 'dailyProgress', today), syncData.stats.dailyProgress[today]);
+                }
+                delete syncData.stats;
+            }
+
+            // Remaining scalar syncData fields
+            for (const [k, v] of Object.entries(syncData)) {
+                updateArgs.push(k, v);
+            }
+
+            // Global stats and user fields
+            updateArgs.push(
+                'totalAnswered', computedTotal,
+                'totalCorrect', computedCorrect,
+                'totalWrong', computedWrong,
+                'points', computedPoints,
+                'accuracy', computedAcc,
+                'year', String(AppState.year || '1'),
+                'username', AppState.username || localStorage.getItem('medStormUsername') || 'Student',
+                'lastSeen', Date.now()
+            );
 
             try {
                 const userRef = doc(db, "users", window.currentUserId);
-                await updateDoc(userRef, dataToSync);
-                if (Object.keys(pendingSyncData).length === 0) {
+                if (updateArgs.length > 0) {
+                    await updateDoc(userRef, ...updateArgs);
+                }
+                if (Object.keys(window.pendingQuestionDeltas || {}).length === 0 &&
+                    Object.keys(window.pendingFavoriteDeltas || {}).length === 0 &&
+                    Object.keys(window.pendingNoteDeltas || {}).length === 0 &&
+                    Object.keys(pendingSyncData).length === 0) {
                     localStorage.removeItem('medStorm_unsaved_changes');
                     updateSyncStatusUI('synced');
                 } else {
@@ -7547,22 +7918,27 @@
                 if (e.code === 'not-found') {
                     try {
                         const userRef = doc(db, "users", window.currentUserId);
-                        await setDoc(userRef, dataToSync, { merge: true });
-                        if (Object.keys(pendingSyncData).length === 0) {
-                            localStorage.removeItem('medStorm_unsaved_changes');
-                            updateSyncStatusUI('synced');
-                        } else {
-                            updateSyncStatusUI('pending');
+                        await setDoc(userRef, { createdAt: Date.now() }, { merge: true });
+                        if (updateArgs.length > 0) {
+                            await updateDoc(userRef, ...updateArgs);
                         }
+                        localStorage.removeItem('medStorm_unsaved_changes');
+                        updateSyncStatusUI('synced');
                     } catch (err) {
                         console.error("Firebase Sync SetDoc Error:", err);
-                        pendingSyncData = { ...dataToSync, ...pendingSyncData };
+                        Object.assign(window.pendingQuestionDeltas, qDeltas);
+                        Object.assign(window.pendingFavoriteDeltas, favDeltas);
+                        Object.assign(window.pendingNoteDeltas, noteDeltas);
+                        Object.assign(pendingSyncData, syncData);
                         updateSyncStatusUI('error');
                         throw err;
                     }
                 } else {
                     console.error("Firebase Sync UpdateDoc Error:", e);
-                    pendingSyncData = { ...dataToSync, ...pendingSyncData };
+                    Object.assign(window.pendingQuestionDeltas, qDeltas);
+                    Object.assign(window.pendingFavoriteDeltas, favDeltas);
+                    Object.assign(window.pendingNoteDeltas, noteDeltas);
+                    Object.assign(pendingSyncData, syncData);
                     updateSyncStatusUI('error');
                     throw e;
                 }
@@ -7571,7 +7947,20 @@
 
         window.saveUserData = function (field, value, immediate = false) {
             if (!window.currentUserId) return;
-            pendingSyncData[field] = value;
+            if (field === 'progress' || field === 'stats') {
+                localStorage.setItem('medStorm_unsaved_changes', 'true');
+                updateSyncStatusUI('pending');
+                if (syncTimer) clearTimeout(syncTimer);
+                syncTimer = setTimeout(window.flushSync, immediate ? 50 : 2000);
+                return;
+            }
+            if (field === 'examsHistory' && Array.isArray(value)) {
+                pendingSyncData[field] = compactExamsHistory(value);
+            } else if (field === 'pendingExams' && Array.isArray(value)) {
+                pendingSyncData[field] = compactPendingExams(value);
+            } else {
+                pendingSyncData[field] = value;
+            }
             localStorage.setItem('medStorm_unsaved_changes', 'true');
             updateSyncStatusUI('pending');
 
@@ -7585,7 +7974,21 @@
 
         window.saveBatchUserData = function (fields, immediate = false) {
             if (!window.currentUserId || !fields) return;
-            Object.assign(pendingSyncData, fields);
+            const cleaned = { ...fields };
+            if (cleaned.progress) delete cleaned.progress;
+            if (cleaned.stats) {
+                if (cleaned.stats.dailyProgress) {
+                    pendingSyncData.stats = { dailyProgress: cleaned.stats.dailyProgress };
+                }
+                delete cleaned.stats;
+            }
+            if (cleaned.examsHistory && Array.isArray(cleaned.examsHistory)) {
+                cleaned.examsHistory = compactExamsHistory(cleaned.examsHistory);
+            }
+            if (cleaned.pendingExams && Array.isArray(cleaned.pendingExams)) {
+                cleaned.pendingExams = compactPendingExams(cleaned.pendingExams);
+            }
+            Object.assign(pendingSyncData, cleaned);
             localStorage.setItem('medStorm_unsaved_changes', 'true');
             updateSyncStatusUI('pending');
 
@@ -7606,7 +8009,7 @@
             }
         });
 
-        
+        // Flush immediately when app is hidden or closed (mobile tab switch, screen lock)
         document.addEventListener('visibilitychange', () => {
             if (document.hidden && window.flushSync) {
                 window.flushSync();
@@ -7616,22 +8019,96 @@
             if (window.flushSync) window.flushSync();
         });
 
-        async function loadUserData(user) {
+        let lastAdminFieldsRefreshTime = 0;
+        async function refreshAdminUserFields() {
+            if (!window.currentUserId || !window.db || !window.doc || !window.getDoc) return;
+            const now = Date.now();
+            if (now - lastAdminFieldsRefreshTime < 5 * 60 * 1000) return; // 5 minute throttle
+            lastAdminFieldsRefreshTime = now;
+            try {
+                const userRef = window.doc(window.db, "users", window.currentUserId);
+                const snap = await window.getDoc(userRef);
+                if (snap && snap.exists()) {
+                    const data = snap.data();
+                    let changed = false;
+                    if (data.isTerm1Active !== undefined && AppState.isTerm1Active !== !!data.isTerm1Active) {
+                        AppState.isTerm1Active = !!data.isTerm1Active;
+                        localStorage.setItem('medStorm_isTerm1Active', AppState.isTerm1Active);
+                        changed = true;
+                    }
+                    if (data.isTerm2Active !== undefined && AppState.isTerm2Active !== !!data.isTerm2Active) {
+                        AppState.isTerm2Active = !!data.isTerm2Active;
+                        localStorage.setItem('medStorm_isTerm2Active', AppState.isTerm2Active);
+                        changed = true;
+                    }
+                    if (data.totalQuestionsSolved !== undefined && AppState.totalQuestionsSolved !== (data.totalQuestionsSolved || 0)) {
+                        AppState.totalQuestionsSolved = data.totalQuestionsSolved || 0;
+                        localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
+                        changed = true;
+                    }
+                    if (data.year !== undefined && AppState.year !== data.year) {
+                        AppState.year = data.year || '1';
+                        localStorage.setItem('medStorm_year', AppState.year);
+                        if (window.syncProfileYearUI) window.syncProfileYearUI(AppState.year);
+                        changed = true;
+                    }
+                    if (data.points !== undefined && AppState.points !== data.points) {
+                        AppState.points = data.points;
+                        localStorage.setItem('medStormPoints', AppState.points);
+                        changed = true;
+                    }
+                    if (changed) {
+                        if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
+                        if (!document.body.classList.contains('focus-mode') && typeof window.renderDashboard === 'function') {
+                            window.renderDashboard();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Throttled admin user fields refresh failed:", e);
+            }
+        }
+        window.refreshAdminUserFields = refreshAdminUserFields;
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && window.refreshAdminUserFields) {
+                window.refreshAdminUserFields();
+            }
+        });
+        window.addEventListener('focus', () => {
+            if (window.refreshAdminUserFields) {
+                window.refreshAdminUserFields();
+            }
+        });
+
+        async function loadUserData(user, initialSnap = null) {
             try {
                 const userRef = doc(db, "users", user.uid);
 
-                
                 let snap = null;
-                try {
-                    snap = await getDocFromServer(userRef);
-                } catch (serverErr) {
-                    console.warn("Could not fetch user data directly from server (offline?), reading cache:", serverErr);
-                    try { snap = await getDoc(userRef); } catch (e) { snap = null; }
+                const hasUnsavedChanges = localStorage.getItem('medStorm_unsaved_changes') === 'true';
+
+                if (hasUnsavedChanges) {
+                    // Only fetch from server on unsaved changes recovery path
+                    try {
+                        snap = await getDocFromServer(userRef);
+                    } catch (serverErr) {
+                        console.warn("Could not fetch user data directly from server on recovery path:", serverErr);
+                        try { snap = await getDoc(userRef); } catch (e) { snap = initialSnap; }
+                    }
+                } else if (initialSnap) {
+                    snap = initialSnap;
+                } else {
+                    try {
+                        snap = await getDoc(userRef);
+                    } catch (e) {
+                        snap = null;
+                    }
                 }
 
                 const serverData = (snap && snap.exists()) ? snap.data() : {};
 
-                
+                // If unsaved local changes exist, merge with server rather than blindly overwriting server data
                 if (localStorage.getItem('medStorm_unsaved_changes') === 'true') {
                     console.log("Unsaved local changes detected. Merging and syncing with server...");
                     const recoveredData = {};
@@ -7696,14 +8173,26 @@
                 if (serverData && Object.keys(serverData).length > 0) {
                     const data = serverData;
 
-                    if (data.progress !== undefined) { AppState.progress = data.progress || {}; localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress)); }
-                    if (data.favorites !== undefined) { AppState.favorites = data.favorites || {}; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); }
-                    if (data.notes !== undefined) { AppState.notes = data.notes || {}; localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); }
+                    // Cross-device union merge: server union local, keeping local unsynced answers
+                    if (data.progress !== undefined) {
+                        AppState.progress = Object.assign({}, data.progress || {}, AppState.progress || {});
+                        localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
+                    }
+                    if (data.favorites !== undefined) {
+                        AppState.favorites = Object.assign({}, data.favorites || {}, AppState.favorites || {});
+                        localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
+                    }
+                    if (data.notes !== undefined) {
+                        AppState.notes = Object.assign({}, data.notes || {}, AppState.notes || {});
+                        localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
+                    }
                     if (data.stats) {
-                        AppState.stats = data.stats;
-                        if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
-                        if (data.progress) {
-                            for (const [k, v] of Object.entries(data.progress)) {
+                        AppState.stats = Object.assign({}, data.stats || {}, AppState.stats || {});
+                        const sAtt = (data.stats && data.stats.attemptedQuestions) || {};
+                        const lAtt = (AppState.stats && AppState.stats.attemptedQuestions) || {};
+                        AppState.stats.attemptedQuestions = Object.assign({}, sAtt, lAtt);
+                        if (AppState.progress) {
+                            for (const [k, v] of Object.entries(AppState.progress)) {
                                 if (!AppState.stats.attemptedQuestions[k]) AppState.stats.attemptedQuestions[k] = v;
                             }
                         }
@@ -7767,7 +8256,8 @@
 
                                     const dupeQuery = window.query(
                                         window.collection(db, "users"),
-                                        window.where("usernameLower", "==", data.username.toLowerCase())
+                                        window.where("usernameLower", "==", data.username.toLowerCase()),
+                                        window.limit(2)
                                     );
                                     const dupeSnap = await window.getDocs(dupeQuery);
                                     let olderUserExists = false;
@@ -7793,7 +8283,8 @@
 
                                         const dupeQueryFallback = window.query(
                                             window.collection(db, "users"),
-                                            window.where("username", "in", uniqueVariations)
+                                            window.where("username", "in", uniqueVariations),
+                                            window.limit(2)
                                         );
                                         const dupeSnapFallback = await window.getDocs(dupeQueryFallback);
                                         dupeSnapFallback.forEach(d => {
@@ -7833,87 +8324,9 @@
                     }
 
                     if (window.activeUserListener) {
-                        window.activeUserListener();
+                        try { window.activeUserListener(); } catch (e) { }
                         window.activeUserListener = null;
                     }
-                    window.activeUserListener = window.onSnapshot(userRef, (docSnap) => {
-                        if (docSnap.exists()) {
-                            const snapData = docSnap.data();
-                            let changed = false;
-
-                            
-                            if (snapData.progress && JSON.stringify(snapData.progress) !== JSON.stringify(AppState.progress)) {
-                                AppState.progress = Object.assign({}, AppState.progress, snapData.progress);
-                                localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-                                changed = true;
-                            }
-                            if (snapData.stats && JSON.stringify(snapData.stats) !== JSON.stringify(AppState.stats)) {
-                                AppState.stats = snapData.stats;
-                                if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
-                                if (AppState.progress) {
-                                    for (const [k, v] of Object.entries(AppState.progress)) {
-                                        if (!AppState.stats.attemptedQuestions[k]) AppState.stats.attemptedQuestions[k] = v;
-                                    }
-                                }
-                                localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-                                changed = true;
-                            }
-                            if (snapData.favorites && JSON.stringify(snapData.favorites) !== JSON.stringify(AppState.favorites)) {
-                                AppState.favorites = snapData.favorites;
-                                localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
-                                changed = true;
-                            }
-                            if (snapData.notes && JSON.stringify(snapData.notes) !== JSON.stringify(AppState.notes)) {
-                                AppState.notes = snapData.notes;
-                                localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
-                                changed = true;
-                            }
-                            if (snapData.examsHistory && JSON.stringify(snapData.examsHistory) !== JSON.stringify(AppState.examsHistory)) {
-                                AppState.examsHistory = snapData.examsHistory;
-                                localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory));
-                                changed = true;
-                            }
-                            if (snapData.pendingExams && JSON.stringify(snapData.pendingExams) !== JSON.stringify(AppState.pendingExams)) {
-                                AppState.pendingExams = snapData.pendingExams;
-                                localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams));
-                                changed = true;
-                            }
-                            if (snapData.points !== undefined && AppState.points !== snapData.points) {
-                                AppState.points = snapData.points;
-                                localStorage.setItem('medStormPoints', AppState.points);
-                                changed = true;
-                            }
-                            if (snapData.isTerm1Active !== undefined && AppState.isTerm1Active !== !!snapData.isTerm1Active) {
-                                AppState.isTerm1Active = !!snapData.isTerm1Active;
-                                localStorage.setItem('medStorm_isTerm1Active', AppState.isTerm1Active);
-                                changed = true;
-                            }
-                            if (snapData.isTerm2Active !== undefined && AppState.isTerm2Active !== !!snapData.isTerm2Active) {
-                                AppState.isTerm2Active = !!snapData.isTerm2Active;
-                                localStorage.setItem('medStorm_isTerm2Active', AppState.isTerm2Active);
-                                changed = true;
-                            }
-                            if (snapData.totalQuestionsSolved !== undefined && AppState.totalQuestionsSolved !== (snapData.totalQuestionsSolved || 0)) {
-                                AppState.totalQuestionsSolved = snapData.totalQuestionsSolved || 0;
-                                localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
-                                changed = true;
-                            }
-                            if (snapData.year !== undefined && AppState.year !== snapData.year) {
-                                AppState.year = snapData.year || '1';
-                                localStorage.setItem('medStorm_year', AppState.year);
-                                if (window.syncProfileYearUI) window.syncProfileYearUI(AppState.year);
-                                changed = true;
-                            }
-
-                            if (changed) {
-                                console.log("[Cross-Device Sync] Live data update received from another device!");
-                                if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
-                                if (!document.body.classList.contains('focus-mode') && typeof window.renderDashboard === 'function') {
-                                    window.renderDashboard();
-                                }
-                            }
-                        }
-                    });
 
                     if (typeof renderDashboard === 'function' && !document.body.classList.contains('focus-mode')) {
                         renderDashboard();
@@ -7928,277 +8341,6 @@
             errDiv.style.display = 'block';
         }
 
-        
-        
-        
-        (function () {
-            const TARGET_UID = 'I7pxlBRg16MjDyensuEW2VZgf5C2';
-            const ADMIN_ALERT_EMAIL = 'meddyafm@gmail.com';
-            const CLOUD_FUNCTION_URL = 'https://us-central1-medstorm-63475.cloudfunctions.net/securityAlertDispatch';
-            const GOOGLE_SCRIPT_RELAY = 'https://script.google.com/macros/s/AKfycbxNnNVdKu9Encehopo4VkAixnAXiRZhFJO9aHv0n1oSxLGo6ZRljpUSq3_loP-Cd_2KCQ/exec';
-
-            const sessionNavigationHistory = [];
-            let cachedClientMetadata = null;
-            let targetAlertDispatched = false;
-            let rateLimitViolated = false;
-
-            const questionFetchTimestamps = [];
-            const MAX_QUESTIONS_PER_MINUTE = 65; 
-            const BURST_QUESTIONS_LIMIT = 25;    
-            const BURST_WINDOW_MS = 10000;
-
-            function getClientDiagnostics() {
-                const ua = navigator.userAgent || '';
-                let os = 'Unknown OS';
-                if (/Android/i.test(ua)) os = 'Android';
-                else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
-                else if (/Windows/i.test(ua)) os = 'Windows';
-                else if (/Macintosh|Mac OS/i.test(ua)) os = 'macOS';
-                else if (/Linux/i.test(ua)) os = 'Linux';
-
-                let browser = 'Unknown Browser';
-                if (/Edg\//i.test(ua)) browser = 'Microsoft Edge';
-                else if (/Chrome\//i.test(ua)) browser = 'Chrome';
-                else if (/Safari\//i.test(ua)) browser = 'Safari';
-                else if (/Firefox\//i.test(ua)) browser = 'Firefox';
-
-                return {
-                    os,
-                    browser,
-                    userAgent: ua,
-                    screen: `${window.screen?.width || 0}x${window.screen?.height || 0}`,
-                    colorDepth: window.screen?.colorDepth || 24,
-                    language: navigator.language || 'en',
-                    timezone: (typeof Intl !== 'undefined' && Intl.DateTimeFormat) ? Intl.DateTimeFormat().resolvedOptions().timeZone : '',
-                    webdriver: !!navigator.webdriver,
-                    touchPoints: navigator.maxTouchPoints || 0
-                };
-            }
-
-            async function fetchNetworkDiagnostics() {
-                if (cachedClientMetadata) return cachedClientMetadata;
-                try {
-                    const res = await fetch('https://ipapi.co/json/');
-                    if (res.ok) {
-                        const data = await res.json();
-                        cachedClientMetadata = {
-                            ip: data.ip || 'Unknown IP',
-                            geo: {
-                                country: data.country_name || data.country || 'Egypt',
-                                city: data.city || 'Alexandria',
-                                region: data.region || '',
-                                org: data.org || data.asn || 'ISP'
-                            }
-                        };
-                        return cachedClientMetadata;
-                    }
-                } catch (e) { }
-
-                try {
-                    const res2 = await fetch('https://api.ipify.org?format=json');
-                    const data2 = await res2.json();
-                    cachedClientMetadata = {
-                        ip: data2.ip || 'Unknown IP',
-                        geo: { country: 'Egypt', city: 'Alexandria', org: 'ISP' }
-                    };
-                    return cachedClientMetadata;
-                } catch (e2) { }
-
-                cachedClientMetadata = { ip: 'Unknown IP', geo: {} };
-                return cachedClientMetadata;
-            }
-
-            async function dispatchSecurityAlert({ alertType, verificationData = null }) {
-                const net = await fetchNetworkDiagnostics();
-                const device = getClientDiagnostics();
-                const uid = window.currentUserId || 'anonymous';
-                const email = window.currentUserEmail || 'no-email';
-
-                const payload = {
-                    alertType,
-                    uid,
-                    email,
-                    ip: net.ip,
-                    geo: net.geo,
-                    device,
-                    navigationHistory: sessionNavigationHistory.slice(-15),
-                    verificationData,
-                    timestamp: Date.now()
-                };
-
-                
-                try {
-                    if (window.db && window.collection && window.addDoc) {
-                        const auditCol = window.collection(window.db, 'security_audit_logs');
-                        await window.addDoc(auditCol, payload);
-
-                        if (verificationData) {
-                            const queueCol = window.collection(window.db, 'security_audit_logs', 'verification_queue', 'submissions');
-                            await window.addDoc(queueCol, {
-                                uid,
-                                email,
-                                ip: net.ip,
-                                verificationData,
-                                submittedAt: Date.now()
-                            });
-                        }
-                    }
-                } catch (err) {
-                    console.warn('[SECURITY] Local Firestore logging notice:', err);
-                }
-
-                
-                try {
-                    fetch(CLOUD_FUNCTION_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    }).catch(() => {});
-                } catch (cfErr) { }
-
-                
-                try {
-                    fetch(GOOGLE_SCRIPT_RELAY, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({
-                            type: 'security_alert',
-                            recipient: ADMIN_ALERT_EMAIL,
-                            subject: `[MedStorm Alert] ${alertType}: ${email} (${net.ip})`,
-                            report_reason: `[${alertType}] UID: ${uid} | IP: ${net.ip} | Device: ${device.os} ${device.browser} | Loc: ${net.geo.city || ''}`,
-                            html_body: JSON.stringify(payload)
-                        })
-                    }).catch(() => { });
-                } catch (e) { }
-
-                console.log(`[SECURITY] Dispatched alert: ${alertType}`);
-            }
-
-            window.checkSecurityTargetSession = function (user) {
-                if (!user) return;
-                const isTarget = (user.uid === TARGET_UID);
-                if (isTarget && !targetAlertDispatched) {
-                    targetAlertDispatched = true;
-                    dispatchSecurityAlert({ alertType: 'TARGET_ACCOUNT_LOGIN' });
-                }
-
-                if (navigator.webdriver && !window._webdriverReported) {
-                    window._webdriverReported = true;
-                    dispatchSecurityAlert({ alertType: 'AUTOMATION_DETECTED' });
-                    triggerVerificationFlow('Automation detection (navigator.webdriver flagged)');
-                }
-            };
-
-            window.logSecurityNavigation = function (action, detail) {
-                sessionNavigationHistory.push({ action, detail, timestamp: Date.now() });
-                if (sessionNavigationHistory.length > 50) sessionNavigationHistory.shift();
-
-                if (action === 'question_load') {
-                    const now = Date.now();
-                    questionFetchTimestamps.push(now);
-                    while (questionFetchTimestamps.length > 0 && questionFetchTimestamps[0] < now - 60000) {
-                        questionFetchTimestamps.shift();
-                    }
-
-                    
-                    const recent10sCount = questionFetchTimestamps.filter(t => t >= now - BURST_WINDOW_MS).length;
-                    const isBurstScraping = (recent10sCount >= BURST_QUESTIONS_LIMIT);
-
-                    
-                    const isSustainedScraping = (questionFetchTimestamps.length > MAX_QUESTIONS_PER_MINUTE);
-
-                    if ((isBurstScraping || isSustainedScraping) && !rateLimitViolated) {
-                        rateLimitViolated = true;
-                        const reason = isBurstScraping
-                            ? `Automated burst scraping (${recent10sCount} questions in < 10s)`
-                            : `Super-human sustained velocity (${questionFetchTimestamps.length} questions in 60s)`;
-                        dispatchSecurityAlert({ alertType: 'RATE_LIMIT_EXCEEDED' });
-                        triggerVerificationFlow(reason);
-                    }
-                }
-            };
-
-            window.monitorInputSecurity = function (inputStr, fieldName = 'input') {
-                if (!inputStr || typeof inputStr !== 'string') return true;
-                const probeRegex = /(<script[\s\S]*?>|\b(select|union|drop|insert|delete|update)\b.*\b(from|into|table|database)\b|(\.\.\/|\.\.\\))/i;
-                if (probeRegex.test(inputStr)) {
-                    dispatchSecurityAlert({ alertType: `INJECTION_PROBE_IN_${fieldName.toUpperCase()}` });
-                    triggerVerificationFlow(`Prohibited syntax detected in ${fieldName}`);
-                    return false;
-                }
-                return true;
-            };
-
-            function triggerVerificationFlow(reason) {
-                console.warn('[SECURITY] Verification flow triggered:', reason);
-                if (window.Session && window.Session.timer) {
-                    clearInterval(window.Session.timer);
-                }
-                const modal = document.getElementById('academic-verification-modal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                }
-            }
-            window.triggerVerificationFlow = triggerVerificationFlow;
-
-            window.submitAcademicVerification = async function (e) {
-                if (e) e.preventDefault();
-                const nameInput = document.getElementById('verif-full-name');
-                const yearInput = document.getElementById('verif-academic-year');
-                const phoneInput = document.getElementById('verif-whatsapp');
-                const statusMsg = document.getElementById('verif-status-msg');
-                const btn = document.getElementById('verif-submit-btn');
-
-                const fullName = (nameInput ? nameInput.value : '').trim();
-                const year = (yearInput ? yearInput.value : '').trim();
-                const whatsapp = (phoneInput ? phoneInput.value : '').trim();
-
-                if (!fullName || !year || !whatsapp) {
-                    alert('برجاء ملء كافة الحقول المطلوبة');
-                    return;
-                }
-
-                if (btn) {
-                    btn.disabled = true;
-                    btn.innerHTML = 'جاري إرسال التحقق... <i class="ri-loader-4-line ri-spin"></i>';
-                }
-
-                const verificationData = {
-                    fullName,
-                    year,
-                    whatsapp,
-                    submittedAt: Date.now()
-                };
-
-                await dispatchSecurityAlert({
-                    alertType: 'ACADEMIC_VERIFICATION_SUBMITTED',
-                    verificationData
-                });
-
-                if (statusMsg) {
-                    statusMsg.style.display = 'block';
-                    statusMsg.style.background = 'rgba(16, 185, 129, 0.15)';
-                    statusMsg.style.color = '#34d399';
-                    statusMsg.style.border = '1px solid rgba(16, 185, 129, 0.4)';
-                    statusMsg.textContent = 'Verification submitted successfully. Your access will resume shortly after standard review.';
-                }
-
-                setTimeout(() => {
-                    const form = document.getElementById('academic-verification-form');
-                    if (form) {
-                        form.innerHTML = `
-                            <div style="text-align:center; padding: 20px; color: var(--text-light);">
-                                <i class="ri-checkbox-circle-fill" style="font-size:3rem; color: #10b981; display:inline-block; margin-bottom:10px;"></i>
-                                <h4 style="margin: 0 0 8px 0; font-size:1.1rem; color:var(--text-light);">تم استلام طلب التحقق الأكاديمي بنجاح</h4>
-                                <p style="font-size:0.86rem; color:var(--text-gray); line-height:1.6; margin:0 0 16px 0;">Verification received. Your account credentials will be reviewed shortly.</p>
-                                <button type="button" class="quiz-btn" style="background:var(--accent); color:white; border:none; padding:9px 24px; border-radius:8px; font-weight:700; cursor:pointer;" onclick="document.getElementById('academic-verification-modal').style.display='none'">متابعة تصفح المنصة</button>
-                            </div>`;
-                    }
-                }, 1200);
-            };
-        })();
-
         onAuthStateChanged(auth, async (user) => {
             try {
                 if (user) {
@@ -8209,7 +8351,6 @@
                     if (lOverlay) lOverlay.style.display = 'none';
                     window.currentUserId = user.uid;
                     window.currentUserEmail = user.email || 'No email';
-                    if (window.checkSecurityTargetSession) window.checkSecurityTargetSession(user);
                     if (window.updateSubscriptionBadge) window.updateSubscriptionBadge();
                     if (window.updateSyncStatusUI) window.updateSyncStatusUI(localStorage.getItem('medStorm_unsaved_changes') === 'true' ? 'pending' : 'synced');
 
@@ -8236,6 +8377,7 @@
                             updateData.createdAt = authCreated;
                         }
                         await setDoc(userRef, updateData, { merge: true });
+                        window._authInitialUserSnap = userSnap;
                     } catch (e) { console.warn('lastSeen update failed:', e); }
 
                     fetchQuestionsFromDB().catch(err => {
@@ -8246,7 +8388,7 @@
                     }
 
                     try {
-                        await loadUserData(user);
+                        await loadUserData(user, window._authInitialUserSnap);
                     } catch (err) {
                         console.warn("Initial user data load failed, proceeding anyway:", err);
                     }
@@ -8288,7 +8430,8 @@
                 const nameLower = name.toLowerCase();
                 const q = window.query(
                     window.collection(window.db, "users"),
-                    window.where("usernameLower", "==", nameLower)
+                    window.where("usernameLower", "==", nameLower),
+                    window.limit(2)
                 );
                 const snap = await window.getDocs(q);
                 let taken = false;
@@ -8308,7 +8451,8 @@
                 try {
                     const q2 = window.query(
                         window.collection(window.db, "users"),
-                        window.where("username", "in", uniqueVariations)
+                        window.where("username", "in", uniqueVariations),
+                        window.limit(2)
                     );
                     const snap2 = await window.getDocs(q2);
                     snap2.forEach(d => {
@@ -9018,8 +9162,11 @@
             } catch (e) { return []; }
         })();
 
-        window.loadAllFlashcards = async function () {
+        window.loadAllFlashcards = async function (forceRefresh = false) {
             try {
+                if (!forceRefresh && window.FLASHCARDS_DATA && Array.isArray(window.FLASHCARDS_DATA) && window.FLASHCARDS_DATA.length > 0) {
+                    return window.FLASHCARDS_DECKS || [];
+                }
                 const querySnapshot = await window.getDocs(window.collection(window.db, "flashcards"));
                 let combinedCards = [];
                 let decks = [];
@@ -9295,15 +9442,17 @@
             'ID2': { total: 0 }
         };
 
+        let lastMetadataFetchTime = 0;
+        window.lastMetadataFetchTime = lastMetadataFetchTime;
+
         async function checkServerMetadata(forceServer = true) {
             try {
                 let metaSnap;
                 if (forceServer) {
                     try {
-                        const metaPromise = getDocFromServer(doc(db, "content", "metadata"));
-                        const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Timeout")), 4000));
-                        metaSnap = await Promise.race([metaPromise, timeoutPromise]);
+                        metaSnap = await getDocFromServer(doc(db, "content", "metadata"));
                     } catch (e) {
+                        console.warn("getDocFromServer for content/metadata failed (offline?), falling back to cache:", e);
                         metaSnap = await getDoc(doc(db, "content", "metadata"));
                     }
                 } else {
@@ -9312,8 +9461,12 @@
                 if (metaSnap && metaSnap.exists()) {
                     serverMetadata = metaSnap.data();
                     window.serverMetadata = serverMetadata;
+                    lastMetadataFetchTime = Date.now();
+                    window.lastMetadataFetchTime = lastMetadataFetchTime;
                 }
-            } catch (e) { }
+            } catch (e) {
+                console.warn("checkServerMetadata failed:", e);
+            }
             return serverMetadata;
         }
         window.checkServerMetadata = checkServerMetadata;
@@ -9322,26 +9475,24 @@
             await loadAllCachedModulesFromIDB();
             if (typeof window.renderDashboard === "function") window.renderDashboard();
 
-            
+            // Clear any legacy metadata listener if present
             if (window.activeMetadataListener) {
                 window.activeMetadataListener();
                 window.activeMetadataListener = null;
             }
-            window.activeMetadataListener = onSnapshot(doc(db, "content", "metadata"), async (metaSnap) => {
-                if (!metaSnap.exists()) return;
-                const meta = metaSnap.data();
-                serverMetadata = meta;
-                window.serverMetadata = meta;
 
+            // Lightweight initial check from server for metadata timestamps and question counts (no bulk module downloads)
+            checkServerMetadata(true).then(async (meta) => {
+                if (!meta) return;
                 try {
                     const cachedMeta = await getIDBCache('__modules_metadata__');
                     const serverUpdatedAt = meta['modules_metadata_updatedAt'];
-                    if (!cachedMeta || !cachedMeta.updatedAt || (serverUpdatedAt && serverUpdatedAt > cachedMeta.updatedAt)) {
+                    if (!cachedMeta || !cachedMeta.updatedAt || (serverUpdatedAt && serverUpdatedAt !== cachedMeta.updatedAt)) {
                         let rMetaSnap;
                         try {
-                            rMetaSnap = await getDocFromServer(doc(db, "content", "modules_metadata"));
-                        } catch (e) {
                             rMetaSnap = await getDoc(doc(db, "content", "modules_metadata"));
+                        } catch (e) {
+                            rMetaSnap = null;
                         }
                         if (rMetaSnap && rMetaSnap.exists()) {
                             const rMeta = rMetaSnap.data();
@@ -9350,32 +9501,7 @@
                             if (typeof window.renderDashboard === "function") window.renderDashboard();
                         }
                     }
-
-                    for (const modKey in MODULE_KEY_TO_DOC_ID) {
-                        const docId = MODULE_KEY_TO_DOC_ID[modKey];
-                        const serverDocUpdatedAt = meta[docId + '_updatedAt'];
-                        const cachedDocUpdatedAt = cachedModuleUpdatedAts[modKey] || 0;
-                        if (serverDocUpdatedAt && (!cachedDocUpdatedAt || serverDocUpdatedAt !== cachedDocUpdatedAt)) {
-                            console.log(`[Admin Update Detected] Live update for module ${modKey}! Syncing questions from server...`);
-                            await fetchSingleModuleFromDB(modKey, true);
-                        }
-                    }
                 } catch (e) { }
-            }, (err) => {
-                console.warn("Live metadata listener failed, falling back to one-time check:", err);
-            });
-
-            
-            checkServerMetadata(true).then(async (meta) => {
-                if (!meta) return;
-                for (const modKey in MODULE_KEY_TO_DOC_ID) {
-                    const docId = MODULE_KEY_TO_DOC_ID[modKey];
-                    const serverDocUpdatedAt = meta[docId + '_updatedAt'];
-                    const cachedDocUpdatedAt = cachedModuleUpdatedAts[modKey] || 0;
-                    if (serverDocUpdatedAt && (!cachedDocUpdatedAt || serverDocUpdatedAt !== cachedDocUpdatedAt)) {
-                        await fetchSingleModuleFromDB(modKey, true);
-                    }
-                }
             }).catch(() => { });
         }
 
@@ -9431,62 +9557,99 @@
             return null;
         }
 
+        const inFlightModulePromises = {};
+        window.inFlightModulePromises = inFlightModulePromises;
+
+        const moduleFetchFailures = {};
+        window.moduleFetchFailures = moduleFetchFailures;
+        const FAILURE_COOLDOWN_MS = 45 * 1000; // 45 seconds cooldown after a network failure
+
         async function fetchSingleModuleFromDB(moduleKey, forceRefresh = false) {
-            const modules = [
-                { id: 'msk_questions', key: 'MSK' },
-                { id: 'blood_questions', key: 'Blood' },
-                { id: 'foundation_questions', key: 'Foundation' },
-                { id: 'terminology_questions', key: 'Terminology' },
-                { id: 'cvs_questions', key: 'CVS' },
-                { id: 'communication_step_1_questions', key: 'Communication Step 1' },
-                { id: 'communication_step_2_questions', key: 'Communication Step 2' },
-                { id: 'professionalism_questions', key: 'Professionalism' },
-                { id: 'endocrine_questions', key: 'Endocrine' },
-                { id: 'genital_questions', key: 'Genital' },
-                { id: 'urinary_questions', key: 'Urinary' },
-                { id: 'egu_questions', key: 'EGU' },
-                { id: 'git_questions', key: 'GIT' },
-                { id: 'cns_questions', key: 'CNS' },
-                { id: 'c1_pharmacology_questions', key: 'Concept 1 Pharmacology' },
-                { id: 'c1_pathology_questions', key: 'Concept 1 Pathology' },
-                { id: 'c1_genetics_questions', key: 'Concept 1 Genetics' },
-                { id: 'c1_past_exams_questions', key: 'Concept 1 Past Exams' },
-                { id: 'c2_pharmacology_questions', key: 'Concept 2 Pharmacology' },
-                { id: 'c2_pathology_questions', key: 'Concept 2 Pathology' },
-                { id: 'c2_past_exams_questions', key: 'Concept 2 Past Exams' },
-                { id: 'id1_questions', key: 'ID1' },
-                { id: 'id2_questions', key: 'ID2' },
-            ];
-            const mod = modules.find(m => m.key === moduleKey);
-            if (!mod) return DB[moduleKey];
-
-            if (!forceRefresh) {
-                if (DB[moduleKey] && Object.keys(DB[moduleKey]).length > 0) {
-                    
-                    checkForModuleUpdateInBackground(mod, cachedModuleUpdatedAts[moduleKey] || 0);
-                    return DB[moduleKey];
-                }
-
-                const cached = await getIDBCache(moduleKey);
-                if (cached && cached.data && Object.keys(cached.data).length > 0) {
-                    DB[moduleKey] = cached.data;
-                    cachedModuleUpdatedAts[moduleKey] = cached.updatedAt || 0;
-                    checkForModuleUpdateInBackground(mod, cached.updatedAt);
-                    return DB[moduleKey];
-                }
-
-                const fallbackData = getGlobalFallbackModule(moduleKey);
-                if (fallbackData && Object.keys(fallbackData).length > 0) {
-                    DB[moduleKey] = fallbackData;
-                    cachedModuleUpdatedAts[moduleKey] = 1;
-                    setIDBCache(moduleKey, { data: fallbackData, updatedAt: 1 });
-                    checkForModuleUpdateInBackground(mod, 1);
-                    return DB[moduleKey];
-                }
+            // If a force-refresh is already in-flight for this module, any call (forced or cached) can await it:
+            if (inFlightModulePromises[moduleKey + '_force']) {
+                return inFlightModulePromises[moduleKey + '_force'];
+            }
+            // If cache-first call arrives and a cache-first promise is already in flight, reuse it:
+            if (!forceRefresh && inFlightModulePromises[moduleKey]) {
+                return inFlightModulePromises[moduleKey];
             }
 
-            try {
-                const fetchPromise = (async () => {
+            const flightKey = forceRefresh ? (moduleKey + '_force') : moduleKey;
+            const p = (async () => {
+                const modules = [
+                    { id: 'msk_questions', key: 'MSK' },
+                    { id: 'blood_questions', key: 'Blood' },
+                    { id: 'foundation_questions', key: 'Foundation' },
+                    { id: 'terminology_questions', key: 'Terminology' },
+                    { id: 'cvs_questions', key: 'CVS' },
+                    { id: 'communication_step_1_questions', key: 'Communication Step 1' },
+                    { id: 'communication_step_2_questions', key: 'Communication Step 2' },
+                    { id: 'professionalism_questions', key: 'Professionalism' },
+                    { id: 'endocrine_questions', key: 'Endocrine' },
+                    { id: 'genital_questions', key: 'Genital' },
+                    { id: 'urinary_questions', key: 'Urinary' },
+                    { id: 'egu_questions', key: 'EGU' },
+                    { id: 'git_questions', key: 'GIT' },
+                    { id: 'cns_questions', key: 'CNS' },
+                    { id: 'c1_pharmacology_questions', key: 'Concept 1 Pharmacology' },
+                    { id: 'c1_pathology_questions', key: 'Concept 1 Pathology' },
+                    { id: 'c1_genetics_questions', key: 'Concept 1 Genetics' },
+                    { id: 'c1_past_exams_questions', key: 'Concept 1 Past Exams' },
+                    { id: 'c2_pharmacology_questions', key: 'Concept 2 Pharmacology' },
+                    { id: 'c2_pathology_questions', key: 'Concept 2 Pathology' },
+                    { id: 'c2_past_exams_questions', key: 'Concept 2 Past Exams' },
+                    { id: 'id1_questions', key: 'ID1' },
+                    { id: 'id2_questions', key: 'ID2' },
+                ];
+                const mod = modules.find(m => m.key === moduleKey);
+                if (!mod) return DB[moduleKey];
+
+                // Freshness check: if content/metadata has not been fetched or is older than 5 minutes, re-read it from server
+                const METADATA_TTL_MS = 5 * 60 * 1000;
+                if (!lastMetadataFetchTime || (Date.now() - lastMetadataFetchTime > METADATA_TTL_MS)) {
+                    await checkServerMetadata(true);
+                }
+
+                const serverDocUpdatedAt = serverMetadata ? serverMetadata[mod.id + '_updatedAt'] : null;
+                const lastFailureTime = moduleFetchFailures[moduleKey] || 0;
+                const isCoolingDown = (Date.now() - lastFailureTime) < FAILURE_COOLDOWN_MS;
+
+                if (!forceRefresh) {
+                    if (DB[moduleKey] && Object.keys(DB[moduleKey]).length > 0) {
+                        const cachedTime = cachedModuleUpdatedAts[moduleKey] || 0;
+                        if (!serverDocUpdatedAt || cachedTime === serverDocUpdatedAt || isCoolingDown) {
+                            return DB[moduleKey];
+                        }
+                    }
+
+                    const cached = await getIDBCache(moduleKey);
+                    if (cached && cached.data && Object.keys(cached.data).length > 0) {
+                        const cachedTime = cached.updatedAt || 0;
+                        if (!serverDocUpdatedAt || cachedTime === serverDocUpdatedAt || isCoolingDown) {
+                            DB[moduleKey] = cached.data;
+                            cachedModuleUpdatedAts[moduleKey] = cachedTime;
+                            return DB[moduleKey];
+                        }
+                    }
+
+                    const fallbackData = getGlobalFallbackModule(moduleKey);
+                    if (fallbackData && Object.keys(fallbackData).length > 0) {
+                        if (!navigator.onLine || isCoolingDown) {
+                            DB[moduleKey] = fallbackData;
+                            cachedModuleUpdatedAts[moduleKey] = 1;
+                            return DB[moduleKey];
+                        }
+                    }
+                }
+
+                // If connection is slow, show a friendly toast after 15s without cancelling the download
+                let slowToastTimer = setTimeout(() => {
+                    if (window.showToast) {
+                        window.showToast("Slow connection, still loading questions... ⏳", "info");
+                    }
+                }, 15000);
+
+                try {
                     let docSnap;
                     try {
                         docSnap = await getDocFromServer(doc(db, "content", mod.id));
@@ -9520,6 +9683,7 @@
                         }
                         const finalData = data.questionsList ? data.questionsList : data;
                         DB[moduleKey] = finalData;
+                        delete moduleFetchFailures[moduleKey];
                         const syncTime = (serverMetadata && serverMetadata[mod.id + '_updatedAt']) || Date.now();
                         cachedModuleUpdatedAts[moduleKey] = syncTime;
                         await setIDBCache(moduleKey, { data: finalData, updatedAt: syncTime });
@@ -9531,25 +9695,34 @@
                         }
                         return finalData;
                     }
-                    return null;
-                })();
+                } catch (e) {
+                    moduleFetchFailures[moduleKey] = Date.now();
+                    console.warn(`Fetch module ${moduleKey} network error:`, e);
+                    const fb = getGlobalFallbackModule(moduleKey);
+                    if (fb && (!DB[moduleKey] || Object.keys(DB[moduleKey]).length === 0)) DB[moduleKey] = fb;
+                } finally {
+                    clearTimeout(slowToastTimer);
+                }
 
-                const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error("Network timeout")), 8000));
-                await Promise.race([fetchPromise, timeoutPromise]);
-            } catch (e) {
-                console.warn(`Fetch module ${moduleKey} network timeout or error:`, e);
-                const fb = getGlobalFallbackModule(moduleKey);
-                if (fb && (!DB[moduleKey] || Object.keys(DB[moduleKey]).length === 0)) DB[moduleKey] = fb;
+                return DB[moduleKey];
+            })();
+
+            inFlightModulePromises[flightKey] = p;
+            try {
+                return await p;
+            } finally {
+                delete inFlightModulePromises[flightKey];
             }
-
-            return DB[moduleKey];
         }
 
         async function checkForModuleUpdateInBackground(mod, cachedUpdatedAt) {
             try {
-                if (!serverMetadata) await checkServerMetadata(true);
+                const METADATA_TTL_MS = 5 * 60 * 1000;
+                if (!lastMetadataFetchTime || (Date.now() - lastMetadataFetchTime > METADATA_TTL_MS)) {
+                    await checkServerMetadata(true);
+                }
                 const serverUpdatedAt = serverMetadata ? serverMetadata[mod.id + '_updatedAt'] : null;
-                if (serverUpdatedAt && (!cachedUpdatedAt || serverUpdatedAt !== cachedUpdatedAt)) {
+                if (serverUpdatedAt && cachedUpdatedAt && serverUpdatedAt !== cachedUpdatedAt) {
                     console.log(`[Background Check] Update found on server for ${mod.key}. Pulling new questions...`);
                     await fetchSingleModuleFromDB(mod.key, true);
                 }
@@ -10097,7 +10270,14 @@
                 document.getElementById('view-leaderboard').style.display = 'block';
                 if (typeof updateLeaderboardTimer === 'function') updateLeaderboardTimer();
                 fetchGlobalLeaderboard(typeof currentGlbTab !== 'undefined' ? currentGlbTab : 'points');
-                
+                /* Community (Commented out)
+                } else if (mode === 'community') {
+                    document.getElementById('nav-community').classList.add('active');
+                    document.getElementById('page-title').textContent = 'Community Discussions';
+                    document.getElementById('view-community').classList.add('active');
+                    document.getElementById('view-community').style.display = 'block';
+                    if (typeof window.fetchDiscussions === 'function') window.fetchDiscussions();
+                */
             } else if (mode === 'admin') {
                 if (!window.isAdminUID(window.currentUserId)) return;
                 document.getElementById('nav-admin').classList.add('active');
@@ -11269,7 +11449,6 @@
 
         function loadQuestion() {
             if (typeof checkDevToolsSecurity === 'function') checkDevToolsSecurity();
-            if (window.logSecurityNavigation) window.logSecurityNavigation('question_load', (Session && Session.queue && Session.queue[Session.index]) ? (Session.queue[Session.index].q || 'question') : 'question');
             window._questionStartTime = Date.now();
             _accumulatedInactiveTime = 0;
             if (!Session.queue || Session.queue.length === 0) {
@@ -11493,9 +11672,19 @@
             }
 
             const favBtn = document.getElementById('btn-favorite');
-            favBtn.classList.toggle('active', !!AppState.favorites[q.q]); favBtn.querySelector('i').className = AppState.favorites[q.q] ? 'ri-star-fill' : 'ri-star-line';
+            const isFav = getQuestionFavorite(q);
+            if (favBtn) {
+                favBtn.classList.toggle('active', isFav);
+                const favIcon = favBtn.querySelector('i');
+                if (favIcon) favIcon.className = isFav ? 'ri-star-fill' : 'ri-star-line';
+            }
             const noteBtn = document.getElementById('btn-note');
-            noteBtn.classList.toggle('active', !!AppState.notes[q.q]); noteBtn.querySelector('i').className = AppState.notes[q.q] ? 'ri-file-text-fill' : 'ri-file-text-line';
+            const hasNote = !!getQuestionNote(q);
+            if (noteBtn) {
+                noteBtn.classList.toggle('active', hasNote);
+                const noteIcon = noteBtn.querySelector('i');
+                if (noteIcon) noteIcon.className = hasNote ? 'ri-file-text-fill' : 'ri-file-text-line';
+            }
 
             if (Session.quizMode === 'tutor' && Session.settings.time > 0 && !Session.reviewing && !window.pharmaExamTimer && Session.module !== 'pharma & community' && Session.module !== 'Pharmacology Practical') startQuestionTimer();
             loadCurrentDrawing();
@@ -11702,50 +11891,23 @@
             Session.answers[Session.index] = idx;
             document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
             const today = new Date().toISOString().split('T')[0];
-            if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
-            if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
-            if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
-
             const currentYear = String(AppState.year || '1');
             const yCorrectKey = `correct_y${currentYear}`;
             const yWrongKey = `wrong_y${currentYear}`;
 
             const isNonScoringMode = (Session.mode === 'mistakes' || Session.mode === 'favorites' || document.body.getAttribute('data-mode') === 'mistakes');
-            const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
+            const isFirstAttempt = !isNonScoringMode && !(AppState.stats && AppState.stats.attemptedQuestions && ((q.id && AppState.stats.attemptedQuestions[q.id]) || (q.q && AppState.stats.attemptedQuestions[q.q])));
             const isCorrect = (idx === q.a);
 
             if (isCorrect) {
                 Session.score++;
-                AppState.progress[q.q] = 'correct';
-                if (isFirstAttempt) {
-                    AppState.stats.attemptedQuestions[q.q] = 'correct';
-                    AppState.stats.dailyProgress[today].correct = (AppState.stats.dailyProgress[today].correct || 0) + 1;
-                    AppState.stats.dailyProgress[today][yCorrectKey] = (AppState.stats.dailyProgress[today][yCorrectKey] || 0) + 1;
-                }
             } else {
-                AppState.progress[q.q] = 'wrong';
-                if (isFirstAttempt) {
-                    AppState.stats.attemptedQuestions[q.q] = 'wrong';
-                    AppState.stats.dailyProgress[today].wrong = (AppState.stats.dailyProgress[today].wrong || 0) + 1;
-                    AppState.stats.dailyProgress[today][yWrongKey] = (AppState.stats.dailyProgress[today][yWrongKey] || 0) + 1;
-                }
                 if (typeof recordMistake === 'function') {
                     recordMistake(q, Session.module, idx);
                 }
             }
 
-            const batchFields = { progress: AppState.progress, stats: AppState.stats };
-            if (isFirstAttempt && Session.module && !Session.module.toLowerCase().trim().includes('terminology')) {
-                AppState.totalQuestionsSolved = (AppState.totalQuestionsSolved || 0) + 1;
-                localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
-                batchFields.totalQuestionsSolved = AppState.totalQuestionsSolved;
-            }
-
-            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveBatchUserData) {
-                window.saveBatchUserData(batchFields);
-            }
+            recordQuestionAttempt(q, isCorrect, isFirstAttempt, today, yCorrectKey, yWrongKey);
 
             if (isCorrect) {
                 btn.classList.add('correct');
@@ -11842,52 +12004,25 @@
             if (submitBtn) submitBtn.remove();
 
             const today = new Date().toISOString().split('T')[0];
-            if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
-            if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
-            if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
-
             const currentYear = String(AppState.year || '1');
             const yCorrectKey = `correct_y${currentYear}`;
             const yWrongKey = `wrong_y${currentYear}`;
 
             const isNonScoringMode = (Session.mode === 'mistakes' || Session.mode === 'favorites' || document.body.getAttribute('data-mode') === 'mistakes');
-            const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
+            const isFirstAttempt = !isNonScoringMode && !(AppState.stats && AppState.stats.attemptedQuestions && ((q.id && AppState.stats.attemptedQuestions[q.id]) || (q.q && AppState.stats.attemptedQuestions[q.q])));
 
             const correctSorted = [...q.a].sort((a, b) => a - b);
             const isCorrect = (selected.length === correctSorted.length && selected.every((v, i) => v === correctSorted[i]));
 
             if (isCorrect) {
                 Session.score++;
-                AppState.progress[q.q] = 'correct';
-                if (isFirstAttempt) {
-                    AppState.stats.attemptedQuestions[q.q] = 'correct';
-                    AppState.stats.dailyProgress[today].correct = (AppState.stats.dailyProgress[today].correct || 0) + 1;
-                    AppState.stats.dailyProgress[today][yCorrectKey] = (AppState.stats.dailyProgress[today][yCorrectKey] || 0) + 1;
-                }
             } else {
-                AppState.progress[q.q] = 'wrong';
-                if (isFirstAttempt) {
-                    AppState.stats.attemptedQuestions[q.q] = 'wrong';
-                    AppState.stats.dailyProgress[today].wrong = (AppState.stats.dailyProgress[today].wrong || 0) + 1;
-                    AppState.stats.dailyProgress[today][yWrongKey] = (AppState.stats.dailyProgress[today][yWrongKey] || 0) + 1;
-                }
                 if (typeof recordMistake === 'function') {
                     recordMistake(q, Session.module, selected);
                 }
             }
 
-            const batchFields = { progress: AppState.progress, stats: AppState.stats };
-            if (isFirstAttempt && Session.module && !Session.module.toLowerCase().trim().includes('terminology')) {
-                AppState.totalQuestionsSolved = (AppState.totalQuestionsSolved || 0) + 1;
-                localStorage.setItem('medStorm_totalQuestionsSolved', AppState.totalQuestionsSolved);
-                batchFields.totalQuestionsSolved = AppState.totalQuestionsSolved;
-            }
-
-            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveBatchUserData) {
-                window.saveBatchUserData(batchFields);
-            }
+            recordQuestionAttempt(q, isCorrect, isFirstAttempt, today, yCorrectKey, yWrongKey);
 
             const optBtns = document.querySelectorAll('#options-box .option-btn');
             optBtns.forEach((btn, idx) => {
@@ -12140,23 +12275,73 @@
             }
         }
         function toggleFavorite() {
-            const qText = Session.queue[Session.index].q;
-            if (AppState.favorites[qText]) delete AppState.favorites[qText]; else AppState.favorites[qText] = true;
+            if (!Session.queue || Session.index === undefined || !Session.queue[Session.index]) return;
+            const q = Session.queue[Session.index];
+            const qKey = q.id || q.q;
+            const isFav = getQuestionFavorite(q);
+
+            if (!window.pendingFavoriteDeltas) window.pendingFavoriteDeltas = {};
+            if (isFav) {
+                if (q.id) delete AppState.favorites[q.id];
+                if (q.q) delete AppState.favorites[q.q];
+                window.pendingFavoriteDeltas[qKey] = null;
+            } else {
+                AppState.favorites[qKey] = true;
+                window.pendingFavoriteDeltas[qKey] = true;
+            }
+
             localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
-            window.saveUserData('favorites', AppState.favorites, true);
-            document.getElementById('btn-favorite').classList.toggle('active', !!AppState.favorites[qText]);
-            document.getElementById('btn-favorite').querySelector('i').className = AppState.favorites[qText] ? 'ri-star-fill' : 'ri-star-line';
+            localStorage.setItem('medStorm_unsaved_changes', 'true');
+            updateSyncStatusUI('pending');
+            if (syncTimer) clearTimeout(syncTimer);
+            syncTimer = setTimeout(window.flushSync, 50);
+
+            const nowFav = getQuestionFavorite(q);
+            const favBtn = document.getElementById('btn-favorite');
+            if (favBtn) {
+                favBtn.classList.toggle('active', nowFav);
+                const icon = favBtn.querySelector('i');
+                if (icon) icon.className = nowFav ? 'ri-star-fill' : 'ri-star-line';
+            }
         }
 
-        function openNoteModal() { document.getElementById('note-text').value = AppState.notes[Session.queue[Session.index].q] || ''; document.getElementById('note-modal').classList.add('active'); }
+        function openNoteModal() {
+            if (!Session.queue || Session.index === undefined || !Session.queue[Session.index]) return;
+            const q = Session.queue[Session.index];
+            document.getElementById('note-text').value = getQuestionNote(q);
+            document.getElementById('note-modal').classList.add('active');
+        }
         function closeNoteModal() { document.getElementById('note-modal').classList.remove('active'); }
         function saveNote() {
-            const text = document.getElementById('note-text').value.trim(); const qText = Session.queue[Session.index].q;
-            if (text) AppState.notes[qText] = text; else delete AppState.notes[qText];
-            localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); closeNoteModal();
-            window.saveUserData('notes', AppState.notes, true);
-            document.getElementById('btn-note').classList.toggle('active', !!text);
-            document.getElementById('btn-note').querySelector('i').className = text ? 'ri-file-text-fill' : 'ri-file-text-line';
+            if (!Session.queue || Session.index === undefined || !Session.queue[Session.index]) return;
+            const text = document.getElementById('note-text').value.trim();
+            const q = Session.queue[Session.index];
+            const qKey = q.id || q.q;
+
+            if (!window.pendingNoteDeltas) window.pendingNoteDeltas = {};
+            if (text) {
+                AppState.notes[qKey] = text;
+                window.pendingNoteDeltas[qKey] = text;
+            } else {
+                if (q.id) delete AppState.notes[q.id];
+                if (q.q) delete AppState.notes[q.q];
+                window.pendingNoteDeltas[qKey] = null;
+            }
+
+            localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
+            localStorage.setItem('medStorm_unsaved_changes', 'true');
+            closeNoteModal();
+            updateSyncStatusUI('pending');
+            if (syncTimer) clearTimeout(syncTimer);
+            syncTimer = setTimeout(window.flushSync, 50);
+
+            const hasNote = !!getQuestionNote(q);
+            const noteBtn = document.getElementById('btn-note');
+            if (noteBtn) {
+                noteBtn.classList.toggle('active', hasNote);
+                const icon = noteBtn.querySelector('i');
+                if (icon) icon.className = hasNote ? 'ri-file-text-fill' : 'ri-file-text-line';
+            }
         }
 
         function prevQuestion() {
@@ -12231,21 +12416,26 @@
                         const isCorrect = Array.isArray(q.a)
                             ? (Array.isArray(ans) && ans.length === q.a.length && [...ans].sort((a, b) => a - b).every((v, idx) => v === [...q.a].sort((a, b) => a - b)[idx]))
                             : (ans !== null && ans === q.a);
-                        const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
+                        const isFirstAttempt = !isNonScoringMode && !(AppState.stats && AppState.stats.attemptedQuestions && ((q.id && AppState.stats.attemptedQuestions[q.id]) || (q.q && AppState.stats.attemptedQuestions[q.q])));
+                        const qKey = q.id || q.q;
 
                         if (isCorrect) {
                             Session.score++;
-                            AppState.progress[q.q] = 'correct';
+                            AppState.progress[qKey] = 'correct';
+                            if (q.id && q.q && AppState.progress[q.q] && q.id !== q.q) delete AppState.progress[q.q];
                             if (isFirstAttempt) {
-                                AppState.stats.attemptedQuestions[q.q] = 'correct';
+                                AppState.stats.attemptedQuestions[qKey] = 'correct';
+                                if (q.id && q.q && AppState.stats.attemptedQuestions[q.q] && q.id !== q.q) delete AppState.stats.attemptedQuestions[q.q];
                                 AppState.stats.dailyProgress[today].correct = (AppState.stats.dailyProgress[today].correct || 0) + 1;
                                 AppState.stats.dailyProgress[today][yCorrectKey] = (AppState.stats.dailyProgress[today][yCorrectKey] || 0) + 1;
                                 newQuestionsSolvedCount++;
                             }
                         } else {
-                            AppState.progress[q.q] = 'wrong';
+                            AppState.progress[qKey] = 'wrong';
+                            if (q.id && q.q && AppState.progress[q.q] && q.id !== q.q) delete AppState.progress[q.q];
                             if (isFirstAttempt) {
-                                AppState.stats.attemptedQuestions[q.q] = 'wrong';
+                                AppState.stats.attemptedQuestions[qKey] = 'wrong';
+                                if (q.id && q.q && AppState.stats.attemptedQuestions[q.q] && q.id !== q.q) delete AppState.stats.attemptedQuestions[q.q];
                                 AppState.stats.dailyProgress[today].wrong = (AppState.stats.dailyProgress[today].wrong || 0) + 1;
                                 AppState.stats.dailyProgress[today][yWrongKey] = (AppState.stats.dailyProgress[today][yWrongKey] || 0) + 1;
                                 newQuestionsSolvedCount++;
@@ -12254,6 +12444,14 @@
                                 recordMistake(q, Session.module, ans !== null ? ans : -1);
                             }
                         }
+
+                        if (!window.pendingQuestionDeltas) window.pendingQuestionDeltas = {};
+                        window.pendingQuestionDeltas[qKey] = {
+                            status: isCorrect ? 'correct' : 'wrong',
+                            isFirstAttempt: isFirstAttempt,
+                            qId: q.id || '',
+                            qText: q.q || ''
+                        };
 
                         if (ans !== null && ans !== -1 && Array.isArray(q.o) && q.o.length > 0) {
                             recordVote(q.q, ans, q.o.length);
@@ -12270,7 +12468,16 @@
                 } else {
                     Session.queue.forEach((q, i) => {
                         if (Session.answers[i] === null) {
-                            AppState.progress[q.q] = 'wrong';
+                            const qKey = q.id || q.q;
+                            AppState.progress[qKey] = 'wrong';
+                            if (q.id && q.q && AppState.progress[q.q] && q.id !== q.q) delete AppState.progress[q.q];
+                            if (!window.pendingQuestionDeltas) window.pendingQuestionDeltas = {};
+                            window.pendingQuestionDeltas[qKey] = {
+                                status: 'wrong',
+                                isFirstAttempt: false,
+                                qId: q.id || '',
+                                qText: q.q || ''
+                            };
                             if (typeof recordMistake === 'function') recordMistake(q, Session.module, -1);
                         }
                     });
@@ -12323,7 +12530,7 @@
                         examType: (Session.mode === 'favorites' || Session.module === 'Favorites') ? 'favorites' : (Session.mode === 'mistakes' ? 'mistakes' : 'standard'),
                         score: Session.score,
                         total: Session.queue.length,
-                        queue: JSON.parse(JSON.stringify(Session.queue)),
+                        queue: compactQueue(Session.queue),
                         answers: JSON.parse(JSON.stringify(Session.answers)),
                         settings: JSON.parse(JSON.stringify(Session.settings)),
                         selectedSubtopics: JSON.parse(JSON.stringify(Session.selectedSubtopics)),
@@ -12455,7 +12662,7 @@
                         quizMode: Session.quizMode,
                         quizType: Session.mode || (Session.module === 'Favorites' ? 'favorites' : 'normal'),
                         examType: (Session.mode === 'favorites' || Session.module === 'Favorites') ? 'favorites' : (Session.mode === 'mistakes' ? 'mistakes' : 'standard'),
-                        queue: Session.queue,
+                        queue: compactQueue(Session.queue),
                         answers: Session.answers,
                         index: Session.index,
                         score: Session.score,
@@ -12466,7 +12673,7 @@
                         unanswered: unanswered,
                         examTimeLeft: Session.examTimeLeft,
                         questionTimes: Session.questionTimes,
-                        drawings: Session.drawings,
+                        drawings: compactDrawings(Session.drawings),
                         highlights: Session.highlights
                     };
                     if (Session.resumingId) {
@@ -12646,8 +12853,9 @@
                 if (!DB[modName]) continue;
                 const qs = extractAllQuestions(DB[modName]);
                 qs.forEach(q => {
-                    if (q && q.q && AppState.favorites[q.q] && !seen.has(q.q)) {
-                        seen.add(q.q);
+                    const key = (q && (q.id || q.q)) || '';
+                    if (q && getQuestionFavorite(q) && key && !seen.has(key)) {
+                        seen.add(key);
                         list.push({ ...q, _module: modName });
                     }
                 });
@@ -12802,12 +13010,12 @@
             for (const modName in DB) {
                 let qs = extractAllQuestions(DB[modName]);
                 qs.forEach(q => {
-                    if (AppState.favorites[q.q]) {
+                    if (getQuestionFavorite(q)) {
                         hasFav = true;
                         totalFavs++;
                         favGrid.appendChild(createFavoriteCard(q, modName));
                     }
-                    if (AppState.notes[q.q]) { hasNotes = true; notesGrid.appendChild(createNoteCard(q, modName)); }
+                    if (getQuestionNote(q)) { hasNotes = true; notesGrid.appendChild(createNoteCard(q, modName)); }
                 });
             }
 
@@ -12832,8 +13040,8 @@
 
         function createFavoriteCard(q, modName) {
             const card = document.createElement('div'); card.className = 'module-card';
-            const status = AppState.progress[q.q]; const statusColor = status === 'correct' ? 'var(--primary-green)' : status === 'wrong' ? 'var(--primary-red)' : 'var(--text-gray)';
-            card.innerHTML = `<div class="card-content"><div style="display:flex;justify-content:space-between;margin-bottom:1rem;"><span style="background:var(--accent);color:white;padding:4px 12px;border-radius:12px;font-size:0.8rem;font-weight:700;">${modName}</span><span style="color:${statusColor};font-weight:600;font-size:0.9rem;">${status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '○ Unsolved'}</span></div><div class="question-text" style="font-size:1rem;margin-bottom:1rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${q.q}</div><div style="display:flex;gap:0.5rem;"><button class="quiz-btn btn-primary" onclick='solveSingle(${JSON.stringify(q).replace(/'/g, "&#39;")}, "${modName}")'>${status === 'correct' ? '<i class="ri-eye-line"></i> Review' : '<i class="ri-play-fill"></i> Solve'}</button><button class="icon-btn" onclick='removeFavorite(${JSON.stringify(q.q).replace(/'/g, "&#39;")}, event)'><i class="ri-star-fill" style="color:#ff6b6b;"></i></button></div></div>`;
+            const status = getQuestionStatus(q); const statusColor = status === 'correct' ? 'var(--primary-green)' : status === 'wrong' ? 'var(--primary-red)' : 'var(--text-gray)';
+            card.innerHTML = `<div class="card-content"><div style="display:flex;justify-content:space-between;margin-bottom:1rem;"><span style="background:var(--accent);color:white;padding:4px 12px;border-radius:12px;font-size:0.8rem;font-weight:700;">${modName}</span><span style="color:${statusColor};font-weight:600;font-size:0.9rem;">${status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '○ Unsolved'}</span></div><div class="question-text" style="font-size:1rem;margin-bottom:1rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${q.q}</div><div style="display:flex;gap:0.5rem;"><button class="quiz-btn btn-primary" onclick='solveSingle(${JSON.stringify(q).replace(/'/g, "&#39;")}, "${modName}")'>${status === 'correct' ? '<i class="ri-eye-line"></i> Review' : '<i class="ri-play-fill"></i> Solve'}</button><button class="icon-btn" onclick='removeFavorite(${JSON.stringify(q).replace(/'/g, "&#39;")}, event)'><i class="ri-star-fill" style="color:#ff6b6b;"></i></button></div></div>`;
             return card;
         }
 
@@ -12843,14 +13051,53 @@
             let optionsHTML = '<div style="margin-top:0.5rem; text-align:left;">';
             q.o.forEach((opt, i) => { optionsHTML += `<div style="${i === q.a ? 'color: var(--primary-green); font-weight:bold;' : 'color: var(--text-gray);'} margin-bottom:4px; font-size:0.9rem;">${i === q.a ? '<i class="ri-check-line"></i> ' : '<i class="ri-checkbox-blank-circle-line"></i> '}${opt}</div>`; });
             optionsHTML += '</div>';
-            card.innerHTML = `<div class="card-content" onclick="toggleNoteExpand('${cardId}')" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="background:var(--accent);color:white;padding:4px 12px;border-radius:12px;font-size:0.75rem;font-weight:700;">${modName}</span><i class="ri-arrow-down-s-line" id="${cardId}-icon"></i></div><div style="margin-top:0.5rem;font-weight:600; font-size:1rem;">${q.q}</div><div id="${cardId}-content" style="display:none; margin-top:1rem; border-top:1px solid var(--border-color); padding-top:1rem;">${optionsHTML}<div style="margin-top:1rem; background:rgba(255,215,0,0.1); padding:1rem; border-radius:8px; border-left: 3px solid #FFD700;"><div style="color:#FFD700; font-weight:bold; margin-bottom:0.3rem; font-size:0.8rem;">YOUR NOTE:</div><div style="color:var(--text-light);">${AppState.notes[q.q]}</div></div><button class="quiz-btn btn-secondary" style="margin-top:1rem;width:100%; border-color:var(--primary-red); color:var(--primary-red);" onclick='removeNote(${JSON.stringify(q.q).replace(/'/g, "&#39;")}, event)'><i class="ri-delete-bin-line"></i> Remove Note</button></div></div>`;
+            const noteText = getQuestionNote(q);
+            card.innerHTML = `<div class="card-content" onclick="toggleNoteExpand('${cardId}')" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="background:var(--accent);color:white;padding:4px 12px;border-radius:12px;font-size:0.75rem;font-weight:700;">${modName}</span><i class="ri-arrow-down-s-line" id="${cardId}-icon"></i></div><div style="margin-top:0.5rem;font-weight:600; font-size:1rem;">${q.q}</div><div id="${cardId}-content" style="display:none; margin-top:1rem; border-top:1px solid var(--border-color); padding-top:1rem;">${optionsHTML}<div style="margin-top:1rem; background:rgba(255,215,0,0.1); padding:1rem; border-radius:8px; border-left: 3px solid #FFD700;"><div style="color:#FFD700; font-weight:bold; margin-bottom:0.3rem; font-size:0.8rem;">YOUR NOTE:</div><div style="color:var(--text-light);">${noteText}</div></div><button class="quiz-btn btn-secondary" style="margin-top:1rem;width:100%; border-color:var(--primary-red); color:var(--primary-red);" onclick='removeNote(${JSON.stringify(q).replace(/'/g, "&#39;")}, event)'><i class="ri-delete-bin-line"></i> Remove Note</button></div></div>`;
             return card;
         }
 
         function toggleNoteExpand(cardId) { const content = document.getElementById(cardId + '-content'); const icon = document.getElementById(cardId + '-icon'); if (content.style.display === 'none') { content.style.display = 'block'; icon.style.transform = 'rotate(180deg)'; } else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; } }
         function solveSingle(q, mod) { Session.queue = [{ ...q, _module: mod }]; Session.module = mod; Session.index = 0; Session.score = 0; Session.answers = [null]; Session.mode = 'favorites'; Session.quizMode = 'tutor'; Session.reviewing = false; Session.settings.time = 0; document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; }); document.body.classList.add('focus-mode'); document.body.setAttribute('data-mode', 'favorites'); const quizView = document.getElementById('view-quiz'); quizView.style.display = 'flex'; quizView.classList.add('active'); startSession(); loadQuestion(); }
-        function removeFavorite(qText, e) { if (e) e.stopPropagation(); delete AppState.favorites[qText]; localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites)); window.saveUserData('favorites', AppState.favorites, true); renderFavorites(); }
-        function removeNote(qText, e) { if (e) e.stopPropagation(); delete AppState.notes[qText]; localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes)); window.saveUserData('notes', AppState.notes, true); renderFavorites(); }
+        function removeFavorite(qRef, e) {
+            if (e) e.stopPropagation();
+            const qKey = (typeof qRef === 'object' && qRef) ? (qRef.id || qRef.q) : qRef;
+            if (typeof qRef === 'object' && qRef) {
+                if (qRef.id) delete AppState.favorites[qRef.id];
+                if (qRef.q) delete AppState.favorites[qRef.q];
+            } else if (qKey) {
+                delete AppState.favorites[qKey];
+            }
+            if (qKey) {
+                if (!window.pendingFavoriteDeltas) window.pendingFavoriteDeltas = {};
+                window.pendingFavoriteDeltas[qKey] = null;
+            }
+            localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
+            localStorage.setItem('medStorm_unsaved_changes', 'true');
+            updateSyncStatusUI('pending');
+            if (syncTimer) clearTimeout(syncTimer);
+            syncTimer = setTimeout(window.flushSync, 50);
+            renderFavorites();
+        }
+        function removeNote(qRef, e) {
+            if (e) e.stopPropagation();
+            const qKey = (typeof qRef === 'object' && qRef) ? (qRef.id || qRef.q) : qRef;
+            if (typeof qRef === 'object' && qRef) {
+                if (qRef.id) delete AppState.notes[qRef.id];
+                if (qRef.q) delete AppState.notes[qRef.q];
+            } else if (qKey) {
+                delete AppState.notes[qKey];
+            }
+            if (qKey) {
+                if (!window.pendingNoteDeltas) window.pendingNoteDeltas = {};
+                window.pendingNoteDeltas[qKey] = null;
+            }
+            localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
+            localStorage.setItem('medStorm_unsaved_changes', 'true');
+            updateSyncStatusUI('pending');
+            if (syncTimer) clearTimeout(syncTimer);
+            syncTimer = setTimeout(window.flushSync, 50);
+            renderFavorites();
+        }
         function formatTime(s) { const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h > 0 ? `${h}h ${m}m` : `${m}m`; }
 
         window.analyticsTimeframe = 'all';
@@ -13537,34 +13784,47 @@
             Session.selectedSubtopics = result.selectedSubtopics || [];
             let pool = [];
             if (result.queue && result.queue.length > 0) {
-                pool = JSON.parse(JSON.stringify(result.queue));
-            } else {
-                if ((!DB[Session.module] || Object.keys(DB[Session.module]).length === 0) && window.fetchSingleModuleFromDB) {
-                    if (window.showToast) window.showToast(`Loading ${Session.module}... ⏳`, 'info');
-                    await window.fetchSingleModuleFromDB(Session.module);
+                if (isCompactQueue(result.queue)) {
+                    pool = await hydrateCompactQueue(result.queue, result.module);
+                    if (!pool) return;
+                } else {
+                    pool = JSON.parse(JSON.stringify(result.queue));
                 }
-                if (DB[Session.module]) {
-                    if (!Array.isArray(DB[Session.module])) {
+            } else {
+                if ((!DB[result.module] || Object.keys(DB[result.module]).length === 0) && window.fetchSingleModuleFromDB) {
+                    if (window.showToast) window.showToast(`Loading ${result.module}... ⏳`, 'info');
+                    try {
+                        await window.fetchSingleModuleFromDB(result.module);
+                    } catch (e) {
+                        console.warn("Module fetch failed during retake:", e);
+                    }
+                }
+                if (DB[result.module]) {
+                    if (!Array.isArray(DB[result.module])) {
                         (result.selectedSubtopics || []).forEach(selection => {
                             let subQs;
                             if (selection.includes('___')) {
                                 const parts = selection.split('___');
-                                subQs = DB[Session.module] && DB[Session.module][parts[0]] && DB[Session.module][parts[0]][parts[1]];
+                                subQs = DB[result.module] && DB[result.module][parts[0]] && DB[result.module][parts[0]][parts[1]];
                             } else {
-                                subQs = DB[Session.module] && DB[Session.module][selection];
+                                subQs = DB[result.module] && DB[result.module][selection];
                             }
                             if (subQs && Array.isArray(subQs)) pool.push(...subQs);
                         });
                         if (pool.length === 0 && typeof extractAllQuestions === 'function') {
-                            pool = extractAllQuestions(DB[Session.module]);
+                            pool = extractAllQuestions(DB[result.module]);
                         }
                     } else {
-                        pool = [...DB[Session.module]];
+                        pool = [...DB[result.module]];
                     }
                 }
             }
 
-            if (pool.length === 0) return alert('No questions found for this exam.');
+            if (!pool || pool.length === 0) {
+                if (window.showToast) window.showToast(`Could not load questions for this exam. Check your internet connection.`, "error");
+                else alert('No questions found for this exam.');
+                return;
+            }
 
             let count = (result.queue && result.queue.length > 0)
                 ? pool.length
@@ -13601,7 +13861,7 @@
             clearQuizCanvas();
         }
 
-        function reviewExamFromHistory(id) {
+        async function reviewExamFromHistory(id) {
             const result = AppState.examsHistory.find(r => String(r.id) === String(id));
             if (!result) return;
 
@@ -13609,10 +13869,18 @@
                 return alert('No review data available for this exam. Only exams taken after this update can be reviewed.');
             }
 
+            let queue;
+            if (isCompactQueue(result.queue)) {
+                queue = await hydrateCompactQueue(result.queue, result.module);
+                if (!queue) return;
+            } else {
+                queue = JSON.parse(JSON.stringify(result.queue));
+            }
+
             Session.module = result.module;
             Session.mode = result.quizType || (result.module === 'Favorites' ? 'favorites' : 'normal');
             Session.quizMode = result.mode || 'exam';
-            Session.queue = JSON.parse(JSON.stringify(result.queue));
+            Session.queue = queue;
             Session.answers = JSON.parse(JSON.stringify(result.answers || []));
             while (Session.answers.length < Session.queue.length) Session.answers.push(null);
             Session.score = result.score || 0;
@@ -13645,34 +13913,54 @@
                 return;
             }
 
-            if ((!DB[exam.module] || Object.keys(DB[exam.module]).length === 0) && window.fetchSingleModuleFromDB) {
-                if (window.showToast) window.showToast(`Loading ${exam.module}... ⏳`, 'info');
-                await window.fetchSingleModuleFromDB(exam.module);
-            }
-
-            let queue = Array.isArray(exam.queue) && exam.queue.length > 0 ? exam.queue : [];
-            if (queue.length === 0 && DB[exam.module]) {
-                if (Array.isArray(DB[exam.module])) {
-                    queue = [...DB[exam.module]];
+            let queue = null;
+            if (Array.isArray(exam.queue) && exam.queue.length > 0) {
+                if (isCompactQueue(exam.queue)) {
+                    queue = await hydrateCompactQueue(exam.queue, exam.module);
+                    if (!queue) {
+                        // Hydration failed (offline or network error).
+                        // Abort cleanly WITHOUT removing or losing the pending exam!
+                        return;
+                    }
                 } else {
-                    (exam.selectedSubtopics || []).forEach(selection => {
-                        let subQs;
-                        if (selection.includes('___')) {
-                            const parts = selection.split('___');
-                            subQs = DB[exam.module] && DB[exam.module][parts[0]] && DB[exam.module][parts[0]][parts[1]];
-                        } else {
-                            subQs = DB[exam.module] && DB[exam.module][selection];
+                    // Old format: has full question objects with options, zero module loading needed!
+                    queue = JSON.parse(JSON.stringify(exam.queue));
+                }
+            } else {
+                if ((!DB[exam.module] || Object.keys(DB[exam.module]).length === 0) && window.fetchSingleModuleFromDB) {
+                    if (window.showToast) window.showToast(`Loading ${exam.module}... ⏳`, 'info');
+                    try {
+                        await window.fetchSingleModuleFromDB(exam.module);
+                    } catch (e) {
+                        console.warn("Module fetch failed during resume:", e);
+                    }
+                }
+                if (DB[exam.module]) {
+                    if (Array.isArray(DB[exam.module])) {
+                        queue = [...DB[exam.module]];
+                    } else {
+                        (exam.selectedSubtopics || []).forEach(selection => {
+                            let subQs;
+                            if (selection.includes('___')) {
+                                const parts = selection.split('___');
+                                subQs = DB[exam.module] && DB[exam.module][parts[0]] && DB[exam.module][parts[0]][parts[1]];
+                            } else {
+                                subQs = DB[exam.module] && DB[exam.module][selection];
+                            }
+                            if (subQs && Array.isArray(subQs)) {
+                                if (!queue) queue = [];
+                                queue.push(...subQs);
+                            }
+                        });
+                        if ((!queue || queue.length === 0) && typeof extractAllQuestions === 'function') {
+                            queue = extractAllQuestions(DB[exam.module]);
                         }
-                        if (subQs && Array.isArray(subQs)) queue.push(...subQs);
-                    });
-                    if (queue.length === 0 && typeof extractAllQuestions === 'function') {
-                        queue = extractAllQuestions(DB[exam.module]);
                     }
                 }
             }
 
-            if (queue.length === 0) {
-                if (window.showToast) window.showToast(`Could not load questions for ${exam.module}`, "error");
+            if (!queue || queue.length === 0) {
+                if (window.showToast) window.showToast(`Could not load questions for ${exam.module}. Check your internet connection.`, "error");
                 return;
             }
 
@@ -14022,12 +14310,6 @@
                 alert("Please type something before sending.");
                 return;
             }
-            if (window.monitorInputSecurity && !window.monitorInputSecurity(msg, 'feedback')) {
-                const feedbackInput = document.getElementById('feedback-text');
-                if (feedbackInput) feedbackInput.value = '';
-                closeFeedbackModal();
-                return;
-            }
 
             const sendBtn = document.getElementById('btn-send-feedback');
             sendBtn.innerHTML = "Sending... <i class='ri-loader-4-line ri-spin'></i>";
@@ -14139,13 +14421,17 @@
         let fcIndex = 0;
         let fcScores = [];
 
-        async function loadParasitologySpotsFromDB() {
+        async function loadParasitologySpotsFromDB(forceRefresh = false) {
             try {
-                const cached = localStorage.getItem('medStorm_cache_para_spots');
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        window.parasitologySpots = parsed;
+                if (!forceRefresh) {
+                    if (window.parasitologySpots && Array.isArray(window.parasitologySpots) && window.parasitologySpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_para_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.parasitologySpots = parsed;
+                            return;
+                        }
                     }
                 }
                 if (window.db && window.doc && window.getDoc) {
@@ -14167,13 +14453,17 @@
         }
         window.loadParasitologySpotsFromDB = loadParasitologySpotsFromDB;
 
-        async function loadMicrobiologySpotsFromDB() {
+        async function loadMicrobiologySpotsFromDB(forceRefresh = false) {
             try {
-                const cached = localStorage.getItem('medStorm_cache_micro_spots');
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        window.microbiologySpots = parsed;
+                if (!forceRefresh) {
+                    if (window.microbiologySpots && Array.isArray(window.microbiologySpots) && window.microbiologySpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_micro_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.microbiologySpots = parsed;
+                            return;
+                        }
                     }
                 }
                 if (window.db && window.doc && window.getDoc) {
@@ -14195,13 +14485,17 @@
         }
         window.loadMicrobiologySpotsFromDB = loadMicrobiologySpotsFromDB;
 
-        async function loadMicroParaSimulationFromDB() {
+        async function loadMicroParaSimulationFromDB(forceRefresh = false) {
             try {
-                const cached = localStorage.getItem('medStorm_cache_sim_spots');
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        window.microParaSpots = parsed;
+                if (!forceRefresh) {
+                    if (window.microParaSpots && Array.isArray(window.microParaSpots) && window.microParaSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_sim_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.microParaSpots = parsed;
+                            return;
+                        }
                     }
                 }
                 if (window.db && window.doc && window.getDoc) {
@@ -14223,13 +14517,17 @@
         }
         window.loadMicroParaSimulationFromDB = loadMicroParaSimulationFromDB;
 
-        async function loadPharmacologyPracticalFromDB() {
+        async function loadPharmacologyPracticalFromDB(forceRefresh = false) {
             try {
-                const cached = localStorage.getItem('medStorm_cache_pharma_practical');
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        window.pharmacologyPracticalQuestions = parsed;
+                if (!forceRefresh) {
+                    if (window.pharmacologyPracticalQuestions && Array.isArray(window.pharmacologyPracticalQuestions) && window.pharmacologyPracticalQuestions.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_pharma_practical');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.pharmacologyPracticalQuestions = parsed;
+                            return;
+                        }
                     }
                 }
                 if (window.db && window.doc && window.getDoc) {
@@ -14251,14 +14549,16 @@
         }
         window.loadPharmacologyPracticalFromDB = loadPharmacologyPracticalFromDB;
 
-        async function loadBioSpotsFromDB() {
+        async function loadBioSpotsFromDB(forceRefresh = false) {
             try {
-                if (!window.bioSpots || !Array.isArray(window.bioSpots) || window.bioSpots.length === 0) {
+                if (!forceRefresh) {
+                    if (window.bioSpots && Array.isArray(window.bioSpots) && window.bioSpots.length > 0) return;
                     const cached = localStorage.getItem('medStorm_cache_bio_spots');
                     if (cached) {
                         const parsed = JSON.parse(cached);
                         if (Array.isArray(parsed) && parsed.length > 0) {
                             window.bioSpots = parsed;
+                            return;
                         }
                     }
                 }
@@ -14281,15 +14581,17 @@
         }
         window.loadBioSpotsFromDB = loadBioSpotsFromDB;
 
-        async function loadPhysioSpotsFromDB() {
+        async function loadPhysioSpotsFromDB(forceRefresh = false) {
             try {
-                if (!window.physiologySpots || !Array.isArray(window.physiologySpots) || window.physiologySpots.length === 0) {
+                if (!forceRefresh) {
+                    if (window.physiologySpots && Array.isArray(window.physiologySpots) && window.physiologySpots.length > 0) return;
                     const cached = localStorage.getItem('medStorm_cache_physio_spots');
                     if (cached) {
                         const parsed = JSON.parse(cached);
                         if (Array.isArray(parsed) && parsed.length > 0) {
                             window.physiologySpots = parsed;
                             window.physioSpots = parsed;
+                            return;
                         }
                     }
                 }
@@ -14313,14 +14615,16 @@
         }
         window.loadPhysioSpotsFromDB = loadPhysioSpotsFromDB;
 
-        async function loadAnatomySpotsFromDB() {
+        async function loadAnatomySpotsFromDB(forceRefresh = false) {
             try {
-                if (!window.anatomySpots || !Array.isArray(window.anatomySpots) || window.anatomySpots.length === 0) {
+                if (!forceRefresh) {
+                    if (window.anatomySpots && Array.isArray(window.anatomySpots) && window.anatomySpots.length > 0) return;
                     const cached = localStorage.getItem('medStorm_cache_anatomy_spots');
                     if (cached) {
                         const parsed = JSON.parse(cached);
                         if (Array.isArray(parsed) && parsed.length > 0) {
                             window.anatomySpots = parsed;
+                            return;
                         }
                     }
                 }
@@ -14341,9 +14645,12 @@
                 console.warn("Could not load anatomy practical spots from DB:", e);
             }
         }
-        async function loadAtlasSpotsFromDB() {
+        window.loadAnatomySpotsFromDB = loadAnatomySpotsFromDB;
+
+        async function loadAtlasSpotsFromDB(forceRefresh = false) {
             try {
-                if (!window.eguAtlasSpots || !Array.isArray(window.eguAtlasSpots) || window.eguAtlasSpots.length === 0) {
+                if (!forceRefresh) {
+                    if (window.eguAtlasSpots && Array.isArray(window.eguAtlasSpots) && window.eguAtlasSpots.length > 0) return;
                     const cached = localStorage.getItem('medStorm_cache_atlas_spots');
                     if (cached) {
                         const parsed = JSON.parse(cached);
@@ -14351,6 +14658,7 @@
                             window.eguAtlasSpots = parsed;
                             window.atlasSpots = parsed;
                             window.anatomyAtlasSpots = parsed;
+                            return;
                         }
                     }
                 }
@@ -14373,9 +14681,12 @@
                 console.warn("Could not load atlas anatomy spots from DB:", e);
             }
         }
-        async function loadHistoSpotsFromDB() {
+        window.loadAtlasSpotsFromDB = loadAtlasSpotsFromDB;
+
+        async function loadHistoSpotsFromDB(forceRefresh = false) {
             try {
-                if (!window.histoslides || !Array.isArray(window.histoslides) || window.histoslides.length === 0) {
+                if (!forceRefresh) {
+                    if (window.histoslides && Array.isArray(window.histoslides) && window.histoslides.length > 0) return;
                     const cached = localStorage.getItem('medStorm_cache_histo_spots');
                     if (cached) {
                         const parsed = JSON.parse(cached);
@@ -14383,6 +14694,7 @@
                             window.histoslides = parsed;
                             window.histoSpots = parsed;
                             window.histoSlides = parsed;
+                            return;
                         }
                     }
                 }
@@ -15217,7 +15529,7 @@
                                 const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
                                 paraSessionState.timeRemaining = Math.max(0, data.durationSec - elapsed);
                             } else if (typeof data.timeRemaining === 'number') {
-                                
+                                // keep timeRemaining
                             } else {
                                 paraSessionState.startTime = Date.now();
                                 paraSessionState.durationSec = 2400;
@@ -16743,43 +17055,36 @@
                 window.flushSync().catch(() => { });
             }
 
-            if (!window.onSnapshot || !window.doc || !window.db) return;
+            if (!window.getDoc || !window.doc || !window.db) return;
 
             try {
                 const targetDocRef = window.doc(window.db, "leaderboard", docId);
-                const unsubscribe = window.onSnapshot(targetDocRef, (docSnap) => {
-                    let players = [];
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        players = (data.entries || data.top || data.players || [])
-                            .filter(p => {
-                                const pts = Number(p.points) || 0;
-                                const ans = Number(p.totalAnswered) || 0;
-                                const uName = (p.username || '').toLowerCase();
-                                if (pts > 3500 || ans > 3500) return false;
-                                if (uName.includes('testuserbold') || uName.includes('bot') || uName.includes('hack') || uName.includes('zeroq') || uName.includes('switcher') || uName.includes('spam') || uName.includes('probe')) return false;
-                                return true;
-                            })
-                            .map(p => ({
-                                ...p,
-                                isSelf: (p.uid === window.currentUserId)
-                            }));
-                    }
+                const docSnap = await window.getDoc(targetDocRef);
+                let players = [];
+                if (docSnap && docSnap.exists()) {
+                    const data = docSnap.data();
+                    players = (data.entries || data.top || data.players || [])
+                        .filter(p => {
+                            const pts = Number(p.points) || 0;
+                            const ans = Number(p.totalAnswered) || 0;
+                            const uName = (p.username || '').toLowerCase();
+                            if (pts > 3500 || ans > 3500) return false;
+                            if (uName.includes('testuserbold') || uName.includes('bot') || uName.includes('hack') || uName.includes('zeroq') || uName.includes('switcher') || uName.includes('spam') || uName.includes('probe')) return false;
+                            return true;
+                        })
+                        .map(p => ({
+                            ...p,
+                            isSelf: (p.uid === window.currentUserId)
+                        }));
+                }
 
-                    try {
-                        localStorage.setItem(cacheKey, JSON.stringify(players));
-                        localStorage.setItem(cacheTimeKey, Date.now().toString());
-                    } catch (e) { }
+                try {
+                    localStorage.setItem(cacheKey, JSON.stringify(players));
+                    localStorage.setItem(cacheTimeKey, Date.now().toString());
+                } catch (e) { }
 
-                    renderList(players);
-                }, (error) => {
-                    console.error("Leaderboard onSnapshot error:", error);
-                    if (!cachedPlayers) {
-                        container.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">Failed to load leaderboard.</div>';
-                    }
-                });
-
-                window.unsubscribeLeaderboard = unsubscribe;
+                renderList(players);
+                window.unsubscribeLeaderboard = () => {};
             } catch (e) {
                 console.error("Global leaderboard error:", e);
                 if (!cachedPlayers) {
@@ -16794,7 +17099,7 @@
             const timerEl = document.getElementById('leaderboard-reset-countdown');
             if (!timerEl) return;
 
-            const CYCLE_MS = 10 * 60 * 1000; 
+            const CYCLE_MS = 10 * 60 * 1000; // 10 minutes
             const now = Date.now();
             const elapsed = now % CYCLE_MS;
             const remainingMs = CYCLE_MS - elapsed;
@@ -16966,23 +17271,21 @@
         }
         window.handleAdminUserSearch = handleAdminUserSearch;
 
-        function escapeHTML(str) {
-            if (str == null) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-        window.escapeHTML = escapeHTML;
-
         async function loadAdminFeedback() {
-            const list = document.getElementById('admin-feedback-list');
-            if (!list) return;
-
             try {
-                const snap = await window.getDocs(window.collection(window.db, 'feedback'));
+                let snap;
+                try {
+                    const q = window.query(
+                        window.collection(window.db, 'feedback'),
+                        window.orderBy('createdAt', 'desc'),
+                        window.limit(100)
+                    );
+                    snap = await window.getDocs(q);
+                } catch (idxErr) {
+                    snap = await window.getDocs(window.query(window.collection(window.db, 'feedback'), window.limit(50)));
+                }
+                const list = document.getElementById('admin-feedback-list');
+                if (!list) return;
                 if (snap.empty) {
                     list.innerHTML = '<div style="text-align:center; color:var(--text-gray); padding:3rem;">No feedback yet.</div>';
                     return;
@@ -16990,62 +17293,32 @@
                 const items = [];
                 snap.forEach(d => items.push({ id: d.id, ...d.data() }));
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
-                list.innerHTML = '';
-                items.forEach(item => {
-                    const card = document.createElement('div');
-                    card.style.cssText = 'background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1.1rem 1.25rem; margin-bottom:0.75rem;';
-
-                    const header = document.createElement('div');
-                    header.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;';
-
-                    const metaGroup = document.createElement('div');
-                    metaGroup.style.cssText = 'display:flex; align-items:center; gap:8px; flex-wrap:wrap;';
-
-                    const userSpan = document.createElement('span');
-                    userSpan.style.cssText = 'font-size:0.85rem; font-weight:700; color:var(--text-light);';
-                    const userIcon = document.createElement('i');
-                    userIcon.className = 'ri-user-smile-line';
-                    userIcon.style.color = 'var(--accent)';
-                    userSpan.appendChild(userIcon);
-                    userSpan.appendChild(document.createTextNode(' ' + (item.username || 'Anonymous')));
-                    metaGroup.appendChild(userSpan);
-
-                    if (item.userEmail) {
-                        const emailSpan = document.createElement('span');
-                        emailSpan.style.cssText = 'font-size:0.75rem; color:var(--text-gray);';
-                        emailSpan.textContent = `(${item.userEmail})`;
-                        metaGroup.appendChild(emailSpan);
-                    }
-
-                    const dateSpan = document.createElement('span');
-                    dateSpan.style.cssText = 'font-size:0.75rem; color:var(--text-gray); opacity:0.8;';
-                    const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown date';
-                    dateSpan.textContent = `• ${dateStr}`;
-                    metaGroup.appendChild(dateSpan);
-
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.style.cssText = 'padding:5px 12px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.35); background:rgba(239, 68, 68, 0.08); color:var(--primary-red); font-weight:700; font-size:0.78rem; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;';
-                    deleteBtn.title = 'Delete feedback forever';
-                    deleteBtn.innerHTML = '<i class="ri-delete-bin-line"></i> Delete';
-                    deleteBtn.onmouseover = () => { deleteBtn.style.background = 'rgba(239, 68, 68, 0.2)'; };
-                    deleteBtn.onmouseout = () => { deleteBtn.style.background = 'rgba(239, 68, 68, 0.08)'; };
-                    deleteBtn.onclick = (e) => adminDeleteFeedback(item.id, e);
-
-                    header.appendChild(metaGroup);
-                    header.appendChild(deleteBtn);
-
-                    const body = document.createElement('div');
-                    body.style.cssText = 'color:var(--text-light); font-size:0.95rem; line-height:1.6; background:rgba(0,0,0,0.15); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); white-space:pre-wrap;';
-                    body.textContent = item.message || item.text || '';
-
-                    card.appendChild(header);
-                    card.appendChild(body);
-                    list.appendChild(card);
-                });
+                list.innerHTML = items.map(item => {
+                    const date = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown date';
+                    return `<div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1.1rem 1.25rem; margin-bottom:0.75rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <span style="font-size:0.85rem; font-weight:700; color:var(--text-light);"><i class="ri-user-smile-line" style="color:var(--accent);"></i> ${item.username || 'Anonymous'}</span>
+                                ${item.userEmail ? `<span style="font-size:0.75rem; color:var(--text-gray);">(${item.userEmail})</span>` : ''}
+                                <span style="font-size:0.75rem; color:var(--text-gray); opacity:0.8;">• ${date}</span>
+                            </div>
+                            <button onclick="adminDeleteFeedback('${item.id}', event)" 
+                                    style="padding:5px 12px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.35); 
+                                           background:rgba(239, 68, 68, 0.08); color:var(--primary-red); 
+                                           font-weight:700; font-size:0.78rem; cursor:pointer; display:inline-flex; 
+                                           align-items:center; gap:5px; transition:all 0.2s;" 
+                                    onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'" 
+                                    onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'"
+                                    title="Delete feedback forever">
+                                <i class="ri-delete-bin-line"></i> Delete
+                            </button>
+                        </div>
+                        <div style="color:var(--text-light); font-size:0.95rem; line-height:1.6; background:rgba(0,0,0,0.15); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); white-space:pre-wrap;">${item.message || item.text || ''}</div>
+                    </div>`;
+                }).join('');
             } catch (e) {
-                console.error("Error loading admin feedback:", e);
-                list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">Failed to load feedback. Check permissions or network.</div>';
+                const list = document.getElementById('admin-feedback-list');
+                if (list) list.innerHTML = '<div style="color:var(--text-gray); padding:2rem; text-align:center;">No feedback yet.</div>';
             }
         }
 
@@ -17187,7 +17460,17 @@
 
         async function loadAdminReports() {
             try {
-                const snap = await window.getDocs(window.collection(window.db, 'reports'));
+                let snap;
+                try {
+                    const q = window.query(
+                        window.collection(window.db, 'reports'),
+                        window.orderBy('createdAt', 'desc'),
+                        window.limit(100)
+                    );
+                    snap = await window.getDocs(q);
+                } catch (idxErr) {
+                    snap = await window.getDocs(window.query(window.collection(window.db, 'reports'), window.limit(50)));
+                }
                 allAdminReports = [];
                 snap.forEach(d => allAdminReports.push({ id: d.id, ...d.data() }));
                 allAdminReports.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -18166,6 +18449,8 @@
             if (tab === 'modules') adminRenderLockedModules();
         }
 
+        const escapeHTML = (str) => typeof str === 'string' ? str.replace(/"/g, '&quot;') : (str || '');
+
         let adminMistakesCache = {};
         let currentMistakesModule = 'all';
         let currentMistakesYear = '1';
@@ -18193,13 +18478,13 @@
 
         function isSnapshotFresh(snap, targetWeek, currentWeek) {
             if (!snap) return false;
-            
+            // Must have listYear3 populated or array
             if (!Array.isArray(snap.listYear3)) return false;
-            
+            // Must match targetWeek or currentWeek
             if (snap.targetWeek !== targetWeek && snap.week !== currentWeek && snap.week !== targetWeek) {
                 return false;
             }
-            
+            // Must not be older than 7 days
             if (snap.compiledAt && (Date.now() - snap.compiledAt > 7 * 86400000)) {
                 return false;
             }
@@ -18326,7 +18611,7 @@
                     }
                 }
 
-                
+                // If cache/static doc is missing or stale from previous weeks, automatically re-compile
                 await recompileWeeklyTopMistakes(false);
 
             } catch (err) {
@@ -18423,7 +18708,7 @@
                 let sortedY2 = sorted.filter(x => (x.year || getModuleYear(x.m)) === '2');
                 let sortedY3 = sorted.filter(x => (x.year || getModuleYear(x.m)) === '3');
 
-                
+                // Supplementary fill for Year 1 if fewer than 15 mistakes
                 if (sortedY1.length < 15 && window.DB && typeof extractAllQuestions === 'function') {
                     const y1Mods = ['Terminology', 'Foundation', 'Blood', 'MSK', 'CVS'];
                     for (const mName of y1Mods) {
@@ -18444,7 +18729,7 @@
                     }
                 }
 
-                
+                // Supplementary fill for Year 2 if fewer than 15 mistakes
                 if (sortedY2.length < 15 && window.DB && typeof extractAllQuestions === 'function') {
                     const y2Mods = ['Endocrine', 'Genital', 'Urinary', 'EGU', 'GIT', 'CNS'];
                     for (const mName of y2Mods) {
@@ -18465,7 +18750,7 @@
                     }
                 }
 
-                
+                // Supplementary fill for Year 3 if fewer than 15 mistakes
                 if (sortedY3.length < 15) {
                     const y3Mods = ['ID1', 'ID2'];
                     for (const mName of y3Mods) {
@@ -19159,6 +19444,11 @@
 
             editorAllData[docId]._sessionEdited = true;
 
+            // Phase 2: Ensure all questions have stable 12-char IDs before saving
+            if (typeof assignQuestionIdsRecursively === 'function') {
+                assignQuestionIdsRecursively(editorAllData[docId]);
+            }
+
             const cleanData = JSON.parse(JSON.stringify(editorAllData[docId]));
             delete cleanData._isChunked;
             delete cleanData._chunkCount;
@@ -19209,14 +19499,14 @@
 
             editorRemoteMeta[docId] = { wasChunked: chunks.length > 1, chunkCount: chunks.length };
 
-            
+            // Update content/metadata with new timestamps so clients detect and download updates
             const now = Date.now();
             const metadataUpdate = {};
             metadataUpdate[docId + '_updatedAt'] = now;
             metadataUpdate['modules_metadata_updatedAt'] = now;
             await window.setDoc(window.doc(window.db, "content", "metadata"), metadataUpdate, { merge: true });
 
-            
+            // Update local in-memory DB and IDB cache immediately
             const modDocMap = window.MODULE_KEY_TO_DOC_ID || (typeof MODULE_KEY_TO_DOC_ID !== 'undefined' ? MODULE_KEY_TO_DOC_ID : {});
             let moduleKey = Object.keys(modDocMap).find(k => modDocMap[k] === docId);
             if (!moduleKey) {
@@ -19649,10 +19939,11 @@
                 item.qRef.q = newQText;
                 item.qRef.o = newOptions;
                 item.qRef.a = newAnswerIndex;
+                item.qRef.id = item.qRef.id || (typeof generateQuestionId === 'function' ? generateQuestionId() : Math.random().toString(36).substr(2, 12));
 
                 await saveEditorDocToFirestore(docId);
 
-                
+                // Real-time sync: update Top Mistakes cache if this question is in the mistakes list
                 if (typeof adminMistakesCache !== 'undefined' && adminMistakesCache['active_snapshot']) {
                     const snap = adminMistakesCache['active_snapshot'];
                     const syncList = (arr) => {
@@ -19675,7 +19966,7 @@
                     }
                 }
 
-                
+                // Real-time sync: update loaded reports list
                 if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
                     allAdminReports.forEach(r => {
                         if (r && r.question && (r.question.trim() === newQText || r.question.trim() === item.qRef.q.trim())) {
@@ -19912,12 +20203,12 @@
             }
         });
 
-        
-        
-        
+        // =========================================================================
+        // MODULE QUESTIONS JS DOWNLOAD SYSTEM
+        // =========================================================================
 
         const MODULE_DOWNLOAD_CONFIG = [
-            
+            // Standard Academic Modules
             { id: 'foundation_questions', name: 'Foundation', varName: 'FOUNDATION_QUESTIONS', fileName: 'found.js', category: 'Academic' },
             { id: 'terminology_questions', name: 'Terminology', varName: 'TERMINOLOGY_QUESTIONS', fileName: 'terminology.js', category: 'Academic' },
             { id: 'blood_questions', name: 'Blood', varName: 'BLOOD_QUESTIONS', fileName: 'blood.js', category: 'Academic' },
@@ -19932,7 +20223,7 @@
             { id: 'communication_step_1_questions', name: 'Communication Step 1', varName: 'communication_step_1', fileName: 'communication_step_1.js', category: 'Skills' },
             { id: 'communication_step_2_questions', name: 'Communication Step 2', varName: 'communication_step_2', fileName: 'communication_step_2.js', category: 'Skills' },
             { id: 'professionalism_questions', name: 'Professionalism', varName: 'professionalism', fileName: 'professionalism.js', category: 'Skills' },
-            
+            // Concepts & Past Exams
             { id: 'c1_pharmacology_questions', name: 'Concept 1 Pharmacology', varName: 'CONCEPT_1_PHARMACOLOGY', fileName: 'c1_pharma.js', category: 'Concepts' },
             { id: 'c1_pathology_questions', name: 'Concept 1 Pathology', varName: 'CONCEPT_1_PATHOLOGY', fileName: 'c1_pathology.js', category: 'Concepts' },
             { id: 'c1_genetics_questions', name: 'Concept 1 Genetics', varName: 'CONCEPT_1_GENETICS', fileName: 'c1_genetics.js', category: 'Concepts' },
@@ -19940,10 +20231,10 @@
             { id: 'c2_pharmacology_questions', name: 'Concept 2 Pharmacology', varName: 'C2_Pharma', fileName: 'c2_pharma.js', category: 'Concepts' },
             { id: 'c2_pathology_questions', name: 'Concept 2 Pathology', varName: 'C2_Pathology', fileName: 'c2_pathology.js', category: 'Concepts' },
             { id: 'c2_past_exams_questions', name: 'Concept 2 Past Exams', varName: 'C2_PREVIOUS_EXAMS', fileName: 'c2_past_exams.js', category: 'Concepts' },
-            
+            // ID Modules (id1_pha matches foundclu.js exactly)
             { id: 'id1_questions', name: 'ID1', varName: 'id1_pha', fileName: 'foundclu.js', category: 'ID Modules' },
             { id: 'id2_questions', name: 'ID2', varName: 'ID2_QUESTIONS', fileName: 'id2.js', category: 'ID Modules' },
-            
+            // Practical Modules
             { id: 'practical_parasitology_spots', name: 'Practical Parasitology Spots', varName: 'PARASITOLOGY_SPOTS', fileName: 'practical_parasitology.js', category: 'Practical' },
             { id: 'practical_microbiology_spots', name: 'Practical Microbiology Spots', varName: 'MICROBIOLOGY_SPOTS', fileName: 'practical_microbiology.js', category: 'Practical' },
             { id: 'practical_micro_para_simulation', name: 'Practical Simulation', varName: 'SIMULATION_QUESTIONS', fileName: 'practical_simulation.js', category: 'Practical' },
@@ -20096,7 +20387,7 @@
                 throw new Error("Firestore connection is not available.");
             }
 
-            
+            // Always fetch fresh directly from Firestore content/<docId>
             const docRef = window.doc(window.db, "content", docId);
             const snap = await window.getDoc(docRef);
 
@@ -20141,7 +20432,7 @@
                 throw new Error(`Could not find questions for "${docId}" in Firebase or local database.`);
             }
 
-            
+            // If the user made edits in the current active editor session, incorporate them so latest edits are guaranteed
             if (editorAllData[docId] && editorAllData[docId]._sessionEdited) {
                 data = editorAllData[docId];
             } else {
@@ -20502,7 +20793,527 @@
             }
         });
 
-        
+        /* =========================================================================
+           COMMUNITY FEATURES (Temporarily commented out - preserved for future use)
+           =========================================================================
+        let currentDiscussPostId = null;
+        let pendingPostData = null;
+
+        function getAuthorName() {
+            if (typeof AppState !== 'undefined' && AppState.username) return AppState.username;
+            if (typeof window._getInternalAppState === 'function') {
+                const state = window._getInternalAppState();
+                if (state.username) return state.username;
+            }
+            return 'Anonymous User';
+        }
+
+        function getAuthorAvatar(name) {
+            if (window.currentUserId) {
+                const lsAvatar = localStorage.getItem('medStorm_avatar_' + window.currentUserId);
+                if (lsAvatar && lsAvatar !== 'img/default_avatar.webp') {
+                    return lsAvatar;
+                }
+            }
+            if (typeof AppState !== 'undefined' && AppState.profilePicUrl && AppState.profilePicUrl !== 'img/default_avatar.webp') {
+                return AppState.profilePicUrl;
+            }
+            if (typeof window._getInternalAppState === 'function') {
+                const state = window._getInternalAppState();
+                if (state.profilePicUrl && state.profilePicUrl !== 'img/default_avatar.webp') return state.profilePicUrl;
+            }
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'A')}&background=random&color=fff`;
+        }
+
+        function openCreatePostModal() {
+            if (!window.currentUserId) return alert('Please login to ask the community.');
+            let qObj = null;
+            if (typeof Session !== 'undefined' && Session.queue && Session.queue[Session.index]) {
+                qObj = Session.queue[Session.index];
+            }
+            if (!qObj || !qObj.q) {
+                alert('No question found to discuss.');
+                return;
+            }
+
+            let mod = typeof Session !== 'undefined' ? Session.module : 'General';
+            let correctAnsStr = typeof qObj.a === 'number' && qObj.o ? qObj.o[qObj.a] : (qObj.a || 'Unknown');
+
+            let userAnsIdx = null;
+            if (typeof Session !== 'undefined' && Session.answers && Session.answers[Session.index] !== undefined && Session.answers[Session.index] !== null) {
+                userAnsIdx = Session.answers[Session.index];
+            }
+
+            let userSelectedAnsStr = (userAnsIdx !== null && qObj.o && qObj.o[userAnsIdx]) ? qObj.o[userAnsIdx] : null;
+
+            let choicesHtml = '';
+            if (qObj.o && Array.isArray(qObj.o)) {
+                choicesHtml = `<div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">` +
+                    qObj.o.map((opt, i) => {
+                        let bg = 'rgba(0,0,0,0.2)';
+                        let border = 'rgba(255,255,255,0.1)';
+                        let icon = '';
+                        if (userAnsIdx !== null) {
+                            if (i === qObj.a) {
+                                bg = 'rgba(46, 213, 115, 0.2)';
+                                border = 'var(--primary-green)';
+                                icon = '<i class="ri-check-line" style="margin-right:5px;"></i>';
+                            } else if (i === userAnsIdx) {
+                                bg = 'rgba(235, 77, 75, 0.2)';
+                                border = 'var(--primary-red)';
+                                icon = '<i class="ri-close-line" style="margin-right:5px;"></i>';
+                            }
+                        }
+                        return `<div style="padding: 10px 12px; border-radius: 8px; background: ${bg}; border: 1px solid ${border}; font-size: 0.95rem;">${icon}${opt}</div>`;
+                    }).join('') + `</div>`;
+            }
+
+            const authorName = getAuthorName();
+
+            pendingPostData = {
+                questionText: qObj.q,
+                questionImage: qObj.img || null,
+                choices: qObj.o || [],
+                correctAnswerIndex: qObj.a,
+                correctAnswerStr: correctAnsStr,
+                userAnswerIndex: userAnsIdx,
+                userAnswerStr: userSelectedAnsStr,
+                module: mod,
+                subtopic: (typeof Session !== 'undefined' && Session.selectedSubtopics && Session.selectedSubtopics.length > 0) ? Session.selectedSubtopics.join(', ') : 'General',
+                authorName: authorName,
+                authorAvatar: getAuthorAvatar(authorName)
+            };
+
+            let previewHtml = `
+                <div style="font-size: 0.8rem; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px;">${mod} Question</div>
+                <div style="font-size: 1.1rem; font-weight: 600; color: white;">${qObj.q}</div>
+                ${qObj.img ? `<img src="${qObj.img}" style="max-height: 150px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); object-fit: contain;">` : ''}
+                ${choicesHtml}
+            `;
+
+            document.getElementById('create-post-preview').innerHTML = previewHtml;
+            document.getElementById('create-post-caption').value = '';
+            document.getElementById('create-post-modal').style.display = 'flex';
+        }
+
+        function closeCreatePostModal() {
+            document.getElementById('create-post-modal').style.display = 'none';
+            pendingPostData = null;
+        }
+
+        async function submitCommunityPost(e) {
+            e.preventDefault();
+            if (!pendingPostData) return;
+            const caption = document.getElementById('create-post-caption').value.trim();
+            if (!caption) return alert('Please write a question or caption for the community.');
+
+            const btn = e.target;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite; display: inline-block;"></i> Posting...';
+
+            try {
+                const post = {
+                    ...pendingPostData,
+                    caption: caption,
+                    authorId: window.currentUserId,
+                    createdAt: Date.now(),
+                    replyCount: 0,
+                    score: 0,
+                    upvotes: [],
+                    downvotes: []
+                };
+
+                await window.addDoc(window.collection(window.db, "discussions"), post);
+                closeCreatePostModal();
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ri-send-plane-fill"></i> Post to Community';
+                fetchDiscussions(true);
+                switchMode('community');
+            } catch (err) {
+                console.error(err);
+                alert('Error creating post: ' + err.message + '\n\nMake sure your Firebase Rules allow authenticated users to write to the "discussions" collection.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ri-send-plane-fill"></i> Post to Community';
+            }
+        }
+
+        async function fetchDiscussions(forceRefresh = false) {
+            const container = document.getElementById('community-list');
+            if (!container) return;
+
+            if (discussionsCache.length === 0 || forceRefresh) {
+                container.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; padding: 4rem;"><div class="loading-dots-container" style="font-size: 1.1rem;"><span>Loading Discussions</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
+
+                try {
+                    const q = window.query(window.collection(window.db, "discussions"), window.orderBy("createdAt", "desc"), window.limit(50));
+                    const snap = await window.getDocs(q);
+                    discussionsCache = [];
+                    snap.forEach(doc => {
+                        discussionsCache.push({ id: doc.id, ...doc.data() });
+                    });
+                } catch (e) {
+                    console.error("Discussions fetch error:", e);
+                    container.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--text-gray);">Failed to load discussions. Make sure Firebase Rules are updated for "discussions" collection.</div>';
+                    return;
+                }
+            }
+
+            if (discussionsCache.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 4rem 2rem; color: var(--text-gray); background: var(--bg-card); border-radius: 16px; border: 1px dashed var(--border-color);">
+                        <i class="ri-discuss-line" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: var(--accent); opacity: 0.8;"></i>
+                        <h3 style="color: var(--text-light); margin-bottom: 0.5rem; font-size: 1.25rem;">No Discussions Yet</h3>
+                        <p style="max-width: 400px; margin: 0 auto; line-height: 1.5; font-size: 0.95rem;">Be the first to start a conversation! When solving questions, tap the <i class="ri-chat-1-line" style="color:var(--accent);"></i> icon to ask the community for help.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            discussionsCache.forEach(post => {
+                const docId = post.id;
+                const data = post;
+                const authorInitial = (data.authorName || 'A')[0].toUpperCase();
+                const formattedTime = new Date(data.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                const upvotes = data.upvotes || [];
+                const downvotes = data.downvotes || [];
+                const score = data.score !== undefined ? data.score : (upvotes.length - downvotes.length);
+
+                const hasUpvoted = window.currentUserId && upvotes.includes(window.currentUserId);
+                const hasDownvoted = window.currentUserId && downvotes.includes(window.currentUserId);
+
+                html += `
+                    <div class="community-post-card" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <img src="${data.authorAvatar || `https://ui-avatars.com/api/?name=${authorInitial}&background=random`}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--border-color);" onerror="this.src='img/default_avatar.webp'">
+                                <div>
+                                    <div style="font-weight:700;color:var(--text-light);font-size:0.95rem;">${data.authorName || 'Anonymous Student'}</div>
+                                    <div style="font-size:0.8rem;color:var(--text-gray);">${formattedTime} • <span style="color:var(--accent);">${data.module}</span></div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <span style="font-size:0.75rem;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,0.05);color:var(--text-gray);border:1px solid var(--border-color);">${data.subtopic || 'General'}</span>
+                                ${data.authorId === window.currentUserId ? `<button onclick="deleteCommunityPost('${docId}')" style="background:none;border:none;color:var(--text-gray);cursor:pointer;font-size:1.2rem;transition:color 0.2s;" onmouseover="this.style.color='var(--primary-red)'" onmouseout="this.style.color='var(--text-gray)'" title="Delete Post"><i class="ri-delete-bin-line"></i></button>` : ''}
+                            </div>
+                        </div>
+
+                        <div style="font-size:1.05rem;color:var(--text-light);line-height:1.5;margin-bottom:1.25rem;font-weight:500;">
+                            ${data.caption}
+                        </div>
+
+                        <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:1rem;margin-bottom:1.25rem;">
+                            <div style="font-size:0.75rem;color:var(--text-gray);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Original Question:</div>
+                            <div style="font-size:0.95rem;color:var(--text-light);line-height:1.4;">${data.questionText}</div>
+                            ${data.questionImage ? `<img src="${data.questionImage}" style="max-height:120px;border-radius:6px;margin-top:8px;border:1px solid rgba(255,255,255,0.1);object-fit:contain;">` : ''}
+                        </div>
+
+                        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.05);padding-top:1rem;">
+                            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.15);padding:4px 8px;border-radius:20px;border:1px solid var(--border-color);">
+                                <button onclick="voteDiscussPost('${docId}', 'up')" style="background:none;border:none;color:${hasUpvoted ? 'var(--primary-green)' : 'var(--text-gray)'};cursor:pointer;font-size:1.1rem;display:flex;align-items:center;"><i class="${hasUpvoted ? 'ri-arrow-up-circle-fill' : 'ri-arrow-up-circle-line'}"></i></button>
+                                <span style="font-weight:700;font-size:0.85rem;color:${score > 0 ? 'var(--primary-green)' : (score < 0 ? 'var(--primary-red)' : 'var(--text-light)')};min-width:18px;text-align:center;">${score}</span>
+                                <button onclick="voteDiscussPost('${docId}', 'down')" style="background:none;border:none;color:${hasDownvoted ? 'var(--primary-red)' : 'var(--text-gray)'};cursor:pointer;font-size:1.1rem;display:flex;align-items:center;"><i class="${hasDownvoted ? 'ri-arrow-down-circle-fill' : 'ri-arrow-down-circle-line'}"></i></button>
+                            </div>
+
+                            <button onclick="openDiscussModal('${docId}')" style="background:transparent;border:1px solid var(--border-color);color:var(--text-light);padding:6px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)';" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-light)';">
+                                <i class="ri-chat-3-line"></i> ${data.replyCount || 0} Comments
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function openDiscussModal(postId) {
+            currentDiscussPostId = postId;
+            const post = discussionsCache.find(p => p.id === postId);
+            if (!post) return;
+
+            const modal = document.getElementById('discussion-modal');
+            const previewContainer = document.getElementById('discuss-post-full-preview');
+            const repliesContainer = document.getElementById('discuss-replies-list');
+
+            const formattedTime = new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            let choicesHtml = '';
+            if (post.choices && Array.isArray(post.choices)) {
+                choicesHtml = `<div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px;">` +
+                    post.choices.map((opt, i) => {
+                        let bg = 'rgba(0,0,0,0.2)';
+                        let border = 'rgba(255,255,255,0.05)';
+                        let icon = '';
+                        if (post.userAnswerIndex !== null && post.userAnswerIndex !== undefined) {
+                            if (i === post.correctAnswerIndex) {
+                                bg = 'rgba(46, 213, 115, 0.15)';
+                                border = 'var(--primary-green)';
+                                icon = '<i class="ri-check-line" style="margin-right:5px; color:var(--primary-green);"></i>';
+                            } else if (i === post.userAnswerIndex) {
+                                bg = 'rgba(235, 77, 75, 0.15)';
+                                border = 'var(--primary-red)';
+                                icon = '<i class="ri-close-line" style="margin-right:5px; color:var(--primary-red);"></i>';
+                            }
+                        }
+                        return `<div style="padding: 6px 10px; border-radius: 6px; background: ${bg}; border: 1px solid ${border}; font-size: 0.85rem; color: var(--text-light);">${icon}${opt}</div>`;
+                    }).join('') + `</div>`;
+            }
+
+            previewContainer.innerHTML = `
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
+                    <img src="${post.authorAvatar || 'img/default_avatar.webp'}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" onerror="this.src='img/default_avatar.webp'">
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-light); font-size: 0.95rem;">${post.authorName || 'Anonymous'}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-gray);">${formattedTime} • ${post.module}</div>
+                    </div>
+                </div>
+                <div style="font-size: 1.05rem; color: var(--text-light); margin-bottom: 1rem; line-height: 1.4;">${post.caption}</div>
+                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px;">
+                    <div style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Question:</div>
+                    <div style="font-size: 0.9rem; color: var(--text-light);">${post.questionText}</div>
+                    ${post.questionImage ? `<img src="${post.questionImage}" style="max-height: 120px; border-radius: 6px; margin-top: 8px; object-fit: contain;">` : ''}
+                    ${choicesHtml}
+                </div>
+            `;
+
+            repliesContainer.innerHTML = '<div style="display:flex; justify-content:center; padding: 2rem;"><div class="loading-dots-container" style="font-size: 0.95rem;"><span>Loading Comments</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div></div>';
+            modal.style.display = 'flex';
+
+            try {
+                const q = window.query(window.collection(window.db, "discussions", postId, "replies"), window.orderBy("createdAt", "asc"), window.limit(100));
+                const snap = await window.getDocs(q);
+                let rHtml = '';
+                if (snap.empty) {
+                    repliesContainer.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 2rem;">No comments yet. Start the conversation!</div>';
+                    return;
+                }
+                snap.forEach(docSnap => {
+                    const r = docSnap.data();
+                    const rId = docSnap.id;
+                    const rTime = new Date(r.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                    const upvotes = r.upvotes || [];
+                    const downvotes = r.downvotes || [];
+                    const score = r.score !== undefined ? r.score : (upvotes.length - downvotes.length);
+                    const hasUpvoted = window.currentUserId && upvotes.includes(window.currentUserId);
+                    const hasDownvoted = window.currentUserId && downvotes.includes(window.currentUserId);
+
+                    rHtml += `
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <img src="${r.authorAvatar || 'img/default_avatar.webp'}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" onerror="this.src='img/default_avatar.webp'">
+                                    <div>
+                                        <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-light);">${r.authorName || 'Anonymous'}</span>
+                                        <span style="font-size: 0.7rem; color: var(--text-gray); margin-left: 6px;">${rTime}</span>
+                                    </div>
+                                </div>
+                                ${r.authorId === window.currentUserId ? `<button onclick="deleteDiscussReply('${rId}')" style="background:none;border:none;color:var(--text-gray);cursor:pointer;font-size:0.9rem;" title="Delete reply"><i class="ri-delete-bin-line"></i></button>` : ''}
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--text-light); line-height: 1.4; margin-bottom: 8px; padding-left: 36px;">${r.text}</div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; padding-right: 4px;">
+                                <button class="upvote-btn" onclick="voteDiscussReply('${rId}', 'up')" style="background:none;border:none;color:${hasUpvoted ? 'var(--primary-green)' : 'var(--text-gray)'};cursor:pointer;font-size:0.95rem;"><i class="${hasUpvoted ? 'ri-arrow-up-circle-fill' : 'ri-arrow-up-circle-line'}"></i></button>
+                                <span class="score-span" style="font-size:0.75rem;font-weight:700;color:${score > 0 ? 'var(--primary-green)' : (score < 0 ? 'var(--primary-red)' : 'var(--text-light)')};min-width:14px;text-align:center;">${score}</span>
+                                <button class="downvote-btn" onclick="voteDiscussReply('${rId}', 'down')" style="background:none;border:none;color:${hasDownvoted ? 'var(--primary-red)' : 'var(--text-gray)'};cursor:pointer;font-size:0.95rem;"><i class="${hasDownvoted ? 'ri-arrow-down-circle-fill' : 'ri-arrow-down-circle-line'}"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                repliesContainer.innerHTML = rHtml;
+            } catch (e) {
+                console.error("Replies fetch error:", e);
+                repliesContainer.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 1rem;">Failed to load comments.</div>';
+            }
+        }
+
+        function closeDiscussModal() {
+            document.getElementById('discussion-modal').style.display = 'none';
+            currentDiscussPostId = null;
+        }
+
+        async function submitDiscussReply(e) {
+            e.preventDefault();
+            if (!currentDiscussPostId) return;
+            const input = document.getElementById('discuss-reply-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const btn = e.target;
+            btn.disabled = true;
+
+            try {
+                const authorName = getAuthorName();
+                const reply = {
+                    text: text,
+                    authorId: window.currentUserId,
+                    authorName: authorName,
+                    authorAvatar: getAuthorAvatar(authorName),
+                    createdAt: Date.now(),
+                    upvotes: [],
+                    downvotes: [],
+                    score: 0
+                };
+
+                await window.addDoc(window.collection(window.db, "discussions", currentDiscussPostId, "replies"), reply);
+
+                try {
+                    await window.updateDoc(window.doc(window.db, "discussions", currentDiscussPostId), {
+                        replyCount: window.increment(1)
+                    });
+                } catch (e) { }
+
+                input.value = '';
+                btn.disabled = false;
+                openDiscussModal(currentDiscussPostId);
+                fetchDiscussions(true);
+            } catch (err) {
+                console.error(err);
+                alert('Failed to post reply: ' + err.message + '\n\nMake sure your Firebase Rules allow creating documents in subcollections.');
+                btn.disabled = false;
+            }
+        }
+
+        async function voteDiscussPost(postId, type) {
+            if (!window.currentUserId) return alert('Please login to vote.');
+            try {
+                const postRef = window.doc(window.db, "discussions", postId);
+                const postSnap = await window.getDoc(postRef);
+                if (!postSnap.exists()) return;
+
+                const data = postSnap.data();
+                let upvotes = data.upvotes || [];
+                let downvotes = data.downvotes || [];
+                const uid = window.currentUserId;
+
+                if (type === 'up') {
+                    if (upvotes.includes(uid)) {
+                        upvotes = upvotes.filter(id => id !== uid);
+                    } else {
+                        upvotes.push(uid);
+                        downvotes = downvotes.filter(id => id !== uid);
+                    }
+                } else if (type === 'down') {
+                    if (downvotes.includes(uid)) {
+                        downvotes = downvotes.filter(id => id !== uid);
+                    } else {
+                        downvotes.push(uid);
+                        upvotes = upvotes.filter(id => id !== uid);
+                    }
+                }
+
+                const score = upvotes.length - downvotes.length;
+
+                const cached = discussionsCache.find(p => p.id === postId);
+                if (cached) {
+                    cached.upvotes = upvotes;
+                    cached.downvotes = downvotes;
+                    cached.score = score;
+                    fetchDiscussions(false);
+                }
+
+                await window.updateDoc(postRef, {
+                    upvotes: upvotes,
+                    downvotes: downvotes,
+                    score: score
+                });
+            } catch (e) {
+                console.error(e);
+                alert('Failed to vote. Please ask the admin to update Firebase Rules: "allow update: if request.auth != null;" for discussions!');
+            }
+        }
+
+        async function voteDiscussReply(replyId, type) {
+            if (!window.currentUserId) return alert('Please login to vote.');
+            if (!currentDiscussPostId) return;
+
+            try {
+                const replyRef = window.doc(window.db, "discussions", currentDiscussPostId, "replies", replyId);
+                const replySnap = await window.getDoc(replyRef);
+                if (!replySnap.exists()) return;
+
+                const data = replySnap.data();
+                let upvotes = data.upvotes || [];
+                let downvotes = data.downvotes || [];
+                const uid = window.currentUserId;
+
+                if (type === 'up') {
+                    if (upvotes.includes(uid)) {
+                        upvotes = upvotes.filter(id => id !== uid);
+                    } else {
+                        upvotes.push(uid);
+                        downvotes = downvotes.filter(id => id !== uid);
+                    }
+                } else if (type === 'down') {
+                    if (downvotes.includes(uid)) {
+                        downvotes = downvotes.filter(id => id !== uid);
+                    } else {
+                        downvotes.push(uid);
+                        upvotes = upvotes.filter(id => id !== uid);
+                    }
+                }
+
+                const score = upvotes.length - downvotes.length;
+
+                const btnContainer = event.target.closest('div');
+                if (btnContainer) {
+                    const upBtn = btnContainer.querySelector('.upvote-btn');
+                    const downBtn = btnContainer.querySelector('.downvote-btn');
+                    const scoreSpan = btnContainer.querySelector('.score-span');
+
+                    if (type === 'up') {
+                        upBtn.style.color = upvotes.includes(uid) ? 'var(--primary-green)' : 'var(--text-gray)';
+                        upBtn.innerHTML = upvotes.includes(uid) ? '<i class="ri-arrow-up-circle-fill"></i>' : '<i class="ri-arrow-up-circle-line"></i>';
+                        downBtn.style.color = 'var(--text-gray)';
+                        downBtn.innerHTML = '<i class="ri-arrow-down-circle-line"></i>';
+                    } else {
+                        downBtn.style.color = downvotes.includes(uid) ? 'var(--primary-red)' : 'var(--text-gray)';
+                        downBtn.innerHTML = downvotes.includes(uid) ? '<i class="ri-arrow-down-circle-fill"></i>' : '<i class="ri-arrow-down-circle-line"></i>';
+                        upBtn.style.color = 'var(--text-gray)';
+                        upBtn.innerHTML = '<i class="ri-arrow-up-circle-line"></i>';
+                    }
+                    scoreSpan.textContent = score;
+                    scoreSpan.style.color = score > 0 ? 'var(--primary-green)' : (score < 0 ? 'var(--primary-red)' : 'var(--text-light)');
+                }
+
+                await window.updateDoc(replyRef, {
+                    upvotes: upvotes,
+                    downvotes: downvotes,
+                    score: score
+                });
+            } catch (e) {
+                console.error(e);
+                alert('Failed to vote. Please ask the admin to update Firebase Rules: "allow update: if request.auth != null;" for discussions and replies!');
+            }
+        }
+        async function deleteCommunityPost(postId) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+            try {
+                await window.deleteDoc(window.doc(window.db, "discussions", postId));
+                fetchDiscussions(true);
+                document.getElementById('discussion-modal').style.display = 'none';
+            } catch (e) {
+                console.error(e);
+                alert('Error deleting post: ' + e.message + '\n\nIf this is a permission error, make sure you are deleting your own post, and that your Firebase rules are correctly published.');
+            }
+        }
+
+        async function deleteDiscussReply(replyId) {
+            if (!currentDiscussPostId) return;
+            if (!confirm('Are you sure you want to delete this reply?')) return;
+            try {
+                await window.deleteDoc(window.doc(window.db, "discussions", currentDiscussPostId, "replies", replyId));
+                try {
+                    await window.updateDoc(window.doc(window.db, "discussions", currentDiscussPostId), {
+                        replyCount: window.increment(-1)
+                    });
+                } catch (e) { }
+            } catch (e) {
+                console.error(e);
+                alert('Error deleting reply: ' + e.message + '\n\nMake sure your Firebase Rules are correctly published.');
+            }
+        }
+        */
 
         document.addEventListener('contextmenu', function (e) {
             if (e.target && e.target.closest && e.target.closest('#view-quiz, #quiz-screen, #exam-screen, .quiz-container, .question-card, .question-box, .choices-container, .question-text')) {
