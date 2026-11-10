@@ -23,6 +23,10 @@
     <script src="anatomy.js"></script>
     <script src="anatomyat.js"></script>
     <script src="histoslides.js"></script>
+    <script src="biochemistry found.js"></script>
+    <script src="histology found.js"></script>
+    <script src="anatomy found.js"></script>
+    <script src="physiology found.js"></script>
     <style>
         :root {
             --primary-green: #22c55e;
@@ -115,9 +119,229 @@
             --shimmer-highlight: rgba(15, 23, 42, 1);
         }
 
-        :root {
+        :root, [data-theme='dark'] {
             --bg-sidebar: rgba(14, 20, 18, 0.95);
             --bg-topbar: rgba(31, 41, 36, 0.7);
+        }
+
+        /* =========================================================================
+           AMOLED PURE BLACK THEME & CIRCULAR SCREEN INVASION ANIMATION
+           ========================================================================= */
+        [data-theme='black'] {
+            --bg-dark: #000000;
+            --bg-darker: #070708;
+            --bg-card: #0d0d0f;
+            --bg-sidebar: rgba(4, 4, 5, 0.98);
+            --bg-topbar: rgba(6, 6, 8, 0.9);
+            --text-light: #F8FAFC;
+            --text-gray: #94A3B8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --hover-bg: rgba(255, 255, 255, 0.06);
+
+            --shimmer-base: rgba(248, 250, 252, 0.45);
+            --shimmer-highlight: rgba(248, 250, 252, 1);
+        }
+
+        [data-theme='black'] body {
+            background: #000000;
+        }
+
+        [data-theme='black'] .question-card {
+            background: linear-gradient(145deg, #0d0d0f, #050506);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme='black'] .sidebar {
+            background: rgba(4, 4, 5, 0.98);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        [data-theme='black'] .top-bar {
+            background: rgba(6, 6, 8, 0.92);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        [data-theme='black'] .module-card {
+            background: #0d0d0f;
+            border-color: rgba(255, 255, 255, 0.09);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        [data-theme='black'] .option-btn {
+            background: #0d0d0f;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme='black'] .trophy-card {
+            background: linear-gradient(145deg, #0d0d0f, #050506);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme='black'] .quiz-calculator-container {
+            background: rgba(10, 10, 12, 0.98);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        [data-theme='black'] .calc-display,
+        [data-theme='black'] .calc-header {
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        /* View Transitions circular reveal */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        ::view-transition-old(root) {
+            z-index: 1;
+        }
+
+        ::view-transition-new(root) {
+            z-index: 99999999;
+        }
+
+        /* Theme Picker Popover */
+        .theme-picker-popover {
+            position: fixed;
+            z-index: 999999;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 10px;
+            width: 200px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            animation: themePopIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: top right;
+            user-select: none;
+        }
+
+        @keyframes themePopIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .theme-picker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .theme-picker-options {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .theme-option-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 1.5px solid transparent;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            text-align: left;
+        }
+
+        .theme-option-btn:hover {
+            background: var(--hover-bg);
+            border-color: var(--border-color);
+            transform: translateY(-1px);
+        }
+
+        .theme-option-btn.active {
+            background: var(--accent-bg-subtle);
+            border-color: var(--accent);
+        }
+
+        .theme-swatch {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .theme-option-btn:hover .theme-swatch {
+            transform: scale(1.1);
+        }
+
+        .swatch-green {
+            background: linear-gradient(135deg, #18201C 0%, #15803d 100%);
+            border-color: #22c55e;
+        }
+
+        .swatch-black {
+            background: #000000;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+
+        .swatch-light {
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            border-color: #94a3b8;
+        }
+
+        .theme-option-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .theme-option-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-option-desc {
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            margin-top: 1px;
+        }
+
+        .theme-check-icon {
+            font-size: 1.15rem;
+            color: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform: scale(0.7);
+        }
+
+        .theme-option-btn.active .theme-check-icon {
+            opacity: 1;
+            transform: scale(1);
         }
 
         * {
@@ -2047,6 +2271,7 @@
 
         .modal-overlay.active {
             display: flex;
+            z-index: 100050 !important;
         }
 
         .modal {
@@ -5386,6 +5611,601 @@
             box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
             background: linear-gradient(135deg, #34d399, #10b981);
         }
+
+        /* ============================================================
+           Quiz Floating Scientific Calculator Styles
+           ============================================================ */
+        .quiz-calculator-container {
+            position: fixed;
+            width: 315px;
+            max-width: calc(100vw - 20px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 100010 !important;
+            display: none;
+            flex-direction: column;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+            touch-action: none;
+        }
+
+        body.calculator-open #toggle-draw-btn-footer {
+            z-index: 1 !important;
+        }
+
+        /* Ghost Mode (Semi-transparent to read questions underneath without obstruction) */
+        .quiz-calculator-container.calc-ghost {
+            background: rgba(24, 32, 28, 0.52) !important;
+            backdrop-filter: blur(8px) saturate(180%);
+            -webkit-backdrop-filter: blur(8px) saturate(180%);
+            border-color: rgba(255, 255, 255, 0.16) !important;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
+            opacity: 0.65;
+        }
+
+        .quiz-calculator-container.calc-ghost:hover,
+        .quiz-calculator-container.calc-ghost:focus-within {
+            opacity: 0.94;
+            background: rgba(24, 32, 28, 0.8) !important;
+        }
+
+        .quiz-calculator-container.calc-ghost .calc-display {
+            background: rgba(0, 0, 0, 0.28) !important;
+        }
+
+        .quiz-calculator-container.calc-ghost .calc-key {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(4px);
+        }
+
+        [data-theme='light'] .quiz-calculator-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(15, 23, 42, 0.12);
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(15, 23, 42, 0.06);
+        }
+
+        [data-theme='light'] .quiz-calculator-container.calc-ghost {
+            background: rgba(255, 255, 255, 0.62) !important;
+            border-color: rgba(15, 23, 42, 0.16) !important;
+            opacity: 0.72;
+        }
+
+        [data-theme='light'] .quiz-calculator-container.calc-ghost:hover,
+        [data-theme='light'] .quiz-calculator-container.calc-ghost:focus-within {
+            opacity: 0.96;
+            background: rgba(255, 255, 255, 0.92) !important;
+        }
+
+        [data-theme='light'] .quiz-calculator-container.calc-ghost .calc-display {
+            background: rgba(241, 245, 249, 0.65) !important;
+        }
+
+        /* Calculator Header */
+        .calc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.18);
+            border-bottom: 1px solid var(--border-color);
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .calc-header:active {
+            cursor: grabbing;
+        }
+
+        [data-theme='light'] .calc-header {
+            background: rgba(241, 245, 249, 0.7);
+        }
+
+        .calc-header-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--text-light);
+            pointer-events: none;
+        }
+
+        .calc-header-title .drag-icon {
+            font-size: 0.95rem;
+            opacity: 0.55;
+            cursor: grab;
+            pointer-events: auto;
+        }
+
+        .calc-mode-pill {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 5px;
+            background: var(--accent-bg-subtle);
+            color: var(--accent);
+            border: 1px solid var(--accent-glow-subtle);
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            user-select: none;
+            pointer-events: auto;
+            transition: all 0.15s ease;
+        }
+
+        .calc-mode-pill:hover {
+            transform: scale(1.05);
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        .calc-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .calc-h-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-gray);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.92rem;
+            transition: all 0.15s ease;
+        }
+
+        .calc-h-btn:hover {
+            background: var(--hover-bg);
+            color: var(--text-light);
+        }
+
+        .calc-h-btn.active {
+            background: var(--accent-bg-subtle);
+            color: var(--accent);
+            border: 1px solid var(--accent-glow-subtle);
+        }
+
+        .calc-h-btn.close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        /* Calculator Display */
+        .calc-display {
+            padding: 10px 14px 8px 14px;
+            background: rgba(0, 0, 0, 0.26);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        [data-theme='light'] .calc-display {
+            background: rgba(241, 245, 249, 0.7);
+        }
+
+        .calc-expr {
+            min-height: 18px;
+            font-size: 0.76rem;
+            color: var(--text-gray);
+            text-align: right;
+            direction: ltr;
+            white-space: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+            font-family: 'Inter', -apple-system, monospace;
+        }
+
+        .calc-expr::-webkit-scrollbar {
+            display: none;
+        }
+
+        .calc-main-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            direction: ltr;
+        }
+
+        .calc-result {
+            flex: 1;
+            text-align: right;
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--text-light);
+            white-space: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+            font-family: 'Inter', monospace;
+            letter-spacing: 0.5px;
+            transition: font-size 0.15s ease;
+        }
+
+        .calc-result::-webkit-scrollbar {
+            display: none;
+        }
+
+        .calc-display-actions {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .calc-d-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-gray);
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.88rem;
+            transition: all 0.15s ease;
+        }
+
+        .calc-d-btn:hover {
+            background: var(--hover-bg);
+            color: var(--text-light);
+        }
+
+        .calc-d-btn.copied {
+            color: #22c55e !important;
+        }
+
+        /* Scientific Functions Drawer Bar */
+        .calc-sci-bar {
+            display: none;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            padding: 6px 10px;
+            background: rgba(0, 0, 0, 0.16);
+            border-bottom: 1px solid var(--border-color);
+            animation: calcFadeDown 0.18s ease;
+        }
+
+        .calc-sci-bar.active {
+            display: grid;
+        }
+
+        [data-theme='light'] .calc-sci-bar {
+            background: rgba(241, 245, 249, 0.5);
+        }
+
+        .calc-sci-btn {
+            height: 28px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-gray);
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .calc-sci-btn:hover {
+            background: var(--accent-bg-subtle);
+            color: var(--accent);
+            border-color: var(--accent-glow-subtle);
+        }
+
+        .calc-sci-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Keypad Grid (5 columns x 5 rows) */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            padding: 10px;
+            touch-action: manipulation;
+        }
+
+        .calc-key {
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            font-size: 0.98rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .calc-key:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        .calc-key:active {
+            transform: scale(0.94);
+        }
+
+        [data-theme='light'] .calc-key {
+            background: rgba(15, 23, 42, 0.04);
+            color: var(--text-light);
+        }
+
+        [data-theme='light'] .calc-key:hover {
+            background: rgba(15, 23, 42, 0.08);
+            border-color: rgba(15, 23, 42, 0.18);
+        }
+
+        .calc-key.key-op {
+            color: var(--accent);
+            font-weight: 700;
+            background: var(--accent-bg-subtle);
+            border-color: var(--accent-glow-subtle);
+        }
+
+        .calc-key.key-op:hover {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 3px 12px var(--accent-glow);
+        }
+
+        .calc-key.key-fn {
+            color: #60a5fa;
+            font-size: 0.88rem;
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .calc-key.key-fn:hover {
+            background: rgba(59, 130, 246, 0.22);
+            color: #93c5fd;
+        }
+
+        .calc-key.key-danger {
+            color: #f87171;
+            font-size: 0.88rem;
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .calc-key.key-danger:hover {
+            background: rgba(239, 68, 68, 0.22);
+            color: #fca5a5;
+        }
+
+        .calc-key.key-eq {
+            background: var(--accent);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.25rem;
+            border: none;
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .calc-key.key-eq:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+
+        /* History Drawer (Inside Calculator) */
+        .calc-history-drawer {
+            position: absolute;
+            top: 42px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-card);
+            z-index: 25;
+            display: none;
+            flex-direction: column;
+            border-top: 1px solid var(--border-color);
+            animation: calcFadeDown 0.18s ease;
+        }
+
+        .calc-history-drawer.active {
+            display: flex;
+        }
+
+        [data-theme='light'] .calc-history-drawer {
+            background: #ffffff;
+        }
+
+        .calc-history-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.16);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        [data-theme='light'] .calc-history-head {
+            background: rgba(241, 245, 249, 0.7);
+        }
+
+        .calc-history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .calc-history-item {
+            padding: 7px 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+            transition: all 0.15s ease;
+        }
+
+        .calc-history-item:hover {
+            background: var(--accent-bg-subtle);
+            border-color: var(--accent-glow-subtle);
+        }
+
+        [data-theme='light'] .calc-history-item {
+            background: rgba(15, 23, 42, 0.03);
+        }
+
+        .calc-h-expr {
+            font-size: 0.74rem;
+            color: var(--text-gray);
+            direction: ltr;
+        }
+
+        .calc-h-res {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--text-light);
+            direction: ltr;
+        }
+
+        /* Minimized Floating Calculator Pill */
+        .quiz-calc-pill {
+            position: fixed;
+            bottom: 84px;
+            right: 20px;
+            z-index: 100009 !important;
+            background: var(--bg-card);
+            border: 1.5px solid var(--accent);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38), 0 0 16px var(--accent-glow);
+            border-radius: 50px;
+            padding: 8px 15px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 0.86rem;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .quiz-calc-pill:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.48), 0 0 22px var(--accent-glow);
+        }
+
+        .quiz-calc-pill i {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .quiz-calc-pill-close {
+            width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            color: var(--text-gray);
+            margin-left: 2px;
+            transition: all 0.15s;
+        }
+
+        .quiz-calc-pill-close:hover {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+        [data-theme='light'] .quiz-calc-pill {
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14), 0 0 16px var(--accent-glow);
+        }
+
+        @keyframes calcFadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsiveness for Tablet and Mobile */
+        @media (max-width: 991px) {
+            .quiz-calculator-container {
+                width: 300px;
+            }
+
+            .calc-key {
+                height: 38px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .quiz-calculator-container {
+                width: calc(100vw - 20px);
+                max-width: 320px;
+                border-radius: 16px;
+            }
+
+            .calc-grid {
+                gap: 5px;
+                padding: 8px;
+            }
+
+            .calc-key {
+                height: 38px;
+                font-size: 0.92rem;
+                border-radius: 8px;
+            }
+
+            .calc-result {
+                font-size: 1.35rem;
+            }
+
+            .quiz-calc-pill {
+                bottom: 74px;
+                right: 12px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
 </head>
@@ -5394,6 +6214,10 @@
     <script>
         (function () {
             try {
+                const savedTheme = localStorage.getItem('medStormTheme');
+                if (savedTheme === 'light' || savedTheme === 'black' || savedTheme === 'dark') {
+                    document.body.setAttribute('data-theme', savedTheme);
+                }
                 const savedMode = localStorage.getItem('asa_active_mode');
                 if (savedMode === 'mistakes') {
                     document.body.setAttribute('data-mode', 'mistakes');
@@ -5403,6 +6227,40 @@
             } catch (e) { }
         })();
     </script>
+
+    <!-- Theme Palette Popover -->
+    <div id="theme-picker-popover" class="theme-picker-popover" style="display:none;" onclick="event.stopPropagation();">
+        <div class="theme-picker-header">
+            <span><i class="ri-palette-line" style="color:var(--accent); margin-right:4px;"></i> Theme</span>
+            <span style="font-size:0.68rem; opacity:0.75; font-weight:600;">3 Modes</span>
+        </div>
+        <div class="theme-picker-options">
+            <!-- Green Theme -->
+            <button class="theme-option-btn" data-target-theme="dark" onclick="selectTheme('dark', event)" title="Green">
+                <span class="theme-swatch swatch-green"></span>
+                <div class="theme-option-info">
+                    <span class="theme-option-name">Green</span>
+                </div>
+                <i class="ri-check-line theme-check-icon"></i>
+            </button>
+            <!-- Black Theme -->
+            <button class="theme-option-btn" data-target-theme="black" onclick="selectTheme('black', event)" title="Black">
+                <span class="theme-swatch swatch-black"></span>
+                <div class="theme-option-info">
+                    <span class="theme-option-name">Black</span>
+                </div>
+                <i class="ri-check-line theme-check-icon"></i>
+            </button>
+            <!-- White Theme -->
+            <button class="theme-option-btn" data-target-theme="light" onclick="selectTheme('light', event)" title="White">
+                <span class="theme-swatch swatch-light"></span>
+                <div class="theme-option-info">
+                    <span class="theme-option-name">White</span>
+                </div>
+                <i class="ri-check-line theme-check-icon"></i>
+            </button>
+        </div>
+    </div>
 
     <div id="first-load-overlay"
         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; overflow: hidden;">
@@ -5929,7 +6787,7 @@
                     <i class="ri-fullscreen-line" id="fullscreen-icon"></i>
                 </button>
 
-                <button class="icon-btn" onclick="toggleTheme()" title="Dark/Light Mode">
+                <button class="icon-btn" onclick="toggleTheme(event)" title="Theme: Green / Black / Light" id="btn-theme-toggle">
                     <i class="ri-sun-fill" id="theme-icon"></i>
                 </button>
 
@@ -6386,9 +7244,12 @@
                     <button class="finish-quiz-btn" onclick="finishQuiz()" title="Finish Session">
                         <i class="ri-flag-2-fill"></i><span>Finish</span>
                     </button>
+                    <button class="action-icon-btn quiz-calc-btn" id="quiz-calc-header-btn"
+                        onclick="toggleQuizCalculator()" title="Calculator (آلة حاسبة)"><i
+                            class="ri-calculator-line"></i></button>
                     <button class="action-icon-btn quiz-home-btn" onclick="exitQuiz()" title="Exit"><i
                             class="ri-home-line"></i></button>
-                    <button class="action-icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i
+                    <button class="action-icon-btn" onclick="toggleTheme(event)" title="Theme: Green / Black / Light" id="btn-theme-toggle-quiz"><i
                             class="ri-sun-fill" id="theme-icon-quiz"></i></button>
                     <button class="action-icon-btn quiz-fullscreen-btn" onclick="toggleFullScreen()"
                         title="Full Screen"><i class="ri-fullscreen-line" id="fullscreen-icon-quiz"></i></button>
@@ -6420,8 +7281,12 @@
                                 <i class="ri-list-unordered"></i>
                             </button>
                             <button id="toggle-draw-btn-footer" class="icon-action-btn" onclick="toggleDrawMode(event)"
-                                title="Draw & Notes" style="position: relative; z-index: 99999;">
+                                title="Draw & Notes" style="position: relative;">
                                 <i class="ri-pen-nib-line"></i>
+                            </button>
+                            <button id="btn-calc-footer" class="icon-action-btn" onclick="toggleQuizCalculator()"
+                                title="Calculator (آلة حاسبة)">
+                                <i class="ri-calculator-line"></i>
                             </button>
                             <button id="ai-explain-btn" class="ai-explain-btn hidden" style="display: none;"
                                 title="Explain Question with ASA AI">
@@ -6472,6 +7337,141 @@
                 <div class="open-book-body">
                     <iframe id="open-book-iframe" src="" allow="autoplay" frameborder="0"></iframe>
                 </div>
+            </div>
+
+            <!-- Quiz Scientific / Floating Calculator (Unobtrusive & Responsive) -->
+            <div id="quiz-calculator" class="quiz-calculator-container" style="display: none;">
+                <!-- Header (Draggable) -->
+                <div class="calc-header" id="quiz-calc-header" title="Drag anywhere (اسحب للتحريك في أي مكان)">
+                    <div class="calc-header-title">
+                        <i class="ri-drag-move-2-line drag-icon" title="Drag to move"></i>
+                        <i class="ri-calculator-line" style="color: var(--accent);"></i>
+                        <span>ASA Calc</span>
+                        <span id="calc-angle-pill" class="calc-mode-pill" onclick="toggleCalcAngleMode()"
+                            title="Toggle DEG / RAD (درجات / راديان)">DEG</span>
+                    </div>
+                    <div class="calc-header-actions">
+                        <button type="button" class="calc-h-btn" id="calc-sci-toggle" onclick="toggleCalcSci()"
+                            title="Scientific Functions (دوال علمية: sin, cos, log, ln, π, e)">
+                            <i class="ri-functions"></i>
+                        </button>
+                        <button type="button" class="calc-h-btn" id="calc-ghost-toggle" onclick="toggleCalcGhost()"
+                            title="Ghost Mode / شفافية (لرؤية السؤال بوضوح تحته)">
+                            <i class="ri-contrast-drop-line"></i>
+                        </button>
+                        <button type="button" class="calc-h-btn" id="calc-hist-toggle" onclick="toggleCalcHistory()"
+                            title="History / سجل الحسابات">
+                            <i class="ri-history-line"></i>
+                        </button>
+                        <button type="button" class="calc-h-btn" onclick="minimizeQuizCalculator()"
+                            title="Minimize / تصغير لأيقونة عائمة">
+                            <i class="ri-subtract-line"></i>
+                        </button>
+                        <button type="button" class="calc-h-btn close" onclick="closeQuizCalculator()"
+                            title="Close / إغلاق">
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Display Box -->
+                <div class="calc-display">
+                    <div class="calc-expr" id="calc-expr-display">&nbsp;</div>
+                    <div class="calc-main-row">
+                        <div class="calc-display-actions">
+                            <button type="button" class="calc-d-btn" id="calc-copy-btn" onclick="copyCalcResult()"
+                                title="Copy Result (نسخ الناتج)">
+                                <i class="ri-file-copy-line"></i>
+                            </button>
+                        </div>
+                        <div class="calc-result" id="calc-result-display">0</div>
+                    </div>
+                </div>
+
+                <!-- Scientific Functions Bar (Toggleable) -->
+                <div class="calc-sci-bar" id="calc-sci-bar">
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('sin')">sin</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('cos')">cos</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('tan')">tan</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('log')">log</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('ln')">ln</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('pi')">π</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('e')">e</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputOp('^')">xʸ</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('recip')">1/x</button>
+                    <button type="button" class="calc-sci-btn" onclick="calcInputFn('parenOpen')">(</button>
+                </div>
+
+                <!-- Standard Keypad Grid (5 columns x 5 rows) -->
+                <div class="calc-grid">
+                    <!-- Row 1 -->
+                    <button type="button" class="calc-key key-danger" onclick="calcClearAll()"
+                        title="All Clear (مسح الكل)">AC</button>
+                    <button type="button" class="calc-key" onclick="calcDelete()" title="Delete (حذف رقم)">⌫</button>
+                    <button type="button" class="calc-key key-fn" onclick="calcInputFn('parenOpen')">(</button>
+                    <button type="button" class="calc-key key-fn" onclick="calcInputFn('parenClose')">)</button>
+                    <button type="button" class="calc-key key-op" onclick="calcInputOp('÷')">÷</button>
+
+                    <!-- Row 2 -->
+                    <button type="button" class="calc-key" onclick="calcInputDigit(7)">7</button>
+                    <button type="button" class="calc-key" onclick="calcInputDigit(8)">8</button>
+                    <button type="button" class="calc-key" onclick="calcInputDigit(9)">9</button>
+                    <button type="button" class="calc-key key-fn" onclick="calcInputFn('percent')">%</button>
+                    <button type="button" class="calc-key key-op" onclick="calcInputOp('×')">×</button>
+
+                    <!-- Row 3 -->
+                    <button type="button" class="calc-key" onclick="calcInputDigit(4)">4</button>
+                    <button type="button" class="calc-key" onclick="calcInputDigit(5)">5</button>
+                    <button type="button" class="calc-key" onclick="calcInputDigit(6)">6</button>
+                    <button type="button" class="calc-key key-fn" onclick="calcInputFn('sqrt')">√</button>
+                    <button type="button" class="calc-key key-op" onclick="calcInputOp('−')">−</button>
+
+                    <!-- Row 4 -->
+                    <button type="button" class="calc-key" onclick="calcInputDigit(1)">1</button>
+                    <button type="button" class="calc-key" onclick="calcInputDigit(2)">2</button>
+                    <button type="button" class="calc-key" onclick="calcInputDigit(3)">3</button>
+                    <button type="button" class="calc-key key-fn" onclick="calcInputFn('sqr')">x²</button>
+                    <button type="button" class="calc-key key-op" onclick="calcInputOp('+')">+</button>
+
+                    <!-- Row 5 -->
+                    <button type="button" class="calc-key key-fn" onclick="calcInputFn('neg')">±</button>
+                    <button type="button" class="calc-key" onclick="calcInputDigit(0)">0</button>
+                    <button type="button" class="calc-key" onclick="calcInputDot()">.</button>
+                    <button type="button" class="calc-key key-fn" onclick="calcInputFn('ans')">Ans</button>
+                    <button type="button" class="calc-key key-eq" onclick="calcEquals()">=</button>
+                </div>
+
+                <!-- History Drawer (Inside Calculator) -->
+                <div class="calc-history-drawer" id="calc-history-drawer">
+                    <div class="calc-history-head">
+                        <span><i class="ri-history-line"></i> Calculation History</span>
+                        <div style="display: flex; gap: 6px;">
+                            <button type="button" class="calc-d-btn" onclick="clearCalcHistory()" title="Clear History"
+                                style="color: #f87171;">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                            <button type="button" class="calc-d-btn" onclick="toggleCalcHistory()"
+                                title="Close History">
+                                <i class="ri-close-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="calc-history-list" id="calc-history-list">
+                        <div style="text-align: center; color: var(--text-gray); font-size: 0.75rem; padding: 20px 0;">
+                            No previous calculations
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Minimized Floating Calculator Pill -->
+            <div id="quiz-calc-pill" class="quiz-calc-pill" onclick="restoreQuizCalculator()"
+                title="Click to open Calculator (اسحب أو اضغط للفتح)">
+                <i class="ri-calculator-line"></i>
+                <span id="quiz-calc-pill-val">Calculator</span>
+                <span class="quiz-calc-pill-close" onclick="closeQuizCalculatorFromPill(event)" title="Close">
+                    <i class="ri-close-line"></i>
+                </span>
             </div>
         </div>
         <div id="view-results" class="view-section">
@@ -6647,6 +7647,12 @@
                                     style="padding:6px 14px; border-radius:8px; border:1px solid #f59e0b; background:rgba(245, 158, 11, 0.2); color:#fbbf24; font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
                                     <i class="ri-time-line"></i> Pending <span id="admin-rep-badge-pending"
                                         style="font-size:0.72rem; opacity:0.85; background:rgba(245,158,11,0.25); padding:1px 6px; border-radius:999px;">0</span>
+                                </button>
+                                <button onclick="adminReportsStatusFilter('common')" id="admin-rep-status-common"
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;"
+                                    title="Questions with multiple reports (Common Reports)">
+                                    <i class="ri-fire-fill" style="color:#ef4444;"></i> Common Reports <span id="admin-rep-badge-common"
+                                        style="font-size:0.72rem; opacity:0.85; background:rgba(239,68,68,0.25); color:#f87171; padding:1px 6px; border-radius:999px;">0</span>
                                 </button>
                                 <button onclick="adminReportsStatusFilter('resolved')" id="admin-rep-status-resolved"
                                     style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
@@ -9950,10 +10956,50 @@
         }
 
         function updateThemeIcons() {
-            const iconClass = AppState.theme === 'light' ? 'ri-moon-fill' : 'ri-sun-fill';
-            document.getElementById('theme-icon').className = iconClass;
-            document.getElementById('theme-icon-quiz').className = iconClass;
+            const theme = AppState.theme || 'dark';
+            let iconClass = 'ri-moon-fill';
+            let iconColor = 'var(--primary-green)';
+            let titleText = 'Theme: Green';
+
+            if (theme === 'black') {
+                iconClass = 'ri-moon-clear-fill';
+                iconColor = '#cbd5e1';
+                titleText = 'Theme: Black';
+            } else if (theme === 'light') {
+                iconClass = 'ri-sun-fill';
+                iconColor = '#f59e0b';
+                titleText = 'Theme: White';
+            }
+
+            const icon1 = document.getElementById('theme-icon');
+            const icon2 = document.getElementById('theme-icon-quiz');
+            const btn1 = document.getElementById('btn-theme-toggle');
+            const btn2 = document.getElementById('btn-theme-toggle-quiz');
+
+            if (icon1) {
+                icon1.className = iconClass;
+                icon1.style.color = iconColor;
+            }
+            if (icon2) {
+                icon2.className = iconClass;
+                icon2.style.color = iconColor;
+            }
+            if (btn1) btn1.title = titleText;
+            if (btn2) btn2.title = titleText;
+
+            // Update active state in picker popover
+            const popover = document.getElementById('theme-picker-popover');
+            if (popover) {
+                popover.querySelectorAll('.theme-option-btn').forEach(b => {
+                    if (b.getAttribute('data-target-theme') === theme) {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
+            }
         }
+        window.updateThemeIcons = updateThemeIcons;
 
         function updateFlashcard() {
             if (flashcards.length === 0) return;
@@ -10006,12 +11052,184 @@
             }, 150);
         }
 
-        function toggleTheme() {
-            AppState.theme = AppState.theme === 'light' ? 'dark' : 'light';
-            document.body.setAttribute('data-theme', AppState.theme);
-            localStorage.setItem('medStormTheme', AppState.theme);
+        window.openThemePicker = function (anchorEl, event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const popover = document.getElementById('theme-picker-popover');
+            if (!popover) return;
+
+            if (popover.style.display === 'flex' && popover._currentAnchor === anchorEl) {
+                popover.style.display = 'none';
+                return;
+            }
+
             updateThemeIcons();
+
+            popover._currentAnchor = anchorEl;
+            popover.style.display = 'flex';
+
+            const rect = anchorEl ? anchorEl.getBoundingClientRect() : { bottom: 60, right: window.innerWidth - 20, top: 20, left: window.innerWidth - 220 };
+            const popoverWidth = 200;
+            let top = rect.bottom + 8;
+            let left = rect.right - popoverWidth;
+
+            if (left < 10) left = 10;
+            if (left + popoverWidth > window.innerWidth - 10) {
+                left = window.innerWidth - popoverWidth - 10;
+            }
+            if (top + 180 > window.innerHeight) {
+                top = Math.max(10, rect.top - 175);
+            }
+
+            popover.style.top = top + 'px';
+            popover.style.left = left + 'px';
+        };
+
+        window.selectTheme = function (targetTheme, event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const popover = document.getElementById('theme-picker-popover');
+            if (popover) popover.style.display = 'none';
+
+            let clickX = window.innerWidth - 60;
+            let clickY = 40;
+            if (event && typeof event.clientX === 'number' && event.clientX > 0) {
+                clickX = event.clientX;
+                clickY = event.clientY;
+            } else if (popover && popover._currentAnchor) {
+                const r = popover._currentAnchor.getBoundingClientRect();
+                clickX = r.left + r.width / 2;
+                clickY = r.top + r.height / 2;
+            }
+
+            if (AppState.theme === targetTheme) return;
+            applyThemeWithInvasion(targetTheme, clickX, clickY);
+        };
+
+        window.cycleTheme = function (event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const order = ['dark', 'black', 'light'];
+            const current = AppState.theme || 'dark';
+            const nextIdx = (order.indexOf(current) + 1) % order.length;
+            const nextTheme = order[nextIdx];
+
+            let clickX = window.innerWidth - 60;
+            let clickY = 40;
+            if (event && typeof event.clientX === 'number' && event.clientX > 0) {
+                clickX = event.clientX;
+                clickY = event.clientY;
+            }
+
+            applyThemeWithInvasion(nextTheme, clickX, clickY);
+        };
+
+        window.toggleTheme = function (event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const btn = (event && event.currentTarget) ? event.currentTarget : document.getElementById('btn-theme-toggle');
+            const popover = document.getElementById('theme-picker-popover');
+
+            if (popover && popover.style.display === 'flex' && popover._currentAnchor === btn) {
+                popover.style.display = 'none';
+                window.cycleTheme(event);
+                return;
+            }
+
+            window.openThemePicker(btn, event);
+        };
+
+        window.applyThemeWithInvasion = function (themeName, clickX, clickY) {
+            const x = typeof clickX === 'number' ? clickX : (window.innerWidth - 60);
+            const y = typeof clickY === 'number' ? clickY : 40;
+            const endRadius = Math.hypot(
+                Math.max(x, window.innerWidth - x),
+                Math.max(y, window.innerHeight - y)
+            );
+
+            const applyThemeState = () => {
+                AppState.theme = themeName;
+                document.body.setAttribute('data-theme', themeName);
+                localStorage.setItem('medStormTheme', themeName);
+                updateThemeIcons();
+            };
+
+            // Use View Transitions API if supported
+            if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                try {
+                    const transition = document.startViewTransition(() => {
+                        applyThemeState();
+                    });
+
+                    transition.ready.then(() => {
+                        const clipPath = [
+                            `circle(0px at ${x}px ${y}px)`,
+                            `circle(${endRadius}px at ${x}px ${y}px)`
+                        ];
+                        document.documentElement.animate(
+                            {
+                                clipPath: clipPath
+                            },
+                            {
+                                duration: 650,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                pseudoElement: '::view-transition-new(root)'
+                            }
+                        );
+                    }).catch(() => {
+                        applyThemeState();
+                    });
+                    return;
+                } catch (e) {
+                    // Fallback to ripple
+                }
+            }
+
+            // Fallback circular wave animation
+            createThemeInvasionRipple(themeName, x, y, endRadius, applyThemeState);
+        };
+
+        function createThemeInvasionRipple(themeName, x, y, maxRadius, onComplete) {
+            const ripple = document.createElement('div');
+            let bg = '#18201C';
+            if (themeName === 'black') bg = '#000000';
+            else if (themeName === 'light') bg = '#F1F5F9';
+
+            ripple.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: ${bg};
+                pointer-events: none;
+                z-index: 99999999;
+                transform: translate(-50%, -50%) scale(1);
+                transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+                box-shadow: 0 0 60px rgba(0,0,0,0.4);
+            `;
+            document.body.appendChild(ripple);
+
+            const targetScale = (maxRadius * 2) / 16;
+            requestAnimationFrame(() => {
+                ripple.style.transform = `translate(-50%, -50%) scale(${targetScale})`;
+            });
+
+            setTimeout(() => {
+                onComplete();
+                ripple.style.opacity = '0';
+                setTimeout(() => {
+                    if (ripple.parentNode) ripple.parentNode.removeChild(ripple);
+                }, 250);
+            }, 450);
         }
+
+        // Close popover when clicking anywhere outside
+        document.addEventListener('click', function (e) {
+            const popover = document.getElementById('theme-picker-popover');
+            if (popover && popover.style.display === 'flex') {
+                if (!popover.contains(e.target) && !e.target.closest('#btn-theme-toggle') && !e.target.closest('#btn-theme-toggle-quiz') && !e.target.closest('.theme-option-btn')) {
+                    popover.style.display = 'none';
+                }
+            }
+        });
 
         async function preloadVotes() {
             Session.cachedVotes = {};
@@ -10126,6 +11344,8 @@
 
             const anyModalActive = document.querySelector('.modal-overlay.active');
             if (anyModalActive) return;
+
+            if (typeof window.isQuizCalculatorActive === 'function' && window.isQuizCalculatorActive()) return;
 
             if (!document.body.classList.contains('focus-mode')) return;
 
@@ -12373,6 +13593,7 @@
             clearQuizCanvas();
             if (typeof toggleOpenBookPdf === 'function') toggleOpenBookPdf(false);
             if (typeof showOpenBookPdfTrigger === 'function') showOpenBookPdfTrigger(false);
+            if (typeof closeQuizCalculator === 'function') closeQuizCalculator();
             if (window.pharmaExamTimer) { clearInterval(window.pharmaExamTimer); window.pharmaExamTimer = null; }
             try { clearInterval(globalStopwatch); } catch (e) { }
             try { clearInterval(Session.timer); } catch (e) { }
@@ -12699,6 +13920,7 @@
             closeExitModal();
             if (typeof toggleOpenBookPdf === 'function') toggleOpenBookPdf(false);
             if (typeof showOpenBookPdfTrigger === 'function') showOpenBookPdfTrigger(false);
+            if (typeof closeQuizCalculator === 'function') closeQuizCalculator();
             if (window.pharmaExamTimer) { clearInterval(window.pharmaExamTimer); window.pharmaExamTimer = null; }
             saveSessionProgress();
             clearInterval(Session.timer);
@@ -14719,6 +15941,140 @@
         }
         window.loadHistoSpotsFromDB = loadHistoSpotsFromDB;
 
+        async function loadFoundPhysioSpotsFromDB(forceRefresh = false) {
+            try {
+                if (!forceRefresh) {
+                    if (window.physiologyFoundSpots && Array.isArray(window.physiologyFoundSpots) && window.physiologyFoundSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_found_physio_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.physiologyFoundSpots = parsed;
+                            window.physioFoundSpots = parsed;
+                            return;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_found_physio_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.physiologyFoundSpots = spots;
+                            window.physioFoundSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_found_physio_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load foundation physio practical spots from DB:", e);
+            }
+        }
+        window.loadFoundPhysioSpotsFromDB = loadFoundPhysioSpotsFromDB;
+
+        async function loadFoundHistoSpotsFromDB(forceRefresh = false) {
+            try {
+                if (!forceRefresh) {
+                    if (window.histologyFoundSpots && Array.isArray(window.histologyFoundSpots) && window.histologyFoundSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_found_histo_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.histologyFoundSpots = parsed;
+                            window.histoFoundSpots = parsed;
+                            return;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_found_histo_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.histologyFoundSpots = spots;
+                            window.histoFoundSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_found_histo_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load foundation histo practical spots from DB:", e);
+            }
+        }
+        window.loadFoundHistoSpotsFromDB = loadFoundHistoSpotsFromDB;
+
+        async function loadFoundBioSpotsFromDB(forceRefresh = false) {
+            try {
+                if (!forceRefresh) {
+                    if (window.biochemistryFoundSpots && Array.isArray(window.biochemistryFoundSpots) && window.biochemistryFoundSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_found_bio_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.biochemistryFoundSpots = parsed;
+                            window.bioFoundSpots = parsed;
+                            return;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_found_bio_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.biochemistryFoundSpots = spots;
+                            window.bioFoundSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_found_bio_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load foundation bio practical spots from DB:", e);
+            }
+        }
+        window.loadFoundBioSpotsFromDB = loadFoundBioSpotsFromDB;
+
+        async function loadFoundAnatomySpotsFromDB(forceRefresh = false) {
+            try {
+                if (!forceRefresh) {
+                    if (window.anatomyFoundSpots && Array.isArray(window.anatomyFoundSpots) && window.anatomyFoundSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_found_anatomy_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.anatomyFoundSpots = parsed;
+                            return;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_found_anatomy_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.anatomyFoundSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_found_anatomy_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load foundation anatomy practical spots from DB:", e);
+            }
+        }
+        window.loadFoundAnatomySpotsFromDB = loadFoundAnatomySpotsFromDB;
+
         window.setPracticalYear = function (year) {
             window.currentPracticalYear = String(year);
             _fcShowCover();
@@ -14742,10 +16098,14 @@
             const p7 = typeof loadAnatomySpotsFromDB === 'function' ? loadAnatomySpotsFromDB() : Promise.resolve();
             const p8 = typeof loadAtlasSpotsFromDB === 'function' ? loadAtlasSpotsFromDB() : Promise.resolve();
             const p9 = typeof loadHistoSpotsFromDB === 'function' ? loadHistoSpotsFromDB() : Promise.resolve();
-            Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9]).then(() => {
+            const p10 = typeof loadFoundPhysioSpotsFromDB === 'function' ? loadFoundPhysioSpotsFromDB() : Promise.resolve();
+            const p11 = typeof loadFoundHistoSpotsFromDB === 'function' ? loadFoundHistoSpotsFromDB() : Promise.resolve();
+            const p12 = typeof loadFoundBioSpotsFromDB === 'function' ? loadFoundBioSpotsFromDB() : Promise.resolve();
+            const p13 = typeof loadFoundAnatomySpotsFromDB === 'function' ? loadFoundAnatomySpotsFromDB() : Promise.resolve();
+            Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13]).then(() => {
                 const curY = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
                 const inSession = Boolean(document.getElementById('para-session-wrap'));
-                if (!inSession && (curY === '3' || curY === '2')) _fcShowCover();
+                if (!inSession && (curY === '3' || curY === '2' || curY === '1')) _fcShowCover();
             }).catch(() => { });
 
             if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
@@ -14956,6 +16316,165 @@
                 return;
             }
 
+            if (curYear === '1') {
+                const foundPhysioList = (window.physiologyFoundSpots && window.physiologyFoundSpots.length) ? window.physiologyFoundSpots : ((window.physioFoundSpots && window.physioFoundSpots.length) ? window.physioFoundSpots : ((window.physiologySlides && window.physiologySlides.length) ? window.physiologySlides : []));
+                const foundPhysioSpotsCount = foundPhysioList.length || 18;
+                let foundPhysioTotalQs = 18;
+                if (foundPhysioList.length > 0) {
+                    let counted = 0;
+                    foundPhysioList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) foundPhysioTotalQs = counted;
+                }
+
+                const foundHistoList = (window.histologyFoundSpots && window.histologyFoundSpots.length) ? window.histologyFoundSpots : ((window.histoFoundSpots && window.histoFoundSpots.length) ? window.histoFoundSpots : ((window.histologySlides && window.histologySlides.length) ? window.histologySlides : []));
+                const foundHistoSpotsCount = foundHistoList.length || 75;
+                let foundHistoTotalQs = 75;
+                if (foundHistoList.length > 0) {
+                    let counted = 0;
+                    foundHistoList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) foundHistoTotalQs = counted;
+                }
+
+                const foundBioList = (window.biochemistryFoundSpots && window.biochemistryFoundSpots.length) ? window.biochemistryFoundSpots : ((window.bioFoundSpots && window.bioFoundSpots.length) ? window.bioFoundSpots : ((window.biochemistrySlides && window.biochemistrySlides.length) ? window.biochemistrySlides : []));
+                const foundBioSpotsCount = foundBioList.length || 72;
+                let foundBioTotalQs = 124;
+                if (foundBioList.length > 0) {
+                    let counted = 0;
+                    foundBioList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) foundBioTotalQs = counted;
+                }
+
+                const foundAnatomyList = (window.anatomyFoundSpots && window.anatomyFoundSpots.length) ? window.anatomyFoundSpots : ((window.anatomySlides && window.anatomySlides.length) ? window.anatomySlides : []);
+                const foundAnatomySpotsCount = foundAnatomyList.length || 13;
+                let foundAnatomyTotalQs = 19;
+                if (foundAnatomyList.length > 0) {
+                    let counted = 0;
+                    foundAnatomyList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) foundAnatomyTotalQs = counted;
+                }
+
+                container.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.4rem;">🔬 1st Year Practical Exams</h2>
+                        <p style="color: var(--text-gray); font-size: 0.95rem; margin: 0;">Interactive spot-by-spot exams with question steps, answers, image zooming, and self-evaluation.</p>
+                    </div>
+
+                    <!-- Foundation Big Card Container -->
+                    <div class="egu-big-card foundation-big-card" style="width: 100%; max-width: 1520px; margin: 0 auto; background: linear-gradient(145deg, rgba(31, 41, 36, 0.6) 0%, rgba(15, 23, 42, 0.75) 100%); border: 1.5px solid rgba(34, 197, 94, 0.35); border-radius: 24px; padding: 28px 24px 34px 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08); position: relative;">
+                        <!-- Foundation Big Card Header -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-left: 8px; padding-right: 8px;">
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #22c55e, #15803d); display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 8px 22px rgba(34, 197, 94, 0.35); border: 1px solid rgba(255, 255, 255, 0.15);">🩺</div>
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                        <h3 style="font-size: 1.6rem; font-weight: 800; color: #f8fafc; margin: 0;">🩺 Foundation Practical</h3>
+                                        <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); padding: 3px 12px; border-radius: 20px; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.5px;">FOUNDATION MODULE</span>
+                                    </div>
+                                    <p style="color: var(--text-gray); font-size: 0.92rem; margin: 4px 0 0 0;"></p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--border-color); padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                                    <i class="ri-stack-line" style="color: var(--accent);"></i> 4 Subjects
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Cards Flex Row Inside Big Foundation -->
+                        <div style="display: flex; justify-content: center; align-items: stretch; gap: 24px; flex-wrap: wrap; width: 100%; margin: 0 auto; padding: 10px 0;">
+                            <!-- PHYSIO Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${foundPhysioSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetFoundPhysioSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('found_physio')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #2b1d0c 0%, #150e05 100%); border: 1.5px solid #f59e0b; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(245, 158, 11, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">${foundPhysioSpotsCount > 0 ? `${foundPhysioSpotsCount} spots • ${foundPhysioTotalQs} Qs` : '⚡ Physiology'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">⚡</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">⚡ PHYSIO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Foundation Physiology Stations</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('found_physio')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);">
+                                    <i class="ri-play-fill"></i> Start PHYSIO Practical
+                                </button>
+                            </div>
+
+                            <!-- HISTO Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${foundHistoSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetFoundHistoSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('found_histo')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #2b1120 0%, #170912 100%); border: 1.5px solid #ec4899; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(236, 72, 153, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4);">${foundHistoSpotsCount > 0 ? `${foundHistoSpotsCount} spots • ${foundHistoTotalQs} Qs` : '🔬 Histology'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🔬</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🔬 HISTO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Foundation Histology Spots &amp; Slides</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('found_histo')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #ec4899, #be185d); box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);">
+                                    <i class="ri-play-fill"></i> Start HISTO Practical
+                                </button>
+                            </div>
+
+                            <!-- BIO Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${foundBioSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetFoundBioSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('found_bio')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #0c2333 0%, #06131c 100%); border: 1.5px solid #0ea5e9; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(14, 165, 233, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4);">${foundBioSpotsCount > 0 ? `${foundBioSpotsCount} spots • ${foundBioTotalQs} Qs` : '🧪 Biochemistry'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🧪</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🧪 BIO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Foundation Biochemistry Spots</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('found_bio')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);">
+                                    <i class="ri-play-fill"></i> Start Practical Session
+                                </button>
+                            </div>
+
+                            <!-- ANATOMY Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${foundAnatomySpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetFoundAnatomySpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('found_anatomy')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #241432 0%, #130a1c 100%); border: 1.5px solid #a855f7; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(168, 85, 247, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4);">${foundAnatomySpotsCount > 0 ? `${foundAnatomySpotsCount} spots • ${foundAnatomyTotalQs} Qs` : '🦴 Anatomy'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦴</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🦴 ANATOMY Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Foundation Anatomy &amp; Bones</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('found_anatomy')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #a855f7, #7e22ce); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);">
+                                    <i class="ri-play-fill"></i> Start ANATOMY Practical
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
             if (curYear !== '3') {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 4rem 1.5rem; color: #94a3b8; max-width: 500px; margin: 2rem auto;">
@@ -15144,6 +16663,47 @@
         window.startPhysioSpotsSession = (force) => startPracticalSession('physio', force);
         window.startAnatomySpotsSession = (force) => startPracticalSession('anatomy', force);
         window.startAtlasSpotsSession = (force) => startPracticalSession('atlas', force);
+
+        function resetFoundBioSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Foundation Biochemistry Practical progress?")) return;
+            localStorage.removeItem('medStorm_found_bio_progress');
+            if (window.showToast) window.showToast('Foundation Biochemistry progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetFoundBioSpotsProgress = resetFoundBioSpotsProgress;
+
+        function resetFoundHistoSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Foundation Histology Practical progress?")) return;
+            localStorage.removeItem('medStorm_found_histo_progress');
+            if (window.showToast) window.showToast('Foundation Histology progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetFoundHistoSpotsProgress = resetFoundHistoSpotsProgress;
+
+        function resetFoundPhysioSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Foundation Physiology Practical progress?")) return;
+            localStorage.removeItem('medStorm_found_physio_progress');
+            if (window.showToast) window.showToast('Foundation Physiology progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetFoundPhysioSpotsProgress = resetFoundPhysioSpotsProgress;
+
+        function resetFoundAnatomySpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Foundation Anatomy Practical progress?")) return;
+            localStorage.removeItem('medStorm_found_anatomy_progress');
+            if (window.showToast) window.showToast('Foundation Anatomy progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetFoundAnatomySpotsProgress = resetFoundAnatomySpotsProgress;
+
+        window.startFoundBioSpotsSession = (force) => startPracticalSession('found_bio', force);
+        window.startFoundHistoSpotsSession = (force) => startPracticalSession('found_histo', force);
+        window.startFoundPhysioSpotsSession = (force) => startPracticalSession('found_physio', force);
+        window.startFoundAnatomySpotsSession = (force) => startPracticalSession('found_anatomy', force);
 
         function resetParaSpotsProgress(event) {
             if (event) event.stopPropagation();
@@ -15405,23 +16965,33 @@
         }
 
         function startPracticalSession(type = 'parasitology', forceRestart = false) {
-            const curYear = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
-            const isBio = (type === 'bio' || type === 'biochemistry');
-            const isHisto = (type === 'histo' || type === 'histology');
-            const isPhysio = (type === 'physio' || type === 'physiology');
-            const isAnatomy = (type === 'anatomy');
+            const curYear = String(window.currentPracticalYear || (AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
+            const isBio = (type === 'bio' || type === 'biochemistry' || type === 'found_bio');
+            const isHisto = (type === 'histo' || type === 'histology' || type === 'found_histo');
+            const isPhysio = (type === 'physio' || type === 'physiology' || type === 'found_physio');
+            const isAnatomy = (type === 'anatomy' || type === 'found_anatomy');
             const isAtlas = (type === 'atlas' || type === 'atlas_anatomy' || type === 'anatomy_atlas');
-            const isYear2 = (isBio || isHisto || isPhysio || isAnatomy || isAtlas);
 
+            const isFoundType = (type.startsWith('found_'));
+            const isYear1Target = (curYear === '1' || isFoundType);
+
+            const isYear1 = (isBio || isHisto || isPhysio || isAnatomy);
+            const isYear2 = (isBio || isHisto || isPhysio || isAnatomy || isAtlas);
+            const isYear3 = (type === 'parasitology' || type === 'microbiology' || type === 'simulation');
+
+            if (curYear === '1' && !isYear1) {
+                alert("There is no practical questions available.");
+                return;
+            }
             if (curYear === '2' && !isYear2) {
                 alert("There is no practical questions available.");
                 return;
             }
-            if (curYear === '3' && isYear2) {
+            if (curYear === '3' && !isYear3) {
                 alert("There is no practical questions available.");
                 return;
             }
-            if (curYear !== '3' && curYear !== '2') {
+            if (curYear !== '1' && curYear !== '2' && curYear !== '3') {
                 alert("There is no practical questions available.");
                 return;
             }
@@ -15435,7 +17005,33 @@
             let sessionTitle = '🦠 Parasitology Practical';
             let sessionIcon = '🦠';
 
-            if (isMicro) {
+            if (isYear1Target) {
+                if (isPhysio) {
+                    targetVar = 'physiologyFoundSpots';
+                    scriptSrc = 'physiology found.js';
+                    storageKey = 'medStorm_found_physio_progress';
+                    sessionTitle = '⚡ PHYSIO Practical (Foundation)';
+                    sessionIcon = '⚡';
+                } else if (isHisto) {
+                    targetVar = 'histologyFoundSpots';
+                    scriptSrc = 'histology found.js';
+                    storageKey = 'medStorm_found_histo_progress';
+                    sessionTitle = '🔬 HISTO Practical (Foundation)';
+                    sessionIcon = '🔬';
+                } else if (isBio) {
+                    targetVar = 'biochemistryFoundSpots';
+                    scriptSrc = 'biochemistry found.js';
+                    storageKey = 'medStorm_found_bio_progress';
+                    sessionTitle = '🧪 BIO Practical (Foundation)';
+                    sessionIcon = '🧪';
+                } else if (isAnatomy) {
+                    targetVar = 'anatomyFoundSpots';
+                    scriptSrc = 'anatomy found.js';
+                    storageKey = 'medStorm_found_anatomy_progress';
+                    sessionTitle = '🦴 ANATOMY Practical (Foundation)';
+                    sessionIcon = '🦴';
+                }
+            } else if (isMicro) {
                 targetVar = 'microbiologySpots';
                 scriptSrc = 'practical_microbiology.js';
                 storageKey = 'medStorm_micro_progress';
@@ -15480,20 +17076,35 @@
             }
 
             let spots = window[targetVar];
-            if (isHisto && (!spots || !Array.isArray(spots) || spots.length === 0)) {
-                spots = window.histoslides || window.histoSpots || window.histoSlides;
-            }
-            if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
-                spots = window.physiologySpots || window.physioSpots;
-            }
-            if (isAtlas && (!spots || !Array.isArray(spots) || spots.length === 0)) {
-                spots = window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots;
+            if (isYear1Target) {
+                if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.physiologyFoundSpots || window.physioFoundSpots || window.physiologySlides;
+                }
+                if (isHisto && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.histologyFoundSpots || window.histoFoundSpots || window.histologySlides;
+                }
+                if (isBio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.biochemistryFoundSpots || window.bioFoundSpots || window.biochemistrySlides;
+                }
+                if (isAnatomy && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.anatomyFoundSpots || window.anatomySlides;
+                }
+            } else {
+                if (isHisto && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.histoslides || window.histoSpots || window.histoSlides;
+                }
+                if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.physiologySpots || window.physioSpots;
+                }
+                if (isAtlas && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots;
+                }
             }
             if (!spots || !Array.isArray(spots) || spots.length === 0) {
                 const s = document.createElement('script');
                 s.src = scriptSrc;
                 s.onload = () => {
-                    const loaded = window[targetVar] || (isHisto ? (window.histoslides || window.histoSpots || window.histoSlides) : (isPhysio ? (window.physiologySpots || window.physioSpots) : (isAtlas ? (window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots) : null)));
+                    const loaded = window[targetVar] || (isYear1Target ? (isPhysio ? (window.physiologyFoundSpots || window.physioFoundSpots || window.physiologySlides) : (isHisto ? (window.histologyFoundSpots || window.histoFoundSpots || window.histologySlides) : (isBio ? (window.biochemistryFoundSpots || window.bioFoundSpots || window.biochemistrySlides) : (window.anatomyFoundSpots || window.anatomySlides)))) : (isHisto ? (window.histoslides || window.histoSpots || window.histoSlides) : (isPhysio ? (window.physiologySpots || window.physioSpots) : (isAtlas ? (window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots) : null))));
                     if (loaded && loaded.length > 0) {
                         startPracticalSession(type, forceRestart);
                     } else {
@@ -15523,6 +17134,7 @@
                         paraSessionState.type = type;
                         paraSessionState.title = sessionTitle;
                         paraSessionState.icon = sessionIcon;
+                        paraSessionState.storageKey = storageKey;
                         paraSessionState.showAnswer = false;
                         if (isSim) {
                             if (data.startTime && data.durationSec) {
@@ -15547,6 +17159,7 @@
                 type: type,
                 title: sessionTitle,
                 icon: sessionIcon,
+                storageKey: storageKey,
                 spots: shuffle(spots),
                 spotIdx: 0,
                 qIdx: 0,
@@ -15567,19 +17180,27 @@
 
         function _saveParaProgress() {
             try {
-                let key = 'medStorm_para_progress';
-                if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
-                else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
-                else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
-                else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
-                else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
-                else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
-                else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
+                let key = paraSessionState.storageKey;
+                if (!key) {
+                    if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
+                    else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
+                    else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
+                    else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
+                    else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
+                    else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
+                    else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
+                    else if (paraSessionState.type === 'found_bio') key = 'medStorm_found_bio_progress';
+                    else if (paraSessionState.type === 'found_histo') key = 'medStorm_found_histo_progress';
+                    else if (paraSessionState.type === 'found_physio') key = 'medStorm_found_physio_progress';
+                    else if (paraSessionState.type === 'found_anatomy') key = 'medStorm_found_anatomy_progress';
+                    else key = 'medStorm_para_progress';
+                }
 
                 localStorage.setItem(key, JSON.stringify({
                     type: paraSessionState.type,
                     title: paraSessionState.title,
                     icon: paraSessionState.icon,
+                    storageKey: paraSessionState.storageKey,
                     spots: paraSessionState.spots,
                     spotIdx: paraSessionState.spotIdx,
                     qIdx: paraSessionState.qIdx,
@@ -15639,10 +17260,10 @@
 
                 const isMicro = paraSessionState.type === 'microbiology';
                 const isSim = paraSessionState.type === 'simulation';
-                const isBio = paraSessionState.type === 'bio';
-                const isHisto = paraSessionState.type === 'histo';
-                const isPhysio = paraSessionState.type === 'physio';
-                const isAnatomy = paraSessionState.type === 'anatomy';
+                const isBio = (paraSessionState.type === 'bio' || paraSessionState.type === 'found_bio' || paraSessionState.type === 'biochemistry');
+                const isHisto = (paraSessionState.type === 'histo' || paraSessionState.type === 'found_histo' || paraSessionState.type === 'histology');
+                const isPhysio = (paraSessionState.type === 'physio' || paraSessionState.type === 'found_physio' || paraSessionState.type === 'physiology');
+                const isAnatomy = (paraSessionState.type === 'anatomy' || paraSessionState.type === 'found_anatomy');
                 const isAtlas = (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy');
 
                 const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : '';
@@ -15654,7 +17275,11 @@
                     currentSpot.imageAsAnswer ||
                     currentQ.isAnswerImage ||
                     currentQ.imageAsAnswer ||
-                    (isBio && (
+                    rawImg.includes('eccrine_vs_apocrine_table.webp') ||
+                    rawImg.includes('tonic_vs_phasic_table.webp') ||
+                    rawImg.includes('eda_mechanism_flowchart.webp') ||
+                    rawImg.includes('starch_hydrolysis_steps.webp') ||
+                    (isBio && !paraSessionState.type.startsWith('found_') && (
                         rawImg.includes('spot4.webp') ||
                         rawImg.includes('spot5.webp') ||
                         rawImg.includes('spot6.webp') ||
@@ -15706,7 +17331,13 @@
 
                 const qText = (isBio && rawImg.includes('spot47.webp')) ? '' : (currentQ.question || '');
                 const hasQText = Boolean(qText && String(qText).trim());
-                const currentAnsStr = String(currentQ.answer || '');
+                let currentAnsStr = String(currentQ.answer || '');
+                if (rawImg.includes('eccrine_vs_apocrine_table.webp') ||
+                    rawImg.includes('tonic_vs_phasic_table.webp') ||
+                    rawImg.includes('eda_mechanism_flowchart.webp') ||
+                    rawImg.includes('starch_hydrolysis_steps.webp')) {
+                    currentAnsStr = '';
+                }
 
                 const progressPct = Math.round(((paraSessionState.spotIdx) / totalSpots) * 100);
                 let badgeThemeColor = isMicro ? '#34d399' : '#60a5fa';
@@ -15989,14 +17620,21 @@
 
         function paraFinishSession() {
             if (simTimerInterval) { clearInterval(simTimerInterval); simTimerInterval = null; }
-            let key = 'medStorm_para_progress';
-            if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
-            else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
-            else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
-            else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
-            else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
-            else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
-            else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
+            let key = paraSessionState.storageKey;
+            if (!key) {
+                if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
+                else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
+                else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
+                else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
+                else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
+                else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
+                else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
+                else if (paraSessionState.type === 'found_bio') key = 'medStorm_found_bio_progress';
+                else if (paraSessionState.type === 'found_histo') key = 'medStorm_found_histo_progress';
+                else if (paraSessionState.type === 'found_physio') key = 'medStorm_found_physio_progress';
+                else if (paraSessionState.type === 'found_anatomy') key = 'medStorm_found_anatomy_progress';
+                else key = 'medStorm_para_progress';
+            }
             localStorage.removeItem(key);
             if (typeof showConfetti === 'function') showConfetti();
             _renderParaCompletionView();
@@ -16014,10 +17652,10 @@
 
             const isMicro = paraSessionState.type === 'microbiology';
             const isSim = paraSessionState.type === 'simulation';
-            const isBio = paraSessionState.type === 'bio';
-            const isHisto = paraSessionState.type === 'histo';
-            const isPhysio = paraSessionState.type === 'physio';
-            const isAnatomy = paraSessionState.type === 'anatomy';
+            const isBio = (paraSessionState.type === 'bio' || paraSessionState.type === 'found_bio' || paraSessionState.type === 'biochemistry');
+            const isHisto = (paraSessionState.type === 'histo' || paraSessionState.type === 'found_histo' || paraSessionState.type === 'histology');
+            const isPhysio = (paraSessionState.type === 'physio' || paraSessionState.type === 'found_physio' || paraSessionState.type === 'physiology');
+            const isAnatomy = (paraSessionState.type === 'anatomy' || paraSessionState.type === 'found_anatomy');
             const isAtlas = (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy');
 
             const totalSpots = paraSessionState.spots ? paraSessionState.spots.length : (isSim ? 20 : (isMicro ? 111 : (isBio ? 68 : 58)));
@@ -16039,19 +17677,19 @@
                 color = '#c084fc';
                 btnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
             } else if (isBio) {
-                name = 'Biochemistry Practical';
+                name = (paraSessionState.type === 'found_bio' ? 'Biochemistry Practical (Foundation)' : 'Biochemistry Practical');
                 color = '#38bdf8';
                 btnGradient = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
             } else if (isHisto) {
-                name = 'Histology Practical';
+                name = (paraSessionState.type === 'found_histo' ? 'Histology Practical (Foundation)' : 'Histology Practical');
                 color = '#ec4899';
                 btnGradient = 'linear-gradient(135deg, #ec4899, #be185d)';
             } else if (isPhysio) {
-                name = 'Physiology Practical';
+                name = (paraSessionState.type === 'found_physio' ? 'Physiology Practical (Foundation)' : 'Physiology Practical');
                 color = '#f59e0b';
                 btnGradient = 'linear-gradient(135deg, #f59e0b, #d97706)';
             } else if (isAnatomy) {
-                name = 'Anatomy Practical';
+                name = (paraSessionState.type === 'found_anatomy' ? 'Anatomy Practical (Foundation)' : 'Anatomy Practical');
                 color = '#a855f7';
                 btnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
             } else if (isAtlas) {
@@ -16777,6 +18415,7 @@
                     footerBtn.style.color = 'var(--primary-red)';
                     footerBtn.style.borderColor = 'var(--primary-red)';
                     footerBtn.style.background = 'rgba(239, 68, 68, 0.15)';
+                    footerBtn.style.zIndex = '99995';
                 }
             } else {
                 if (canvas) {
@@ -16792,6 +18431,7 @@
                     footerBtn.style.color = '';
                     footerBtn.style.borderColor = '';
                     footerBtn.style.background = '';
+                    footerBtn.style.zIndex = '';
                 }
             }
         }
@@ -16888,7 +18528,7 @@
                     return;
                 }
             }
-            if (e.target && e.target.closest('#drawing-toolbar')) {
+            if (e.target && e.target.closest('#drawing-toolbar, #quiz-calculator, #quiz-calc-pill')) {
                 return;
             }
             if (e.cancelable) e.preventDefault();
@@ -17084,7 +18724,7 @@
                 } catch (e) { }
 
                 renderList(players);
-                window.unsubscribeLeaderboard = () => {};
+                window.unsubscribeLeaderboard = () => { };
             } catch (e) {
                 console.error("Global leaderboard error:", e);
                 if (!cachedPlayers) {
@@ -17501,7 +19141,7 @@
 
         function adminReportsStatusFilter(status) {
             currentReportsStatusFilter = status;
-            ['pending', 'resolved', 'all'].forEach(s => {
+            ['pending', 'common', 'resolved', 'all'].forEach(s => {
                 const btn = document.getElementById('admin-rep-status-' + s);
                 if (btn) {
                     const isActive = s === status;
@@ -17512,6 +19152,10 @@
                         activeBg = 'rgba(245, 158, 11, 0.2)';
                         activeColor = '#fbbf24';
                         activeBorder = '#f59e0b';
+                    } else if (s === 'common') {
+                        activeBg = 'rgba(239, 68, 68, 0.2)';
+                        activeColor = '#f87171';
+                        activeBorder = '#ef4444';
                     } else if (s === 'resolved') {
                         activeBg = 'rgba(16, 185, 129, 0.2)';
                         activeColor = '#10b981';
@@ -17528,7 +19172,7 @@
         window.adminReportsStatusFilter = adminReportsStatusFilter;
 
         window.adminReportsFilter = function (filter) {
-            if (filter === 'pending' || filter === 'all' || filter === 'resolved') {
+            if (filter === 'pending' || filter === 'common' || filter === 'all' || filter === 'resolved') {
                 adminReportsStatusFilter(filter);
             } else if (filter === '1' || filter === '2') {
                 adminReportsYearFilter(filter);
@@ -17542,6 +19186,183 @@
         }
         window.handleAdminReportsSearch = handleAdminReportsSearch;
 
+        function renderCommonReportCard(g) {
+            const firstRep = g.reports[0] || {};
+            const totalCount = g.reports.length;
+            const pendingReports = g.reports.filter(r => (r.status || 'pending') === 'pending');
+            const pendingCount = pendingReports.length;
+            const isAllResolved = (pendingCount === 0);
+            const statusColor = isAllResolved ? '#10b981' : '#ef4444';
+            const statusBg = isAllResolved ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+            const repYear = g.year || getReportYear(firstRep);
+            const isYear2 = repYear === '2';
+
+            const meta = typeof findQuestionMetadata === 'function' ? findQuestionMetadata(g.question, firstRep.module) : null;
+            const subjectName = (meta && meta.subject) ? meta.subject : (firstRep.subject || '');
+            const chapterName = (meta && meta.chapter) ? meta.chapter : (firstRep.chapter || '');
+            const options = (meta && meta.options && meta.options.length > 0) ? meta.options : ((firstRep.options && Array.isArray(firstRep.options) && firstRep.options.length > 0) ? firstRep.options : []);
+            const correctIndex = (meta && typeof meta.correctIndex === 'number') ? meta.correctIndex : (typeof firstRep.correctIndex === 'number' ? firstRep.correctIndex : null);
+            const correctAns = (meta && meta.correctAnswer) ? meta.correctAnswer : (firstRep.correctAnswer || '');
+            const qImage = (meta && meta.image) ? meta.image : (firstRep.image || '');
+
+            let sectionParts = [];
+            if (subjectName) sectionParts.push(subjectName);
+            if (chapterName && chapterName !== subjectName) sectionParts.push(chapterName);
+            const sectionBreadcrumb = sectionParts.join(' ▸ ');
+
+            let optionsHtml = '';
+            if (options && options.length > 0) {
+                optionsHtml = `
+                    <div style="margin-top:10px;">
+                        <div style="font-size:0.75rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Choices:</div>
+                        <div style="display:grid; grid-template-columns:1fr; gap:6px;">
+                            ${options.map((opt, oIdx) => {
+                                const letter = String.fromCharCode(65 + oIdx);
+                                const isCorrect = (correctIndex === oIdx) || (String(opt).trim() === String(correctAns).trim());
+                                return `
+                                    <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 12px; border-radius:8px; font-size:0.86rem; line-height:1.45; ${isCorrect ? 'background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.4); color:var(--text-light); font-weight:600;' : 'background:rgba(255,255,255,0.02); border:1px solid var(--border-color); color:var(--text-gray);'}">
+                                        <span style="font-weight:800; min-width:20px; color:${isCorrect ? '#10b981' : 'var(--text-gray)'};">${letter}.</span>
+                                        <span style="flex:1;">${escapeHTML(opt)}</span>
+                                        ${isCorrect ? '<span style="font-size:0.7rem; background:#10b981; color:#fff; padding:1px 7px; border-radius:999px; font-weight:700; white-space:nowrap; margin-left:6px;"><i class="ri-check-line"></i> Correct</span>' : ''}
+                                    </div>`;
+                            }).join('')}
+                        </div>
+                    </div>`;
+            } else if (correctAns) {
+                optionsHtml = `
+                    <div style="margin-top:8px; display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:8px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); color:#34d399; font-size:0.82rem; font-weight:700;">
+                        <i class="ri-checkbox-circle-fill"></i> Correct answer: ${escapeHTML(correctAns)}
+                    </div>`;
+            }
+
+            const imgHtml = qImage ? `
+                <div style="margin-top:10px;">
+                    <img src="${escapeHTML(qImage)}" alt="Question Image" style="max-height:140px; border-radius:8px; border:1px solid var(--border-color); object-fit:contain; background:#000; cursor:pointer;" onclick="window.open('${escapeHTML(qImage)}', '_blank')" title="Click to open full image">
+                </div>` : '';
+
+            const reportsListHtml = g.reports.map(r => {
+                const isRepResolved = r.status === 'resolved';
+                const timeAgoStr = typeof timeAgo === 'function' && r.createdAt ? timeAgo(r.createdAt) : (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'Unknown');
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:8px 12px; border-radius:8px; background:rgba(0,0,0,0.22); border:1px solid rgba(255,255,255,0.06);">
+                        <div style="flex:1;">
+                            <div style="font-size:0.8rem; font-weight:700; color:var(--text-light); display:inline-flex; align-items:center; gap:6px;">
+                                <i class="ri-user-smile-line" style="color:var(--accent);"></i> ${escapeHTML(r.username || 'Anonymous')}
+                                <span style="font-size:0.72rem; font-weight:400; color:var(--text-gray);">· ${timeAgoStr}</span>
+                                ${r.userEmail ? `<span style="font-size:0.7rem; color:var(--text-gray); opacity:0.8;">(${escapeHTML(r.userEmail)})</span>` : ''}
+                            </div>
+                            <div style="font-size:0.9rem; color:#fef08a; margin-top:4px; line-height:1.45; font-weight:500;">
+                                "${escapeHTML(r.reason || 'No specific reason given.')}"
+                            </div>
+                        </div>
+                        <span style="font-size:0.7rem; padding:2px 8px; border-radius:999px; font-weight:700; white-space:nowrap; ${isRepResolved ? 'background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3);' : 'background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3);'}">
+                            <i class="${isRepResolved ? 'ri-checkbox-circle-fill' : 'ri-time-line'}"></i> ${r.status || 'pending'}
+                        </span>
+                    </div>`;
+            }).join('');
+
+            return `
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid ${statusColor}; border-radius:14px; padding:1.25rem 1.4rem; box-shadow:0 3px 14px rgba(0,0,0,0.08); transition:all 0.2s ease;">
+                <!-- Header Bar -->
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                        <!-- Common Fire Badge -->
+                        <span style="font-size:0.78rem; background:rgba(239,68,68,0.18); color:#f87171; border:1.5px solid rgba(239,68,68,0.45); padding:3px 11px; border-radius:999px; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 0 10px rgba(239,68,68,0.15);">
+                            <i class="ri-fire-fill" style="color:#ef4444;"></i> ${totalCount} Reports ${pendingCount > 0 ? `(${pendingCount} Pending)` : ''}
+                        </span>
+                        <!-- Year Badge -->
+                        <span style="font-size:0.75rem; background:${isYear2 ? 'rgba(168,85,247,0.15)' : 'rgba(59,130,246,0.15)'}; color:${isYear2 ? '#c084fc' : '#60a5fa'}; border:1px solid ${isYear2 ? 'rgba(168,85,247,0.35)' : 'rgba(59,130,246,0.35)'}; padding:2px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="ri-graduation-cap-line"></i> Year ${repYear}
+                        </span>
+                        <!-- Module Badge -->
+                        <span style="font-size:0.75rem; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:2px 9px; border-radius:999px; font-weight:700;">
+                            📚 ${escapeHTML(firstRep.module || 'Unknown module')}
+                        </span>
+                        <!-- Section / Chapter Breadcrumb -->
+                        ${sectionBreadcrumb ? `
+                        <span style="font-size:0.75rem; background:var(--bg-darker); color:var(--text-light); border:1px solid var(--border-color); padding:2px 10px; border-radius:999px; font-weight:600; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="ri-folder-line" style="color:var(--accent);"></i> ${escapeHTML(sectionBreadcrumb)}
+                        </span>` : ''}
+                        <!-- Overall Status Badge -->
+                        <span style="font-size:0.75rem; background:${statusBg}; color:${statusColor}; border:1px solid ${statusColor}40; padding:2px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="${isAllResolved ? 'ri-checkbox-circle-fill' : 'ri-time-line'}"></i> ${isAllResolved ? 'All Resolved' : `${pendingCount} Pending`}
+                        </span>
+                    </div>
+
+                    <div style="font-size:0.75rem; color:var(--text-gray); font-weight:600;">
+                        Grouped Reports
+                    </div>
+                </div>
+
+                <!-- Student Feedback Box -->
+                <div style="background:rgba(245, 158, 11, 0.08); border:1px solid rgba(245, 158, 11, 0.28); border-radius:10px; padding:12px 14px; margin-bottom:12px;">
+                    <div style="font-size:0.76rem; font-weight:800; color:#fbbf24; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; justify-content:space-between; gap:5px; margin-bottom:8px;">
+                        <span style="display:inline-flex; align-items:center; gap:5px;">
+                            <i class="ri-feedback-line" style="font-size:0.95rem;"></i> Student Feedback & Reasons (${totalCount}):
+                        </span>
+                        <span style="font-size:0.72rem; font-weight:700; color:#a5f3fc;"><i class="ri-magic-line"></i> Editing question will resolve all ${totalCount} reports</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        ${reportsListHtml}
+                    </div>
+                </div>
+
+                <!-- Question Content -->
+                <div style="background:var(--bg-darker); border:1px solid var(--border-color); border-radius:10px; padding:12px 14px; margin-bottom:12px;">
+                    <div style="font-size:0.76rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+                        <i class="ri-question-line" style="color:var(--accent);"></i> Question Text:
+                    </div>
+                    <div style="font-size:0.94rem; color:var(--text-light); font-weight:600; line-height:1.55;">
+                        ${escapeHTML(g.question || 'N/A')}
+                    </div>
+                    ${imgHtml}
+                    ${optionsHtml}
+                </div>
+
+                <!-- Action Buttons Toolbar -->
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid var(--border-color); padding-top:10px;">
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                        <!-- Fix in Question Editor Button -->
+                        <button onclick="adminEditReportById('${firstRep.id}')"
+                            style="padding:7px 15px; border-radius:8px; border:1px solid rgba(59, 130, 246, 0.4); background:rgba(59, 130, 246, 0.12); color:#60a5fa; font-size:0.83rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'"
+                            onmouseout="this.style.background='rgba(59, 130, 246, 0.12)'"
+                            title="Open in Question Editor (Saving auto-resolves all reports)">
+                            <i class="ri-edit-2-line"></i> Fix in Editor
+                        </button>
+
+                        <!-- Copy Question Button -->
+                        <button onclick="adminCopyReportQuestion('${firstRep.id}')"
+                            style="padding:7px 12px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.83rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
+                            onmouseover="this.style.color='var(--text-light)'; this.style.borderColor='var(--text-light)'"
+                            onmouseout="this.style.color='var(--text-gray)'; this.style.borderColor='var(--border-color)'"
+                            title="Copy question and choices to clipboard">
+                            <i class="ri-file-copy-line"></i> Copy
+                        </button>
+                    </div>
+
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <!-- Resolve All Button -->
+                        <button onclick="adminResolveAllReportsByReportId('${firstRep.id}', event)"
+                            style="padding:7px 16px; border-radius:8px; border:1px solid ${isAllResolved ? 'rgba(245, 158, 11, 0.45)' : 'rgba(16, 185, 129, 0.45)'}; background:${isAllResolved ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; color:${isAllResolved ? '#fbbf24' : '#34d399'}; font-size:0.83rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;"
+                            onmouseover="this.style.filter='brightness(1.15)'"
+                            onmouseout="this.style.filter='none'">
+                            <i class="${isAllResolved ? 'ri-arrow-go-back-line' : 'ri-check-double-line'}"></i> ${isAllResolved ? 'Reopen All' : `Resolve All (${totalCount})`}
+                        </button>
+
+                        <!-- Delete All Button -->
+                        <button onclick="adminDeleteAllReportsByReportId('${firstRep.id}', event)"
+                            style="padding:7px 13px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.35); background:rgba(239, 68, 68, 0.08); color:var(--primary-red); font-size:0.83rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'"
+                            onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'"
+                            title="Delete all reports for this question permanently">
+                            <i class="ri-delete-bin-line"></i> Delete All (${totalCount})
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
         function adminRenderReports() {
             const list = document.getElementById('admin-reports-list');
             if (!list) return;
@@ -17552,18 +19373,102 @@
             const totalPending = allAdminReports.filter(r => (r.status || 'pending') === 'pending').length;
             const totalResolved = allAdminReports.filter(r => r.status === 'resolved').length;
 
+            // Calculate common questions with >= 2 reports (where at least one is pending)
+            const qReportCounts = {};
+            allAdminReports.forEach(r => {
+                if (!r || !r.question) return;
+                const nq = r.question.trim().toLowerCase().replace(/\s+/g, ' ');
+                if (!qReportCounts[nq]) qReportCounts[nq] = { total: 0, pending: 0 };
+                qReportCounts[nq].total++;
+                if ((r.status || 'pending') === 'pending') qReportCounts[nq].pending++;
+            });
+            const totalCommon = Object.values(qReportCounts).filter(item => item.total >= 2 && item.pending > 0).length;
+
             const bAll = document.getElementById('admin-rep-badge-all');
             const bY1 = document.getElementById('admin-rep-badge-y1');
             const bY2 = document.getElementById('admin-rep-badge-y2');
             const bPend = document.getElementById('admin-rep-badge-pending');
+            const bCommon = document.getElementById('admin-rep-badge-common');
             const bRes = document.getElementById('admin-rep-badge-resolved');
             const bStatAll = document.getElementById('admin-rep-badge-status-all');
             if (bAll) bAll.textContent = totalAll;
             if (bY1) bY1.textContent = totalY1;
             if (bY2) bY2.textContent = totalY2;
             if (bPend) bPend.textContent = totalPending;
+            if (bCommon) bCommon.textContent = totalCommon;
             if (bRes) bRes.textContent = totalResolved;
             if (bStatAll) bStatAll.textContent = totalAll;
+
+            // Common Reports Filter View
+            if (currentReportsStatusFilter === 'common') {
+                let pool = allAdminReports.filter(r => {
+                    const repYear = getReportYear(r);
+                    if (currentReportsYearFilter === 'all') return true;
+                    return repYear === currentReportsYearFilter;
+                });
+
+                const groupMap = new Map();
+                pool.forEach(r => {
+                    if (!r || !r.question) return;
+                    const norm = r.question.trim().toLowerCase().replace(/\s+/g, ' ');
+                    if (!groupMap.has(norm)) {
+                        groupMap.set(norm, {
+                            norm,
+                            question: r.question,
+                            module: r.module,
+                            subject: r.subject,
+                            chapter: r.chapter,
+                            year: getReportYear(r),
+                            reports: []
+                        });
+                    }
+                    groupMap.get(norm).reports.push(r);
+                });
+
+                let commonGroups = Array.from(groupMap.values()).filter(g => g.reports.length >= 2);
+
+                if (currentReportsSearchQuery) {
+                    const q = currentReportsSearchQuery;
+                    commonGroups = commonGroups.filter(g => {
+                        const qText = (g.question || '').toLowerCase();
+                        const mod = (g.module || '').toLowerCase();
+                        const subj = (g.subject || '').toLowerCase();
+                        const chap = (g.chapter || '').toLowerCase();
+                        const matchInReports = g.reports.some(r =>
+                            (r.reason || '').toLowerCase().includes(q) ||
+                            (r.username || '').toLowerCase().includes(q) ||
+                            (r.userEmail || '').toLowerCase().includes(q)
+                        );
+                        return qText.includes(q) || mod.includes(q) || subj.includes(q) || chap.includes(q) || matchInReports;
+                    });
+                }
+
+                commonGroups.sort((a, b) => {
+                    const aPending = a.reports.filter(r => (r.status || 'pending') === 'pending').length;
+                    const bPending = b.reports.filter(r => (r.status || 'pending') === 'pending').length;
+                    if (aPending !== bPending) return bPending - aPending;
+                    return b.reports.length - a.reports.length;
+                });
+
+                const summaryEl = document.getElementById('admin-rep-summary-text');
+                if (summaryEl) {
+                    const totalRepsInCommon = commonGroups.reduce((acc, g) => acc + g.reports.length, 0);
+                    summaryEl.textContent = `Showing ${commonGroups.length} common question(s) (${totalRepsInCommon} total reports)`;
+                }
+
+                if (commonGroups.length === 0) {
+                    list.innerHTML = `
+                        <div style="text-align:center; color:var(--text-gray); padding:3.5rem 1rem; background:var(--bg-card); border-radius:14px; border:1px solid var(--border-color);">
+                            <i class="ri-checkbox-circle-line" style="font-size:2.5rem; color:#10b981; display:inline-block; margin-bottom:10px;"></i>
+                            <div style="font-weight:700; color:var(--text-light); font-size:1rem;">No Common Reports Found</div>
+                            <div style="font-size:0.82rem; color:var(--text-gray); margin-top:4px;">No questions currently have 2 or more reports. Great job!</div>
+                        </div>`;
+                    return;
+                }
+
+                list.innerHTML = commonGroups.map(g => renderCommonReportCard(g)).join('');
+                return;
+            }
 
             let filtered = allAdminReports.filter(r => {
                 const repYear = getReportYear(r);
@@ -17618,6 +19523,12 @@
                 const repYear = getReportYear(r);
                 const isYear2 = repYear === '2';
 
+                // Check if this question has duplicate/multiple reports
+                const normQ = (r.question || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                const sameQReports = allAdminReports.filter(x => x && x.question && x.question.trim().toLowerCase().replace(/\s+/g, ' ') === normQ);
+                const countForQ = sameQReports.length;
+                const pendingForQ = sameQReports.filter(x => (x.status || 'pending') === 'pending').length;
+
                 const meta = typeof findQuestionMetadata === 'function' ? findQuestionMetadata(r.question, r.module) : null;
                 const subjectName = (meta && meta.subject) ? meta.subject : (r.subject || '');
                 const chapterName = (meta && meta.chapter) ? meta.chapter : (r.chapter || '');
@@ -17666,6 +19577,11 @@
                     <!-- Header Bar -->
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
                         <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                            ${countForQ >= 2 ? `
+                            <!-- Multiple Reports Badge -->
+                            <span style="font-size:0.75rem; background:rgba(239,68,68,0.18); color:#f87171; border:1px solid rgba(239,68,68,0.4); padding:2px 8px; border-radius:999px; font-weight:800; display:inline-flex; align-items:center; gap:4px;" title="This question was reported ${countForQ} times">
+                                <i class="ri-fire-fill"></i> ${countForQ} Reports ${pendingForQ > 1 ? `(${pendingForQ} pending)` : ''}
+                            </span>` : ''}
                             <!-- Year Badge -->
                             <span style="font-size:0.75rem; background:${isYear2 ? 'rgba(168,85,247,0.15)' : 'rgba(59,130,246,0.15)'}; color:${isYear2 ? '#c084fc' : '#60a5fa'}; border:1px solid ${isYear2 ? 'rgba(168,85,247,0.35)' : 'rgba(59,130,246,0.35)'}; padding:2px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
                                 <i class="ri-graduation-cap-line"></i> Year ${repYear}
@@ -17746,7 +19662,7 @@
                                 style="padding:6px 14px; border-radius:8px; border:1px solid ${isResolved ? 'rgba(245, 158, 11, 0.45)' : 'rgba(16, 185, 129, 0.45)'}; background:${isResolved ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; color:${isResolved ? '#fbbf24' : '#34d399'}; font-size:0.82rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
                                 onmouseover="this.style.filter='brightness(1.15)'"
                                 onmouseout="this.style.filter='none'">
-                                <i class="${isResolved ? 'ri-arrow-go-back-line' : 'ri-check-line'}"></i> ${isResolved ? 'Reopen' : 'Mark Resolved'}
+                                <i class="${isResolved ? 'ri-arrow-go-back-line' : 'ri-check-line'}"></i> ${isResolved ? 'Reopen' : (countForQ > 1 ? `Resolve All (${countForQ})` : 'Mark Resolved')}
                             </button>
 
                             <!-- Delete Report Button -->
@@ -17763,17 +19679,117 @@
             }).join('');
         }
 
+        window.adminResolveAllReportsByReportId = async function (reportId, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const targetReport = allAdminReports.find(r => r.id === reportId);
+            if (!targetReport || !targetReport.question) return;
+
+            const normQ = targetReport.question.trim().toLowerCase().replace(/\s+/g, ' ');
+            const matchingReports = allAdminReports.filter(r => {
+                if (!r || !r.question) return false;
+                return r.question.trim().toLowerCase().replace(/\s+/g, ' ') === normQ;
+            });
+            if (matchingReports.length === 0) return;
+
+            const allResolved = matchingReports.every(r => r.status === 'resolved');
+            const targetStatus = allResolved ? 'pending' : 'resolved';
+
+            try {
+                const promises = matchingReports.map(r => {
+                    r.status = targetStatus;
+                    r.resolvedAt = targetStatus === 'resolved' ? Date.now() : null;
+                    if (r.id && window.db && window.updateDoc && window.doc) {
+                        return window.updateDoc(window.doc(window.db, 'reports', r.id), {
+                            status: targetStatus,
+                            resolvedAt: targetStatus === 'resolved' ? Date.now() : null
+                        }).catch(err => console.warn('Update failed:', r.id, err));
+                    }
+                    return Promise.resolve();
+                });
+                await Promise.all(promises);
+                adminRenderReports();
+                if (window.showToast) {
+                    window.showToast(targetStatus === 'resolved' 
+                        ? `Resolved all ${matchingReports.length} reports for this question!` 
+                        : `Reopened all ${matchingReports.length} reports!`, 'success');
+                }
+            } catch (err) {
+                console.error('Error resolving reports:', err);
+                if (window.showToast) window.showToast('Error updating reports: ' + err.message, 'error');
+            }
+        };
+
+        window.adminDeleteAllReportsByReportId = async function (reportId, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const targetReport = allAdminReports.find(r => r.id === reportId);
+            if (!targetReport || !targetReport.question) return;
+
+            const normQ = targetReport.question.trim().toLowerCase().replace(/\s+/g, ' ');
+            const matchingReports = allAdminReports.filter(r => {
+                if (!r || !r.question) return false;
+                return r.question.trim().toLowerCase().replace(/\s+/g, ' ') === normQ;
+            });
+            if (matchingReports.length === 0) return;
+
+            if (!confirm(`Are you sure you want to permanently delete all ${matchingReports.length} reports for this question?`)) return;
+
+            try {
+                const idsToDelete = new Set(matchingReports.map(r => r.id));
+                const promises = matchingReports.map(r => {
+                    if (r.id && window.db && window.deleteDoc && window.doc) {
+                        return window.deleteDoc(window.doc(window.db, 'reports', r.id)).catch(err => console.warn('Delete failed:', r.id, err));
+                    }
+                    return Promise.resolve();
+                });
+                await Promise.all(promises);
+                allAdminReports = allAdminReports.filter(r => !idsToDelete.has(r.id));
+                adminRenderReports();
+                if (window.showToast) {
+                    window.showToast(`Deleted all ${matchingReports.length} reports!`, 'success');
+                }
+            } catch (err) {
+                console.error('Error deleting reports:', err);
+                if (window.showToast) window.showToast('Failed to delete reports: ' + err.message, 'error');
+            }
+        };
+
         window.adminToggleReportStatus = async function (reportId, e) {
             if (e && e.stopPropagation) e.stopPropagation();
             const report = allAdminReports.find(r => r.id === reportId);
             if (!report) return;
             const newStatus = (report.status === 'resolved') ? 'pending' : 'resolved';
             try {
-                await window.updateDoc(window.doc(window.db, 'reports', reportId), { status: newStatus });
-                report.status = newStatus;
-                adminRenderReports();
-                if (window.showToast) {
-                    window.showToast(newStatus === 'resolved' ? 'Report marked as resolved' : 'Report reopened as pending', 'success');
+                if (newStatus === 'resolved') {
+                    const normQ = (report.question || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                    const sameQReports = allAdminReports.filter(r => {
+                        if (!r || !r.question) return false;
+                        return r.question.trim().toLowerCase().replace(/\s+/g, ' ') === normQ;
+                    });
+
+                    const promises = sameQReports.map(r => {
+                        r.status = 'resolved';
+                        r.resolvedAt = Date.now();
+                        if (r.id && window.db && window.updateDoc && window.doc) {
+                            return window.updateDoc(window.doc(window.db, 'reports', r.id), {
+                                status: 'resolved',
+                                resolvedAt: Date.now()
+                            }).catch(err => console.warn('Update failed:', r.id, err));
+                        }
+                        return Promise.resolve();
+                    });
+                    await Promise.all(promises);
+                    adminRenderReports();
+                    if (window.showToast) {
+                        const count = sameQReports.length;
+                        window.showToast(count > 1 ? `Resolved all ${count} reports for this question!` : 'Report marked as resolved', 'success');
+                    }
+                } else {
+                    await window.updateDoc(window.doc(window.db, 'reports', reportId), { status: 'pending' });
+                    report.status = 'pending';
+                    adminRenderReports();
+                    if (window.showToast) {
+                        window.showToast('Report reopened as pending', 'success');
+                    }
                 }
             } catch (err) {
                 console.error("Error updating report status:", err);
@@ -19932,6 +21948,7 @@
                 return;
             }
 
+            const originalQText = item.qRef ? (item.qRef.q || '') : '';
             btn.innerHTML = "<i class='ri-loader-4-line' style='animation:spin 1s linear infinite; display:inline-block;'></i> Saving... ⏳";
             btn.disabled = true;
 
@@ -19949,7 +21966,7 @@
                     const syncList = (arr) => {
                         if (!Array.isArray(arr)) return;
                         arr.forEach(mItem => {
-                            if (mItem && mItem.q && (mItem.q.trim() === newQText || mItem.q.trim() === item.qRef.q.trim())) {
+                            if (mItem && mItem.q && (mItem.q.trim() === newQText || mItem.q.trim() === originalQText.trim())) {
                                 mItem.q = newQText;
                                 mItem.o = newOptions;
                                 mItem.a = newAnswerIndex;
@@ -19966,22 +21983,87 @@
                     }
                 }
 
-                // Real-time sync: update loaded reports list
+                // Real-time sync: AUTO-RESOLVE all reports for this question!
+                const normOld = (originalQText || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                const normNew = (newQText || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                let resolvedCount = 0;
+
                 if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
+                    const toUpdateInFirestore = [];
                     allAdminReports.forEach(r => {
-                        if (r && r.question && (r.question.trim() === newQText || r.question.trim() === item.qRef.q.trim())) {
+                        if (!r || !r.question) return;
+                        const nq = r.question.trim().toLowerCase().replace(/\s+/g, ' ');
+                        if (nq === normOld || nq === normNew) {
                             r.options = newOptions;
                             r.correctIndex = newAnswerIndex;
                             r.correctAnswer = newOptions[newAnswerIndex] || '';
+                            if (r.status !== 'resolved') {
+                                r.status = 'resolved';
+                                r.resolvedAt = Date.now();
+                                r.autoResolved = true;
+                                resolvedCount++;
+                                if (r.id && window.db && window.updateDoc && window.doc) {
+                                    toUpdateInFirestore.push(
+                                        window.updateDoc(window.doc(window.db, 'reports', r.id), {
+                                            status: 'resolved',
+                                            resolvedAt: Date.now(),
+                                            autoResolved: true
+                                        }).catch(err => console.warn('Could not auto-resolve report:', r.id, err))
+                                    );
+                                }
+                            }
                         }
                     });
-                    if (typeof adminRenderReports === 'function') {
-                        try { adminRenderReports(); } catch (e) { }
+                    if (toUpdateInFirestore.length > 0) {
+                        try { await Promise.all(toUpdateInFirestore); } catch (e) { }
                     }
+                }
+
+                // Also check and bulk-resolve any other pending reports in Firestore matching this question
+                try {
+                    if (window.collection && window.query && window.where && window.getDocs && window.updateDoc && window.db) {
+                        const qPending = window.query(
+                            window.collection(window.db, 'reports'),
+                            window.where('status', '==', 'pending')
+                        );
+                        const pSnap = await window.getDocs(qPending);
+                        const fsUpdates = [];
+                        pSnap.forEach(d => {
+                            const dData = d.data();
+                            if (dData && dData.question) {
+                                const dn = dData.question.trim().toLowerCase().replace(/\s+/g, ' ');
+                                if (dn === normOld || dn === normNew) {
+                                    fsUpdates.push(
+                                        window.updateDoc(d.ref, {
+                                            status: 'resolved',
+                                            resolvedAt: Date.now(),
+                                            autoResolved: true
+                                        }).catch(e => {})
+                                    );
+                                    if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
+                                        const inMem = allAdminReports.find(x => x.id === d.id);
+                                        if (inMem) inMem.status = 'resolved';
+                                    }
+                                }
+                            }
+                        });
+                        if (fsUpdates.length > 0) {
+                            await Promise.all(fsUpdates);
+                        }
+                    }
+                } catch (fsErr) {
+                    console.warn('Firestore bulk resolve check error:', fsErr);
+                }
+
+                if (typeof adminRenderReports === 'function') {
+                    try { adminRenderReports(); } catch (e) { }
                 }
 
                 btn.innerHTML = "<i class='ri-check-line'></i> Saved successfully";
                 btn.style.backgroundColor = "#10B981";
+                if (window.showToast) {
+                    window.showToast(resolvedCount > 0 ? `Saved! Auto-resolved ${resolvedCount} report(s) for this question.` : 'Question saved successfully!', 'success');
+                }
                 setTimeout(() => {
                     btn.innerHTML = "<i class='ri-save-line'></i> Save Changes";
                     btn.disabled = false;
@@ -21389,6 +23471,633 @@
 
         window.addEventListener('resize', checkDevToolsSecurity);
         setInterval(checkDevToolsSecurity, 1200);
+
+        /* =========================================================================
+           QUIZ FLOATING SCIENTIFIC CALCULATOR ENGINE
+           ========================================================================= */
+        (function () {
+            // Calculator State
+            let calcExpression = '';
+            let calcCurrentVal = '0';
+            let calcAns = 0;
+            let calcAngleMode = 'DEG'; // 'DEG' or 'RAD'
+            let calcHistory = [];
+            let isGhostMode = false;
+            let isSciOpen = false;
+            let isHistoryOpen = false;
+            let isNewInput = true;
+            let lastPosition = null; // { left, top }
+            let pillPosition = null;
+
+            // DOM Elements
+            function getEls() {
+                return {
+                    calc: document.getElementById('quiz-calculator'),
+                    pill: document.getElementById('quiz-calc-pill'),
+                    header: document.getElementById('quiz-calc-header'),
+                    expr: document.getElementById('calc-expr-display'),
+                    res: document.getElementById('calc-result-display'),
+                    sciBar: document.getElementById('calc-sci-bar'),
+                    histDrawer: document.getElementById('calc-history-drawer'),
+                    histList: document.getElementById('calc-history-list'),
+                    anglePill: document.getElementById('calc-angle-pill'),
+                    sciBtn: document.getElementById('calc-sci-toggle'),
+                    ghostBtn: document.getElementById('calc-ghost-toggle'),
+                    histBtn: document.getElementById('calc-hist-toggle'),
+                    pillVal: document.getElementById('quiz-calc-pill-val'),
+                    copyBtn: document.getElementById('calc-copy-btn'),
+                    headerBtn: document.getElementById('quiz-calc-header-btn'),
+                    footerBtn: document.getElementById('btn-calc-footer')
+                };
+            }
+
+            // Expose active check for keyboard handler
+            window.isQuizCalculatorActive = function () {
+                const els = getEls();
+                return !!(els.calc && els.calc.style.display !== 'none' && (!els.pill || els.pill.style.display === 'none'));
+            };
+
+            // Expression Evaluator
+            function evaluateMath(expr, ans, angleMode) {
+                if (!expr || !expr.trim()) return 0;
+                let s = expr.trim();
+
+                // Replace symbols
+                s = s.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+                s = s.replace(/Ans/gi, `(${ans})`);
+                s = s.replace(/π/g, 'Math.PI');
+                s = s.replace(/\be\b/g, 'Math.E');
+                s = s.replace(/\^/g, '**');
+
+                // Square root
+                s = s.replace(/√\s*(\d+(\.\d+)?)/g, 'Math.sqrt($1)');
+                s = s.replace(/√/g, 'Math.sqrt');
+
+                // Trigonometric
+                if (angleMode === 'DEG') {
+                    s = s.replace(/\bsin\(([^)]+)\)/g, 'Math.sin(($1) * Math.PI / 180)');
+                    s = s.replace(/\bcos\(([^)]+)\)/g, 'Math.cos(($1) * Math.PI / 180)');
+                    s = s.replace(/\btan\(([^)]+)\)/g, 'Math.tan(($1) * Math.PI / 180)');
+                } else {
+                    s = s.replace(/\bsin\b/g, 'Math.sin');
+                    s = s.replace(/\bcos\b/g, 'Math.cos');
+                    s = s.replace(/\btan\b/g, 'Math.tan');
+                }
+
+                // Logarithmic
+                s = s.replace(/\blog\b/g, 'Math.log10');
+                s = s.replace(/\bln\b/g, 'Math.log');
+
+                // Percentage
+                s = s.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
+
+                // Auto-close missing parentheses
+                const openCount = (s.match(/\(/g) || []).length;
+                const closeCount = (s.match(/\)/g) || []).length;
+                if (openCount > closeCount) {
+                    s += ')'.repeat(openCount - closeCount);
+                }
+
+                // Sanity check characters
+                const sanitized = s.replace(/Math\.(sqrt|sin|cos|tan|log10|log|PI|E|abs|floor|ceil|round)/g, '');
+                if (/[^0-9\+\-\*\/\(\)\.\s\,]/.test(sanitized)) {
+                    throw new Error('Invalid');
+                }
+
+                const result = Function('"use strict"; return (' + s + ')')();
+                if (typeof result !== 'number' || isNaN(result)) throw new Error('Math Error');
+                if (!isFinite(result)) throw new Error('Divide by 0');
+
+                return Math.round(result * 1e10) / 1e10;
+            }
+
+            // Update UI Display
+            function updateDisplay() {
+                const els = getEls();
+                if (!els.res) return;
+
+                // Adjust result font size if string is very long
+                const len = calcCurrentVal.length;
+                if (len > 15) {
+                    els.res.style.fontSize = '1.05rem';
+                } else if (len > 11) {
+                    els.res.style.fontSize = '1.25rem';
+                } else {
+                    els.res.style.fontSize = window.innerWidth <= 640 ? '1.35rem' : '1.55rem';
+                }
+
+                els.res.textContent = calcCurrentVal || '0';
+                els.expr.textContent = calcExpression || '\u00A0';
+                if (els.pillVal) {
+                    els.pillVal.textContent = calcCurrentVal !== '0' ? calcCurrentVal : 'Calculator';
+                }
+            }
+
+            // Open Calculator
+            window.openQuizCalculator = function () {
+                const els = getEls();
+                if (!els.calc) return;
+
+                // Close drawing mode if active so it doesn't overlap
+                if (typeof isDrawingMode !== 'undefined' && isDrawingMode) {
+                    if (typeof toggleDrawMode === 'function') toggleDrawMode();
+                }
+                document.body.classList.add('calculator-open');
+
+                if (els.pill) els.pill.style.display = 'none';
+                els.calc.style.display = 'flex';
+
+                // Initial position if not dragged before
+                if (!lastPosition) {
+                    const isMobile = window.innerWidth <= 640;
+                    if (isMobile) {
+                        els.calc.style.top = 'auto';
+                        els.calc.style.bottom = '85px';
+                        els.calc.style.right = '10px';
+                        els.calc.style.left = 'auto';
+                    } else {
+                        els.calc.style.top = '90px';
+                        els.calc.style.right = '28px';
+                        els.calc.style.bottom = 'auto';
+                        els.calc.style.left = 'auto';
+                    }
+                } else {
+                    // Clamp to current screen bounds
+                    const calcW = els.calc.offsetWidth || 315;
+                    const calcH = els.calc.offsetHeight || 380;
+                    const clampedL = Math.max(8, Math.min(window.innerWidth - calcW - 8, lastPosition.left));
+                    const clampedT = Math.max(8, Math.min(window.innerHeight - calcH - 8, lastPosition.top));
+                    els.calc.style.left = clampedL + 'px';
+                    els.calc.style.top = clampedT + 'px';
+                    els.calc.style.right = 'auto';
+                    els.calc.style.bottom = 'auto';
+                }
+
+                if (els.headerBtn) els.headerBtn.classList.add('active');
+                if (els.footerBtn) els.footerBtn.classList.add('active');
+                updateDisplay();
+            };
+
+            // Close Calculator
+            window.closeQuizCalculator = function () {
+                document.body.classList.remove('calculator-open');
+                const els = getEls();
+                if (els.calc) els.calc.style.display = 'none';
+                if (els.pill) els.pill.style.display = 'none';
+                if (els.headerBtn) els.headerBtn.classList.remove('active');
+                if (els.footerBtn) els.footerBtn.classList.remove('active');
+            };
+
+            // Toggle Calculator
+            window.toggleQuizCalculator = function (forceState) {
+                const els = getEls();
+                if (!els.calc) return;
+                const isCurrentlyOpen = els.calc.style.display !== 'none' || (els.pill && els.pill.style.display !== 'none');
+                const willOpen = typeof forceState === 'boolean' ? forceState : !isCurrentlyOpen;
+                if (willOpen) {
+                    openQuizCalculator();
+                } else {
+                    closeQuizCalculator();
+                }
+            };
+
+            // Minimize Calculator to floating pill
+            window.minimizeQuizCalculator = function () {
+                document.body.classList.remove('calculator-open');
+                const els = getEls();
+                if (!els.calc) return;
+                els.calc.style.display = 'none';
+                if (els.pill) {
+                    els.pill.style.display = 'inline-flex';
+                    if (els.pillVal) {
+                        els.pillVal.textContent = calcCurrentVal !== '0' ? calcCurrentVal : 'Calculator';
+                    }
+                }
+            };
+
+            // Restore from pill
+            window.restoreQuizCalculator = function () {
+                openQuizCalculator();
+            };
+
+            // Close directly from pill close icon
+            window.closeQuizCalculatorFromPill = function (e) {
+                if (e) e.stopPropagation();
+                closeQuizCalculator();
+            };
+
+            // Toggle Ghost Mode (Transparency)
+            window.toggleCalcGhost = function () {
+                const els = getEls();
+                if (!els.calc) return;
+                isGhostMode = !isGhostMode;
+                els.calc.classList.toggle('calc-ghost', isGhostMode);
+                if (els.ghostBtn) {
+                    els.ghostBtn.classList.toggle('active', isGhostMode);
+                    els.ghostBtn.title = isGhostMode ? 'Ghost Mode Active (انقر لإلغاء الشفافية)' : 'Ghost Mode / شفافية (لرؤية السؤال بوضوح)';
+                }
+            };
+
+            // Toggle Scientific Row
+            window.toggleCalcSci = function () {
+                const els = getEls();
+                if (!els.sciBar) return;
+                isSciOpen = !isSciOpen;
+                els.sciBar.classList.toggle('active', isSciOpen);
+                if (els.sciBtn) els.sciBtn.classList.toggle('active', isSciOpen);
+            };
+
+            // Toggle Angle Mode (DEG / RAD)
+            window.toggleCalcAngleMode = function () {
+                const els = getEls();
+                calcAngleMode = calcAngleMode === 'DEG' ? 'RAD' : 'DEG';
+                if (els.anglePill) els.anglePill.textContent = calcAngleMode;
+                if (window.showToast) window.showToast(`Angle mode: ${calcAngleMode}`, 'info');
+            };
+
+            // Toggle History Drawer
+            window.toggleCalcHistory = function () {
+                const els = getEls();
+                if (!els.histDrawer) return;
+                isHistoryOpen = !isHistoryOpen;
+                els.histDrawer.classList.toggle('active', isHistoryOpen);
+                if (els.histBtn) els.histBtn.classList.toggle('active', isHistoryOpen);
+                if (isHistoryOpen) renderHistoryList();
+            };
+
+            // Render History List
+            function renderHistoryList() {
+                const els = getEls();
+                if (!els.histList) return;
+                if (calcHistory.length === 0) {
+                    els.histList.innerHTML = '<div style="text-align: center; color: var(--text-gray); font-size: 0.75rem; padding: 24px 0;">No previous calculations</div>';
+                    return;
+                }
+                els.histList.innerHTML = calcHistory.map((item, idx) => `
+                    <div class="calc-history-item" onclick="loadCalcHistoryItem(${idx})">
+                        <span class="calc-h-expr">${item.expr} =</span>
+                        <span class="calc-h-res">${item.result}</span>
+                    </div>
+                `).join('');
+            }
+
+            // Load History Item
+            window.loadCalcHistoryItem = function (idx) {
+                const item = calcHistory[idx];
+                if (!item) return;
+                calcCurrentVal = String(item.result);
+                calcExpression = item.expr + ' =';
+                isNewInput = true;
+                updateDisplay();
+                toggleCalcHistory();
+            };
+
+            // Clear History
+            window.clearCalcHistory = function () {
+                calcHistory = [];
+                renderHistoryList();
+            };
+
+            // Copy Result
+            window.copyCalcResult = function () {
+                const textToCopy = calcCurrentVal || '0';
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        handleCopySuccess();
+                    }).catch(() => {
+                        fallbackCopy(textToCopy);
+                    });
+                } else {
+                    fallbackCopy(textToCopy);
+                }
+            };
+
+            function fallbackCopy(text) {
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    handleCopySuccess();
+                } catch (e) { }
+            }
+
+            function handleCopySuccess() {
+                const els = getEls();
+                if (els.copyBtn) {
+                    els.copyBtn.innerHTML = '<i class="ri-check-line"></i>';
+                    els.copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        if (els.copyBtn) {
+                            els.copyBtn.innerHTML = '<i class="ri-file-copy-line"></i>';
+                            els.copyBtn.classList.remove('copied');
+                        }
+                    }, 1200);
+                }
+                if (window.showToast) window.showToast(`تم نسخ الناتج: ${calcCurrentVal}`, 'success');
+            }
+
+            // Keypad Input Handlers
+            window.calcInputDigit = function (digit) {
+                if (isNewInput || calcCurrentVal === '0') {
+                    calcCurrentVal = String(digit);
+                    isNewInput = false;
+                } else {
+                    if (calcCurrentVal.length < 18) {
+                        calcCurrentVal += String(digit);
+                    }
+                }
+                updateDisplay();
+            };
+
+            window.calcInputDot = function () {
+                if (isNewInput) {
+                    calcCurrentVal = '0.';
+                    isNewInput = false;
+                } else if (!calcCurrentVal.includes('.')) {
+                    calcCurrentVal += '.';
+                }
+                updateDisplay();
+            };
+
+            window.calcInputOp = function (op) {
+                if (!isNewInput || calcExpression === '') {
+                    calcExpression += (calcExpression.endsWith(' ') || calcExpression === '' ? '' : ' ') + calcCurrentVal + ' ' + op + ' ';
+                } else {
+                    // Replace trailing operator if user changed their mind
+                    calcExpression = calcExpression.replace(/[\+\−\×\÷\^]\s*$/, op + ' ');
+                }
+                isNewInput = true;
+                updateDisplay();
+            };
+
+            window.calcInputFn = function (fn) {
+                if (fn === 'sqrt') {
+                    if (calcCurrentVal !== '0' && !isNewInput) {
+                        calcCurrentVal = `√(${calcCurrentVal})`;
+                    } else {
+                        calcCurrentVal = '√(';
+                    }
+                    isNewInput = false;
+                } else if (fn === 'sqr') {
+                    calcCurrentVal = `(${calcCurrentVal})^2`;
+                    isNewInput = false;
+                } else if (fn === 'recip') {
+                    calcCurrentVal = `(1/${calcCurrentVal})`;
+                    isNewInput = false;
+                } else if (['sin', 'cos', 'tan', 'log', 'ln'].includes(fn)) {
+                    if (calcCurrentVal !== '0' && !isNewInput) {
+                        calcCurrentVal = `${fn}(${calcCurrentVal})`;
+                    } else {
+                        calcCurrentVal = `${fn}(`;
+                    }
+                    isNewInput = false;
+                } else if (fn === 'pi') {
+                    calcCurrentVal = 'π';
+                    isNewInput = false;
+                } else if (fn === 'e') {
+                    calcCurrentVal = 'e';
+                    isNewInput = false;
+                } else if (fn === 'parenOpen') {
+                    if (calcCurrentVal !== '0' && !isNewInput) {
+                        calcExpression += calcCurrentVal + ' × ( ';
+                    } else {
+                        calcExpression += '( ';
+                    }
+                    calcCurrentVal = '0';
+                    isNewInput = true;
+                } else if (fn === 'parenClose') {
+                    calcExpression += calcCurrentVal + ' ) ';
+                    calcCurrentVal = '0';
+                    isNewInput = true;
+                } else if (fn === 'percent') {
+                    calcCurrentVal += '%';
+                    isNewInput = false;
+                } else if (fn === 'neg') {
+                    if (calcCurrentVal.startsWith('-')) {
+                        calcCurrentVal = calcCurrentVal.substring(1);
+                    } else if (calcCurrentVal !== '0') {
+                        calcCurrentVal = '-' + calcCurrentVal;
+                    }
+                } else if (fn === 'ans') {
+                    calcCurrentVal = String(calcAns);
+                    isNewInput = false;
+                }
+                updateDisplay();
+            };
+
+            window.calcDelete = function () {
+                if (isNewInput) {
+                    calcCurrentVal = '0';
+                } else if (calcCurrentVal.length > 1) {
+                    calcCurrentVal = calcCurrentVal.slice(0, -1);
+                } else {
+                    calcCurrentVal = '0';
+                    isNewInput = true;
+                }
+                updateDisplay();
+            };
+
+            window.calcClearAll = function () {
+                calcExpression = '';
+                calcCurrentVal = '0';
+                isNewInput = true;
+                updateDisplay();
+            };
+
+            window.calcEquals = function () {
+                const formula = (calcExpression + (isNewInput && calcExpression ? '' : calcCurrentVal)).trim();
+                if (!formula) return;
+
+                try {
+                    const result = evaluateMath(formula, calcAns, calcAngleMode);
+                    calcHistory.unshift({ expr: formula, result: result });
+                    if (calcHistory.length > 25) calcHistory.pop();
+
+                    calcAns = result;
+                    calcExpression = formula + ' =';
+                    calcCurrentVal = String(result);
+                    isNewInput = true;
+                } catch (err) {
+                    calcExpression = formula + ' =';
+                    calcCurrentVal = err.message === 'Divide by 0' ? 'Cannot divide by 0' : 'Error';
+                    isNewInput = true;
+                }
+                updateDisplay();
+            };
+
+            // Draggable Engine for Calculator & Pill
+            function setupDraggable(targetEl, handleEl, saveKey) {
+                if (!targetEl || !handleEl) return;
+                let isDragging = false;
+                let startX = 0, startY = 0;
+                let origLeft = 0, origTop = 0;
+
+                function startDrag(e) {
+                    // Ignore clicks on header action buttons
+                    if (e.target.closest('.calc-h-btn') || e.target.closest('.calc-mode-pill') || e.target.closest('.quiz-calc-pill-close')) {
+                        return;
+                    }
+                    isDragging = true;
+                    const evt = e.touches ? e.touches[0] : e;
+                    startX = evt.clientX;
+                    startY = evt.clientY;
+
+                    const rect = targetEl.getBoundingClientRect();
+                    origLeft = rect.left;
+                    origTop = rect.top;
+
+                    // Switch to left/top absolute viewport positioning
+                    targetEl.style.left = origLeft + 'px';
+                    targetEl.style.top = origTop + 'px';
+                    targetEl.style.right = 'auto';
+                    targetEl.style.bottom = 'auto';
+
+                    if (e.cancelable && e.type === 'touchstart') {
+                        // Prevent page scroll when touching handle
+                        e.preventDefault();
+                    }
+                }
+
+                function doDrag(e) {
+                    if (!isDragging) return;
+                    const evt = e.touches ? e.touches[0] : e;
+                    const dx = evt.clientX - startX;
+                    const dy = evt.clientY - startY;
+
+                    const w = targetEl.offsetWidth;
+                    const h = targetEl.offsetHeight;
+                    const maxLeft = window.innerWidth - w - 8;
+                    const maxTop = window.innerHeight - h - 8;
+
+                    const newLeft = Math.max(8, Math.min(maxLeft, origLeft + dx));
+                    const newTop = Math.max(8, Math.min(maxTop, origTop + dy));
+
+                    targetEl.style.left = newLeft + 'px';
+                    targetEl.style.top = newTop + 'px';
+
+                    if (saveKey === 'calc') {
+                        lastPosition = { left: newLeft, top: newTop };
+                    } else if (saveKey === 'pill') {
+                        pillPosition = { left: newLeft, top: newTop };
+                    }
+
+                    if (e.cancelable && e.type === 'touchmove') {
+                        e.preventDefault();
+                    }
+                }
+
+                function endDrag() {
+                    isDragging = false;
+                }
+
+                handleEl.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', doDrag);
+                window.addEventListener('mouseup', endDrag);
+
+                handleEl.addEventListener('touchstart', startDrag, { passive: false });
+                window.addEventListener('touchmove', doDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            }
+
+            // Keyboard input routing
+            window.addEventListener('keydown', function (e) {
+                // If focus is in normal input or textarea, leave alone
+                const activeTag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName.toLowerCase() : '';
+                if (activeTag === 'input' || activeTag === 'textarea') return;
+
+                const els = getEls();
+                if (!els.calc || els.calc.style.display === 'none') return;
+                if (els.pill && els.pill.style.display !== 'none') return;
+
+                // Numbers 0-9
+                if (e.key >= '0' && e.key <= '9') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    calcInputDigit(parseInt(e.key));
+                    return;
+                }
+
+                // Operators
+                if (e.key === '+') {
+                    e.preventDefault(); e.stopPropagation(); calcInputOp('+'); return;
+                }
+                if (e.key === '-') {
+                    e.preventDefault(); e.stopPropagation(); calcInputOp('−'); return;
+                }
+                if (e.key === '*' || e.key === 'x' || e.key === 'X') {
+                    e.preventDefault(); e.stopPropagation(); calcInputOp('×'); return;
+                }
+                if (e.key === '/') {
+                    e.preventDefault(); e.stopPropagation(); calcInputOp('÷'); return;
+                }
+                if (e.key === '.') {
+                    e.preventDefault(); e.stopPropagation(); calcInputDot(); return;
+                }
+                if (e.key === '(') {
+                    e.preventDefault(); e.stopPropagation(); calcInputFn('parenOpen'); return;
+                }
+                if (e.key === ')') {
+                    e.preventDefault(); e.stopPropagation(); calcInputFn('parenClose'); return;
+                }
+                if (e.key === '%') {
+                    e.preventDefault(); e.stopPropagation(); calcInputFn('percent'); return;
+                }
+                if (e.key === '^') {
+                    e.preventDefault(); e.stopPropagation(); calcInputOp('^'); return;
+                }
+                if (e.key === 'Enter' || e.key === '=') {
+                    e.preventDefault(); e.stopPropagation(); calcEquals(); return;
+                }
+                if (e.key === 'Backspace') {
+                    e.preventDefault(); e.stopPropagation(); calcDelete(); return;
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault(); e.stopPropagation(); minimizeQuizCalculator(); return;
+                }
+                if (e.key === 'c' || e.key === 'C') {
+                    e.preventDefault(); e.stopPropagation(); calcClearAll(); return;
+                }
+            }, true);
+
+            // Re-clamp on window resize
+            window.addEventListener('resize', function () {
+                const els = getEls();
+                if (els.calc && els.calc.style.display !== 'none' && lastPosition) {
+                    const w = els.calc.offsetWidth || 315;
+                    const h = els.calc.offsetHeight || 380;
+                    const clampedL = Math.max(8, Math.min(window.innerWidth - w - 8, lastPosition.left));
+                    const clampedT = Math.max(8, Math.min(window.innerHeight - h - 8, lastPosition.top));
+                    els.calc.style.left = clampedL + 'px';
+                    els.calc.style.top = clampedT + 'px';
+                }
+            });
+
+            // Initialize Draggables
+            window.addEventListener('DOMContentLoaded', function () {
+                const els = getEls();
+                if (els.calc && els.header) {
+                    setupDraggable(els.calc, els.header, 'calc');
+                }
+                if (els.pill) {
+                    setupDraggable(els.pill, els.pill, 'pill');
+                }
+            });
+            // Also run in case DOM is already loaded
+            setTimeout(function () {
+                const els = getEls();
+                if (els.calc && els.header) {
+                    setupDraggable(els.calc, els.header, 'calc');
+                }
+                if (els.pill) {
+                    setupDraggable(els.pill, els.pill, 'pill');
+                }
+            }, 500);
+        })();
 
     </script>
 </body>
