@@ -2047,6 +2047,7 @@
 
         .modal-overlay.active {
             display: flex;
+            z-index: 100050 !important;
         }
 
         .modal {
@@ -5400,7 +5401,7 @@
             box-shadow: 0 20px 48px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(255, 255, 255, 0.07);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            z-index: 99975;
+            z-index: 100010 !important;
             display: none;
             flex-direction: column;
             user-select: none;
@@ -5408,6 +5409,10 @@
             overflow: hidden;
             transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
             touch-action: none;
+        }
+
+        body.calculator-open #toggle-draw-btn-footer {
+            z-index: 1 !important;
         }
 
         /* Ghost Mode (Semi-transparent to read questions underneath without obstruction) */
@@ -5870,7 +5875,7 @@
             position: fixed;
             bottom: 84px;
             right: 20px;
-            z-index: 99974;
+            z-index: 100009 !important;
             background: var(--bg-card);
             border: 1.5px solid var(--accent);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38), 0 0 16px var(--accent-glow);
@@ -7006,7 +7011,7 @@
                                 <i class="ri-list-unordered"></i>
                             </button>
                             <button id="toggle-draw-btn-footer" class="icon-action-btn" onclick="toggleDrawMode(event)"
-                                title="Draw & Notes" style="position: relative; z-index: 99999;">
+                                title="Draw & Notes" style="position: relative;">
                                 <i class="ri-pen-nib-line"></i>
                             </button>
                             <button id="btn-calc-footer" class="icon-action-btn" onclick="toggleQuizCalculator()"
@@ -17495,6 +17500,7 @@
                     footerBtn.style.color = 'var(--primary-red)';
                     footerBtn.style.borderColor = 'var(--primary-red)';
                     footerBtn.style.background = 'rgba(239, 68, 68, 0.15)';
+                    footerBtn.style.zIndex = '99995';
                 }
             } else {
                 if (canvas) {
@@ -17510,6 +17516,7 @@
                     footerBtn.style.color = '';
                     footerBtn.style.borderColor = '';
                     footerBtn.style.background = '';
+                    footerBtn.style.zIndex = '';
                 }
             }
         }
@@ -17606,7 +17613,7 @@
                     return;
                 }
             }
-            if (e.target && e.target.closest('#drawing-toolbar')) {
+            if (e.target && e.target.closest('#drawing-toolbar, #quiz-calculator, #quiz-calc-pill')) {
                 return;
             }
             if (e.cancelable) e.preventDefault();
@@ -22234,6 +22241,12 @@
                 const els = getEls();
                 if (!els.calc) return;
 
+                // Close drawing mode if active so it doesn't overlap
+                if (typeof isDrawingMode !== 'undefined' && isDrawingMode) {
+                    if (typeof toggleDrawMode === 'function') toggleDrawMode();
+                }
+                document.body.classList.add('calculator-open');
+
                 if (els.pill) els.pill.style.display = 'none';
                 els.calc.style.display = 'flex';
 
@@ -22270,6 +22283,7 @@
 
             // Close Calculator
             window.closeQuizCalculator = function () {
+                document.body.classList.remove('calculator-open');
                 const els = getEls();
                 if (els.calc) els.calc.style.display = 'none';
                 if (els.pill) els.pill.style.display = 'none';
@@ -22292,6 +22306,7 @@
 
             // Minimize Calculator to floating pill
             window.minimizeQuizCalculator = function () {
+                document.body.classList.remove('calculator-open');
                 const els = getEls();
                 if (!els.calc) return;
                 els.calc.style.display = 'none';
