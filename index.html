@@ -9242,7 +9242,7 @@
                 (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
             if (inActiveQuiz) return;
             const now = Date.now();
-            if (now - lastCloudSyncFocusTime < 60 * 1000) return; // 60s throttle
+            if (now - lastCloudSyncFocusTime < 15 * 1000) return; // 15s throttle
             lastCloudSyncFocusTime = now;
             if (window.syncWithCloud) {
                 try {
@@ -14108,6 +14108,7 @@
             if (typeof closeQuizCalculator === 'function') closeQuizCalculator();
             if (window.pharmaExamTimer) { clearInterval(window.pharmaExamTimer); window.pharmaExamTimer = null; }
             saveSessionProgress();
+            if (window.flushSync) window.flushSync();
             clearInterval(Session.timer);
             clearInterval(globalStopwatch);
             switchMode('dashboard');
