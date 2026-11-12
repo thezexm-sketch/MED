@@ -8707,7 +8707,9 @@
 
         function compactExamsHistory(history) {
             if (!Array.isArray(history)) return [];
-            return history.map(item => {
+            // Keep at most 5 most recent exams in cloud doc (full history remains in localStorage)
+            const recent = history.slice(0, 5);
+            return recent.map(item => {
                 if (!item || typeof item !== 'object') return null;
                 const copy = { ...item };
                 delete copy.drawings; // Strip drawings completely from examsHistory
@@ -8721,14 +8723,14 @@
 
         function compactPendingExams(pending) {
             if (!Array.isArray(pending)) return [];
-            return pending.map(item => {
+            // Keep at most 2 most recent pending exams and strip heavy drawings from cloud doc (drawings remain in localStorage)
+            const recent = pending.slice(-2);
+            return recent.map(item => {
                 if (!item || typeof item !== 'object') return null;
                 const copy = { ...item };
+                delete copy.drawings; // Strip canvas drawings from cloud document to prevent multi-hundred-KB doc bloat
                 if (Array.isArray(copy.queue)) {
                     copy.queue = compactQueue(copy.queue);
-                }
-                if (copy.drawings) {
-                    copy.drawings = compactDrawings(copy.drawings);
                 }
                 return copy;
             }).filter(Boolean);
@@ -8862,7 +8864,7 @@
             updateSyncStatusUI('pending');
 
             if (syncTimer) clearTimeout(syncTimer);
-            syncTimer = setTimeout(window.flushSync, 2000);
+            syncTimer = setTimeout(window.flushSync, 35000);
         }
         window.recordQuestionAttempt = recordQuestionAttempt;
 
@@ -9043,7 +9045,7 @@
                 localStorage.setItem('medStorm_unsaved_changes', 'true');
                 updateSyncStatusUI('pending');
                 if (syncTimer) clearTimeout(syncTimer);
-                syncTimer = setTimeout(window.flushSync, immediate ? 50 : 2000);
+                syncTimer = setTimeout(window.flushSync, immediate ? 50 : 35000);
                 return;
             }
             if (field === 'examsHistory' && Array.isArray(value)) {
@@ -9060,7 +9062,7 @@
             if (immediate) {
                 syncTimer = setTimeout(window.flushSync, 50);
             } else {
-                syncTimer = setTimeout(window.flushSync, 2000);
+                syncTimer = setTimeout(window.flushSync, 35000);
             }
         };
 
@@ -9088,7 +9090,7 @@
             if (immediate) {
                 syncTimer = setTimeout(window.flushSync, 50);
             } else {
-                syncTimer = setTimeout(window.flushSync, 2000);
+                syncTimer = setTimeout(window.flushSync, 35000);
             }
         };
 
@@ -9114,11 +9116,11 @@
             if (window.flushSync) window.flushSync();
         });
 
-        let lastAdminFieldsRefreshTime = 0;
+        let lastAdminFieldsRefreshTime = Date.now();
         async function refreshAdminUserFields() {
             if (!window.currentUserId || !window.db || !window.doc) return;
             const now = Date.now();
-            if (now - lastAdminFieldsRefreshTime < 5 * 60 * 1000) return; // 5 minute throttle
+            if (now - lastAdminFieldsRefreshTime < 25 * 60 * 1000) return; // 25 minute throttle
             lastAdminFieldsRefreshTime = now;
             try {
                 const userRef = window.doc(window.db, "users", window.currentUserId);
@@ -9233,11 +9235,14 @@
             }
         };
 
-        let lastCloudSyncFocusTime = 0;
+        let lastCloudSyncFocusTime = Date.now();
         async function autoSyncOnFocus() {
             if (!window.currentUserId || !navigator.onLine) return;
+            const inActiveQuiz = document.body.classList.contains('focus-mode') ||
+                (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
+            if (inActiveQuiz) return;
             const now = Date.now();
-            if (now - lastCloudSyncFocusTime < 25 * 1000) return; // 25s throttle
+            if (now - lastCloudSyncFocusTime < 60 * 1000) return; // 60s throttle
             lastCloudSyncFocusTime = now;
             if (window.syncWithCloud) {
                 try {
@@ -9577,6 +9582,8 @@
                     } catch (err) {
                         console.warn("Initial user data load failed, proceeding anyway:", err);
                     }
+                    lastAdminFieldsRefreshTime = Date.now();
+                    lastCloudSyncFocusTime = Date.now();
                     const inActiveQuiz = document.body.classList.contains('focus-mode') ||
                         (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
                     if (!inActiveQuiz) {
@@ -13613,6 +13620,12 @@
 
         async function recordVote(questionText, optionIndex, optionCount) {
             const voteDocId = hashQuestion(questionText);
+            const voteKey = 'medStorm_voted_' + voteDocId;
+            if (localStorage.getItem(voteKey)) {
+                return; // User has already recorded a community vote for this question from this device
+            }
+            localStorage.setItem(voteKey, String(optionIndex));
+
             pendingVotes[voteDocId] = {
                 optionIndex: optionIndex,
                 optionCount: optionCount
@@ -15604,9 +15617,8 @@
             if (AppState) AppState.chatHistory = history;
             localStorage.setItem('medStormChat_' + userId, JSON.stringify(history));
 
-            if (window.currentUserId && window.saveUserData) {
-                window.saveUserData('chatHistory', history);
-            }
+            // Chat history is fully stored and retained per user in localStorage.
+            // Decoupled from cloud user doc to eliminate 25-50KB bloat and repeated Firestore write costs per message.
         }
 
         function clearChatHistory() {
