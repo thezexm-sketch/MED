@@ -8834,6 +8834,7 @@
                 qId: q.id || '',
                 qText: q.q || ''
             };
+            if (window.persistPendingDeltas) window.persistPendingDeltas();
 
             if (isFirstAttempt) {
                 if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
@@ -8871,6 +8872,62 @@
         window.pendingQuestionDeltas = {};
         window.pendingFavoriteDeltas = {};
         window.pendingNoteDeltas = {};
+
+        function persistPendingDeltas() {
+            try {
+                if (window.pendingQuestionDeltas && Object.keys(window.pendingQuestionDeltas).length > 0) {
+                    localStorage.setItem('medStorm_pQ', JSON.stringify(window.pendingQuestionDeltas));
+                } else {
+                    localStorage.removeItem('medStorm_pQ');
+                }
+                if (window.pendingFavoriteDeltas && Object.keys(window.pendingFavoriteDeltas).length > 0) {
+                    localStorage.setItem('medStorm_pF', JSON.stringify(window.pendingFavoriteDeltas));
+                } else {
+                    localStorage.removeItem('medStorm_pF');
+                }
+                if (window.pendingNoteDeltas && Object.keys(window.pendingNoteDeltas).length > 0) {
+                    localStorage.setItem('medStorm_pN', JSON.stringify(window.pendingNoteDeltas));
+                } else {
+                    localStorage.removeItem('medStorm_pN');
+                }
+            } catch (e) {
+                console.warn("Failed to persist pending deltas:", e);
+            }
+        }
+        window.persistPendingDeltas = persistPendingDeltas;
+
+        // Startup: one-time migration and delta restoration from localStorage before loadUserData runs
+        try {
+            if (!localStorage.getItem('medStorm_sync_v2')) {
+                if (!localStorage.getItem('medStorm_pQ') && !localStorage.getItem('medStorm_pF') && !localStorage.getItem('medStorm_pN')) {
+                    localStorage.removeItem('medStorm_unsaved_changes');
+                }
+                localStorage.setItem('medStorm_sync_v2', 'true');
+            }
+            const savedPQ = localStorage.getItem('medStorm_pQ');
+            if (savedPQ) Object.assign(window.pendingQuestionDeltas, JSON.parse(savedPQ) || {});
+            const savedPF = localStorage.getItem('medStorm_pF');
+            if (savedPF) Object.assign(window.pendingFavoriteDeltas, JSON.parse(savedPF) || {});
+            const savedPN = localStorage.getItem('medStorm_pN');
+            if (savedPN) Object.assign(window.pendingNoteDeltas, JSON.parse(savedPN) || {});
+        } catch (e) {
+            console.warn("Failed to restore pending deltas on startup:", e);
+        }
+
+        function applyQDeltas(base, deltas) {
+            const out = { ...(base || {}) };
+            for (const [k, d] of Object.entries(deltas || {})) {
+                const key = sanitizeFirestoreFieldKey(d.qId || k);
+                if (d.status === null || d.isDelete) {
+                    delete out[key];
+                    if (d.qText) delete out[sanitizeFirestoreFieldKey(d.qText)];
+                } else {
+                    out[key] = d.status;
+                }
+            }
+            return out;
+        }
+        window.applyQDeltas = applyQDeltas;
 
         window.flushSync = async function () {
             if (!window.currentUserId) return;
@@ -8930,6 +8987,13 @@
                 if (d.status === null || d.isDelete) {
                     updateArgs.push(new FieldPath('progress', safeKey), deleteField());
                     updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeKey), deleteField());
+                    if (d.qText) {
+                        const safeTextKey = sanitizeFirestoreFieldKey(d.qText);
+                        if (safeTextKey !== safeKey) {
+                            updateArgs.push(new FieldPath('progress', safeTextKey), deleteField());
+                            updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeTextKey), deleteField());
+                        }
+                    }
                 } else {
                     updateArgs.push(new FieldPath('progress', safeKey), d.status);
                     if (d.isFirstAttempt) {
@@ -8999,6 +9063,7 @@
                 if (updateArgs.length > 0) {
                     await updateDoc(userRef, ...updateArgs);
                 }
+                if (window.persistPendingDeltas) window.persistPendingDeltas();
                 if (Object.keys(window.pendingQuestionDeltas || {}).length === 0 &&
                     Object.keys(window.pendingFavoriteDeltas || {}).length === 0 &&
                     Object.keys(window.pendingNoteDeltas || {}).length === 0 &&
@@ -9016,6 +9081,7 @@
                         if (updateArgs.length > 0) {
                             await updateDoc(userRef, ...updateArgs);
                         }
+                        if (window.persistPendingDeltas) window.persistPendingDeltas();
                         localStorage.removeItem('medStorm_unsaved_changes');
                         updateSyncStatusUI('synced');
                     } catch (err) {
@@ -9024,6 +9090,7 @@
                         Object.assign(window.pendingFavoriteDeltas, favDeltas);
                         Object.assign(window.pendingNoteDeltas, noteDeltas);
                         Object.assign(pendingSyncData, syncData);
+                        if (window.persistPendingDeltas) window.persistPendingDeltas();
                         updateSyncStatusUI('error');
                         throw err;
                     }
@@ -9033,6 +9100,7 @@
                     Object.assign(window.pendingFavoriteDeltas, favDeltas);
                     Object.assign(window.pendingNoteDeltas, noteDeltas);
                     Object.assign(pendingSyncData, syncData);
+                    if (window.persistPendingDeltas) window.persistPendingDeltas();
                     updateSyncStatusUI('error');
                     throw e;
                 }
@@ -9242,7 +9310,7 @@
                 (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
             if (inActiveQuiz) return;
             const now = Date.now();
-            if (now - lastCloudSyncFocusTime < 15 * 1000) return; // 15s throttle
+            if (now - lastCloudSyncFocusTime < 60 * 1000) return; // 60s throttle
             lastCloudSyncFocusTime = now;
             if (window.syncWithCloud) {
                 try {
@@ -9269,9 +9337,9 @@
                 const userRef = doc(db, "users", user.uid);
 
                 let snap = null;
-                const hasUnsavedChanges = localStorage.getItem('medStorm_unsaved_changes') === 'true';
+                const hadUnsaved = localStorage.getItem('medStorm_unsaved_changes') === 'true';
 
-                if (hasUnsavedChanges) {
+                if (hadUnsaved) {
                     // Only fetch from server on unsaved changes recovery path
                     try {
                         snap = await getDocFromServer(userRef);
@@ -9291,56 +9359,6 @@
 
                 const serverData = (snap && snap.exists()) ? snap.data() : {};
 
-                // If unsaved local changes exist, merge with server rather than blindly overwriting server data
-                if (localStorage.getItem('medStorm_unsaved_changes') === 'true') {
-                    console.log("Unsaved local changes detected. Merging and syncing with server...");
-                    const recoveredData = {};
-                    try {
-                        const prog = localStorage.getItem('medStormProgress');
-                        if (prog !== null) {
-                            const localProg = JSON.parse(prog) || {};
-                            recoveredData.progress = Object.assign({}, serverData.progress || {}, localProg);
-                        }
-                        const favs = localStorage.getItem('medStormFavorites');
-                        if (favs !== null) {
-                            const localFavs = JSON.parse(favs) || {};
-                            recoveredData.favorites = Object.assign({}, serverData.favorites || {}, localFavs);
-                        }
-                        const nts = localStorage.getItem('medStormNotes');
-                        if (nts !== null) {
-                            const localNotes = JSON.parse(nts) || {};
-                            recoveredData.notes = Object.assign({}, serverData.notes || {}, localNotes);
-                        }
-                        const sts = localStorage.getItem('medStormStats');
-                        if (sts !== null) {
-                            const localStats = JSON.parse(sts) || {};
-                            const sAtt = (serverData.stats && serverData.stats.attemptedQuestions) || {};
-                            const lAtt = localStats.attemptedQuestions || {};
-                            recoveredData.stats = Object.assign({}, serverData.stats || {}, localStats);
-                            recoveredData.stats.attemptedQuestions = Object.assign({}, sAtt, lAtt);
-                        }
-                        const hist = localStorage.getItem('medStormExamsHistory');
-                        if (hist !== null) recoveredData.examsHistory = JSON.parse(hist);
-                        const pend = localStorage.getItem('medStormPendingExams');
-                        if (pend !== null) recoveredData.pendingExams = JSON.parse(pend);
-
-                        if (Object.keys(recoveredData).length > 0) {
-                            try {
-                                await updateDoc(userRef, recoveredData);
-                            } catch (e) {
-                                if (e.code === 'not-found') {
-                                    await setDoc(userRef, recoveredData, { merge: true });
-                                }
-                            }
-                            localStorage.removeItem('medStorm_unsaved_changes');
-                            console.log("Cross-device recovery merge complete!");
-                            Object.assign(serverData, recoveredData);
-                        }
-                    } catch (e) {
-                        console.error("Recovery merge failed:", e);
-                    }
-                }
-
                 const savedVotes = localStorage.getItem('medStorm_unsaved_votes');
                 if (savedVotes && window.flushVotes) {
                     try {
@@ -9356,33 +9374,84 @@
                 if (serverData && Object.keys(serverData).length > 0) {
                     const data = serverData;
 
-                    // Cross-device union merge: server union local, keeping local unsynced answers
+                    // Server is the single source of truth, with pending local deltas applied on top
                     if (data.progress !== undefined) {
-                        AppState.progress = Object.assign({}, AppState.progress || {}, data.progress || {});
+                        AppState.progress = applyQDeltas(data.progress, window.pendingQuestionDeltas);
                         localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
                     }
                     if (data.favorites !== undefined) {
-                        AppState.favorites = Object.assign({}, AppState.favorites || {}, data.favorites || {});
+                        const mergedFavs = { ...(data.favorites || {}) };
+                        for (const [k, val] of Object.entries(window.pendingFavoriteDeltas || {})) {
+                            const safeK = sanitizeFirestoreFieldKey(k);
+                            if (val === null) delete mergedFavs[safeK];
+                            else mergedFavs[safeK] = val;
+                        }
+                        AppState.favorites = mergedFavs;
                         localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
                     }
                     if (data.notes !== undefined) {
-                        AppState.notes = Object.assign({}, AppState.notes || {}, data.notes || {});
+                        const mergedNotes = { ...(data.notes || {}) };
+                        for (const [k, val] of Object.entries(window.pendingNoteDeltas || {})) {
+                            const safeK = sanitizeFirestoreFieldKey(k);
+                            if (val === null) delete mergedNotes[safeK];
+                            else mergedNotes[safeK] = val;
+                        }
+                        AppState.notes = mergedNotes;
                         localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
                     }
                     if (data.stats) {
-                        AppState.stats = Object.assign({}, AppState.stats || {}, data.stats || {});
+                        const curStats = AppState.stats || {};
+                        const sDaily = (data.stats && data.stats.dailyProgress) || {};
+                        const lDaily = curStats.dailyProgress || {};
+                        const sModTime = (data.stats && data.stats.moduleTime) || {};
+                        const lModTime = curStats.moduleTime || {};
+
+                        // Build attemptedQuestions strictly from server + pending deltas (NO UNION, NO progress-fill loop!)
                         const sAtt = (data.stats && data.stats.attemptedQuestions) || {};
-                        const lAtt = (AppState.stats && AppState.stats.attemptedQuestions) || {};
-                        AppState.stats.attemptedQuestions = Object.assign({}, lAtt, sAtt);
-                        if (AppState.progress) {
-                            for (const [k, v] of Object.entries(AppState.progress)) {
-                                if (!AppState.stats.attemptedQuestions[k]) AppState.stats.attemptedQuestions[k] = v;
+                        const attOut = { ...sAtt };
+                        for (const [k, d] of Object.entries(window.pendingQuestionDeltas || {})) {
+                            const safeKey = sanitizeFirestoreFieldKey(d.qId || k);
+                            if (d.status === null || d.isDelete) {
+                                delete attOut[safeKey];
+                                if (d.qText) delete attOut[sanitizeFirestoreFieldKey(d.qText)];
+                            } else if (d.isFirstAttempt) {
+                                attOut[safeKey] = d.status;
                             }
                         }
+
+                        // For moduleTime, keep local resets if pending reset deltas exist, else prefer server
+                        const mergedModTime = Object.assign({}, sModTime);
+                        const hasPendingQDeltas = window.pendingQuestionDeltas && Object.keys(window.pendingQuestionDeltas).length > 0;
+                        if (hasPendingQDeltas) {
+                            Object.assign(mergedModTime, lModTime);
+                        }
+
+                        AppState.stats = {
+                            ...curStats,
+                            ...data.stats,
+                            attemptedQuestions: attOut,
+                            dailyProgress: Object.assign({}, sDaily, lDaily),
+                            moduleTime: mergedModTime,
+                            totalTime: Math.max(data.stats.totalTime || 0, curStats.totalTime || 0)
+                        };
                         localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
                     }
-                    if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
-                    if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
+                    if (hadUnsaved) {
+                        try {
+                            const lh = JSON.parse(localStorage.getItem('medStormExamsHistory') || 'null');
+                            const lp = JSON.parse(localStorage.getItem('medStormPendingExams') || 'null');
+                            if (Array.isArray(lh)) { AppState.examsHistory = lh; if (window.saveUserData) window.saveUserData('examsHistory', lh); }
+                            else if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
+                            if (Array.isArray(lp)) { AppState.pendingExams = lp; if (window.saveUserData) window.saveUserData('pendingExams', lp); }
+                            else if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
+                        } catch (e) {
+                            if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
+                            if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
+                        }
+                    } else {
+                        if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
+                        if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
+                    }
 
                     AppState.totalQuestionsSolved = Math.max(data.totalQuestionsSolved || 0, AppState.totalQuestionsSolved || 0);
                     AppState.isTerm1Active = !!data.isTerm1Active;
@@ -9509,6 +9578,10 @@
                     if (window.activeUserListener) {
                         try { window.activeUserListener(); } catch (e) { }
                         window.activeUserListener = null;
+                    }
+
+                    if (hadUnsaved && window.flushSync) {
+                        try { await window.flushSync(); } catch (e) { console.warn("Post-merge flushSync failed:", e); }
                     }
 
                     if (typeof renderDashboard === 'function' && !document.body.classList.contains('focus-mode')) {
@@ -10317,6 +10390,10 @@
                     }
                 }
                 await signOut(auth);
+                window.pendingQuestionDeltas = {};
+                window.pendingFavoriteDeltas = {};
+                window.pendingNoteDeltas = {};
+                ['medStorm_pQ', 'medStorm_pF', 'medStorm_pN', 'medStorm_unsaved_changes'].forEach(k => localStorage.removeItem(k));
                 localStorage.removeItem('medStormProgress');
                 localStorage.removeItem('medStormFavorites');
                 localStorage.removeItem('medStormNotes');
@@ -13691,6 +13768,7 @@
                 AppState.favorites[qKey] = true;
                 window.pendingFavoriteDeltas[qKey] = true;
             }
+            if (window.persistPendingDeltas) window.persistPendingDeltas();
 
             localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
             localStorage.setItem('medStorm_unsaved_changes', 'true');
@@ -13729,6 +13807,7 @@
                 if (q.q) delete AppState.notes[q.q];
                 window.pendingNoteDeltas[qKey] = null;
             }
+            if (window.persistPendingDeltas) window.persistPendingDeltas();
 
             localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
             localStorage.setItem('medStorm_unsaved_changes', 'true');
@@ -14186,24 +14265,34 @@
             targetResetSubjectKey = null;
         }
 
-        function confirmResetAction() {
+        async function confirmResetAction() {
             if (!targetResetModule) return;
+            const modName = targetResetModule;
+            if ((!DB[modName] || !Object.keys(DB[modName]).length) && window.fetchSingleModuleFromDB) {
+                try { await window.fetchSingleModuleFromDB(modName); } catch (e) {}
+            }
+            const modData = DB[modName];
+            if (!modData || !Object.keys(modData).length) {
+                if (window.showToast) window.showToast('Could not load module. Check connection.', 'error');
+                closeResetModal(); return;
+            }
 
             let questionsToReset;
             const isLesson = targetResetSubjectKey && targetResetSubjectKey.includes('___');
+
             if (targetResetSubjectKey) {
                 let subjectData;
                 if (isLesson) {
                     const parts = targetResetSubjectKey.split('___');
                     const pKey = parts[0];
                     const cKey = parts[1];
-                    subjectData = (DB[targetResetModule] && DB[targetResetModule][pKey]) ? DB[targetResetModule][pKey][cKey] : [];
+                    subjectData = (modData && modData[pKey]) ? modData[pKey][cKey] : [];
                 } else {
-                    subjectData = DB[targetResetModule][targetResetSubjectKey];
+                    subjectData = modData ? modData[targetResetSubjectKey] : [];
                 }
                 questionsToReset = extractAllQuestions(subjectData || []);
             } else {
-                questionsToReset = extractAllQuestions(DB[targetResetModule]);
+                questionsToReset = extractAllQuestions(modData || []);
             }
 
             if (!window.pendingQuestionDeltas) window.pendingQuestionDeltas = {};
@@ -14233,20 +14322,20 @@
 
             if (!isResettingMistakes) {
                 if (!AppState.stats.moduleTime) AppState.stats.moduleTime = {};
-                AppState.stats.moduleTime[targetResetModule] = 0;
+                AppState.stats.moduleTime[modName] = 0;
             }
 
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
             localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveUserData) window.saveUserData('progress', AppState.progress);
-            if (window.saveUserData) window.saveUserData('stats', AppState.stats);
+            if (window.persistPendingDeltas) window.persistPendingDeltas();
+            localStorage.setItem('medStorm_unsaved_changes', 'true');
             if (window.flushSync) window.flushSync().catch(e => console.warn("Reset sync failed:", e));
 
             if (targetResetSubjectKey) {
                 if (window.showToast) window.showToast(isLesson ? 'Lesson progress reset!' : 'Subject progress reset!', 'success');
                 if (typeof renderDashboard === 'function') renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
                 const parentGroupToExpand = isLesson ? targetResetSubjectKey.split('___')[0] : null;
-                openStartModal(targetResetModule, isResettingMistakes, parentGroupToExpand);
+                openStartModal(modName, isResettingMistakes, parentGroupToExpand);
             } else {
                 renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
             }
@@ -14495,6 +14584,7 @@
             if (qKey) {
                 if (!window.pendingFavoriteDeltas) window.pendingFavoriteDeltas = {};
                 window.pendingFavoriteDeltas[qKey] = null;
+                if (window.persistPendingDeltas) window.persistPendingDeltas();
             }
             localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
             localStorage.setItem('medStorm_unsaved_changes', 'true');
@@ -14515,6 +14605,7 @@
             if (qKey) {
                 if (!window.pendingNoteDeltas) window.pendingNoteDeltas = {};
                 window.pendingNoteDeltas[qKey] = null;
+                if (window.persistPendingDeltas) window.persistPendingDeltas();
             }
             localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
             localStorage.setItem('medStorm_unsaved_changes', 'true');
