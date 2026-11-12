@@ -537,6 +537,18 @@
                 border-radius: 10px;
                 justify-content: center;
             }
+
+            .sync-status-indicator .sync-status-text {
+                display: none;
+            }
+
+            .sync-status-indicator {
+                padding: 6px !important;
+                border-radius: 50% !important;
+                min-width: 32px;
+                height: 32px;
+                justify-content: center;
+            }
         }
 
         .ai-chat-window {
@@ -6766,12 +6778,12 @@
                 </a>
 
                 <div class="sync-status-indicator"
-                    onclick="window.flushSync && window.flushSync(); window.flushVotes && window.flushVotes(); window.flushWeeklyMistakes && window.flushWeeklyMistakes();"
+                    onclick="if (window.syncWithCloud) window.syncWithCloud(true); else if (window.flushSync) window.flushSync();"
                     style="display: none; align-items: center; gap: 6px; font-size: 0.8rem; color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; cursor: pointer; transition: all 0.2s ease; user-select: none;"
                     onmouseover="this.style.background='rgba(16, 185, 129, 0.15)'"
                     onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'">
                     <i class="ri-checkbox-circle-fill" style="color: #10B981;"></i>
-                    <span>Cloud Synced</span>
+                    <span class="sync-status-text">Cloud Synced</span>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -7087,6 +7099,11 @@
                             style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); color: #a855f7; padding: 0.6rem 1.5rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                             <i class="ri-edit-line"></i> Change Username
                         </button>
+                        <button onclick="if (window.syncWithCloud) window.syncWithCloud(true);"
+                            style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; padding: 0.6rem 1.5rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                            title="Force sync latest progress across all devices">
+                            <i class="ri-refresh-line"></i> Sync with Cloud
+                        </button>
                         <button onclick="window.handleLogout()"
                             style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red); padding: 0.6rem 1.5rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                             <i class="ri-logout-box-r-line"></i> Logout
@@ -7229,12 +7246,12 @@
                         <i class="ri-book-open-fill"></i><span>📖 Open Book</span>
                     </button>
                     <div class="sync-status-indicator"
-                        onclick="window.flushSync && window.flushSync(); window.flushVotes && window.flushVotes(); window.flushWeeklyMistakes && window.flushWeeklyMistakes();"
+                        onclick="if (window.syncWithCloud) window.syncWithCloud(true); else if (window.flushSync) window.flushSync();"
                         style="display: none; align-items: center; gap: 6px; font-size: 0.8rem; color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; cursor: pointer; transition: all 0.2s ease; user-select: none;"
                         onmouseover="this.style.background='rgba(16, 185, 129, 0.15)'"
                         onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'">
                         <i class="ri-checkbox-circle-fill" style="color: #10B981;"></i>
-                        <span>Cloud Synced</span>
+                        <span class="sync-status-text">Cloud Synced</span>
                     </div>
 
                     <button class="report-btn-top" onclick="openReportModal(event)" title="Report Error"
@@ -8495,11 +8512,29 @@
                     el.style.display = 'none';
                     return;
                 }
-                if (status === 'synced' || status === 'pending') {
-                    el.style.display = 'none';
+                if (status === 'synced') {
+                    el.style.display = 'flex';
+                    el.innerHTML = '<i class="ri-checkbox-circle-fill" style="color: #10B981; font-size: 0.95rem;"></i> <span class="sync-status-text" style="font-size: 0.75rem; font-weight: 600;">Cloud Synced</span>';
+                    el.style.color = '#10B981';
+                    el.style.background = 'rgba(16, 185, 129, 0.1)';
+                    el.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+                    el.style.padding = '4px 10px';
+                    el.style.borderRadius = '20px';
+                    el.style.opacity = '1';
+                    el.title = 'Progress synced with cloud. Click to sync now.';
+                } else if (status === 'pending') {
+                    el.style.display = 'flex';
+                    el.innerHTML = '<i class="ri-time-line" style="color: #F59E0B; font-size: 0.95rem;"></i> <span class="sync-status-text" style="font-size: 0.75rem; font-weight: 600;">Syncing Soon...</span>';
+                    el.style.color = '#F59E0B';
+                    el.style.background = 'rgba(245, 158, 11, 0.1)';
+                    el.style.borderColor = 'rgba(245, 158, 11, 0.2)';
+                    el.style.padding = '4px 10px';
+                    el.style.borderRadius = '20px';
+                    el.style.opacity = '1';
+                    el.title = 'Unsaved changes pending sync. Click to sync now.';
                 } else if (status === 'syncing') {
                     el.style.display = 'flex';
-                    el.innerHTML = '<i class="ri-loader-4-line ri-spin" style="color: #9CA3AF; font-size: 1rem;"></i>';
+                    el.innerHTML = '<i class="ri-loader-4-line ri-spin" style="color: #9CA3AF; font-size: 0.95rem;"></i> <span class="sync-status-text" style="font-size: 0.75rem; font-weight: 600;">Syncing...</span>';
                     el.style.color = '#9CA3AF';
                     el.style.background = 'transparent';
                     el.style.borderColor = 'transparent';
@@ -8508,7 +8543,7 @@
                     el.title = 'Saving to cloud...';
                 } else if (status === 'error') {
                     el.style.display = 'flex';
-                    el.innerHTML = '<i class="ri-error-warning-fill" style="color: #EF4444; font-size: 1rem;"></i> <span style="font-size: 0.75rem; font-weight: 600;">Sync Error</span>';
+                    el.innerHTML = '<i class="ri-error-warning-fill" style="color: #EF4444; font-size: 0.95rem;"></i> <span class="sync-status-text" style="font-size: 0.75rem; font-weight: 600;">Sync Error</span>';
                     el.style.color = '#EF4444';
                     el.style.background = 'rgba(239, 68, 68, 0.1)';
                     el.style.borderColor = 'rgba(239, 68, 68, 0.2)';
@@ -8890,9 +8925,14 @@
             // Granular FieldPath updates for progress and stats
             for (const [k, d] of Object.entries(qDeltas)) {
                 const safeKey = sanitizeFirestoreFieldKey(d.qId || k);
-                updateArgs.push(new FieldPath('progress', safeKey), d.status);
-                if (d.isFirstAttempt) {
-                    updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeKey), d.status);
+                if (d.status === null || d.isDelete) {
+                    updateArgs.push(new FieldPath('progress', safeKey), deleteField());
+                    updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeKey), deleteField());
+                } else {
+                    updateArgs.push(new FieldPath('progress', safeKey), d.status);
+                    if (d.isFirstAttempt) {
+                        updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeKey), d.status);
+                    }
                 }
             }
 
@@ -9059,6 +9099,9 @@
             if (localStorage.getItem('medStorm_unsaved_votes') && window.flushVotes) {
                 window.flushVotes();
             }
+            if (window.syncWithCloud) {
+                window.syncWithCloud(false);
+            }
         });
 
         // Flush immediately when app is hidden or closed (mobile tab switch, screen lock)
@@ -9073,13 +9116,18 @@
 
         let lastAdminFieldsRefreshTime = 0;
         async function refreshAdminUserFields() {
-            if (!window.currentUserId || !window.db || !window.doc || !window.getDoc) return;
+            if (!window.currentUserId || !window.db || !window.doc) return;
             const now = Date.now();
             if (now - lastAdminFieldsRefreshTime < 5 * 60 * 1000) return; // 5 minute throttle
             lastAdminFieldsRefreshTime = now;
             try {
                 const userRef = window.doc(window.db, "users", window.currentUserId);
-                const snap = await window.getDoc(userRef);
+                let snap = null;
+                try {
+                    snap = await (window.getDocFromServer ? window.getDocFromServer(userRef) : window.getDoc(userRef));
+                } catch (e) {
+                    try { snap = await window.getDoc(userRef); } catch (e2) { snap = null; }
+                }
                 if (snap && snap.exists()) {
                     const data = snap.data();
                     let changed = false;
@@ -9122,15 +9170,93 @@
         }
         window.refreshAdminUserFields = refreshAdminUserFields;
 
+        let isSyncingWithCloud = false;
+        window.syncWithCloud = async function (showToastFeedback = false) {
+            if (!window.currentUserId) return;
+            if (isSyncingWithCloud) return;
+            if (!navigator.onLine) {
+                if (showToastFeedback && window.showToast) {
+                    window.showToast("Offline — cannot sync with cloud right now ⚠️", "warning");
+                }
+                return;
+            }
+
+            isSyncingWithCloud = true;
+            if (window.updateSyncStatusUI) window.updateSyncStatusUI('syncing');
+
+            try {
+                // 1. Push any pending deltas first so nothing is lost
+                if (window.flushSync) {
+                    try { await window.flushSync(); } catch (e) { console.warn("flushSync error in syncWithCloud:", e); }
+                }
+                if (window.flushVotes) {
+                    try { await window.flushVotes(); } catch (e) { console.warn("flushVotes error in syncWithCloud:", e); }
+                }
+                if (window.flushWeeklyMistakes) {
+                    try { await window.flushWeeklyMistakes(); } catch (e) { console.warn("flushWeeklyMistakes error in syncWithCloud:", e); }
+                }
+
+                // 2. Pull fresh data from server (bypassing IndexedDB cache)
+                const userRef = doc(db, "users", window.currentUserId);
+                let serverSnap = null;
+                try {
+                    serverSnap = await getDocFromServer(userRef);
+                } catch (serverErr) {
+                    console.warn("getDocFromServer failed in syncWithCloud, falling back to cache:", serverErr);
+                    try { serverSnap = await getDoc(userRef); } catch (e) { serverSnap = null; }
+                }
+
+                // 3. Merge server snapshot into local state
+                if (serverSnap && serverSnap.exists()) {
+                    await loadUserData({ uid: window.currentUserId, email: window.currentUserEmail }, serverSnap);
+                }
+
+                // 4. Update UI if not in active quiz
+                const inActiveQuiz = document.body.classList.contains('focus-mode') ||
+                    (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
+                if (!inActiveQuiz && typeof renderDashboard === 'function') {
+                    renderDashboard();
+                }
+
+                if (window.updateSyncStatusUI) window.updateSyncStatusUI('synced');
+                if (showToastFeedback && window.showToast) {
+                    window.showToast("Cloud sync complete! Progress updated 🔄", "success");
+                }
+            } catch (err) {
+                console.error("syncWithCloud failed:", err);
+                if (window.updateSyncStatusUI) window.updateSyncStatusUI('error');
+                if (showToastFeedback && window.showToast) {
+                    window.showToast("Sync failed. Check your internet connection.", "error");
+                }
+            } finally {
+                isSyncingWithCloud = false;
+            }
+        };
+
+        let lastCloudSyncFocusTime = 0;
+        async function autoSyncOnFocus() {
+            if (!window.currentUserId || !navigator.onLine) return;
+            const now = Date.now();
+            if (now - lastCloudSyncFocusTime < 25 * 1000) return; // 25s throttle
+            lastCloudSyncFocusTime = now;
+            if (window.syncWithCloud) {
+                try {
+                    await window.syncWithCloud(false);
+                } catch (e) {
+                    console.warn("autoSyncOnFocus failed:", e);
+                }
+            }
+        }
+
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && window.refreshAdminUserFields) {
-                window.refreshAdminUserFields();
+            if (!document.hidden) {
+                if (window.refreshAdminUserFields) window.refreshAdminUserFields();
+                autoSyncOnFocus();
             }
         });
         window.addEventListener('focus', () => {
-            if (window.refreshAdminUserFields) {
-                window.refreshAdminUserFields();
-            }
+            if (window.refreshAdminUserFields) window.refreshAdminUserFields();
+            autoSyncOnFocus();
         });
 
         async function loadUserData(user, initialSnap = null) {
@@ -9152,9 +9278,9 @@
                     snap = initialSnap;
                 } else {
                     try {
-                        snap = await getDoc(userRef);
+                        snap = await getDocFromServer(userRef);
                     } catch (e) {
-                        snap = null;
+                        try { snap = await getDoc(userRef); } catch (e2) { snap = null; }
                     }
                 }
 
@@ -9227,22 +9353,22 @@
 
                     // Cross-device union merge: server union local, keeping local unsynced answers
                     if (data.progress !== undefined) {
-                        AppState.progress = Object.assign({}, data.progress || {}, AppState.progress || {});
+                        AppState.progress = Object.assign({}, AppState.progress || {}, data.progress || {});
                         localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
                     }
                     if (data.favorites !== undefined) {
-                        AppState.favorites = Object.assign({}, data.favorites || {}, AppState.favorites || {});
+                        AppState.favorites = Object.assign({}, AppState.favorites || {}, data.favorites || {});
                         localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
                     }
                     if (data.notes !== undefined) {
-                        AppState.notes = Object.assign({}, data.notes || {}, AppState.notes || {});
+                        AppState.notes = Object.assign({}, AppState.notes || {}, data.notes || {});
                         localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
                     }
                     if (data.stats) {
-                        AppState.stats = Object.assign({}, data.stats || {}, AppState.stats || {});
+                        AppState.stats = Object.assign({}, AppState.stats || {}, data.stats || {});
                         const sAtt = (data.stats && data.stats.attemptedQuestions) || {};
                         const lAtt = (AppState.stats && AppState.stats.attemptedQuestions) || {};
-                        AppState.stats.attemptedQuestions = Object.assign({}, sAtt, lAtt);
+                        AppState.stats.attemptedQuestions = Object.assign({}, lAtt, sAtt);
                         if (AppState.progress) {
                             for (const [k, v] of Object.entries(AppState.progress)) {
                                 if (!AppState.stats.attemptedQuestions[k]) AppState.stats.attemptedQuestions[k] = v;
@@ -9253,7 +9379,7 @@
                     if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
                     if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
 
-                    AppState.totalQuestionsSolved = data.totalQuestionsSolved || 0;
+                    AppState.totalQuestionsSolved = Math.max(data.totalQuestionsSolved || 0, AppState.totalQuestionsSolved || 0);
                     AppState.isTerm1Active = !!data.isTerm1Active;
                     AppState.isTerm2Active = !!data.isTerm2Active;
                     AppState.year = data.year || '1';
@@ -9419,17 +9545,24 @@
                     window.setAvatarUI(savedAvatar ? savedAvatar : defAvatar);
                     try {
                         const userRef = doc(db, 'users', user.uid);
-                        const userSnap = await getDoc(userRef);
-                        const updateData = { lastSeen: Date.now(), email: user.email || '' };
-                        if (!userSnap.exists() || !userSnap.data().createdAt) {
-
-                            const authCreated = user.metadata && user.metadata.creationTime
-                                ? new Date(user.metadata.creationTime).getTime()
-                                : Date.now();
-                            updateData.createdAt = authCreated;
+                        let userSnap = null;
+                        try {
+                            userSnap = await getDocFromServer(userRef);
+                        } catch (serverErr) {
+                            console.warn('Initial server fetch failed (offline?), falling back to cache:', serverErr);
+                            try { userSnap = await getDoc(userRef); } catch (e) { userSnap = null; }
                         }
-                        await setDoc(userRef, updateData, { merge: true });
-                        window._authInitialUserSnap = userSnap;
+                        if (userSnap) {
+                            const updateData = { lastSeen: Date.now(), email: user.email || '' };
+                            if (!userSnap.exists() || !userSnap.data().createdAt) {
+                                const authCreated = user.metadata && user.metadata.creationTime
+                                    ? new Date(user.metadata.creationTime).getTime()
+                                    : Date.now();
+                                updateData.createdAt = authCreated;
+                            }
+                            await setDoc(userRef, updateData, { merge: true });
+                            window._authInitialUserSnap = userSnap;
+                        }
                     } catch (e) { console.warn('lastSeen update failed:', e); }
 
                     fetchQuestionsFromDB().catch(err => {
@@ -14059,24 +14192,27 @@
                 questionsToReset = extractAllQuestions(DB[targetResetModule]);
             }
 
+            if (!window.pendingQuestionDeltas) window.pendingQuestionDeltas = {};
             questionsToReset.forEach(q => {
                 if (!q) return;
                 const status = getQuestionStatus(q);
-                if (isResettingMistakes) {
-                    if (status === 'wrong') {
-                        if (q.id) delete AppState.progress[q.id];
-                        if (q.q) delete AppState.progress[q.q];
-                        if (AppState.stats && AppState.stats.attemptedQuestions) {
-                            if (q.id) delete AppState.stats.attemptedQuestions[q.id];
-                            if (q.q) delete AppState.stats.attemptedQuestions[q.q];
-                        }
-                    }
-                } else {
+                const qKey = q.id || q.q;
+                const shouldReset = isResettingMistakes ? (status === 'wrong') : !!status;
+                if (shouldReset) {
                     if (q.id) delete AppState.progress[q.id];
                     if (q.q) delete AppState.progress[q.q];
                     if (AppState.stats && AppState.stats.attemptedQuestions) {
                         if (q.id) delete AppState.stats.attemptedQuestions[q.id];
                         if (q.q) delete AppState.stats.attemptedQuestions[q.q];
+                    }
+                    if (qKey) {
+                        window.pendingQuestionDeltas[qKey] = {
+                            status: null,
+                            isFirstAttempt: false,
+                            qId: q.id || '',
+                            qText: q.q || '',
+                            isDelete: true
+                        };
                     }
                 }
             });
