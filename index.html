@@ -8577,22 +8577,68 @@
         window.sanitizeFirestoreFieldKey = sanitizeFirestoreFieldKey;
 
         function getQuestionStatus(q) {
-            if (!q) return null;
-            if (q.id && AppState.progress && AppState.progress[q.id]) return AppState.progress[q.id];
-            if (q.q && AppState.progress && AppState.progress[q.q]) return AppState.progress[q.q];
+            if (!q || !AppState.progress) return null;
+            if (q.id && AppState.progress[q.id]) return AppState.progress[q.id];
+            if (q.q) {
+                if (AppState.progress[q.q]) return AppState.progress[q.q];
+                const trimmed = q.q.trim();
+                if (AppState.progress[trimmed]) return AppState.progress[trimmed];
+            }
+            if (typeof sanitizeFirestoreFieldKey === 'function') {
+                if (q.id) {
+                    const skId = sanitizeFirestoreFieldKey(q.id);
+                    if (AppState.progress[skId]) return AppState.progress[skId];
+                }
+                if (q.q) {
+                    const skQ = sanitizeFirestoreFieldKey(q.q);
+                    if (AppState.progress[skQ]) return AppState.progress[skQ];
+                }
+            }
             return null;
         }
         window.getQuestionStatus = getQuestionStatus;
 
         function getQuestionFavorite(q) {
             if (!q || !AppState.favorites) return false;
-            return !!((q.id && AppState.favorites[q.id]) || (q.q && AppState.favorites[q.q]));
+            if (q.id && AppState.favorites[q.id]) return true;
+            if (q.q) {
+                if (AppState.favorites[q.q]) return true;
+                const trimmed = q.q.trim();
+                if (AppState.favorites[trimmed]) return true;
+            }
+            if (typeof sanitizeFirestoreFieldKey === 'function') {
+                if (q.id) {
+                    const skId = sanitizeFirestoreFieldKey(q.id);
+                    if (AppState.favorites[skId]) return true;
+                }
+                if (q.q) {
+                    const skQ = sanitizeFirestoreFieldKey(q.q);
+                    if (AppState.favorites[skQ]) return true;
+                }
+            }
+            return false;
         }
         window.getQuestionFavorite = getQuestionFavorite;
 
         function getQuestionNote(q) {
             if (!q || !AppState.notes) return '';
-            return (q.id && AppState.notes[q.id]) || (q.q && AppState.notes[q.q]) || '';
+            if (q.id && AppState.notes[q.id]) return AppState.notes[q.id];
+            if (q.q) {
+                if (AppState.notes[q.q]) return AppState.notes[q.q];
+                const trimmed = q.q.trim();
+                if (AppState.notes[trimmed]) return AppState.notes[trimmed];
+            }
+            if (typeof sanitizeFirestoreFieldKey === 'function') {
+                if (q.id) {
+                    const skId = sanitizeFirestoreFieldKey(q.id);
+                    if (AppState.notes[skId]) return AppState.notes[skId];
+                }
+                if (q.q) {
+                    const skQ = sanitizeFirestoreFieldKey(q.q);
+                    if (AppState.notes[skQ]) return AppState.notes[skQ];
+                }
+            }
+            return '';
         }
         window.getQuestionNote = getQuestionNote;
 
@@ -9763,7 +9809,10 @@
                 if (DB[modName]) {
                     const qs = extractAllQuestions(DB[modName]);
                     qs.forEach(q => {
-                        if (q && q.q) allowedQs.add(q.q);
+                        if (q) {
+                            if (q.id) allowedQs.add(q.id);
+                            if (q.q) allowedQs.add(q.q);
+                        }
                     });
                 }
             });
@@ -11779,8 +11828,8 @@
                 let availableCount = 0, mistakesCount = 0;
                 if (hasLocalQs) {
                     allQs.forEach(q => {
-                        if (!q || !q.q) return;
-                        const status = AppState.progress[q.q];
+                        if (!q) return;
+                        const status = getQuestionStatus(q);
                         if (status === 'wrong') mistakesCount++;
                         if (isMistakes && status === 'wrong') availableCount++;
                         else if (!isMistakes && !status) availableCount++;
@@ -11789,7 +11838,7 @@
                 const total = hasLocalQs ? allQs.length : (meta ? meta.total : 0);
                 const isLoaded = total > 0;
 
-                let solved = hasLocalQs ? allQs.filter(q => q && q.q && AppState.progress[q.q]).length : 0;
+                let solved = hasLocalQs ? allQs.filter(q => q && getQuestionStatus(q)).length : 0;
                 if (!hasLocalQs && meta && meta.total > 0) {
                     availableCount = isMistakes ? 0 : Math.max(0, meta.total - solved);
                 }
@@ -12014,8 +12063,8 @@
             function analyzeQuestions(questions, sectionPath) {
                 let correct = 0, wrong = 0;
                 questions.forEach(q => {
-                    if (!q || !q.q) return;
-                    const status = AppState.progress[q.q];
+                    if (!q) return;
+                    const status = getQuestionStatus(q);
                     if (status === 'correct') correct++;
                     else if (status === 'wrong') wrong++;
                 });
@@ -12212,7 +12261,7 @@
                     if (totalSubjectQuestions === 0) continue;
 
                     if (Array.isArray(data)) {
-                        const pool = isMistakes ? data.filter(q => AppState.progress[q.q] === 'wrong') : data.filter(q => !AppState.progress[q.q]);
+                        const pool = isMistakes ? data.filter(q => getQuestionStatus(q) === 'wrong') : data.filter(q => !getQuestionStatus(q));
                         const poolCount = pool.length;
 
                         const groupDiv = document.createElement('div');
@@ -12287,8 +12336,8 @@
                             if (childQuestions.length === 0) continue;
 
                             const pool = isMistakes
-                                ? childQuestions.filter(q => AppState.progress[q.q] === 'wrong')
-                                : childQuestions.filter(q => !AppState.progress[q.q]);
+                                ? childQuestions.filter(q => getQuestionStatus(q) === 'wrong')
+                                : childQuestions.filter(q => !getQuestionStatus(q));
                             const childPoolCount = pool.length;
                             groupPoolCount += childPoolCount;
 
@@ -12594,19 +12643,19 @@
                     }
                     if (subQs) {
                         const filtered = Session.mode === 'mistakes'
-                            ? subQs.filter(q => AppState.progress[q.q] === 'wrong')
+                            ? subQs.filter(q => getQuestionStatus(q) === 'wrong')
                             : (Session.mode === 'favorites'
-                                ? subQs.filter(q => q && q.q && AppState.favorites && AppState.favorites[q.q])
-                                : subQs.filter(q => !AppState.progress[q.q]));
+                                ? subQs.filter(q => getQuestionFavorite(q))
+                                : subQs.filter(q => !getQuestionStatus(q)));
                         pool.push(...filtered);
                     }
                 });
             } else {
                 pool = Session.mode === 'mistakes'
-                    ? DB[Session.module].filter(q => AppState.progress[q.q] === 'wrong')
+                    ? DB[Session.module].filter(q => getQuestionStatus(q) === 'wrong')
                     : (Session.mode === 'favorites'
-                        ? DB[Session.module].filter(q => q && q.q && AppState.favorites && AppState.favorites[q.q])
-                        : DB[Session.module].filter(q => !AppState.progress[q.q]));
+                        ? DB[Session.module].filter(q => getQuestionFavorite(q))
+                        : DB[Session.module].filter(q => !getQuestionStatus(q)));
             }
             if (pool.length === 0) return alert("No questions available! Reset module to start over.");
             closeModal();
@@ -13025,30 +13074,17 @@
             if (pill) pill.classList.add('warning');
 
             const isNonScoringMode = (Session.mode === 'mistakes' || Session.mode === 'favorites' || document.body.getAttribute('data-mode') === 'mistakes');
-            if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
-            const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
-
-            AppState.progress[q.q] = 'wrong';
+            const isFirstAttempt = !isNonScoringMode && !(AppState.stats && AppState.stats.attemptedQuestions && ((q.id && AppState.stats.attemptedQuestions[q.id]) || (q.q && AppState.stats.attemptedQuestions[q.q])));
             const today = new Date().toISOString().split('T')[0];
-            if (isFirstAttempt) {
-                AppState.stats.attemptedQuestions[q.q] = 'wrong';
-                if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
-                if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
-                AppState.stats.dailyProgress[today].wrong = (AppState.stats.dailyProgress[today].wrong || 0) + 1;
-                const currentYear = String(AppState.year || '1');
-                const yKey = `wrong_y${currentYear}`;
-                AppState.stats.dailyProgress[today][yKey] = (AppState.stats.dailyProgress[today][yKey] || 0) + 1;
-            }
+            const currentYear = String(AppState.year || '1');
+            const yCorrectKey = `correct_y${currentYear}`;
+            const yWrongKey = `wrong_y${currentYear}`;
 
             if (typeof recordMistake === 'function') {
                 recordMistake(q, Session.module, -1);
             }
 
-            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveBatchUserData) {
-                window.saveBatchUserData({ progress: AppState.progress, stats: AppState.stats });
-            }
+            recordQuestionAttempt(q, false, isFirstAttempt, today, yCorrectKey, yWrongKey);
 
             document.querySelectorAll('#options-box .option-btn').forEach(btn => btn.disabled = true);
             document.querySelectorAll('#options-box .eliminate-btn').forEach(btn => btn.disabled = true);
@@ -13716,7 +13752,10 @@
                     if (DB[modName]) {
                         const qs = extractAllQuestions(DB[modName]);
                         qs.forEach(q => {
-                            if (q && q.q) allowedQs.add(q.q);
+                            if (q) {
+                                if (q.id) allowedQs.add(q.id);
+                                if (q.q) allowedQs.add(q.q);
+                            }
                         });
                     }
                 });
@@ -13943,7 +13982,7 @@
                         box.classList.add('answered');
                     }
                 }
-                if (AppState.favorites[q.q]) box.classList.add('favorited'); if (AppState.notes[q.q]) box.classList.add('noted');
+                if (getQuestionFavorite(q)) box.classList.add('favorited'); if (getQuestionNote(q)) box.classList.add('noted');
                 box.innerHTML = `<span class="q-num">${i + 1}.</span><span class="q-preview">${q.q}</span>`;
                 box.onclick = () => {
                     if (Session.quizMode === 'tutor') {
@@ -14021,10 +14060,24 @@
             }
 
             questionsToReset.forEach(q => {
+                if (!q) return;
+                const status = getQuestionStatus(q);
                 if (isResettingMistakes) {
-                    if (AppState.progress[q.q] === 'wrong') delete AppState.progress[q.q];
+                    if (status === 'wrong') {
+                        if (q.id) delete AppState.progress[q.id];
+                        if (q.q) delete AppState.progress[q.q];
+                        if (AppState.stats && AppState.stats.attemptedQuestions) {
+                            if (q.id) delete AppState.stats.attemptedQuestions[q.id];
+                            if (q.q) delete AppState.stats.attemptedQuestions[q.q];
+                        }
+                    }
                 } else {
-                    delete AppState.progress[q.q];
+                    if (q.id) delete AppState.progress[q.id];
+                    if (q.q) delete AppState.progress[q.q];
+                    if (AppState.stats && AppState.stats.attemptedQuestions) {
+                        if (q.id) delete AppState.stats.attemptedQuestions[q.id];
+                        if (q.q) delete AppState.stats.attemptedQuestions[q.q];
+                    }
                 }
             });
 
@@ -14350,8 +14403,8 @@
                 function evalSection(questions, topicName) {
                     let correct = 0, wrong = 0;
                     questions.forEach(q => {
-                        if (!q || !q.q) return;
-                        const st = AppState.progress[q.q];
+                        if (!q) return;
+                        const st = getQuestionStatus(q);
                         if (st === 'correct') correct++;
                         else if (st === 'wrong') wrong++;
                     });
@@ -14449,8 +14502,10 @@
                     let m = 0, w = 0;
 
                     qs.forEach(q => {
-                        if (AppState.progress[q.q] === 'correct') m++;
-                        else if (AppState.progress[q.q] === 'wrong') w++;
+                        if (!q) return;
+                        const st = getQuestionStatus(q);
+                        if (st === 'correct') m++;
+                        else if (st === 'wrong') w++;
                     });
 
                     totalMastered += m;
@@ -14703,8 +14758,10 @@
                 let correct = 0;
                 let wrong = 0;
                 qs.forEach(q => {
-                    if (AppState.progress[q.q] === 'correct') correct++;
-                    else if (AppState.progress[q.q] === 'wrong') wrong++;
+                    if (!q) return;
+                    const st = getQuestionStatus(q);
+                    if (st === 'correct') correct++;
+                    else if (st === 'wrong') wrong++;
                 });
 
                 const attempted = correct + wrong;
@@ -16740,7 +16797,10 @@
             const list = window.pharmacologyPracticalQuestions || [];
             if (AppState && AppState.progress) {
                 list.forEach(q => {
-                    if (q && q.q) delete AppState.progress[q.q];
+                    if (q) {
+                        if (q.id) delete AppState.progress[q.id];
+                        if (q.q) delete AppState.progress[q.q];
+                    }
                 });
                 localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
                 if (window.saveUserData) window.saveUserData('progress', AppState.progress);
@@ -20094,7 +20154,10 @@
                     if (DB[modName]) {
                         const qs = extractAllQuestions(DB[modName]);
                         qs.forEach(q => {
-                            if (q && q.q) allowedQs.add(q.q);
+                            if (q) {
+                                if (q.id) allowedQs.add(q.id);
+                                if (q.q) allowedQs.add(q.q);
+                            }
                         });
                     }
                 });
@@ -20244,7 +20307,10 @@
                     if (DB[modName]) {
                         const qs = extractAllQuestions(DB[modName]);
                         qs.forEach(q => {
-                            if (q && q.q) allowedQs.add(q.q);
+                            if (q) {
+                                if (q.id) allowedQs.add(q.id);
+                                if (q.q) allowedQs.add(q.q);
+                            }
                         });
                     }
                 });
