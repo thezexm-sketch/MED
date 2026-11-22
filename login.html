@@ -23,6 +23,10 @@
     <script src="anatomy.js"></script>
     <script src="anatomyat.js"></script>
     <script src="histoslides.js"></script>
+    <script src="biochemistry found.js"></script>
+    <script src="histology found.js"></script>
+    <script src="anatomy found.js"></script>
+    <script src="physiology found.js"></script>
     <style>
         :root {
             --primary-green: #22c55e;
@@ -115,9 +119,231 @@
             --shimmer-highlight: rgba(15, 23, 42, 1);
         }
 
-        :root {
+        :root,
+        [data-theme='dark'] {
             --bg-sidebar: rgba(14, 20, 18, 0.95);
             --bg-topbar: rgba(31, 41, 36, 0.7);
+        }
+
+        /* =========================================================================
+           AMOLED PURE BLACK THEME & CIRCULAR SCREEN INVASION ANIMATION
+           ========================================================================= */
+        [data-theme='black'] {
+            --bg-dark: #000000;
+            --bg-darker: #070708;
+            --bg-card: #0d0d0f;
+            --bg-sidebar: rgba(4, 4, 5, 0.98);
+            --bg-topbar: rgba(6, 6, 8, 0.9);
+            --text-light: #F8FAFC;
+            --text-gray: #94A3B8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --hover-bg: rgba(255, 255, 255, 0.06);
+
+            --shimmer-base: rgba(248, 250, 252, 0.45);
+            --shimmer-highlight: rgba(248, 250, 252, 1);
+        }
+
+        [data-theme='black'] body {
+            background: #000000;
+        }
+
+        [data-theme='black'] .question-card {
+            background: linear-gradient(145deg, #0d0d0f, #050506);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme='black'] .sidebar {
+            background: rgba(4, 4, 5, 0.98);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        [data-theme='black'] .top-bar {
+            background: rgba(6, 6, 8, 0.92);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        [data-theme='black'] .module-card {
+            background: #0d0d0f;
+            border-color: rgba(255, 255, 255, 0.09);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        [data-theme='black'] .option-btn {
+            background: #0d0d0f;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme='black'] .trophy-card {
+            background: linear-gradient(145deg, #0d0d0f, #050506);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme='black'] .quiz-calculator-container {
+            background: rgba(10, 10, 12, 0.98);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        [data-theme='black'] .calc-display,
+        [data-theme='black'] .calc-header {
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        /* View Transitions circular reveal */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        ::view-transition-old(root) {
+            z-index: 1;
+        }
+
+        ::view-transition-new(root) {
+            z-index: 99999999;
+        }
+
+        /* Theme Picker Popover */
+        .theme-picker-popover {
+            position: fixed;
+            z-index: 999999;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 20px rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 10px;
+            width: 200px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            animation: themePopIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: top right;
+            user-select: none;
+        }
+
+        @keyframes themePopIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .theme-picker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .theme-picker-options {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .theme-option-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 1.5px solid transparent;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            text-align: left;
+        }
+
+        .theme-option-btn:hover {
+            background: var(--hover-bg);
+            border-color: var(--border-color);
+            transform: translateY(-1px);
+        }
+
+        .theme-option-btn.active {
+            background: var(--accent-bg-subtle);
+            border-color: var(--accent);
+        }
+
+        .theme-swatch {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .theme-option-btn:hover .theme-swatch {
+            transform: scale(1.1);
+        }
+
+        .swatch-green {
+            background: linear-gradient(135deg, #18201C 0%, #15803d 100%);
+            border-color: #22c55e;
+        }
+
+        .swatch-black {
+            background: #000000;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+
+        .swatch-light {
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            border-color: #94a3b8;
+        }
+
+        .theme-option-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .theme-option-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-option-desc {
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            margin-top: 1px;
+        }
+
+        .theme-check-icon {
+            font-size: 1.15rem;
+            color: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform: scale(0.7);
+        }
+
+        .theme-option-btn.active .theme-check-icon {
+            opacity: 1;
+            transform: scale(1);
         }
 
         * {
@@ -311,6 +537,18 @@
                 height: 38px;
                 min-width: 38px;
                 border-radius: 10px;
+                justify-content: center;
+            }
+
+            .sync-status-indicator .sync-status-text {
+                display: none;
+            }
+
+            .sync-status-indicator {
+                padding: 6px !important;
+                border-radius: 50% !important;
+                min-width: 32px;
+                height: 32px;
                 justify-content: center;
             }
         }
@@ -5935,6 +6173,7 @@
                 opacity: 0;
                 transform: translateY(-6px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -5946,6 +6185,7 @@
             .quiz-calculator-container {
                 width: 300px;
             }
+
             .calc-key {
                 height: 38px;
             }
@@ -5957,18 +6197,22 @@
                 max-width: 320px;
                 border-radius: 16px;
             }
+
             .calc-grid {
                 gap: 5px;
                 padding: 8px;
             }
+
             .calc-key {
                 height: 38px;
                 font-size: 0.92rem;
                 border-radius: 8px;
             }
+
             .calc-result {
                 font-size: 1.35rem;
             }
+
             .quiz-calc-pill {
                 bottom: 74px;
                 right: 12px;
@@ -5984,6 +6228,10 @@
     <script>
         (function () {
             try {
+                const savedTheme = localStorage.getItem('medStormTheme');
+                if (savedTheme === 'light' || savedTheme === 'black' || savedTheme === 'dark') {
+                    document.body.setAttribute('data-theme', savedTheme);
+                }
                 const savedMode = localStorage.getItem('asa_active_mode');
                 if (savedMode === 'mistakes') {
                     document.body.setAttribute('data-mode', 'mistakes');
@@ -5993,6 +6241,44 @@
             } catch (e) { }
         })();
     </script>
+
+    <!-- Theme Palette Popover -->
+    <div id="theme-picker-popover" class="theme-picker-popover" style="display:none;"
+        onclick="event.stopPropagation();">
+        <div class="theme-picker-header">
+            <span><i class="ri-palette-line" style="color:var(--accent); margin-right:4px;"></i> Theme</span>
+            <span style="font-size:0.68rem; opacity:0.75; font-weight:600;">3 Modes</span>
+        </div>
+        <div class="theme-picker-options">
+            <!-- Green Theme -->
+            <button class="theme-option-btn" data-target-theme="dark" onclick="selectTheme('dark', event)"
+                title="Green">
+                <span class="theme-swatch swatch-green"></span>
+                <div class="theme-option-info">
+                    <span class="theme-option-name">Green</span>
+                </div>
+                <i class="ri-check-line theme-check-icon"></i>
+            </button>
+            <!-- Black Theme -->
+            <button class="theme-option-btn" data-target-theme="black" onclick="selectTheme('black', event)"
+                title="Black">
+                <span class="theme-swatch swatch-black"></span>
+                <div class="theme-option-info">
+                    <span class="theme-option-name">Black</span>
+                </div>
+                <i class="ri-check-line theme-check-icon"></i>
+            </button>
+            <!-- White Theme -->
+            <button class="theme-option-btn" data-target-theme="light" onclick="selectTheme('light', event)"
+                title="White">
+                <span class="theme-swatch swatch-light"></span>
+                <div class="theme-option-info">
+                    <span class="theme-option-name">White</span>
+                </div>
+                <i class="ri-check-line theme-check-icon"></i>
+            </button>
+        </div>
+    </div>
 
     <div id="first-load-overlay"
         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; overflow: hidden;">
@@ -6498,12 +6784,12 @@
                 </a>
 
                 <div class="sync-status-indicator"
-                    onclick="window.flushSync && window.flushSync(); window.flushVotes && window.flushVotes(); window.flushWeeklyMistakes && window.flushWeeklyMistakes();"
+                    onclick="if (window.syncWithCloud) window.syncWithCloud(true); else if (window.flushSync) window.flushSync();"
                     style="display: none; align-items: center; gap: 6px; font-size: 0.8rem; color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; cursor: pointer; transition: all 0.2s ease; user-select: none;"
                     onmouseover="this.style.background='rgba(16, 185, 129, 0.15)'"
                     onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'">
                     <i class="ri-checkbox-circle-fill" style="color: #10B981;"></i>
-                    <span>Cloud Synced</span>
+                    <span class="sync-status-text">Cloud Synced</span>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -6519,7 +6805,8 @@
                     <i class="ri-fullscreen-line" id="fullscreen-icon"></i>
                 </button>
 
-                <button class="icon-btn" onclick="toggleTheme()" title="Dark/Light Mode">
+                <button class="icon-btn" onclick="toggleTheme(event)" title="Theme: Green / Black / Light"
+                    id="btn-theme-toggle">
                     <i class="ri-sun-fill" id="theme-icon"></i>
                 </button>
 
@@ -6819,6 +7106,11 @@
                             style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); color: #a855f7; padding: 0.6rem 1.5rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                             <i class="ri-edit-line"></i> Change Username
                         </button>
+                        <button onclick="if (window.syncWithCloud) window.syncWithCloud(true);"
+                            style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; padding: 0.6rem 1.5rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                            title="Force sync latest progress across all devices">
+                            <i class="ri-refresh-line"></i> Sync with Cloud
+                        </button>
                         <button onclick="window.handleLogout()"
                             style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red); padding: 0.6rem 1.5rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                             <i class="ri-logout-box-r-line"></i> Logout
@@ -6961,12 +7253,12 @@
                         <i class="ri-book-open-fill"></i><span>📖 Open Book</span>
                     </button>
                     <div class="sync-status-indicator"
-                        onclick="window.flushSync && window.flushSync(); window.flushVotes && window.flushVotes(); window.flushWeeklyMistakes && window.flushWeeklyMistakes();"
+                        onclick="if (window.syncWithCloud) window.syncWithCloud(true); else if (window.flushSync) window.flushSync();"
                         style="display: none; align-items: center; gap: 6px; font-size: 0.8rem; color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); font-weight: 600; cursor: pointer; transition: all 0.2s ease; user-select: none;"
                         onmouseover="this.style.background='rgba(16, 185, 129, 0.15)'"
                         onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'">
                         <i class="ri-checkbox-circle-fill" style="color: #10B981;"></i>
-                        <span>Cloud Synced</span>
+                        <span class="sync-status-text">Cloud Synced</span>
                     </div>
 
                     <button class="report-btn-top" onclick="openReportModal(event)" title="Report Error"
@@ -6976,11 +7268,13 @@
                     <button class="finish-quiz-btn" onclick="finishQuiz()" title="Finish Session">
                         <i class="ri-flag-2-fill"></i><span>Finish</span>
                     </button>
-                    <button class="action-icon-btn quiz-calc-btn" id="quiz-calc-header-btn" onclick="toggleQuizCalculator()" title="Calculator (آلة حاسبة)"><i class="ri-calculator-line"></i></button>
+                    <button class="action-icon-btn quiz-calc-btn" id="quiz-calc-header-btn"
+                        onclick="toggleQuizCalculator()" title="Calculator (آلة حاسبة)"><i
+                            class="ri-calculator-line"></i></button>
                     <button class="action-icon-btn quiz-home-btn" onclick="exitQuiz()" title="Exit"><i
                             class="ri-home-line"></i></button>
-                    <button class="action-icon-btn" onclick="toggleTheme()" title="Dark/Light Mode"><i
-                            class="ri-sun-fill" id="theme-icon-quiz"></i></button>
+                    <button class="action-icon-btn" onclick="toggleTheme(event)" title="Theme: Green / Black / Light"
+                        id="btn-theme-toggle-quiz"><i class="ri-sun-fill" id="theme-icon-quiz"></i></button>
                     <button class="action-icon-btn quiz-fullscreen-btn" onclick="toggleFullScreen()"
                         title="Full Screen"><i class="ri-fullscreen-line" id="fullscreen-icon-quiz"></i></button>
                 </div>
@@ -7077,22 +7371,28 @@
                         <i class="ri-drag-move-2-line drag-icon" title="Drag to move"></i>
                         <i class="ri-calculator-line" style="color: var(--accent);"></i>
                         <span>ASA Calc</span>
-                        <span id="calc-angle-pill" class="calc-mode-pill" onclick="toggleCalcAngleMode()" title="Toggle DEG / RAD (درجات / راديان)">DEG</span>
+                        <span id="calc-angle-pill" class="calc-mode-pill" onclick="toggleCalcAngleMode()"
+                            title="Toggle DEG / RAD (درجات / راديان)">DEG</span>
                     </div>
                     <div class="calc-header-actions">
-                        <button type="button" class="calc-h-btn" id="calc-sci-toggle" onclick="toggleCalcSci()" title="Scientific Functions (دوال علمية: sin, cos, log, ln, π, e)">
+                        <button type="button" class="calc-h-btn" id="calc-sci-toggle" onclick="toggleCalcSci()"
+                            title="Scientific Functions (دوال علمية: sin, cos, log, ln, π, e)">
                             <i class="ri-functions"></i>
                         </button>
-                        <button type="button" class="calc-h-btn" id="calc-ghost-toggle" onclick="toggleCalcGhost()" title="Ghost Mode / شفافية (لرؤية السؤال بوضوح تحته)">
+                        <button type="button" class="calc-h-btn" id="calc-ghost-toggle" onclick="toggleCalcGhost()"
+                            title="Ghost Mode / شفافية (لرؤية السؤال بوضوح تحته)">
                             <i class="ri-contrast-drop-line"></i>
                         </button>
-                        <button type="button" class="calc-h-btn" id="calc-hist-toggle" onclick="toggleCalcHistory()" title="History / سجل الحسابات">
+                        <button type="button" class="calc-h-btn" id="calc-hist-toggle" onclick="toggleCalcHistory()"
+                            title="History / سجل الحسابات">
                             <i class="ri-history-line"></i>
                         </button>
-                        <button type="button" class="calc-h-btn" onclick="minimizeQuizCalculator()" title="Minimize / تصغير لأيقونة عائمة">
+                        <button type="button" class="calc-h-btn" onclick="minimizeQuizCalculator()"
+                            title="Minimize / تصغير لأيقونة عائمة">
                             <i class="ri-subtract-line"></i>
                         </button>
-                        <button type="button" class="calc-h-btn close" onclick="closeQuizCalculator()" title="Close / إغلاق">
+                        <button type="button" class="calc-h-btn close" onclick="closeQuizCalculator()"
+                            title="Close / إغلاق">
                             <i class="ri-close-line"></i>
                         </button>
                     </div>
@@ -7103,7 +7403,8 @@
                     <div class="calc-expr" id="calc-expr-display">&nbsp;</div>
                     <div class="calc-main-row">
                         <div class="calc-display-actions">
-                            <button type="button" class="calc-d-btn" id="calc-copy-btn" onclick="copyCalcResult()" title="Copy Result (نسخ الناتج)">
+                            <button type="button" class="calc-d-btn" id="calc-copy-btn" onclick="copyCalcResult()"
+                                title="Copy Result (نسخ الناتج)">
                                 <i class="ri-file-copy-line"></i>
                             </button>
                         </div>
@@ -7128,7 +7429,8 @@
                 <!-- Standard Keypad Grid (5 columns x 5 rows) -->
                 <div class="calc-grid">
                     <!-- Row 1 -->
-                    <button type="button" class="calc-key key-danger" onclick="calcClearAll()" title="All Clear (مسح الكل)">AC</button>
+                    <button type="button" class="calc-key key-danger" onclick="calcClearAll()"
+                        title="All Clear (مسح الكل)">AC</button>
                     <button type="button" class="calc-key" onclick="calcDelete()" title="Delete (حذف رقم)">⌫</button>
                     <button type="button" class="calc-key key-fn" onclick="calcInputFn('parenOpen')">(</button>
                     <button type="button" class="calc-key key-fn" onclick="calcInputFn('parenClose')">)</button>
@@ -7168,10 +7470,12 @@
                     <div class="calc-history-head">
                         <span><i class="ri-history-line"></i> Calculation History</span>
                         <div style="display: flex; gap: 6px;">
-                            <button type="button" class="calc-d-btn" onclick="clearCalcHistory()" title="Clear History" style="color: #f87171;">
+                            <button type="button" class="calc-d-btn" onclick="clearCalcHistory()" title="Clear History"
+                                style="color: #f87171;">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
-                            <button type="button" class="calc-d-btn" onclick="toggleCalcHistory()" title="Close History">
+                            <button type="button" class="calc-d-btn" onclick="toggleCalcHistory()"
+                                title="Close History">
                                 <i class="ri-close-line"></i>
                             </button>
                         </div>
@@ -7185,7 +7489,8 @@
             </div>
 
             <!-- Minimized Floating Calculator Pill -->
-            <div id="quiz-calc-pill" class="quiz-calc-pill" onclick="restoreQuizCalculator()" title="Click to open Calculator (اسحب أو اضغط للفتح)">
+            <div id="quiz-calc-pill" class="quiz-calc-pill" onclick="restoreQuizCalculator()"
+                title="Click to open Calculator (اسحب أو اضغط للفتح)">
                 <i class="ri-calculator-line"></i>
                 <span id="quiz-calc-pill-val">Calculator</span>
                 <span class="quiz-calc-pill-close" onclick="closeQuizCalculatorFromPill(event)" title="Close">
@@ -7366,6 +7671,13 @@
                                     style="padding:6px 14px; border-radius:8px; border:1px solid #f59e0b; background:rgba(245, 158, 11, 0.2); color:#fbbf24; font-size:0.85rem; cursor:pointer; font-weight:700; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
                                     <i class="ri-time-line"></i> Pending <span id="admin-rep-badge-pending"
                                         style="font-size:0.72rem; opacity:0.85; background:rgba(245,158,11,0.25); padding:1px 6px; border-radius:999px;">0</span>
+                                </button>
+                                <button onclick="adminReportsStatusFilter('common')" id="admin-rep-status-common"
+                                    style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;"
+                                    title="Questions with multiple reports (Common Reports)">
+                                    <i class="ri-fire-fill" style="color:#ef4444;"></i> Common Reports <span
+                                        id="admin-rep-badge-common"
+                                        style="font-size:0.72rem; opacity:0.85; background:rgba(239,68,68,0.25); color:#f87171; padding:1px 6px; border-radius:999px;">0</span>
                                 </button>
                                 <button onclick="adminReportsStatusFilter('resolved')" id="admin-rep-status-resolved"
                                     style="padding:6px 14px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.85rem; cursor:pointer; font-weight:600; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;">
@@ -8208,11 +8520,29 @@
                     el.style.display = 'none';
                     return;
                 }
-                if (status === 'synced' || status === 'pending') {
-                    el.style.display = 'none';
+                if (status === 'synced') {
+                    el.style.display = 'flex';
+                    el.innerHTML = '<i class="ri-checkbox-circle-fill" style="color: #10B981; font-size: 0.95rem;"></i> <span class="sync-status-text" style="font-size: 0.75rem; font-weight: 600;">Cloud Synced</span>';
+                    el.style.color = '#10B981';
+                    el.style.background = 'rgba(16, 185, 129, 0.1)';
+                    el.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+                    el.style.padding = '4px 10px';
+                    el.style.borderRadius = '20px';
+                    el.style.opacity = '1';
+                    el.title = 'Progress synced with cloud. Click to sync now.';
+                } else if (status === 'pending') {
+                    el.style.display = 'flex';
+                    el.innerHTML = '<i class="ri-time-line" style="color: #F59E0B; font-size: 0.95rem;"></i> <span class="sync-status-text" style="font-size: 0.75rem; font-weight: 600;">Syncing Soon...</span>';
+                    el.style.color = '#F59E0B';
+                    el.style.background = 'rgba(245, 158, 11, 0.1)';
+                    el.style.borderColor = 'rgba(245, 158, 11, 0.2)';
+                    el.style.padding = '4px 10px';
+                    el.style.borderRadius = '20px';
+                    el.style.opacity = '1';
+                    el.title = 'Unsaved changes pending sync. Click to sync now.';
                 } else if (status === 'syncing') {
                     el.style.display = 'flex';
-                    el.innerHTML = '<i class="ri-loader-4-line ri-spin" style="color: #9CA3AF; font-size: 1rem;"></i>';
+                    el.innerHTML = '<i class="ri-loader-4-line ri-spin" style="color: #9CA3AF; font-size: 0.95rem;"></i> <span class="sync-status-text" style="font-size: 0.75rem; font-weight: 600;">Syncing...</span>';
                     el.style.color = '#9CA3AF';
                     el.style.background = 'transparent';
                     el.style.borderColor = 'transparent';
@@ -8221,7 +8551,7 @@
                     el.title = 'Saving to cloud...';
                 } else if (status === 'error') {
                     el.style.display = 'flex';
-                    el.innerHTML = '<i class="ri-error-warning-fill" style="color: #EF4444; font-size: 1rem;"></i> <span style="font-size: 0.75rem; font-weight: 600;">Sync Error</span>';
+                    el.innerHTML = '<i class="ri-error-warning-fill" style="color: #EF4444; font-size: 0.95rem;"></i> <span class="sync-status-text" style="font-size: 0.75rem; font-weight: 600;">Sync Error</span>';
                     el.style.color = '#EF4444';
                     el.style.background = 'rgba(239, 68, 68, 0.1)';
                     el.style.borderColor = 'rgba(239, 68, 68, 0.2)';
@@ -8290,22 +8620,68 @@
         window.sanitizeFirestoreFieldKey = sanitizeFirestoreFieldKey;
 
         function getQuestionStatus(q) {
-            if (!q) return null;
-            if (q.id && AppState.progress && AppState.progress[q.id]) return AppState.progress[q.id];
-            if (q.q && AppState.progress && AppState.progress[q.q]) return AppState.progress[q.q];
+            if (!q || !AppState.progress) return null;
+            if (q.id && AppState.progress[q.id]) return AppState.progress[q.id];
+            if (q.q) {
+                if (AppState.progress[q.q]) return AppState.progress[q.q];
+                const trimmed = q.q.trim();
+                if (AppState.progress[trimmed]) return AppState.progress[trimmed];
+            }
+            if (typeof sanitizeFirestoreFieldKey === 'function') {
+                if (q.id) {
+                    const skId = sanitizeFirestoreFieldKey(q.id);
+                    if (AppState.progress[skId]) return AppState.progress[skId];
+                }
+                if (q.q) {
+                    const skQ = sanitizeFirestoreFieldKey(q.q);
+                    if (AppState.progress[skQ]) return AppState.progress[skQ];
+                }
+            }
             return null;
         }
         window.getQuestionStatus = getQuestionStatus;
 
         function getQuestionFavorite(q) {
             if (!q || !AppState.favorites) return false;
-            return !!((q.id && AppState.favorites[q.id]) || (q.q && AppState.favorites[q.q]));
+            if (q.id && AppState.favorites[q.id]) return true;
+            if (q.q) {
+                if (AppState.favorites[q.q]) return true;
+                const trimmed = q.q.trim();
+                if (AppState.favorites[trimmed]) return true;
+            }
+            if (typeof sanitizeFirestoreFieldKey === 'function') {
+                if (q.id) {
+                    const skId = sanitizeFirestoreFieldKey(q.id);
+                    if (AppState.favorites[skId]) return true;
+                }
+                if (q.q) {
+                    const skQ = sanitizeFirestoreFieldKey(q.q);
+                    if (AppState.favorites[skQ]) return true;
+                }
+            }
+            return false;
         }
         window.getQuestionFavorite = getQuestionFavorite;
 
         function getQuestionNote(q) {
             if (!q || !AppState.notes) return '';
-            return (q.id && AppState.notes[q.id]) || (q.q && AppState.notes[q.q]) || '';
+            if (q.id && AppState.notes[q.id]) return AppState.notes[q.id];
+            if (q.q) {
+                if (AppState.notes[q.q]) return AppState.notes[q.q];
+                const trimmed = q.q.trim();
+                if (AppState.notes[trimmed]) return AppState.notes[trimmed];
+            }
+            if (typeof sanitizeFirestoreFieldKey === 'function') {
+                if (q.id) {
+                    const skId = sanitizeFirestoreFieldKey(q.id);
+                    if (AppState.notes[skId]) return AppState.notes[skId];
+                }
+                if (q.q) {
+                    const skQ = sanitizeFirestoreFieldKey(q.q);
+                    if (AppState.notes[skQ]) return AppState.notes[skQ];
+                }
+            }
+            return '';
         }
         window.getQuestionNote = getQuestionNote;
 
@@ -8339,7 +8715,9 @@
 
         function compactExamsHistory(history) {
             if (!Array.isArray(history)) return [];
-            return history.map(item => {
+            // Keep at most 5 most recent exams in cloud doc (full history remains in localStorage)
+            const recent = history.slice(0, 5);
+            return recent.map(item => {
                 if (!item || typeof item !== 'object') return null;
                 const copy = { ...item };
                 delete copy.drawings; // Strip drawings completely from examsHistory
@@ -8353,14 +8731,14 @@
 
         function compactPendingExams(pending) {
             if (!Array.isArray(pending)) return [];
-            return pending.map(item => {
+            // Keep at most 2 most recent pending exams and strip heavy drawings from cloud doc (drawings remain in localStorage)
+            const recent = pending.slice(-2);
+            return recent.map(item => {
                 if (!item || typeof item !== 'object') return null;
                 const copy = { ...item };
+                delete copy.drawings; // Strip canvas drawings from cloud document to prevent multi-hundred-KB doc bloat
                 if (Array.isArray(copy.queue)) {
                     copy.queue = compactQueue(copy.queue);
-                }
-                if (copy.drawings) {
-                    copy.drawings = compactDrawings(copy.drawings);
                 }
                 return copy;
             }).filter(Boolean);
@@ -8464,6 +8842,7 @@
                 qId: q.id || '',
                 qText: q.q || ''
             };
+            if (window.persistPendingDeltas) window.persistPendingDeltas();
 
             if (isFirstAttempt) {
                 if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
@@ -8494,13 +8873,69 @@
             updateSyncStatusUI('pending');
 
             if (syncTimer) clearTimeout(syncTimer);
-            syncTimer = setTimeout(window.flushSync, 2000);
+            syncTimer = setTimeout(window.flushSync, 35000);
         }
         window.recordQuestionAttempt = recordQuestionAttempt;
 
         window.pendingQuestionDeltas = {};
         window.pendingFavoriteDeltas = {};
         window.pendingNoteDeltas = {};
+
+        function persistPendingDeltas() {
+            try {
+                if (window.pendingQuestionDeltas && Object.keys(window.pendingQuestionDeltas).length > 0) {
+                    localStorage.setItem('medStorm_pQ', JSON.stringify(window.pendingQuestionDeltas));
+                } else {
+                    localStorage.removeItem('medStorm_pQ');
+                }
+                if (window.pendingFavoriteDeltas && Object.keys(window.pendingFavoriteDeltas).length > 0) {
+                    localStorage.setItem('medStorm_pF', JSON.stringify(window.pendingFavoriteDeltas));
+                } else {
+                    localStorage.removeItem('medStorm_pF');
+                }
+                if (window.pendingNoteDeltas && Object.keys(window.pendingNoteDeltas).length > 0) {
+                    localStorage.setItem('medStorm_pN', JSON.stringify(window.pendingNoteDeltas));
+                } else {
+                    localStorage.removeItem('medStorm_pN');
+                }
+            } catch (e) {
+                console.warn("Failed to persist pending deltas:", e);
+            }
+        }
+        window.persistPendingDeltas = persistPendingDeltas;
+
+        // Startup: one-time migration and delta restoration from localStorage before loadUserData runs
+        try {
+            if (!localStorage.getItem('medStorm_sync_v2')) {
+                if (!localStorage.getItem('medStorm_pQ') && !localStorage.getItem('medStorm_pF') && !localStorage.getItem('medStorm_pN')) {
+                    localStorage.removeItem('medStorm_unsaved_changes');
+                }
+                localStorage.setItem('medStorm_sync_v2', 'true');
+            }
+            const savedPQ = localStorage.getItem('medStorm_pQ');
+            if (savedPQ) Object.assign(window.pendingQuestionDeltas, JSON.parse(savedPQ) || {});
+            const savedPF = localStorage.getItem('medStorm_pF');
+            if (savedPF) Object.assign(window.pendingFavoriteDeltas, JSON.parse(savedPF) || {});
+            const savedPN = localStorage.getItem('medStorm_pN');
+            if (savedPN) Object.assign(window.pendingNoteDeltas, JSON.parse(savedPN) || {});
+        } catch (e) {
+            console.warn("Failed to restore pending deltas on startup:", e);
+        }
+
+        function applyQDeltas(base, deltas) {
+            const out = { ...(base || {}) };
+            for (const [k, d] of Object.entries(deltas || {})) {
+                const key = sanitizeFirestoreFieldKey(d.qId || k);
+                if (d.status === null || d.isDelete) {
+                    delete out[key];
+                    if (d.qText) delete out[sanitizeFirestoreFieldKey(d.qText)];
+                } else {
+                    out[key] = d.status;
+                }
+            }
+            return out;
+        }
+        window.applyQDeltas = applyQDeltas;
 
         window.flushSync = async function () {
             if (!window.currentUserId) return;
@@ -8557,9 +8992,21 @@
             // Granular FieldPath updates for progress and stats
             for (const [k, d] of Object.entries(qDeltas)) {
                 const safeKey = sanitizeFirestoreFieldKey(d.qId || k);
-                updateArgs.push(new FieldPath('progress', safeKey), d.status);
-                if (d.isFirstAttempt) {
-                    updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeKey), d.status);
+                if (d.status === null || d.isDelete) {
+                    updateArgs.push(new FieldPath('progress', safeKey), deleteField());
+                    updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeKey), deleteField());
+                    if (d.qText) {
+                        const safeTextKey = sanitizeFirestoreFieldKey(d.qText);
+                        if (safeTextKey !== safeKey) {
+                            updateArgs.push(new FieldPath('progress', safeTextKey), deleteField());
+                            updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeTextKey), deleteField());
+                        }
+                    }
+                } else {
+                    updateArgs.push(new FieldPath('progress', safeKey), d.status);
+                    if (d.isFirstAttempt) {
+                        updateArgs.push(new FieldPath('stats', 'attemptedQuestions', safeKey), d.status);
+                    }
                 }
             }
 
@@ -8624,6 +9071,7 @@
                 if (updateArgs.length > 0) {
                     await updateDoc(userRef, ...updateArgs);
                 }
+                if (window.persistPendingDeltas) window.persistPendingDeltas();
                 if (Object.keys(window.pendingQuestionDeltas || {}).length === 0 &&
                     Object.keys(window.pendingFavoriteDeltas || {}).length === 0 &&
                     Object.keys(window.pendingNoteDeltas || {}).length === 0 &&
@@ -8641,6 +9089,7 @@
                         if (updateArgs.length > 0) {
                             await updateDoc(userRef, ...updateArgs);
                         }
+                        if (window.persistPendingDeltas) window.persistPendingDeltas();
                         localStorage.removeItem('medStorm_unsaved_changes');
                         updateSyncStatusUI('synced');
                     } catch (err) {
@@ -8649,6 +9098,7 @@
                         Object.assign(window.pendingFavoriteDeltas, favDeltas);
                         Object.assign(window.pendingNoteDeltas, noteDeltas);
                         Object.assign(pendingSyncData, syncData);
+                        if (window.persistPendingDeltas) window.persistPendingDeltas();
                         updateSyncStatusUI('error');
                         throw err;
                     }
@@ -8658,6 +9108,7 @@
                     Object.assign(window.pendingFavoriteDeltas, favDeltas);
                     Object.assign(window.pendingNoteDeltas, noteDeltas);
                     Object.assign(pendingSyncData, syncData);
+                    if (window.persistPendingDeltas) window.persistPendingDeltas();
                     updateSyncStatusUI('error');
                     throw e;
                 }
@@ -8670,7 +9121,7 @@
                 localStorage.setItem('medStorm_unsaved_changes', 'true');
                 updateSyncStatusUI('pending');
                 if (syncTimer) clearTimeout(syncTimer);
-                syncTimer = setTimeout(window.flushSync, immediate ? 50 : 2000);
+                syncTimer = setTimeout(window.flushSync, immediate ? 50 : 35000);
                 return;
             }
             if (field === 'examsHistory' && Array.isArray(value)) {
@@ -8687,7 +9138,7 @@
             if (immediate) {
                 syncTimer = setTimeout(window.flushSync, 50);
             } else {
-                syncTimer = setTimeout(window.flushSync, 2000);
+                syncTimer = setTimeout(window.flushSync, 35000);
             }
         };
 
@@ -8715,7 +9166,7 @@
             if (immediate) {
                 syncTimer = setTimeout(window.flushSync, 50);
             } else {
-                syncTimer = setTimeout(window.flushSync, 2000);
+                syncTimer = setTimeout(window.flushSync, 35000);
             }
         };
 
@@ -8725,6 +9176,9 @@
             }
             if (localStorage.getItem('medStorm_unsaved_votes') && window.flushVotes) {
                 window.flushVotes();
+            }
+            if (window.syncWithCloud) {
+                window.syncWithCloud(false);
             }
         });
 
@@ -8738,15 +9192,20 @@
             if (window.flushSync) window.flushSync();
         });
 
-        let lastAdminFieldsRefreshTime = 0;
+        let lastAdminFieldsRefreshTime = Date.now();
         async function refreshAdminUserFields() {
-            if (!window.currentUserId || !window.db || !window.doc || !window.getDoc) return;
+            if (!window.currentUserId || !window.db || !window.doc) return;
             const now = Date.now();
-            if (now - lastAdminFieldsRefreshTime < 5 * 60 * 1000) return; // 5 minute throttle
+            if (now - lastAdminFieldsRefreshTime < 25 * 60 * 1000) return; // 25 minute throttle
             lastAdminFieldsRefreshTime = now;
             try {
                 const userRef = window.doc(window.db, "users", window.currentUserId);
-                const snap = await window.getDoc(userRef);
+                let snap = null;
+                try {
+                    snap = await (window.getDocFromServer ? window.getDocFromServer(userRef) : window.getDoc(userRef));
+                } catch (e) {
+                    try { snap = await window.getDoc(userRef); } catch (e2) { snap = null; }
+                }
                 if (snap && snap.exists()) {
                     const data = snap.data();
                     let changed = false;
@@ -8789,15 +9248,96 @@
         }
         window.refreshAdminUserFields = refreshAdminUserFields;
 
+        let isSyncingWithCloud = false;
+        window.syncWithCloud = async function (showToastFeedback = false) {
+            if (!window.currentUserId) return;
+            if (isSyncingWithCloud) return;
+            if (!navigator.onLine) {
+                if (showToastFeedback && window.showToast) {
+                    window.showToast("Offline — cannot sync with cloud right now ⚠️", "warning");
+                }
+                return;
+            }
+
+            isSyncingWithCloud = true;
+            if (window.updateSyncStatusUI) window.updateSyncStatusUI('syncing');
+
+            try {
+                // 1. Push any pending deltas first so nothing is lost
+                if (window.flushSync) {
+                    try { await window.flushSync(); } catch (e) { console.warn("flushSync error in syncWithCloud:", e); }
+                }
+                if (window.flushVotes) {
+                    try { await window.flushVotes(); } catch (e) { console.warn("flushVotes error in syncWithCloud:", e); }
+                }
+                if (window.flushWeeklyMistakes) {
+                    try { await window.flushWeeklyMistakes(); } catch (e) { console.warn("flushWeeklyMistakes error in syncWithCloud:", e); }
+                }
+
+                // 2. Pull fresh data from server (bypassing IndexedDB cache)
+                const userRef = doc(db, "users", window.currentUserId);
+                let serverSnap = null;
+                try {
+                    serverSnap = await getDocFromServer(userRef);
+                } catch (serverErr) {
+                    console.warn("getDocFromServer failed in syncWithCloud, falling back to cache:", serverErr);
+                    try { serverSnap = await getDoc(userRef); } catch (e) { serverSnap = null; }
+                }
+
+                // 3. Merge server snapshot into local state
+                if (serverSnap && serverSnap.exists()) {
+                    await loadUserData({ uid: window.currentUserId, email: window.currentUserEmail }, serverSnap);
+                }
+
+                // 4. Update UI if not in active quiz
+                const inActiveQuiz = document.body.classList.contains('focus-mode') ||
+                    (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
+                if (!inActiveQuiz && typeof renderDashboard === 'function') {
+                    renderDashboard();
+                }
+
+                if (window.updateSyncStatusUI) window.updateSyncStatusUI('synced');
+                if (showToastFeedback && window.showToast) {
+                    window.showToast("Cloud sync complete! Progress updated 🔄", "success");
+                }
+            } catch (err) {
+                console.error("syncWithCloud failed:", err);
+                if (window.updateSyncStatusUI) window.updateSyncStatusUI('error');
+                if (showToastFeedback && window.showToast) {
+                    window.showToast("Sync failed. Check your internet connection.", "error");
+                }
+            } finally {
+                isSyncingWithCloud = false;
+            }
+        };
+
+        let lastCloudSyncFocusTime = Date.now();
+        async function autoSyncOnFocus() {
+            if (!window.currentUserId || !navigator.onLine) return;
+            const inActiveQuiz = document.body.classList.contains('focus-mode') ||
+                (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
+            if (inActiveQuiz) return;
+            const now = Date.now();
+            if (now - lastCloudSyncFocusTime < 60 * 1000) return; // 60s throttle
+            lastCloudSyncFocusTime = now;
+            if (window.syncWithCloud) {
+                try {
+                    await window.syncWithCloud(false);
+                } catch (e) {
+                    console.warn("autoSyncOnFocus failed:", e);
+                }
+            }
+        }
+
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && window.refreshAdminUserFields) {
-                window.refreshAdminUserFields();
+            if (!document.hidden) {
+                if (window.refreshAdminUserFields) window.refreshAdminUserFields();
+                autoSyncOnFocus();
             }
         });
         window.addEventListener('focus', () => {
-            if (window.refreshAdminUserFields) {
-                window.refreshAdminUserFields();
-            }
+            if (window.refreshAdminUserFields) window.refreshAdminUserFields();
+            autoSyncOnFocus();
         });
 
         async function loadUserData(user, initialSnap = null) {
@@ -8805,9 +9345,9 @@
                 const userRef = doc(db, "users", user.uid);
 
                 let snap = null;
-                const hasUnsavedChanges = localStorage.getItem('medStorm_unsaved_changes') === 'true';
+                const hadUnsaved = localStorage.getItem('medStorm_unsaved_changes') === 'true';
 
-                if (hasUnsavedChanges) {
+                if (hadUnsaved) {
                     // Only fetch from server on unsaved changes recovery path
                     try {
                         snap = await getDocFromServer(userRef);
@@ -8819,63 +9359,13 @@
                     snap = initialSnap;
                 } else {
                     try {
-                        snap = await getDoc(userRef);
+                        snap = await getDocFromServer(userRef);
                     } catch (e) {
-                        snap = null;
+                        try { snap = await getDoc(userRef); } catch (e2) { snap = null; }
                     }
                 }
 
                 const serverData = (snap && snap.exists()) ? snap.data() : {};
-
-                // If unsaved local changes exist, merge with server rather than blindly overwriting server data
-                if (localStorage.getItem('medStorm_unsaved_changes') === 'true') {
-                    console.log("Unsaved local changes detected. Merging and syncing with server...");
-                    const recoveredData = {};
-                    try {
-                        const prog = localStorage.getItem('medStormProgress');
-                        if (prog !== null) {
-                            const localProg = JSON.parse(prog) || {};
-                            recoveredData.progress = Object.assign({}, serverData.progress || {}, localProg);
-                        }
-                        const favs = localStorage.getItem('medStormFavorites');
-                        if (favs !== null) {
-                            const localFavs = JSON.parse(favs) || {};
-                            recoveredData.favorites = Object.assign({}, serverData.favorites || {}, localFavs);
-                        }
-                        const nts = localStorage.getItem('medStormNotes');
-                        if (nts !== null) {
-                            const localNotes = JSON.parse(nts) || {};
-                            recoveredData.notes = Object.assign({}, serverData.notes || {}, localNotes);
-                        }
-                        const sts = localStorage.getItem('medStormStats');
-                        if (sts !== null) {
-                            const localStats = JSON.parse(sts) || {};
-                            const sAtt = (serverData.stats && serverData.stats.attemptedQuestions) || {};
-                            const lAtt = localStats.attemptedQuestions || {};
-                            recoveredData.stats = Object.assign({}, serverData.stats || {}, localStats);
-                            recoveredData.stats.attemptedQuestions = Object.assign({}, sAtt, lAtt);
-                        }
-                        const hist = localStorage.getItem('medStormExamsHistory');
-                        if (hist !== null) recoveredData.examsHistory = JSON.parse(hist);
-                        const pend = localStorage.getItem('medStormPendingExams');
-                        if (pend !== null) recoveredData.pendingExams = JSON.parse(pend);
-
-                        if (Object.keys(recoveredData).length > 0) {
-                            try {
-                                await updateDoc(userRef, recoveredData);
-                            } catch (e) {
-                                if (e.code === 'not-found') {
-                                    await setDoc(userRef, recoveredData, { merge: true });
-                                }
-                            }
-                            localStorage.removeItem('medStorm_unsaved_changes');
-                            console.log("Cross-device recovery merge complete!");
-                            Object.assign(serverData, recoveredData);
-                        }
-                    } catch (e) {
-                        console.error("Recovery merge failed:", e);
-                    }
-                }
 
                 const savedVotes = localStorage.getItem('medStorm_unsaved_votes');
                 if (savedVotes && window.flushVotes) {
@@ -8892,35 +9382,86 @@
                 if (serverData && Object.keys(serverData).length > 0) {
                     const data = serverData;
 
-                    // Cross-device union merge: server union local, keeping local unsynced answers
+                    // Server is the single source of truth, with pending local deltas applied on top
                     if (data.progress !== undefined) {
-                        AppState.progress = Object.assign({}, data.progress || {}, AppState.progress || {});
+                        AppState.progress = applyQDeltas(data.progress, window.pendingQuestionDeltas);
                         localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
                     }
                     if (data.favorites !== undefined) {
-                        AppState.favorites = Object.assign({}, data.favorites || {}, AppState.favorites || {});
+                        const mergedFavs = { ...(data.favorites || {}) };
+                        for (const [k, val] of Object.entries(window.pendingFavoriteDeltas || {})) {
+                            const safeK = sanitizeFirestoreFieldKey(k);
+                            if (val === null) delete mergedFavs[safeK];
+                            else mergedFavs[safeK] = val;
+                        }
+                        AppState.favorites = mergedFavs;
                         localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
                     }
                     if (data.notes !== undefined) {
-                        AppState.notes = Object.assign({}, data.notes || {}, AppState.notes || {});
+                        const mergedNotes = { ...(data.notes || {}) };
+                        for (const [k, val] of Object.entries(window.pendingNoteDeltas || {})) {
+                            const safeK = sanitizeFirestoreFieldKey(k);
+                            if (val === null) delete mergedNotes[safeK];
+                            else mergedNotes[safeK] = val;
+                        }
+                        AppState.notes = mergedNotes;
                         localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
                     }
                     if (data.stats) {
-                        AppState.stats = Object.assign({}, data.stats || {}, AppState.stats || {});
+                        const curStats = AppState.stats || {};
+                        const sDaily = (data.stats && data.stats.dailyProgress) || {};
+                        const lDaily = curStats.dailyProgress || {};
+                        const sModTime = (data.stats && data.stats.moduleTime) || {};
+                        const lModTime = curStats.moduleTime || {};
+
+                        // Build attemptedQuestions strictly from server + pending deltas (NO UNION, NO progress-fill loop!)
                         const sAtt = (data.stats && data.stats.attemptedQuestions) || {};
-                        const lAtt = (AppState.stats && AppState.stats.attemptedQuestions) || {};
-                        AppState.stats.attemptedQuestions = Object.assign({}, sAtt, lAtt);
-                        if (AppState.progress) {
-                            for (const [k, v] of Object.entries(AppState.progress)) {
-                                if (!AppState.stats.attemptedQuestions[k]) AppState.stats.attemptedQuestions[k] = v;
+                        const attOut = { ...sAtt };
+                        for (const [k, d] of Object.entries(window.pendingQuestionDeltas || {})) {
+                            const safeKey = sanitizeFirestoreFieldKey(d.qId || k);
+                            if (d.status === null || d.isDelete) {
+                                delete attOut[safeKey];
+                                if (d.qText) delete attOut[sanitizeFirestoreFieldKey(d.qText)];
+                            } else if (d.isFirstAttempt) {
+                                attOut[safeKey] = d.status;
                             }
                         }
+
+                        // For moduleTime, keep local resets if pending reset deltas exist, else prefer server
+                        const mergedModTime = Object.assign({}, sModTime);
+                        const hasPendingQDeltas = window.pendingQuestionDeltas && Object.keys(window.pendingQuestionDeltas).length > 0;
+                        if (hasPendingQDeltas) {
+                            Object.assign(mergedModTime, lModTime);
+                        }
+
+                        AppState.stats = {
+                            ...curStats,
+                            ...data.stats,
+                            attemptedQuestions: attOut,
+                            dailyProgress: Object.assign({}, sDaily, lDaily),
+                            moduleTime: mergedModTime,
+                            totalTime: Math.max(data.stats.totalTime || 0, curStats.totalTime || 0)
+                        };
                         localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
                     }
-                    if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
-                    if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
+                    if (hadUnsaved) {
+                        try {
+                            const lh = JSON.parse(localStorage.getItem('medStormExamsHistory') || 'null');
+                            const lp = JSON.parse(localStorage.getItem('medStormPendingExams') || 'null');
+                            if (Array.isArray(lh)) { AppState.examsHistory = lh; if (window.saveUserData) window.saveUserData('examsHistory', lh); }
+                            else if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
+                            if (Array.isArray(lp)) { AppState.pendingExams = lp; if (window.saveUserData) window.saveUserData('pendingExams', lp); }
+                            else if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
+                        } catch (e) {
+                            if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
+                            if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
+                        }
+                    } else {
+                        if (data.examsHistory !== undefined) { AppState.examsHistory = data.examsHistory || []; localStorage.setItem('medStormExamsHistory', JSON.stringify(AppState.examsHistory)); }
+                        if (data.pendingExams !== undefined) { AppState.pendingExams = data.pendingExams || []; localStorage.setItem('medStormPendingExams', JSON.stringify(AppState.pendingExams)); }
+                    }
 
-                    AppState.totalQuestionsSolved = data.totalQuestionsSolved || 0;
+                    AppState.totalQuestionsSolved = Math.max(data.totalQuestionsSolved || 0, AppState.totalQuestionsSolved || 0);
                     AppState.isTerm1Active = !!data.isTerm1Active;
                     AppState.isTerm2Active = !!data.isTerm2Active;
                     AppState.year = data.year || '1';
@@ -9047,6 +9588,10 @@
                         window.activeUserListener = null;
                     }
 
+                    if (hadUnsaved && window.flushSync) {
+                        try { await window.flushSync(); } catch (e) { console.warn("Post-merge flushSync failed:", e); }
+                    }
+
                     if (typeof renderDashboard === 'function' && !document.body.classList.contains('focus-mode')) {
                         renderDashboard();
                     }
@@ -9086,17 +9631,24 @@
                     window.setAvatarUI(savedAvatar ? savedAvatar : defAvatar);
                     try {
                         const userRef = doc(db, 'users', user.uid);
-                        const userSnap = await getDoc(userRef);
-                        const updateData = { lastSeen: Date.now(), email: user.email || '' };
-                        if (!userSnap.exists() || !userSnap.data().createdAt) {
-
-                            const authCreated = user.metadata && user.metadata.creationTime
-                                ? new Date(user.metadata.creationTime).getTime()
-                                : Date.now();
-                            updateData.createdAt = authCreated;
+                        let userSnap = null;
+                        try {
+                            userSnap = await getDocFromServer(userRef);
+                        } catch (serverErr) {
+                            console.warn('Initial server fetch failed (offline?), falling back to cache:', serverErr);
+                            try { userSnap = await getDoc(userRef); } catch (e) { userSnap = null; }
                         }
-                        await setDoc(userRef, updateData, { merge: true });
-                        window._authInitialUserSnap = userSnap;
+                        if (userSnap) {
+                            const updateData = { lastSeen: Date.now(), email: user.email || '' };
+                            if (!userSnap.exists() || !userSnap.data().createdAt) {
+                                const authCreated = user.metadata && user.metadata.creationTime
+                                    ? new Date(user.metadata.creationTime).getTime()
+                                    : Date.now();
+                                updateData.createdAt = authCreated;
+                            }
+                            await setDoc(userRef, updateData, { merge: true });
+                            window._authInitialUserSnap = userSnap;
+                        }
                     } catch (e) { console.warn('lastSeen update failed:', e); }
 
                     fetchQuestionsFromDB().catch(err => {
@@ -9111,6 +9663,8 @@
                     } catch (err) {
                         console.warn("Initial user data load failed, proceeding anyway:", err);
                     }
+                    lastAdminFieldsRefreshTime = Date.now();
+                    lastCloudSyncFocusTime = Date.now();
                     const inActiveQuiz = document.body.classList.contains('focus-mode') ||
                         (window.Session && Array.isArray(window.Session.queue) && window.Session.queue.length > 0 && !window.Session.reviewing);
                     if (!inActiveQuiz) {
@@ -9476,7 +10030,10 @@
                 if (DB[modName]) {
                     const qs = extractAllQuestions(DB[modName]);
                     qs.forEach(q => {
-                        if (q && q.q) allowedQs.add(q.q);
+                        if (q) {
+                            if (q.id) allowedQs.add(q.id);
+                            if (q.q) allowedQs.add(q.q);
+                        }
                     });
                 }
             });
@@ -9841,6 +10398,10 @@
                     }
                 }
                 await signOut(auth);
+                window.pendingQuestionDeltas = {};
+                window.pendingFavoriteDeltas = {};
+                window.pendingNoteDeltas = {};
+                ['medStorm_pQ', 'medStorm_pF', 'medStorm_pN', 'medStorm_unsaved_changes'].forEach(k => localStorage.removeItem(k));
                 localStorage.removeItem('medStormProgress');
                 localStorage.removeItem('medStormFavorites');
                 localStorage.removeItem('medStormNotes');
@@ -10203,6 +10764,15 @@
             // Lightweight initial check from server for metadata timestamps and question counts (no bulk module downloads)
             checkServerMetadata(true).then(async (meta) => {
                 if (!meta) return;
+                // Refresh any cached module whose server version changed (updates dashboard counts)
+                try {
+                    for (const [key, docId] of Object.entries(MODULE_KEY_TO_DOC_ID)) {
+                        const serverTime = meta[docId + '_updatedAt'];
+                        if (DB[key] && serverTime && cachedModuleUpdatedAts[key] !== serverTime) {
+                            await fetchSingleModuleFromDB(key, true); // re-renders dashboard when done
+                        }
+                    }
+                } catch (e) { console.warn('Stale module refresh failed:', e); }
                 try {
                     const cachedMeta = await getIDBCache('__modules_metadata__');
                     const serverUpdatedAt = meta['modules_metadata_updatedAt'];
@@ -10669,10 +11239,50 @@
         }
 
         function updateThemeIcons() {
-            const iconClass = AppState.theme === 'light' ? 'ri-moon-fill' : 'ri-sun-fill';
-            document.getElementById('theme-icon').className = iconClass;
-            document.getElementById('theme-icon-quiz').className = iconClass;
+            const theme = AppState.theme || 'dark';
+            let iconClass = 'ri-moon-fill';
+            let iconColor = 'var(--primary-green)';
+            let titleText = 'Theme: Green';
+
+            if (theme === 'black') {
+                iconClass = 'ri-moon-clear-fill';
+                iconColor = '#cbd5e1';
+                titleText = 'Theme: Black';
+            } else if (theme === 'light') {
+                iconClass = 'ri-sun-fill';
+                iconColor = '#f59e0b';
+                titleText = 'Theme: White';
+            }
+
+            const icon1 = document.getElementById('theme-icon');
+            const icon2 = document.getElementById('theme-icon-quiz');
+            const btn1 = document.getElementById('btn-theme-toggle');
+            const btn2 = document.getElementById('btn-theme-toggle-quiz');
+
+            if (icon1) {
+                icon1.className = iconClass;
+                icon1.style.color = iconColor;
+            }
+            if (icon2) {
+                icon2.className = iconClass;
+                icon2.style.color = iconColor;
+            }
+            if (btn1) btn1.title = titleText;
+            if (btn2) btn2.title = titleText;
+
+            // Update active state in picker popover
+            const popover = document.getElementById('theme-picker-popover');
+            if (popover) {
+                popover.querySelectorAll('.theme-option-btn').forEach(b => {
+                    if (b.getAttribute('data-target-theme') === theme) {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
+            }
         }
+        window.updateThemeIcons = updateThemeIcons;
 
         function updateFlashcard() {
             if (flashcards.length === 0) return;
@@ -10725,12 +11335,184 @@
             }, 150);
         }
 
-        function toggleTheme() {
-            AppState.theme = AppState.theme === 'light' ? 'dark' : 'light';
-            document.body.setAttribute('data-theme', AppState.theme);
-            localStorage.setItem('medStormTheme', AppState.theme);
+        window.openThemePicker = function (anchorEl, event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const popover = document.getElementById('theme-picker-popover');
+            if (!popover) return;
+
+            if (popover.style.display === 'flex' && popover._currentAnchor === anchorEl) {
+                popover.style.display = 'none';
+                return;
+            }
+
             updateThemeIcons();
+
+            popover._currentAnchor = anchorEl;
+            popover.style.display = 'flex';
+
+            const rect = anchorEl ? anchorEl.getBoundingClientRect() : { bottom: 60, right: window.innerWidth - 20, top: 20, left: window.innerWidth - 220 };
+            const popoverWidth = 200;
+            let top = rect.bottom + 8;
+            let left = rect.right - popoverWidth;
+
+            if (left < 10) left = 10;
+            if (left + popoverWidth > window.innerWidth - 10) {
+                left = window.innerWidth - popoverWidth - 10;
+            }
+            if (top + 180 > window.innerHeight) {
+                top = Math.max(10, rect.top - 175);
+            }
+
+            popover.style.top = top + 'px';
+            popover.style.left = left + 'px';
+        };
+
+        window.selectTheme = function (targetTheme, event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const popover = document.getElementById('theme-picker-popover');
+            if (popover) popover.style.display = 'none';
+
+            let clickX = window.innerWidth - 60;
+            let clickY = 40;
+            if (event && typeof event.clientX === 'number' && event.clientX > 0) {
+                clickX = event.clientX;
+                clickY = event.clientY;
+            } else if (popover && popover._currentAnchor) {
+                const r = popover._currentAnchor.getBoundingClientRect();
+                clickX = r.left + r.width / 2;
+                clickY = r.top + r.height / 2;
+            }
+
+            if (AppState.theme === targetTheme) return;
+            applyThemeWithInvasion(targetTheme, clickX, clickY);
+        };
+
+        window.cycleTheme = function (event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const order = ['dark', 'black', 'light'];
+            const current = AppState.theme || 'dark';
+            const nextIdx = (order.indexOf(current) + 1) % order.length;
+            const nextTheme = order[nextIdx];
+
+            let clickX = window.innerWidth - 60;
+            let clickY = 40;
+            if (event && typeof event.clientX === 'number' && event.clientX > 0) {
+                clickX = event.clientX;
+                clickY = event.clientY;
+            }
+
+            applyThemeWithInvasion(nextTheme, clickX, clickY);
+        };
+
+        window.toggleTheme = function (event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const btn = (event && event.currentTarget) ? event.currentTarget : document.getElementById('btn-theme-toggle');
+            const popover = document.getElementById('theme-picker-popover');
+
+            if (popover && popover.style.display === 'flex' && popover._currentAnchor === btn) {
+                popover.style.display = 'none';
+                window.cycleTheme(event);
+                return;
+            }
+
+            window.openThemePicker(btn, event);
+        };
+
+        window.applyThemeWithInvasion = function (themeName, clickX, clickY) {
+            const x = typeof clickX === 'number' ? clickX : (window.innerWidth - 60);
+            const y = typeof clickY === 'number' ? clickY : 40;
+            const endRadius = Math.hypot(
+                Math.max(x, window.innerWidth - x),
+                Math.max(y, window.innerHeight - y)
+            );
+
+            const applyThemeState = () => {
+                AppState.theme = themeName;
+                document.body.setAttribute('data-theme', themeName);
+                localStorage.setItem('medStormTheme', themeName);
+                updateThemeIcons();
+            };
+
+            // Use View Transitions API if supported
+            if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                try {
+                    const transition = document.startViewTransition(() => {
+                        applyThemeState();
+                    });
+
+                    transition.ready.then(() => {
+                        const clipPath = [
+                            `circle(0px at ${x}px ${y}px)`,
+                            `circle(${endRadius}px at ${x}px ${y}px)`
+                        ];
+                        document.documentElement.animate(
+                            {
+                                clipPath: clipPath
+                            },
+                            {
+                                duration: 650,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                pseudoElement: '::view-transition-new(root)'
+                            }
+                        );
+                    }).catch(() => {
+                        applyThemeState();
+                    });
+                    return;
+                } catch (e) {
+                    // Fallback to ripple
+                }
+            }
+
+            // Fallback circular wave animation
+            createThemeInvasionRipple(themeName, x, y, endRadius, applyThemeState);
+        };
+
+        function createThemeInvasionRipple(themeName, x, y, maxRadius, onComplete) {
+            const ripple = document.createElement('div');
+            let bg = '#18201C';
+            if (themeName === 'black') bg = '#000000';
+            else if (themeName === 'light') bg = '#F1F5F9';
+
+            ripple.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: ${bg};
+                pointer-events: none;
+                z-index: 99999999;
+                transform: translate(-50%, -50%) scale(1);
+                transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+                box-shadow: 0 0 60px rgba(0,0,0,0.4);
+            `;
+            document.body.appendChild(ripple);
+
+            const targetScale = (maxRadius * 2) / 16;
+            requestAnimationFrame(() => {
+                ripple.style.transform = `translate(-50%, -50%) scale(${targetScale})`;
+            });
+
+            setTimeout(() => {
+                onComplete();
+                ripple.style.opacity = '0';
+                setTimeout(() => {
+                    if (ripple.parentNode) ripple.parentNode.removeChild(ripple);
+                }, 250);
+            }, 450);
         }
+
+        // Close popover when clicking anywhere outside
+        document.addEventListener('click', function (e) {
+            const popover = document.getElementById('theme-picker-popover');
+            if (popover && popover.style.display === 'flex') {
+                if (!popover.contains(e.target) && !e.target.closest('#btn-theme-toggle') && !e.target.closest('#btn-theme-toggle-quiz') && !e.target.closest('.theme-option-btn')) {
+                    popover.style.display = 'none';
+                }
+            }
+        });
 
         async function preloadVotes() {
             Session.cachedVotes = {};
@@ -11280,8 +12062,8 @@
                 let availableCount = 0, mistakesCount = 0;
                 if (hasLocalQs) {
                     allQs.forEach(q => {
-                        if (!q || !q.q) return;
-                        const status = AppState.progress[q.q];
+                        if (!q) return;
+                        const status = getQuestionStatus(q);
                         if (status === 'wrong') mistakesCount++;
                         if (isMistakes && status === 'wrong') availableCount++;
                         else if (!isMistakes && !status) availableCount++;
@@ -11290,7 +12072,7 @@
                 const total = hasLocalQs ? allQs.length : (meta ? meta.total : 0);
                 const isLoaded = total > 0;
 
-                let solved = hasLocalQs ? allQs.filter(q => q && q.q && AppState.progress[q.q]).length : 0;
+                let solved = hasLocalQs ? allQs.filter(q => q && getQuestionStatus(q)).length : 0;
                 if (!hasLocalQs && meta && meta.total > 0) {
                     availableCount = isMistakes ? 0 : Math.max(0, meta.total - solved);
                 }
@@ -11515,8 +12297,8 @@
             function analyzeQuestions(questions, sectionPath) {
                 let correct = 0, wrong = 0;
                 questions.forEach(q => {
-                    if (!q || !q.q) return;
-                    const status = AppState.progress[q.q];
+                    if (!q) return;
+                    const status = getQuestionStatus(q);
                     if (status === 'correct') correct++;
                     else if (status === 'wrong') wrong++;
                 });
@@ -11713,7 +12495,7 @@
                     if (totalSubjectQuestions === 0) continue;
 
                     if (Array.isArray(data)) {
-                        const pool = isMistakes ? data.filter(q => AppState.progress[q.q] === 'wrong') : data.filter(q => !AppState.progress[q.q]);
+                        const pool = isMistakes ? data.filter(q => getQuestionStatus(q) === 'wrong') : data.filter(q => !getQuestionStatus(q));
                         const poolCount = pool.length;
 
                         const groupDiv = document.createElement('div');
@@ -11788,8 +12570,8 @@
                             if (childQuestions.length === 0) continue;
 
                             const pool = isMistakes
-                                ? childQuestions.filter(q => AppState.progress[q.q] === 'wrong')
-                                : childQuestions.filter(q => !AppState.progress[q.q]);
+                                ? childQuestions.filter(q => getQuestionStatus(q) === 'wrong')
+                                : childQuestions.filter(q => !getQuestionStatus(q));
                             const childPoolCount = pool.length;
                             groupPoolCount += childPoolCount;
 
@@ -12095,19 +12877,19 @@
                     }
                     if (subQs) {
                         const filtered = Session.mode === 'mistakes'
-                            ? subQs.filter(q => AppState.progress[q.q] === 'wrong')
+                            ? subQs.filter(q => getQuestionStatus(q) === 'wrong')
                             : (Session.mode === 'favorites'
-                                ? subQs.filter(q => q && q.q && AppState.favorites && AppState.favorites[q.q])
-                                : subQs.filter(q => !AppState.progress[q.q]));
+                                ? subQs.filter(q => getQuestionFavorite(q))
+                                : subQs.filter(q => !getQuestionStatus(q)));
                         pool.push(...filtered);
                     }
                 });
             } else {
                 pool = Session.mode === 'mistakes'
-                    ? DB[Session.module].filter(q => AppState.progress[q.q] === 'wrong')
+                    ? DB[Session.module].filter(q => getQuestionStatus(q) === 'wrong')
                     : (Session.mode === 'favorites'
-                        ? DB[Session.module].filter(q => q && q.q && AppState.favorites && AppState.favorites[q.q])
-                        : DB[Session.module].filter(q => !AppState.progress[q.q]));
+                        ? DB[Session.module].filter(q => getQuestionFavorite(q))
+                        : DB[Session.module].filter(q => !getQuestionStatus(q)));
             }
             if (pool.length === 0) return alert("No questions available! Reset module to start over.");
             closeModal();
@@ -12526,30 +13308,17 @@
             if (pill) pill.classList.add('warning');
 
             const isNonScoringMode = (Session.mode === 'mistakes' || Session.mode === 'favorites' || document.body.getAttribute('data-mode') === 'mistakes');
-            if (!AppState.stats.attemptedQuestions) AppState.stats.attemptedQuestions = {};
-            const isFirstAttempt = !isNonScoringMode && !AppState.stats.attemptedQuestions[q.q];
-
-            AppState.progress[q.q] = 'wrong';
+            const isFirstAttempt = !isNonScoringMode && !(AppState.stats && AppState.stats.attemptedQuestions && ((q.id && AppState.stats.attemptedQuestions[q.id]) || (q.q && AppState.stats.attemptedQuestions[q.q])));
             const today = new Date().toISOString().split('T')[0];
-            if (isFirstAttempt) {
-                AppState.stats.attemptedQuestions[q.q] = 'wrong';
-                if (!AppState.stats.dailyProgress) AppState.stats.dailyProgress = {};
-                if (!AppState.stats.dailyProgress[today]) AppState.stats.dailyProgress[today] = { correct: 0, wrong: 0, time: 0 };
-                AppState.stats.dailyProgress[today].wrong = (AppState.stats.dailyProgress[today].wrong || 0) + 1;
-                const currentYear = String(AppState.year || '1');
-                const yKey = `wrong_y${currentYear}`;
-                AppState.stats.dailyProgress[today][yKey] = (AppState.stats.dailyProgress[today][yKey] || 0) + 1;
-            }
+            const currentYear = String(AppState.year || '1');
+            const yCorrectKey = `correct_y${currentYear}`;
+            const yWrongKey = `wrong_y${currentYear}`;
 
             if (typeof recordMistake === 'function') {
                 recordMistake(q, Session.module, -1);
             }
 
-            localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
-            localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveBatchUserData) {
-                window.saveBatchUserData({ progress: AppState.progress, stats: AppState.stats });
-            }
+            recordQuestionAttempt(q, false, isFirstAttempt, today, yCorrectKey, yWrongKey);
 
             document.querySelectorAll('#options-box .option-btn').forEach(btn => btn.disabled = true);
             document.querySelectorAll('#options-box .eliminate-btn').forEach(btn => btn.disabled = true);
@@ -12945,6 +13714,12 @@
 
         async function recordVote(questionText, optionIndex, optionCount) {
             const voteDocId = hashQuestion(questionText);
+            const voteKey = 'medStorm_voted_' + voteDocId;
+            if (localStorage.getItem(voteKey)) {
+                return; // User has already recorded a community vote for this question from this device
+            }
+            localStorage.setItem(voteKey, String(optionIndex));
+
             pendingVotes[voteDocId] = {
                 optionIndex: optionIndex,
                 optionCount: optionCount
@@ -13010,6 +13785,7 @@
                 AppState.favorites[qKey] = true;
                 window.pendingFavoriteDeltas[qKey] = true;
             }
+            if (window.persistPendingDeltas) window.persistPendingDeltas();
 
             localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
             localStorage.setItem('medStorm_unsaved_changes', 'true');
@@ -13048,6 +13824,7 @@
                 if (q.q) delete AppState.notes[q.q];
                 window.pendingNoteDeltas[qKey] = null;
             }
+            if (window.persistPendingDeltas) window.persistPendingDeltas();
 
             localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
             localStorage.setItem('medStorm_unsaved_changes', 'true');
@@ -13217,7 +13994,10 @@
                     if (DB[modName]) {
                         const qs = extractAllQuestions(DB[modName]);
                         qs.forEach(q => {
-                            if (q && q.q) allowedQs.add(q.q);
+                            if (q) {
+                                if (q.id) allowedQs.add(q.id);
+                                if (q.q) allowedQs.add(q.q);
+                            }
                         });
                     }
                 });
@@ -13424,6 +14204,7 @@
             if (typeof closeQuizCalculator === 'function') closeQuizCalculator();
             if (window.pharmaExamTimer) { clearInterval(window.pharmaExamTimer); window.pharmaExamTimer = null; }
             saveSessionProgress();
+            if (window.flushSync) window.flushSync();
             clearInterval(Session.timer);
             clearInterval(globalStopwatch);
             switchMode('dashboard');
@@ -13444,7 +14225,7 @@
                         box.classList.add('answered');
                     }
                 }
-                if (AppState.favorites[q.q]) box.classList.add('favorited'); if (AppState.notes[q.q]) box.classList.add('noted');
+                if (getQuestionFavorite(q)) box.classList.add('favorited'); if (getQuestionNote(q)) box.classList.add('noted');
                 box.innerHTML = `<span class="q-num">${i + 1}.</span><span class="q-preview">${q.q}</span>`;
                 box.onclick = () => {
                     if (Session.quizMode === 'tutor') {
@@ -13501,50 +14282,77 @@
             targetResetSubjectKey = null;
         }
 
-        function confirmResetAction() {
+        async function confirmResetAction() {
             if (!targetResetModule) return;
+            const modName = targetResetModule;
+            if ((!DB[modName] || !Object.keys(DB[modName]).length) && window.fetchSingleModuleFromDB) {
+                try { await window.fetchSingleModuleFromDB(modName); } catch (e) { }
+            }
+            const modData = DB[modName];
+            if (!modData || !Object.keys(modData).length) {
+                if (window.showToast) window.showToast('Could not load module. Check connection.', 'error');
+                closeResetModal(); return;
+            }
 
             let questionsToReset;
             const isLesson = targetResetSubjectKey && targetResetSubjectKey.includes('___');
+
             if (targetResetSubjectKey) {
                 let subjectData;
                 if (isLesson) {
                     const parts = targetResetSubjectKey.split('___');
                     const pKey = parts[0];
                     const cKey = parts[1];
-                    subjectData = (DB[targetResetModule] && DB[targetResetModule][pKey]) ? DB[targetResetModule][pKey][cKey] : [];
+                    subjectData = (modData && modData[pKey]) ? modData[pKey][cKey] : [];
                 } else {
-                    subjectData = DB[targetResetModule][targetResetSubjectKey];
+                    subjectData = modData ? modData[targetResetSubjectKey] : [];
                 }
                 questionsToReset = extractAllQuestions(subjectData || []);
             } else {
-                questionsToReset = extractAllQuestions(DB[targetResetModule]);
+                questionsToReset = extractAllQuestions(modData || []);
             }
 
+            if (!window.pendingQuestionDeltas) window.pendingQuestionDeltas = {};
             questionsToReset.forEach(q => {
-                if (isResettingMistakes) {
-                    if (AppState.progress[q.q] === 'wrong') delete AppState.progress[q.q];
-                } else {
-                    delete AppState.progress[q.q];
+                if (!q) return;
+                const status = getQuestionStatus(q);
+                const qKey = q.id || q.q;
+                const shouldReset = isResettingMistakes ? (status === 'wrong') : !!status;
+                if (shouldReset) {
+                    if (q.id) delete AppState.progress[q.id];
+                    if (q.q) delete AppState.progress[q.q];
+                    if (AppState.stats && AppState.stats.attemptedQuestions) {
+                        if (q.id) delete AppState.stats.attemptedQuestions[q.id];
+                        if (q.q) delete AppState.stats.attemptedQuestions[q.q];
+                    }
+                    if (qKey) {
+                        window.pendingQuestionDeltas[qKey] = {
+                            status: null,
+                            isFirstAttempt: false,
+                            qId: q.id || '',
+                            qText: q.q || '',
+                            isDelete: true
+                        };
+                    }
                 }
             });
 
             if (!isResettingMistakes) {
                 if (!AppState.stats.moduleTime) AppState.stats.moduleTime = {};
-                AppState.stats.moduleTime[targetResetModule] = 0;
+                AppState.stats.moduleTime[modName] = 0;
             }
 
             localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
             localStorage.setItem('medStormStats', JSON.stringify(AppState.stats));
-            if (window.saveUserData) window.saveUserData('progress', AppState.progress);
-            if (window.saveUserData) window.saveUserData('stats', AppState.stats);
+            if (window.persistPendingDeltas) window.persistPendingDeltas();
+            localStorage.setItem('medStorm_unsaved_changes', 'true');
             if (window.flushSync) window.flushSync().catch(e => console.warn("Reset sync failed:", e));
 
             if (targetResetSubjectKey) {
                 if (window.showToast) window.showToast(isLesson ? 'Lesson progress reset!' : 'Subject progress reset!', 'success');
                 if (typeof renderDashboard === 'function') renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
                 const parentGroupToExpand = isLesson ? targetResetSubjectKey.split('___')[0] : null;
-                openStartModal(targetResetModule, isResettingMistakes, parentGroupToExpand);
+                openStartModal(modName, isResettingMistakes, parentGroupToExpand);
             } else {
                 renderDashboard(isResettingMistakes ? 'mistakes' : 'normal');
             }
@@ -13793,6 +14601,7 @@
             if (qKey) {
                 if (!window.pendingFavoriteDeltas) window.pendingFavoriteDeltas = {};
                 window.pendingFavoriteDeltas[qKey] = null;
+                if (window.persistPendingDeltas) window.persistPendingDeltas();
             }
             localStorage.setItem('medStormFavorites', JSON.stringify(AppState.favorites));
             localStorage.setItem('medStorm_unsaved_changes', 'true');
@@ -13813,6 +14622,7 @@
             if (qKey) {
                 if (!window.pendingNoteDeltas) window.pendingNoteDeltas = {};
                 window.pendingNoteDeltas[qKey] = null;
+                if (window.persistPendingDeltas) window.persistPendingDeltas();
             }
             localStorage.setItem('medStormNotes', JSON.stringify(AppState.notes));
             localStorage.setItem('medStorm_unsaved_changes', 'true');
@@ -13851,8 +14661,8 @@
                 function evalSection(questions, topicName) {
                     let correct = 0, wrong = 0;
                     questions.forEach(q => {
-                        if (!q || !q.q) return;
-                        const st = AppState.progress[q.q];
+                        if (!q) return;
+                        const st = getQuestionStatus(q);
                         if (st === 'correct') correct++;
                         else if (st === 'wrong') wrong++;
                     });
@@ -13950,8 +14760,10 @@
                     let m = 0, w = 0;
 
                     qs.forEach(q => {
-                        if (AppState.progress[q.q] === 'correct') m++;
-                        else if (AppState.progress[q.q] === 'wrong') w++;
+                        if (!q) return;
+                        const st = getQuestionStatus(q);
+                        if (st === 'correct') m++;
+                        else if (st === 'wrong') w++;
                     });
 
                     totalMastered += m;
@@ -14204,8 +15016,10 @@
                 let correct = 0;
                 let wrong = 0;
                 qs.forEach(q => {
-                    if (AppState.progress[q.q] === 'correct') correct++;
-                    else if (AppState.progress[q.q] === 'wrong') wrong++;
+                    if (!q) return;
+                    const st = getQuestionStatus(q);
+                    if (st === 'correct') correct++;
+                    else if (st === 'wrong') wrong++;
                 });
 
                 const attempted = correct + wrong;
@@ -14912,9 +15726,8 @@
             if (AppState) AppState.chatHistory = history;
             localStorage.setItem('medStormChat_' + userId, JSON.stringify(history));
 
-            if (window.currentUserId && window.saveUserData) {
-                window.saveUserData('chatHistory', history);
-            }
+            // Chat history is fully stored and retained per user in localStorage.
+            // Decoupled from cloud user doc to eliminate 25-50KB bloat and repeated Firestore write costs per message.
         }
 
         function clearChatHistory() {
@@ -15442,6 +16255,140 @@
         }
         window.loadHistoSpotsFromDB = loadHistoSpotsFromDB;
 
+        async function loadFoundPhysioSpotsFromDB(forceRefresh = false) {
+            try {
+                if (!forceRefresh) {
+                    if (window.physiologyFoundSpots && Array.isArray(window.physiologyFoundSpots) && window.physiologyFoundSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_found_physio_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.physiologyFoundSpots = parsed;
+                            window.physioFoundSpots = parsed;
+                            return;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_found_physio_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.physiologyFoundSpots = spots;
+                            window.physioFoundSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_found_physio_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load foundation physio practical spots from DB:", e);
+            }
+        }
+        window.loadFoundPhysioSpotsFromDB = loadFoundPhysioSpotsFromDB;
+
+        async function loadFoundHistoSpotsFromDB(forceRefresh = false) {
+            try {
+                if (!forceRefresh) {
+                    if (window.histologyFoundSpots && Array.isArray(window.histologyFoundSpots) && window.histologyFoundSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_found_histo_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.histologyFoundSpots = parsed;
+                            window.histoFoundSpots = parsed;
+                            return;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_found_histo_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.histologyFoundSpots = spots;
+                            window.histoFoundSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_found_histo_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load foundation histo practical spots from DB:", e);
+            }
+        }
+        window.loadFoundHistoSpotsFromDB = loadFoundHistoSpotsFromDB;
+
+        async function loadFoundBioSpotsFromDB(forceRefresh = false) {
+            try {
+                if (!forceRefresh) {
+                    if (window.biochemistryFoundSpots && Array.isArray(window.biochemistryFoundSpots) && window.biochemistryFoundSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_found_bio_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.biochemistryFoundSpots = parsed;
+                            window.bioFoundSpots = parsed;
+                            return;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_found_bio_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.biochemistryFoundSpots = spots;
+                            window.bioFoundSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_found_bio_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load foundation bio practical spots from DB:", e);
+            }
+        }
+        window.loadFoundBioSpotsFromDB = loadFoundBioSpotsFromDB;
+
+        async function loadFoundAnatomySpotsFromDB(forceRefresh = false) {
+            try {
+                if (!forceRefresh) {
+                    if (window.anatomyFoundSpots && Array.isArray(window.anatomyFoundSpots) && window.anatomyFoundSpots.length > 0) return;
+                    const cached = localStorage.getItem('medStorm_cache_found_anatomy_spots');
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            window.anatomyFoundSpots = parsed;
+                            return;
+                        }
+                    }
+                }
+                if (window.db && window.doc && window.getDoc) {
+                    const docSnap = await window.getDoc(window.doc(window.db, "content", "practical_found_anatomy_spots"));
+                    if (docSnap && docSnap.exists()) {
+                        const data = docSnap.data();
+                        const spots = data.spots || data.questionsList;
+                        if (Array.isArray(spots) && spots.length > 0) {
+                            window.anatomyFoundSpots = spots;
+                            try {
+                                localStorage.setItem('medStorm_cache_found_anatomy_spots', JSON.stringify(spots));
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not load foundation anatomy practical spots from DB:", e);
+            }
+        }
+        window.loadFoundAnatomySpotsFromDB = loadFoundAnatomySpotsFromDB;
+
         window.setPracticalYear = function (year) {
             window.currentPracticalYear = String(year);
             _fcShowCover();
@@ -15465,10 +16412,14 @@
             const p7 = typeof loadAnatomySpotsFromDB === 'function' ? loadAnatomySpotsFromDB() : Promise.resolve();
             const p8 = typeof loadAtlasSpotsFromDB === 'function' ? loadAtlasSpotsFromDB() : Promise.resolve();
             const p9 = typeof loadHistoSpotsFromDB === 'function' ? loadHistoSpotsFromDB() : Promise.resolve();
-            Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9]).then(() => {
+            const p10 = typeof loadFoundPhysioSpotsFromDB === 'function' ? loadFoundPhysioSpotsFromDB() : Promise.resolve();
+            const p11 = typeof loadFoundHistoSpotsFromDB === 'function' ? loadFoundHistoSpotsFromDB() : Promise.resolve();
+            const p12 = typeof loadFoundBioSpotsFromDB === 'function' ? loadFoundBioSpotsFromDB() : Promise.resolve();
+            const p13 = typeof loadFoundAnatomySpotsFromDB === 'function' ? loadFoundAnatomySpotsFromDB() : Promise.resolve();
+            Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13]).then(() => {
                 const curY = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
                 const inSession = Boolean(document.getElementById('para-session-wrap'));
-                if (!inSession && (curY === '3' || curY === '2')) _fcShowCover();
+                if (!inSession && (curY === '3' || curY === '2' || curY === '1')) _fcShowCover();
             }).catch(() => { });
 
             if (!window.FLASHCARDS_DATA || window.FLASHCARDS_DATA.length === 0) {
@@ -15679,6 +16630,165 @@
                 return;
             }
 
+            if (curYear === '1') {
+                const foundPhysioList = (window.physiologyFoundSpots && window.physiologyFoundSpots.length) ? window.physiologyFoundSpots : ((window.physioFoundSpots && window.physioFoundSpots.length) ? window.physioFoundSpots : ((window.physiologySlides && window.physiologySlides.length) ? window.physiologySlides : []));
+                const foundPhysioSpotsCount = foundPhysioList.length || 18;
+                let foundPhysioTotalQs = 18;
+                if (foundPhysioList.length > 0) {
+                    let counted = 0;
+                    foundPhysioList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) foundPhysioTotalQs = counted;
+                }
+
+                const foundHistoList = (window.histologyFoundSpots && window.histologyFoundSpots.length) ? window.histologyFoundSpots : ((window.histoFoundSpots && window.histoFoundSpots.length) ? window.histoFoundSpots : ((window.histologySlides && window.histologySlides.length) ? window.histologySlides : []));
+                const foundHistoSpotsCount = foundHistoList.length || 75;
+                let foundHistoTotalQs = 75;
+                if (foundHistoList.length > 0) {
+                    let counted = 0;
+                    foundHistoList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) foundHistoTotalQs = counted;
+                }
+
+                const foundBioList = (window.biochemistryFoundSpots && window.biochemistryFoundSpots.length) ? window.biochemistryFoundSpots : ((window.bioFoundSpots && window.bioFoundSpots.length) ? window.bioFoundSpots : ((window.biochemistrySlides && window.biochemistrySlides.length) ? window.biochemistrySlides : []));
+                const foundBioSpotsCount = foundBioList.length || 72;
+                let foundBioTotalQs = 124;
+                if (foundBioList.length > 0) {
+                    let counted = 0;
+                    foundBioList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) foundBioTotalQs = counted;
+                }
+
+                const foundAnatomyList = (window.anatomyFoundSpots && window.anatomyFoundSpots.length) ? window.anatomyFoundSpots : ((window.anatomySlides && window.anatomySlides.length) ? window.anatomySlides : []);
+                const foundAnatomySpotsCount = foundAnatomyList.length || 13;
+                let foundAnatomyTotalQs = 19;
+                if (foundAnatomyList.length > 0) {
+                    let counted = 0;
+                    foundAnatomyList.forEach(s => {
+                        if (s && Array.isArray(s.questions)) counted += s.questions.length;
+                    });
+                    if (counted > 0) foundAnatomyTotalQs = counted;
+                }
+
+                container.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.4rem;">🔬 1st Year Practical Exams</h2>
+                        <p style="color: var(--text-gray); font-size: 0.95rem; margin: 0;">Interactive spot-by-spot exams with question steps, answers, image zooming, and self-evaluation.</p>
+                    </div>
+
+                    <!-- Foundation Big Card Container -->
+                    <div class="egu-big-card foundation-big-card" style="width: 100%; max-width: 1520px; margin: 0 auto; background: linear-gradient(145deg, rgba(31, 41, 36, 0.6) 0%, rgba(15, 23, 42, 0.75) 100%); border: 1.5px solid rgba(34, 197, 94, 0.35); border-radius: 24px; padding: 28px 24px 34px 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08); position: relative;">
+                        <!-- Foundation Big Card Header -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-left: 8px; padding-right: 8px;">
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #22c55e, #15803d); display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 8px 22px rgba(34, 197, 94, 0.35); border: 1px solid rgba(255, 255, 255, 0.15);">🩺</div>
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                        <h3 style="font-size: 1.6rem; font-weight: 800; color: #f8fafc; margin: 0;">🩺 Foundation Practical</h3>
+                                        <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); padding: 3px 12px; border-radius: 20px; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.5px;">FOUNDATION MODULE</span>
+                                    </div>
+                                    <p style="color: var(--text-gray); font-size: 0.92rem; margin: 4px 0 0 0;"></p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--border-color); padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                                    <i class="ri-stack-line" style="color: var(--accent);"></i> 4 Subjects
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Cards Flex Row Inside Big Foundation -->
+                        <div style="display: flex; justify-content: center; align-items: stretch; gap: 24px; flex-wrap: wrap; width: 100%; margin: 0 auto; padding: 10px 0;">
+                            <!-- PHYSIO Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${foundPhysioSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetFoundPhysioSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('found_physio')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #2b1d0c 0%, #150e05 100%); border: 1.5px solid #f59e0b; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(245, 158, 11, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">${foundPhysioSpotsCount > 0 ? `${foundPhysioSpotsCount} spots • ${foundPhysioTotalQs} Qs` : '⚡ Physiology'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">⚡</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">⚡ PHYSIO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Foundation Physiology Stations</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('found_physio')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);">
+                                    <i class="ri-play-fill"></i> Start PHYSIO Practical
+                                </button>
+                            </div>
+
+                            <!-- HISTO Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${foundHistoSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetFoundHistoSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('found_histo')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #2b1120 0%, #170912 100%); border: 1.5px solid #ec4899; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(236, 72, 153, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4);">${foundHistoSpotsCount > 0 ? `${foundHistoSpotsCount} spots • ${foundHistoTotalQs} Qs` : '🔬 Histology'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🔬</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🔬 HISTO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Foundation Histology Spots &amp; Slides</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('found_histo')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #ec4899, #be185d); box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);">
+                                    <i class="ri-play-fill"></i> Start HISTO Practical
+                                </button>
+                            </div>
+
+                            <!-- BIO Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${foundBioSpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetFoundBioSpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('found_bio')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #0c2333 0%, #06131c 100%); border: 1.5px solid #0ea5e9; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(14, 165, 233, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4);">${foundBioSpotsCount > 0 ? `${foundBioSpotsCount} spots • ${foundBioTotalQs} Qs` : '🧪 Biochemistry'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🧪</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🧪 BIO Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Foundation Biochemistry Spots</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('found_bio')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);">
+                                    <i class="ri-play-fill"></i> Start Practical Session
+                                </button>
+                            </div>
+
+                            <!-- ANATOMY Card -->
+                            <div class="fc-cover-wrap" style="width: 340px; max-width: 340px; flex: 0 0 340px; position: relative; margin: 0;">
+                                ${foundAnatomySpotsCount > 0 ? `
+                                    <button class="reset-btn" onclick="resetFoundAnatomySpotsProgress(event)" title="Reset Progress" style="top: -12px; right: -12px; z-index: 20; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--primary-red);"><i class="ri-restart-line" style="font-size: 1.2rem;"></i></button>
+                                ` : ''}
+                                <div class="fc-cover-deck" onclick="startPracticalSession('found_anatomy')">
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-shadow"></div>
+                                    <div class="fc-cover-front" style="background: linear-gradient(145deg, #241432 0%, #130a1c 100%); border: 1.5px solid #a855f7; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 24px rgba(168, 85, 247, 0.25);">
+                                        <div class="fc-cover-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4);">${foundAnatomySpotsCount > 0 ? `${foundAnatomySpotsCount} spots • ${foundAnatomyTotalQs} Qs` : '🦴 Anatomy'}</div>
+                                        <div class="fc-cover-icon" style="font-size: 3.5rem; margin-bottom: 5px;">🦴</div>
+                                        <div class="fc-cover-title" style="color: #f8fafc; font-size: 1.25rem;">🦴 ANATOMY Practical</div>
+                                        <div class="fc-cover-sub" style="color: #94a3b8;">Foundation Anatomy &amp; Bones</div>
+                                    </div>
+                                </div>
+                                <button class="fc-start-btn" onclick="startPracticalSession('found_anatomy')" style="width: 100%; justify-content: center; margin-top: -15px; position: relative; z-index: 10; background: linear-gradient(135deg, #a855f7, #7e22ce); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);">
+                                    <i class="ri-play-fill"></i> Start ANATOMY Practical
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
             if (curYear !== '3') {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 4rem 1.5rem; color: #94a3b8; max-width: 500px; margin: 2rem auto;">
@@ -15868,6 +16978,47 @@
         window.startAnatomySpotsSession = (force) => startPracticalSession('anatomy', force);
         window.startAtlasSpotsSession = (force) => startPracticalSession('atlas', force);
 
+        function resetFoundBioSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Foundation Biochemistry Practical progress?")) return;
+            localStorage.removeItem('medStorm_found_bio_progress');
+            if (window.showToast) window.showToast('Foundation Biochemistry progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetFoundBioSpotsProgress = resetFoundBioSpotsProgress;
+
+        function resetFoundHistoSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Foundation Histology Practical progress?")) return;
+            localStorage.removeItem('medStorm_found_histo_progress');
+            if (window.showToast) window.showToast('Foundation Histology progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetFoundHistoSpotsProgress = resetFoundHistoSpotsProgress;
+
+        function resetFoundPhysioSpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Foundation Physiology Practical progress?")) return;
+            localStorage.removeItem('medStorm_found_physio_progress');
+            if (window.showToast) window.showToast('Foundation Physiology progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetFoundPhysioSpotsProgress = resetFoundPhysioSpotsProgress;
+
+        function resetFoundAnatomySpotsProgress(event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to reset your Foundation Anatomy Practical progress?")) return;
+            localStorage.removeItem('medStorm_found_anatomy_progress');
+            if (window.showToast) window.showToast('Foundation Anatomy progress reset!', 'success');
+            _fcShowCover();
+        }
+        window.resetFoundAnatomySpotsProgress = resetFoundAnatomySpotsProgress;
+
+        window.startFoundBioSpotsSession = (force) => startPracticalSession('found_bio', force);
+        window.startFoundHistoSpotsSession = (force) => startPracticalSession('found_histo', force);
+        window.startFoundPhysioSpotsSession = (force) => startPracticalSession('found_physio', force);
+        window.startFoundAnatomySpotsSession = (force) => startPracticalSession('found_anatomy', force);
+
         function resetParaSpotsProgress(event) {
             if (event) event.stopPropagation();
             if (!confirm("Are you sure you want to reset your Parasitology Practical progress?")) return;
@@ -15903,7 +17054,10 @@
             const list = window.pharmacologyPracticalQuestions || [];
             if (AppState && AppState.progress) {
                 list.forEach(q => {
-                    if (q && q.q) delete AppState.progress[q.q];
+                    if (q) {
+                        if (q.id) delete AppState.progress[q.id];
+                        if (q.q) delete AppState.progress[q.q];
+                    }
                 });
                 localStorage.setItem('medStormProgress', JSON.stringify(AppState.progress));
                 if (window.saveUserData) window.saveUserData('progress', AppState.progress);
@@ -16128,23 +17282,33 @@
         }
 
         function startPracticalSession(type = 'parasitology', forceRestart = false) {
-            const curYear = String((AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
-            const isBio = (type === 'bio' || type === 'biochemistry');
-            const isHisto = (type === 'histo' || type === 'histology');
-            const isPhysio = (type === 'physio' || type === 'physiology');
-            const isAnatomy = (type === 'anatomy');
+            const curYear = String(window.currentPracticalYear || (AppState && AppState.year) || localStorage.getItem('medStorm_year') || '1');
+            const isBio = (type === 'bio' || type === 'biochemistry' || type === 'found_bio');
+            const isHisto = (type === 'histo' || type === 'histology' || type === 'found_histo');
+            const isPhysio = (type === 'physio' || type === 'physiology' || type === 'found_physio');
+            const isAnatomy = (type === 'anatomy' || type === 'found_anatomy');
             const isAtlas = (type === 'atlas' || type === 'atlas_anatomy' || type === 'anatomy_atlas');
-            const isYear2 = (isBio || isHisto || isPhysio || isAnatomy || isAtlas);
 
+            const isFoundType = (type.startsWith('found_'));
+            const isYear1Target = (curYear === '1' || isFoundType);
+
+            const isYear1 = (isBio || isHisto || isPhysio || isAnatomy);
+            const isYear2 = (isBio || isHisto || isPhysio || isAnatomy || isAtlas);
+            const isYear3 = (type === 'parasitology' || type === 'microbiology' || type === 'simulation');
+
+            if (curYear === '1' && !isYear1) {
+                alert("There is no practical questions available.");
+                return;
+            }
             if (curYear === '2' && !isYear2) {
                 alert("There is no practical questions available.");
                 return;
             }
-            if (curYear === '3' && isYear2) {
+            if (curYear === '3' && !isYear3) {
                 alert("There is no practical questions available.");
                 return;
             }
-            if (curYear !== '3' && curYear !== '2') {
+            if (curYear !== '1' && curYear !== '2' && curYear !== '3') {
                 alert("There is no practical questions available.");
                 return;
             }
@@ -16158,7 +17322,33 @@
             let sessionTitle = '🦠 Parasitology Practical';
             let sessionIcon = '🦠';
 
-            if (isMicro) {
+            if (isYear1Target) {
+                if (isPhysio) {
+                    targetVar = 'physiologyFoundSpots';
+                    scriptSrc = 'physiology found.js';
+                    storageKey = 'medStorm_found_physio_progress';
+                    sessionTitle = '⚡ PHYSIO Practical (Foundation)';
+                    sessionIcon = '⚡';
+                } else if (isHisto) {
+                    targetVar = 'histologyFoundSpots';
+                    scriptSrc = 'histology found.js';
+                    storageKey = 'medStorm_found_histo_progress';
+                    sessionTitle = '🔬 HISTO Practical (Foundation)';
+                    sessionIcon = '🔬';
+                } else if (isBio) {
+                    targetVar = 'biochemistryFoundSpots';
+                    scriptSrc = 'biochemistry found.js';
+                    storageKey = 'medStorm_found_bio_progress';
+                    sessionTitle = '🧪 BIO Practical (Foundation)';
+                    sessionIcon = '🧪';
+                } else if (isAnatomy) {
+                    targetVar = 'anatomyFoundSpots';
+                    scriptSrc = 'anatomy found.js';
+                    storageKey = 'medStorm_found_anatomy_progress';
+                    sessionTitle = '🦴 ANATOMY Practical (Foundation)';
+                    sessionIcon = '🦴';
+                }
+            } else if (isMicro) {
                 targetVar = 'microbiologySpots';
                 scriptSrc = 'practical_microbiology.js';
                 storageKey = 'medStorm_micro_progress';
@@ -16203,20 +17393,35 @@
             }
 
             let spots = window[targetVar];
-            if (isHisto && (!spots || !Array.isArray(spots) || spots.length === 0)) {
-                spots = window.histoslides || window.histoSpots || window.histoSlides;
-            }
-            if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
-                spots = window.physiologySpots || window.physioSpots;
-            }
-            if (isAtlas && (!spots || !Array.isArray(spots) || spots.length === 0)) {
-                spots = window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots;
+            if (isYear1Target) {
+                if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.physiologyFoundSpots || window.physioFoundSpots || window.physiologySlides;
+                }
+                if (isHisto && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.histologyFoundSpots || window.histoFoundSpots || window.histologySlides;
+                }
+                if (isBio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.biochemistryFoundSpots || window.bioFoundSpots || window.biochemistrySlides;
+                }
+                if (isAnatomy && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.anatomyFoundSpots || window.anatomySlides;
+                }
+            } else {
+                if (isHisto && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.histoslides || window.histoSpots || window.histoSlides;
+                }
+                if (isPhysio && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.physiologySpots || window.physioSpots;
+                }
+                if (isAtlas && (!spots || !Array.isArray(spots) || spots.length === 0)) {
+                    spots = window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots;
+                }
             }
             if (!spots || !Array.isArray(spots) || spots.length === 0) {
                 const s = document.createElement('script');
                 s.src = scriptSrc;
                 s.onload = () => {
-                    const loaded = window[targetVar] || (isHisto ? (window.histoslides || window.histoSpots || window.histoSlides) : (isPhysio ? (window.physiologySpots || window.physioSpots) : (isAtlas ? (window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots) : null)));
+                    const loaded = window[targetVar] || (isYear1Target ? (isPhysio ? (window.physiologyFoundSpots || window.physioFoundSpots || window.physiologySlides) : (isHisto ? (window.histologyFoundSpots || window.histoFoundSpots || window.histologySlides) : (isBio ? (window.biochemistryFoundSpots || window.bioFoundSpots || window.biochemistrySlides) : (window.anatomyFoundSpots || window.anatomySlides)))) : (isHisto ? (window.histoslides || window.histoSpots || window.histoSlides) : (isPhysio ? (window.physiologySpots || window.physioSpots) : (isAtlas ? (window.eguAtlasSpots || window.atlasSpots || window.anatomyAtlasSpots) : null))));
                     if (loaded && loaded.length > 0) {
                         startPracticalSession(type, forceRestart);
                     } else {
@@ -16246,6 +17451,7 @@
                         paraSessionState.type = type;
                         paraSessionState.title = sessionTitle;
                         paraSessionState.icon = sessionIcon;
+                        paraSessionState.storageKey = storageKey;
                         paraSessionState.showAnswer = false;
                         if (isSim) {
                             if (data.startTime && data.durationSec) {
@@ -16270,6 +17476,7 @@
                 type: type,
                 title: sessionTitle,
                 icon: sessionIcon,
+                storageKey: storageKey,
                 spots: shuffle(spots),
                 spotIdx: 0,
                 qIdx: 0,
@@ -16290,19 +17497,27 @@
 
         function _saveParaProgress() {
             try {
-                let key = 'medStorm_para_progress';
-                if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
-                else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
-                else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
-                else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
-                else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
-                else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
-                else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
+                let key = paraSessionState.storageKey;
+                if (!key) {
+                    if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
+                    else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
+                    else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
+                    else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
+                    else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
+                    else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
+                    else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
+                    else if (paraSessionState.type === 'found_bio') key = 'medStorm_found_bio_progress';
+                    else if (paraSessionState.type === 'found_histo') key = 'medStorm_found_histo_progress';
+                    else if (paraSessionState.type === 'found_physio') key = 'medStorm_found_physio_progress';
+                    else if (paraSessionState.type === 'found_anatomy') key = 'medStorm_found_anatomy_progress';
+                    else key = 'medStorm_para_progress';
+                }
 
                 localStorage.setItem(key, JSON.stringify({
                     type: paraSessionState.type,
                     title: paraSessionState.title,
                     icon: paraSessionState.icon,
+                    storageKey: paraSessionState.storageKey,
                     spots: paraSessionState.spots,
                     spotIdx: paraSessionState.spotIdx,
                     qIdx: paraSessionState.qIdx,
@@ -16362,10 +17577,10 @@
 
                 const isMicro = paraSessionState.type === 'microbiology';
                 const isSim = paraSessionState.type === 'simulation';
-                const isBio = paraSessionState.type === 'bio';
-                const isHisto = paraSessionState.type === 'histo';
-                const isPhysio = paraSessionState.type === 'physio';
-                const isAnatomy = paraSessionState.type === 'anatomy';
+                const isBio = (paraSessionState.type === 'bio' || paraSessionState.type === 'found_bio' || paraSessionState.type === 'biochemistry');
+                const isHisto = (paraSessionState.type === 'histo' || paraSessionState.type === 'found_histo' || paraSessionState.type === 'histology');
+                const isPhysio = (paraSessionState.type === 'physio' || paraSessionState.type === 'found_physio' || paraSessionState.type === 'physiology');
+                const isAnatomy = (paraSessionState.type === 'anatomy' || paraSessionState.type === 'found_anatomy');
                 const isAtlas = (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy');
 
                 const rawImg = (currentSpot.images && currentSpot.images[0]) ? currentSpot.images[0] : '';
@@ -16377,7 +17592,11 @@
                     currentSpot.imageAsAnswer ||
                     currentQ.isAnswerImage ||
                     currentQ.imageAsAnswer ||
-                    (isBio && (
+                    rawImg.includes('eccrine_vs_apocrine_table.webp') ||
+                    rawImg.includes('tonic_vs_phasic_table.webp') ||
+                    rawImg.includes('eda_mechanism_flowchart.webp') ||
+                    rawImg.includes('starch_hydrolysis_steps.webp') ||
+                    (isBio && !paraSessionState.type.startsWith('found_') && (
                         rawImg.includes('spot4.webp') ||
                         rawImg.includes('spot5.webp') ||
                         rawImg.includes('spot6.webp') ||
@@ -16429,7 +17648,13 @@
 
                 const qText = (isBio && rawImg.includes('spot47.webp')) ? '' : (currentQ.question || '');
                 const hasQText = Boolean(qText && String(qText).trim());
-                const currentAnsStr = String(currentQ.answer || '');
+                let currentAnsStr = String(currentQ.answer || '');
+                if (rawImg.includes('eccrine_vs_apocrine_table.webp') ||
+                    rawImg.includes('tonic_vs_phasic_table.webp') ||
+                    rawImg.includes('eda_mechanism_flowchart.webp') ||
+                    rawImg.includes('starch_hydrolysis_steps.webp')) {
+                    currentAnsStr = '';
+                }
 
                 const progressPct = Math.round(((paraSessionState.spotIdx) / totalSpots) * 100);
                 let badgeThemeColor = isMicro ? '#34d399' : '#60a5fa';
@@ -16712,14 +17937,21 @@
 
         function paraFinishSession() {
             if (simTimerInterval) { clearInterval(simTimerInterval); simTimerInterval = null; }
-            let key = 'medStorm_para_progress';
-            if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
-            else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
-            else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
-            else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
-            else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
-            else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
-            else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
+            let key = paraSessionState.storageKey;
+            if (!key) {
+                if (paraSessionState.type === 'microbiology') key = 'medStorm_micro_progress';
+                else if (paraSessionState.type === 'simulation') key = 'medStorm_sim_progress';
+                else if (paraSessionState.type === 'bio') key = 'medStorm_bio_progress';
+                else if (paraSessionState.type === 'histo') key = 'medStorm_histo_progress';
+                else if (paraSessionState.type === 'physio') key = 'medStorm_physio_progress';
+                else if (paraSessionState.type === 'anatomy') key = 'medStorm_anatomy_progress';
+                else if (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy') key = 'medStorm_atlas_progress';
+                else if (paraSessionState.type === 'found_bio') key = 'medStorm_found_bio_progress';
+                else if (paraSessionState.type === 'found_histo') key = 'medStorm_found_histo_progress';
+                else if (paraSessionState.type === 'found_physio') key = 'medStorm_found_physio_progress';
+                else if (paraSessionState.type === 'found_anatomy') key = 'medStorm_found_anatomy_progress';
+                else key = 'medStorm_para_progress';
+            }
             localStorage.removeItem(key);
             if (typeof showConfetti === 'function') showConfetti();
             _renderParaCompletionView();
@@ -16737,10 +17969,10 @@
 
             const isMicro = paraSessionState.type === 'microbiology';
             const isSim = paraSessionState.type === 'simulation';
-            const isBio = paraSessionState.type === 'bio';
-            const isHisto = paraSessionState.type === 'histo';
-            const isPhysio = paraSessionState.type === 'physio';
-            const isAnatomy = paraSessionState.type === 'anatomy';
+            const isBio = (paraSessionState.type === 'bio' || paraSessionState.type === 'found_bio' || paraSessionState.type === 'biochemistry');
+            const isHisto = (paraSessionState.type === 'histo' || paraSessionState.type === 'found_histo' || paraSessionState.type === 'histology');
+            const isPhysio = (paraSessionState.type === 'physio' || paraSessionState.type === 'found_physio' || paraSessionState.type === 'physiology');
+            const isAnatomy = (paraSessionState.type === 'anatomy' || paraSessionState.type === 'found_anatomy');
             const isAtlas = (paraSessionState.type === 'atlas' || paraSessionState.type === 'atlas_anatomy');
 
             const totalSpots = paraSessionState.spots ? paraSessionState.spots.length : (isSim ? 20 : (isMicro ? 111 : (isBio ? 68 : 58)));
@@ -16762,19 +17994,19 @@
                 color = '#c084fc';
                 btnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
             } else if (isBio) {
-                name = 'Biochemistry Practical';
+                name = (paraSessionState.type === 'found_bio' ? 'Biochemistry Practical (Foundation)' : 'Biochemistry Practical');
                 color = '#38bdf8';
                 btnGradient = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
             } else if (isHisto) {
-                name = 'Histology Practical';
+                name = (paraSessionState.type === 'found_histo' ? 'Histology Practical (Foundation)' : 'Histology Practical');
                 color = '#ec4899';
                 btnGradient = 'linear-gradient(135deg, #ec4899, #be185d)';
             } else if (isPhysio) {
-                name = 'Physiology Practical';
+                name = (paraSessionState.type === 'found_physio' ? 'Physiology Practical (Foundation)' : 'Physiology Practical');
                 color = '#f59e0b';
                 btnGradient = 'linear-gradient(135deg, #f59e0b, #d97706)';
             } else if (isAnatomy) {
-                name = 'Anatomy Practical';
+                name = (paraSessionState.type === 'found_anatomy' ? 'Anatomy Practical (Foundation)' : 'Anatomy Practical');
                 color = '#a855f7';
                 btnGradient = 'linear-gradient(135deg, #a855f7, #7e22ce)';
             } else if (isAtlas) {
@@ -17809,7 +19041,7 @@
                 } catch (e) { }
 
                 renderList(players);
-                window.unsubscribeLeaderboard = () => {};
+                window.unsubscribeLeaderboard = () => { };
             } catch (e) {
                 console.error("Global leaderboard error:", e);
                 if (!cachedPlayers) {
@@ -18226,7 +19458,7 @@
 
         function adminReportsStatusFilter(status) {
             currentReportsStatusFilter = status;
-            ['pending', 'resolved', 'all'].forEach(s => {
+            ['pending', 'common', 'resolved', 'all'].forEach(s => {
                 const btn = document.getElementById('admin-rep-status-' + s);
                 if (btn) {
                     const isActive = s === status;
@@ -18237,6 +19469,10 @@
                         activeBg = 'rgba(245, 158, 11, 0.2)';
                         activeColor = '#fbbf24';
                         activeBorder = '#f59e0b';
+                    } else if (s === 'common') {
+                        activeBg = 'rgba(239, 68, 68, 0.2)';
+                        activeColor = '#f87171';
+                        activeBorder = '#ef4444';
                     } else if (s === 'resolved') {
                         activeBg = 'rgba(16, 185, 129, 0.2)';
                         activeColor = '#10b981';
@@ -18253,7 +19489,7 @@
         window.adminReportsStatusFilter = adminReportsStatusFilter;
 
         window.adminReportsFilter = function (filter) {
-            if (filter === 'pending' || filter === 'all' || filter === 'resolved') {
+            if (filter === 'pending' || filter === 'common' || filter === 'all' || filter === 'resolved') {
                 adminReportsStatusFilter(filter);
             } else if (filter === '1' || filter === '2') {
                 adminReportsYearFilter(filter);
@@ -18267,6 +19503,183 @@
         }
         window.handleAdminReportsSearch = handleAdminReportsSearch;
 
+        function renderCommonReportCard(g) {
+            const firstRep = g.reports[0] || {};
+            const totalCount = g.reports.length;
+            const pendingReports = g.reports.filter(r => (r.status || 'pending') === 'pending');
+            const pendingCount = pendingReports.length;
+            const isAllResolved = (pendingCount === 0);
+            const statusColor = isAllResolved ? '#10b981' : '#ef4444';
+            const statusBg = isAllResolved ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+            const repYear = g.year || getReportYear(firstRep);
+            const isYear2 = repYear === '2';
+
+            const meta = typeof findQuestionMetadata === 'function' ? findQuestionMetadata(g.question, firstRep.module) : null;
+            const subjectName = (meta && meta.subject) ? meta.subject : (firstRep.subject || '');
+            const chapterName = (meta && meta.chapter) ? meta.chapter : (firstRep.chapter || '');
+            const options = (meta && meta.options && meta.options.length > 0) ? meta.options : ((firstRep.options && Array.isArray(firstRep.options) && firstRep.options.length > 0) ? firstRep.options : []);
+            const correctIndex = (meta && typeof meta.correctIndex === 'number') ? meta.correctIndex : (typeof firstRep.correctIndex === 'number' ? firstRep.correctIndex : null);
+            const correctAns = (meta && meta.correctAnswer) ? meta.correctAnswer : (firstRep.correctAnswer || '');
+            const qImage = (meta && meta.image) ? meta.image : (firstRep.image || '');
+
+            let sectionParts = [];
+            if (subjectName) sectionParts.push(subjectName);
+            if (chapterName && chapterName !== subjectName) sectionParts.push(chapterName);
+            const sectionBreadcrumb = sectionParts.join(' ▸ ');
+
+            let optionsHtml = '';
+            if (options && options.length > 0) {
+                optionsHtml = `
+                    <div style="margin-top:10px;">
+                        <div style="font-size:0.75rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Choices:</div>
+                        <div style="display:grid; grid-template-columns:1fr; gap:6px;">
+                            ${options.map((opt, oIdx) => {
+                    const letter = String.fromCharCode(65 + oIdx);
+                    const isCorrect = (correctIndex === oIdx) || (String(opt).trim() === String(correctAns).trim());
+                    return `
+                                    <div style="display:flex; align-items:flex-start; gap:8px; padding:7px 12px; border-radius:8px; font-size:0.86rem; line-height:1.45; ${isCorrect ? 'background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.4); color:var(--text-light); font-weight:600;' : 'background:rgba(255,255,255,0.02); border:1px solid var(--border-color); color:var(--text-gray);'}">
+                                        <span style="font-weight:800; min-width:20px; color:${isCorrect ? '#10b981' : 'var(--text-gray)'};">${letter}.</span>
+                                        <span style="flex:1;">${escapeHTML(opt)}</span>
+                                        ${isCorrect ? '<span style="font-size:0.7rem; background:#10b981; color:#fff; padding:1px 7px; border-radius:999px; font-weight:700; white-space:nowrap; margin-left:6px;"><i class="ri-check-line"></i> Correct</span>' : ''}
+                                    </div>`;
+                }).join('')}
+                        </div>
+                    </div>`;
+            } else if (correctAns) {
+                optionsHtml = `
+                    <div style="margin-top:8px; display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:8px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); color:#34d399; font-size:0.82rem; font-weight:700;">
+                        <i class="ri-checkbox-circle-fill"></i> Correct answer: ${escapeHTML(correctAns)}
+                    </div>`;
+            }
+
+            const imgHtml = qImage ? `
+                <div style="margin-top:10px;">
+                    <img src="${escapeHTML(qImage)}" alt="Question Image" style="max-height:140px; border-radius:8px; border:1px solid var(--border-color); object-fit:contain; background:#000; cursor:pointer;" onclick="window.open('${escapeHTML(qImage)}', '_blank')" title="Click to open full image">
+                </div>` : '';
+
+            const reportsListHtml = g.reports.map(r => {
+                const isRepResolved = r.status === 'resolved';
+                const timeAgoStr = typeof timeAgo === 'function' && r.createdAt ? timeAgo(r.createdAt) : (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'Unknown');
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:8px 12px; border-radius:8px; background:rgba(0,0,0,0.22); border:1px solid rgba(255,255,255,0.06);">
+                        <div style="flex:1;">
+                            <div style="font-size:0.8rem; font-weight:700; color:var(--text-light); display:inline-flex; align-items:center; gap:6px;">
+                                <i class="ri-user-smile-line" style="color:var(--accent);"></i> ${escapeHTML(r.username || 'Anonymous')}
+                                <span style="font-size:0.72rem; font-weight:400; color:var(--text-gray);">· ${timeAgoStr}</span>
+                                ${r.userEmail ? `<span style="font-size:0.7rem; color:var(--text-gray); opacity:0.8;">(${escapeHTML(r.userEmail)})</span>` : ''}
+                            </div>
+                            <div style="font-size:0.9rem; color:#fef08a; margin-top:4px; line-height:1.45; font-weight:500;">
+                                "${escapeHTML(r.reason || 'No specific reason given.')}"
+                            </div>
+                        </div>
+                        <span style="font-size:0.7rem; padding:2px 8px; border-radius:999px; font-weight:700; white-space:nowrap; ${isRepResolved ? 'background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3);' : 'background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3);'}">
+                            <i class="${isRepResolved ? 'ri-checkbox-circle-fill' : 'ri-time-line'}"></i> ${r.status || 'pending'}
+                        </span>
+                    </div>`;
+            }).join('');
+
+            return `
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid ${statusColor}; border-radius:14px; padding:1.25rem 1.4rem; box-shadow:0 3px 14px rgba(0,0,0,0.08); transition:all 0.2s ease;">
+                <!-- Header Bar -->
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                        <!-- Common Fire Badge -->
+                        <span style="font-size:0.78rem; background:rgba(239,68,68,0.18); color:#f87171; border:1.5px solid rgba(239,68,68,0.45); padding:3px 11px; border-radius:999px; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 0 10px rgba(239,68,68,0.15);">
+                            <i class="ri-fire-fill" style="color:#ef4444;"></i> ${totalCount} Reports ${pendingCount > 0 ? `(${pendingCount} Pending)` : ''}
+                        </span>
+                        <!-- Year Badge -->
+                        <span style="font-size:0.75rem; background:${isYear2 ? 'rgba(168,85,247,0.15)' : 'rgba(59,130,246,0.15)'}; color:${isYear2 ? '#c084fc' : '#60a5fa'}; border:1px solid ${isYear2 ? 'rgba(168,85,247,0.35)' : 'rgba(59,130,246,0.35)'}; padding:2px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="ri-graduation-cap-line"></i> Year ${repYear}
+                        </span>
+                        <!-- Module Badge -->
+                        <span style="font-size:0.75rem; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:2px 9px; border-radius:999px; font-weight:700;">
+                            📚 ${escapeHTML(firstRep.module || 'Unknown module')}
+                        </span>
+                        <!-- Section / Chapter Breadcrumb -->
+                        ${sectionBreadcrumb ? `
+                        <span style="font-size:0.75rem; background:var(--bg-darker); color:var(--text-light); border:1px solid var(--border-color); padding:2px 10px; border-radius:999px; font-weight:600; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="ri-folder-line" style="color:var(--accent);"></i> ${escapeHTML(sectionBreadcrumb)}
+                        </span>` : ''}
+                        <!-- Overall Status Badge -->
+                        <span style="font-size:0.75rem; background:${statusBg}; color:${statusColor}; border:1px solid ${statusColor}40; padding:2px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="${isAllResolved ? 'ri-checkbox-circle-fill' : 'ri-time-line'}"></i> ${isAllResolved ? 'All Resolved' : `${pendingCount} Pending`}
+                        </span>
+                    </div>
+
+                    <div style="font-size:0.75rem; color:var(--text-gray); font-weight:600;">
+                        Grouped Reports
+                    </div>
+                </div>
+
+                <!-- Student Feedback Box -->
+                <div style="background:rgba(245, 158, 11, 0.08); border:1px solid rgba(245, 158, 11, 0.28); border-radius:10px; padding:12px 14px; margin-bottom:12px;">
+                    <div style="font-size:0.76rem; font-weight:800; color:#fbbf24; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; justify-content:space-between; gap:5px; margin-bottom:8px;">
+                        <span style="display:inline-flex; align-items:center; gap:5px;">
+                            <i class="ri-feedback-line" style="font-size:0.95rem;"></i> Student Feedback & Reasons (${totalCount}):
+                        </span>
+                        <span style="font-size:0.72rem; font-weight:700; color:#a5f3fc;"><i class="ri-magic-line"></i> Editing question will resolve all ${totalCount} reports</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        ${reportsListHtml}
+                    </div>
+                </div>
+
+                <!-- Question Content -->
+                <div style="background:var(--bg-darker); border:1px solid var(--border-color); border-radius:10px; padding:12px 14px; margin-bottom:12px;">
+                    <div style="font-size:0.76rem; font-weight:700; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+                        <i class="ri-question-line" style="color:var(--accent);"></i> Question Text:
+                    </div>
+                    <div style="font-size:0.94rem; color:var(--text-light); font-weight:600; line-height:1.55;">
+                        ${escapeHTML(g.question || 'N/A')}
+                    </div>
+                    ${imgHtml}
+                    ${optionsHtml}
+                </div>
+
+                <!-- Action Buttons Toolbar -->
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid var(--border-color); padding-top:10px;">
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                        <!-- Fix in Question Editor Button -->
+                        <button onclick="adminEditReportById('${firstRep.id}')"
+                            style="padding:7px 15px; border-radius:8px; border:1px solid rgba(59, 130, 246, 0.4); background:rgba(59, 130, 246, 0.12); color:#60a5fa; font-size:0.83rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'"
+                            onmouseout="this.style.background='rgba(59, 130, 246, 0.12)'"
+                            title="Open in Question Editor (Saving auto-resolves all reports)">
+                            <i class="ri-edit-2-line"></i> Fix in Editor
+                        </button>
+
+                        <!-- Copy Question Button -->
+                        <button onclick="adminCopyReportQuestion('${firstRep.id}')"
+                            style="padding:7px 12px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-gray); font-size:0.83rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
+                            onmouseover="this.style.color='var(--text-light)'; this.style.borderColor='var(--text-light)'"
+                            onmouseout="this.style.color='var(--text-gray)'; this.style.borderColor='var(--border-color)'"
+                            title="Copy question and choices to clipboard">
+                            <i class="ri-file-copy-line"></i> Copy
+                        </button>
+                    </div>
+
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <!-- Resolve All Button -->
+                        <button onclick="adminResolveAllReportsByReportId('${firstRep.id}', event)"
+                            style="padding:7px 16px; border-radius:8px; border:1px solid ${isAllResolved ? 'rgba(245, 158, 11, 0.45)' : 'rgba(16, 185, 129, 0.45)'}; background:${isAllResolved ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; color:${isAllResolved ? '#fbbf24' : '#34d399'}; font-size:0.83rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;"
+                            onmouseover="this.style.filter='brightness(1.15)'"
+                            onmouseout="this.style.filter='none'">
+                            <i class="${isAllResolved ? 'ri-arrow-go-back-line' : 'ri-check-double-line'}"></i> ${isAllResolved ? 'Reopen All' : `Resolve All (${totalCount})`}
+                        </button>
+
+                        <!-- Delete All Button -->
+                        <button onclick="adminDeleteAllReportsByReportId('${firstRep.id}', event)"
+                            style="padding:7px 13px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.35); background:rgba(239, 68, 68, 0.08); color:var(--primary-red); font-size:0.83rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
+                            onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'"
+                            onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'"
+                            title="Delete all reports for this question permanently">
+                            <i class="ri-delete-bin-line"></i> Delete All (${totalCount})
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
         function adminRenderReports() {
             const list = document.getElementById('admin-reports-list');
             if (!list) return;
@@ -18277,18 +19690,102 @@
             const totalPending = allAdminReports.filter(r => (r.status || 'pending') === 'pending').length;
             const totalResolved = allAdminReports.filter(r => r.status === 'resolved').length;
 
+            // Calculate common questions with >= 2 reports (where at least one is pending)
+            const qReportCounts = {};
+            allAdminReports.forEach(r => {
+                if (!r || !r.question) return;
+                const nq = r.question.trim().toLowerCase().replace(/\s+/g, ' ');
+                if (!qReportCounts[nq]) qReportCounts[nq] = { total: 0, pending: 0 };
+                qReportCounts[nq].total++;
+                if ((r.status || 'pending') === 'pending') qReportCounts[nq].pending++;
+            });
+            const totalCommon = Object.values(qReportCounts).filter(item => item.total >= 2 && item.pending > 0).length;
+
             const bAll = document.getElementById('admin-rep-badge-all');
             const bY1 = document.getElementById('admin-rep-badge-y1');
             const bY2 = document.getElementById('admin-rep-badge-y2');
             const bPend = document.getElementById('admin-rep-badge-pending');
+            const bCommon = document.getElementById('admin-rep-badge-common');
             const bRes = document.getElementById('admin-rep-badge-resolved');
             const bStatAll = document.getElementById('admin-rep-badge-status-all');
             if (bAll) bAll.textContent = totalAll;
             if (bY1) bY1.textContent = totalY1;
             if (bY2) bY2.textContent = totalY2;
             if (bPend) bPend.textContent = totalPending;
+            if (bCommon) bCommon.textContent = totalCommon;
             if (bRes) bRes.textContent = totalResolved;
             if (bStatAll) bStatAll.textContent = totalAll;
+
+            // Common Reports Filter View
+            if (currentReportsStatusFilter === 'common') {
+                let pool = allAdminReports.filter(r => {
+                    const repYear = getReportYear(r);
+                    if (currentReportsYearFilter === 'all') return true;
+                    return repYear === currentReportsYearFilter;
+                });
+
+                const groupMap = new Map();
+                pool.forEach(r => {
+                    if (!r || !r.question) return;
+                    const norm = r.question.trim().toLowerCase().replace(/\s+/g, ' ');
+                    if (!groupMap.has(norm)) {
+                        groupMap.set(norm, {
+                            norm,
+                            question: r.question,
+                            module: r.module,
+                            subject: r.subject,
+                            chapter: r.chapter,
+                            year: getReportYear(r),
+                            reports: []
+                        });
+                    }
+                    groupMap.get(norm).reports.push(r);
+                });
+
+                let commonGroups = Array.from(groupMap.values()).filter(g => g.reports.length >= 2);
+
+                if (currentReportsSearchQuery) {
+                    const q = currentReportsSearchQuery;
+                    commonGroups = commonGroups.filter(g => {
+                        const qText = (g.question || '').toLowerCase();
+                        const mod = (g.module || '').toLowerCase();
+                        const subj = (g.subject || '').toLowerCase();
+                        const chap = (g.chapter || '').toLowerCase();
+                        const matchInReports = g.reports.some(r =>
+                            (r.reason || '').toLowerCase().includes(q) ||
+                            (r.username || '').toLowerCase().includes(q) ||
+                            (r.userEmail || '').toLowerCase().includes(q)
+                        );
+                        return qText.includes(q) || mod.includes(q) || subj.includes(q) || chap.includes(q) || matchInReports;
+                    });
+                }
+
+                commonGroups.sort((a, b) => {
+                    const aPending = a.reports.filter(r => (r.status || 'pending') === 'pending').length;
+                    const bPending = b.reports.filter(r => (r.status || 'pending') === 'pending').length;
+                    if (aPending !== bPending) return bPending - aPending;
+                    return b.reports.length - a.reports.length;
+                });
+
+                const summaryEl = document.getElementById('admin-rep-summary-text');
+                if (summaryEl) {
+                    const totalRepsInCommon = commonGroups.reduce((acc, g) => acc + g.reports.length, 0);
+                    summaryEl.textContent = `Showing ${commonGroups.length} common question(s) (${totalRepsInCommon} total reports)`;
+                }
+
+                if (commonGroups.length === 0) {
+                    list.innerHTML = `
+                        <div style="text-align:center; color:var(--text-gray); padding:3.5rem 1rem; background:var(--bg-card); border-radius:14px; border:1px solid var(--border-color);">
+                            <i class="ri-checkbox-circle-line" style="font-size:2.5rem; color:#10b981; display:inline-block; margin-bottom:10px;"></i>
+                            <div style="font-weight:700; color:var(--text-light); font-size:1rem;">No Common Reports Found</div>
+                            <div style="font-size:0.82rem; color:var(--text-gray); margin-top:4px;">No questions currently have 2 or more reports. Great job!</div>
+                        </div>`;
+                    return;
+                }
+
+                list.innerHTML = commonGroups.map(g => renderCommonReportCard(g)).join('');
+                return;
+            }
 
             let filtered = allAdminReports.filter(r => {
                 const repYear = getReportYear(r);
@@ -18343,6 +19840,12 @@
                 const repYear = getReportYear(r);
                 const isYear2 = repYear === '2';
 
+                // Check if this question has duplicate/multiple reports
+                const normQ = (r.question || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                const sameQReports = allAdminReports.filter(x => x && x.question && x.question.trim().toLowerCase().replace(/\s+/g, ' ') === normQ);
+                const countForQ = sameQReports.length;
+                const pendingForQ = sameQReports.filter(x => (x.status || 'pending') === 'pending').length;
+
                 const meta = typeof findQuestionMetadata === 'function' ? findQuestionMetadata(r.question, r.module) : null;
                 const subjectName = (meta && meta.subject) ? meta.subject : (r.subject || '');
                 const chapterName = (meta && meta.chapter) ? meta.chapter : (r.chapter || '');
@@ -18391,6 +19894,11 @@
                     <!-- Header Bar -->
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
                         <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                            ${countForQ >= 2 ? `
+                            <!-- Multiple Reports Badge -->
+                            <span style="font-size:0.75rem; background:rgba(239,68,68,0.18); color:#f87171; border:1px solid rgba(239,68,68,0.4); padding:2px 8px; border-radius:999px; font-weight:800; display:inline-flex; align-items:center; gap:4px;" title="This question was reported ${countForQ} times">
+                                <i class="ri-fire-fill"></i> ${countForQ} Reports ${pendingForQ > 1 ? `(${pendingForQ} pending)` : ''}
+                            </span>` : ''}
                             <!-- Year Badge -->
                             <span style="font-size:0.75rem; background:${isYear2 ? 'rgba(168,85,247,0.15)' : 'rgba(59,130,246,0.15)'}; color:${isYear2 ? '#c084fc' : '#60a5fa'}; border:1px solid ${isYear2 ? 'rgba(168,85,247,0.35)' : 'rgba(59,130,246,0.35)'}; padding:2px 9px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">
                                 <i class="ri-graduation-cap-line"></i> Year ${repYear}
@@ -18471,7 +19979,7 @@
                                 style="padding:6px 14px; border-radius:8px; border:1px solid ${isResolved ? 'rgba(245, 158, 11, 0.45)' : 'rgba(16, 185, 129, 0.45)'}; background:${isResolved ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)'}; color:${isResolved ? '#fbbf24' : '#34d399'}; font-size:0.82rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;"
                                 onmouseover="this.style.filter='brightness(1.15)'"
                                 onmouseout="this.style.filter='none'">
-                                <i class="${isResolved ? 'ri-arrow-go-back-line' : 'ri-check-line'}"></i> ${isResolved ? 'Reopen' : 'Mark Resolved'}
+                                <i class="${isResolved ? 'ri-arrow-go-back-line' : 'ri-check-line'}"></i> ${isResolved ? 'Reopen' : (countForQ > 1 ? `Resolve All (${countForQ})` : 'Mark Resolved')}
                             </button>
 
                             <!-- Delete Report Button -->
@@ -18488,17 +19996,117 @@
             }).join('');
         }
 
+        window.adminResolveAllReportsByReportId = async function (reportId, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const targetReport = allAdminReports.find(r => r.id === reportId);
+            if (!targetReport || !targetReport.question) return;
+
+            const normQ = targetReport.question.trim().toLowerCase().replace(/\s+/g, ' ');
+            const matchingReports = allAdminReports.filter(r => {
+                if (!r || !r.question) return false;
+                return r.question.trim().toLowerCase().replace(/\s+/g, ' ') === normQ;
+            });
+            if (matchingReports.length === 0) return;
+
+            const allResolved = matchingReports.every(r => r.status === 'resolved');
+            const targetStatus = allResolved ? 'pending' : 'resolved';
+
+            try {
+                const promises = matchingReports.map(r => {
+                    r.status = targetStatus;
+                    r.resolvedAt = targetStatus === 'resolved' ? Date.now() : null;
+                    if (r.id && window.db && window.updateDoc && window.doc) {
+                        return window.updateDoc(window.doc(window.db, 'reports', r.id), {
+                            status: targetStatus,
+                            resolvedAt: targetStatus === 'resolved' ? Date.now() : null
+                        }).catch(err => console.warn('Update failed:', r.id, err));
+                    }
+                    return Promise.resolve();
+                });
+                await Promise.all(promises);
+                adminRenderReports();
+                if (window.showToast) {
+                    window.showToast(targetStatus === 'resolved'
+                        ? `Resolved all ${matchingReports.length} reports for this question!`
+                        : `Reopened all ${matchingReports.length} reports!`, 'success');
+                }
+            } catch (err) {
+                console.error('Error resolving reports:', err);
+                if (window.showToast) window.showToast('Error updating reports: ' + err.message, 'error');
+            }
+        };
+
+        window.adminDeleteAllReportsByReportId = async function (reportId, e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            const targetReport = allAdminReports.find(r => r.id === reportId);
+            if (!targetReport || !targetReport.question) return;
+
+            const normQ = targetReport.question.trim().toLowerCase().replace(/\s+/g, ' ');
+            const matchingReports = allAdminReports.filter(r => {
+                if (!r || !r.question) return false;
+                return r.question.trim().toLowerCase().replace(/\s+/g, ' ') === normQ;
+            });
+            if (matchingReports.length === 0) return;
+
+            if (!confirm(`Are you sure you want to permanently delete all ${matchingReports.length} reports for this question?`)) return;
+
+            try {
+                const idsToDelete = new Set(matchingReports.map(r => r.id));
+                const promises = matchingReports.map(r => {
+                    if (r.id && window.db && window.deleteDoc && window.doc) {
+                        return window.deleteDoc(window.doc(window.db, 'reports', r.id)).catch(err => console.warn('Delete failed:', r.id, err));
+                    }
+                    return Promise.resolve();
+                });
+                await Promise.all(promises);
+                allAdminReports = allAdminReports.filter(r => !idsToDelete.has(r.id));
+                adminRenderReports();
+                if (window.showToast) {
+                    window.showToast(`Deleted all ${matchingReports.length} reports!`, 'success');
+                }
+            } catch (err) {
+                console.error('Error deleting reports:', err);
+                if (window.showToast) window.showToast('Failed to delete reports: ' + err.message, 'error');
+            }
+        };
+
         window.adminToggleReportStatus = async function (reportId, e) {
             if (e && e.stopPropagation) e.stopPropagation();
             const report = allAdminReports.find(r => r.id === reportId);
             if (!report) return;
             const newStatus = (report.status === 'resolved') ? 'pending' : 'resolved';
             try {
-                await window.updateDoc(window.doc(window.db, 'reports', reportId), { status: newStatus });
-                report.status = newStatus;
-                adminRenderReports();
-                if (window.showToast) {
-                    window.showToast(newStatus === 'resolved' ? 'Report marked as resolved' : 'Report reopened as pending', 'success');
+                if (newStatus === 'resolved') {
+                    const normQ = (report.question || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                    const sameQReports = allAdminReports.filter(r => {
+                        if (!r || !r.question) return false;
+                        return r.question.trim().toLowerCase().replace(/\s+/g, ' ') === normQ;
+                    });
+
+                    const promises = sameQReports.map(r => {
+                        r.status = 'resolved';
+                        r.resolvedAt = Date.now();
+                        if (r.id && window.db && window.updateDoc && window.doc) {
+                            return window.updateDoc(window.doc(window.db, 'reports', r.id), {
+                                status: 'resolved',
+                                resolvedAt: Date.now()
+                            }).catch(err => console.warn('Update failed:', r.id, err));
+                        }
+                        return Promise.resolve();
+                    });
+                    await Promise.all(promises);
+                    adminRenderReports();
+                    if (window.showToast) {
+                        const count = sameQReports.length;
+                        window.showToast(count > 1 ? `Resolved all ${count} reports for this question!` : 'Report marked as resolved', 'success');
+                    }
+                } else {
+                    await window.updateDoc(window.doc(window.db, 'reports', reportId), { status: 'pending' });
+                    report.status = 'pending';
+                    adminRenderReports();
+                    if (window.showToast) {
+                        window.showToast('Report reopened as pending', 'success');
+                    }
                 }
             } catch (err) {
                 console.error("Error updating report status:", err);
@@ -18803,7 +20411,10 @@
                     if (DB[modName]) {
                         const qs = extractAllQuestions(DB[modName]);
                         qs.forEach(q => {
-                            if (q && q.q) allowedQs.add(q.q);
+                            if (q) {
+                                if (q.id) allowedQs.add(q.id);
+                                if (q.q) allowedQs.add(q.q);
+                            }
                         });
                     }
                 });
@@ -18953,7 +20564,10 @@
                     if (DB[modName]) {
                         const qs = extractAllQuestions(DB[modName]);
                         qs.forEach(q => {
-                            if (q && q.q) allowedQs.add(q.q);
+                            if (q) {
+                                if (q.id) allowedQs.add(q.id);
+                                if (q.q) allowedQs.add(q.q);
+                            }
                         });
                     }
                 });
@@ -20657,6 +22271,7 @@
                 return;
             }
 
+            const originalQText = item.qRef ? (item.qRef.q || '') : '';
             btn.innerHTML = "<i class='ri-loader-4-line' style='animation:spin 1s linear infinite; display:inline-block;'></i> Saving... ⏳";
             btn.disabled = true;
 
@@ -20674,7 +22289,7 @@
                     const syncList = (arr) => {
                         if (!Array.isArray(arr)) return;
                         arr.forEach(mItem => {
-                            if (mItem && mItem.q && (mItem.q.trim() === newQText || mItem.q.trim() === item.qRef.q.trim())) {
+                            if (mItem && mItem.q && (mItem.q.trim() === newQText || mItem.q.trim() === originalQText.trim())) {
                                 mItem.q = newQText;
                                 mItem.o = newOptions;
                                 mItem.a = newAnswerIndex;
@@ -20691,22 +22306,87 @@
                     }
                 }
 
-                // Real-time sync: update loaded reports list
+                // Real-time sync: AUTO-RESOLVE all reports for this question!
+                const normOld = (originalQText || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                const normNew = (newQText || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                let resolvedCount = 0;
+
                 if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
+                    const toUpdateInFirestore = [];
                     allAdminReports.forEach(r => {
-                        if (r && r.question && (r.question.trim() === newQText || r.question.trim() === item.qRef.q.trim())) {
+                        if (!r || !r.question) return;
+                        const nq = r.question.trim().toLowerCase().replace(/\s+/g, ' ');
+                        if (nq === normOld || nq === normNew) {
                             r.options = newOptions;
                             r.correctIndex = newAnswerIndex;
                             r.correctAnswer = newOptions[newAnswerIndex] || '';
+                            if (r.status !== 'resolved') {
+                                r.status = 'resolved';
+                                r.resolvedAt = Date.now();
+                                r.autoResolved = true;
+                                resolvedCount++;
+                                if (r.id && window.db && window.updateDoc && window.doc) {
+                                    toUpdateInFirestore.push(
+                                        window.updateDoc(window.doc(window.db, 'reports', r.id), {
+                                            status: 'resolved',
+                                            resolvedAt: Date.now(),
+                                            autoResolved: true
+                                        }).catch(err => console.warn('Could not auto-resolve report:', r.id, err))
+                                    );
+                                }
+                            }
                         }
                     });
-                    if (typeof adminRenderReports === 'function') {
-                        try { adminRenderReports(); } catch (e) { }
+                    if (toUpdateInFirestore.length > 0) {
+                        try { await Promise.all(toUpdateInFirestore); } catch (e) { }
                     }
+                }
+
+                // Also check and bulk-resolve any other pending reports in Firestore matching this question
+                try {
+                    if (window.collection && window.query && window.where && window.getDocs && window.updateDoc && window.db) {
+                        const qPending = window.query(
+                            window.collection(window.db, 'reports'),
+                            window.where('status', '==', 'pending')
+                        );
+                        const pSnap = await window.getDocs(qPending);
+                        const fsUpdates = [];
+                        pSnap.forEach(d => {
+                            const dData = d.data();
+                            if (dData && dData.question) {
+                                const dn = dData.question.trim().toLowerCase().replace(/\s+/g, ' ');
+                                if (dn === normOld || dn === normNew) {
+                                    fsUpdates.push(
+                                        window.updateDoc(d.ref, {
+                                            status: 'resolved',
+                                            resolvedAt: Date.now(),
+                                            autoResolved: true
+                                        }).catch(e => { })
+                                    );
+                                    if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
+                                        const inMem = allAdminReports.find(x => x.id === d.id);
+                                        if (inMem) inMem.status = 'resolved';
+                                    }
+                                }
+                            }
+                        });
+                        if (fsUpdates.length > 0) {
+                            await Promise.all(fsUpdates);
+                        }
+                    }
+                } catch (fsErr) {
+                    console.warn('Firestore bulk resolve check error:', fsErr);
+                }
+
+                if (typeof adminRenderReports === 'function') {
+                    try { adminRenderReports(); } catch (e) { }
                 }
 
                 btn.innerHTML = "<i class='ri-check-line'></i> Saved successfully";
                 btn.style.backgroundColor = "#10B981";
+                if (window.showToast) {
+                    window.showToast(resolvedCount > 0 ? `Saved! Auto-resolved ${resolvedCount} report(s) for this question.` : 'Question saved successfully!', 'success');
+                }
                 setTimeout(() => {
                     btn.innerHTML = "<i class='ri-save-line'></i> Save Changes";
                     btn.disabled = false;
