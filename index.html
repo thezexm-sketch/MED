@@ -10764,15 +10764,6 @@
             // Lightweight initial check from server for metadata timestamps and question counts (no bulk module downloads)
             checkServerMetadata(true).then(async (meta) => {
                 if (!meta) return;
-                // Refresh any cached module whose server version changed (updates dashboard counts)
-                try {
-                    for (const [key, docId] of Object.entries(MODULE_KEY_TO_DOC_ID)) {
-                        const serverTime = meta[docId + '_updatedAt'];
-                        if (DB[key] && serverTime && cachedModuleUpdatedAts[key] !== serverTime) {
-                            await fetchSingleModuleFromDB(key, true); // re-renders dashboard when done
-                        }
-                    }
-                } catch (e) { console.warn('Stale module refresh failed:', e); }
                 try {
                     const cachedMeta = await getIDBCache('__modules_metadata__');
                     const serverUpdatedAt = meta['modules_metadata_updatedAt'];
@@ -21882,6 +21873,9 @@
                     window.renderDashboard();
                 }
             }
+
+            // Batch edits: this module was just persisted, so clear its staged edits
+            if (typeof window.__onDocPersisted === 'function') window.__onDocPersisted(docId);
         }
 
         async function ensureEditorDocLoaded(docId) {
@@ -22051,7 +22045,7 @@
 
                 <div class="action-buttons">
                     <button class="btn save-btn" id="btn_save_${index}" onclick="window.saveEdits(${index}, '${item.docId}')">
-                        <i class="ri-save-line"></i> Save Changes
+                        <i class="ri-save-line"></i> Save to Batch
                     </button>
 
                     <div class="copy-btn-group" id="copy_group_${index}">
@@ -22086,6 +22080,7 @@
             `;
                 resultsContainer.appendChild(card);
                 window[`editRef_${index}`] = item;
+                if (window.__refreshPendingBadge) window.__refreshPendingBadge(index, item);
 
                 const group = card.querySelector(`#opt_group_${index}`);
                 if (group) window.setupDragDrop(group, index);
@@ -22216,13 +22211,268 @@
             }
         };
 
-        window.saveEdits = async function (index, docId) {
+        // =====================================================================
+        // BATCH (STAGED) EDITS — replaces the old per-question window.saveEdits
+        // Save button now only STAGES the edit in memory. "Apply all changes"
+        // writes each touched module ONCE.
+        // =====================================================================
+        window.pendingEdits = window.pendingEdits || new Map();
+        window.__applyingBatch = false;
+
+        const normQ = (s) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+        window.__pendingKey = (item) => item.docId + ':' + (item.qRef && item.qRef.id ? item.qRef.id : '');
+
+        function ensurePendingBar() {
+            let bar = document.getElementById('pending-edits-bar');
+            if (bar) return bar;
+            const st = document.createElement('style');
+            st.textContent = `
+                #pending-edits-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:100000;display:none;align-items:center;gap:12px;padding:12px 18px;border-radius:14px;background:var(--bg-card,#16181d);border:1px solid #F59E0B;box-shadow:0 10px 40px rgba(0,0,0,.5);color:var(--text-light,#fff);font-weight:700;font-size:.92rem;max-width:92vw;flex-wrap:wrap;justify-content:center}
+                #pending-edits-bar button{padding:8px 14px;border-radius:9px;font-weight:700;cursor:pointer;border:1px solid transparent;font-size:.85rem}
+                #pending-edits-bar .pe-apply{background:#10B981;color:#fff}
+                #pending-edits-bar .pe-discard{background:transparent;color:#EF4444;border-color:rgba(239,68,68,.5)}
+                #pending-edits-bar button:disabled{opacity:.6;cursor:not-allowed}
+                .result-card.is-pending{border:1px solid #F59E0B !important;box-shadow:0 0 0 1px rgba(245,158,11,.35)}
+                .pending-badge{display:inline-block;margin-bottom:8px;padding:3px 10px;border-radius:999px;background:rgba(245,158,11,.15);color:#F59E0B;font-size:.75rem;font-weight:800}
+            `;
+            document.head.appendChild(st);
+            bar = document.createElement('div');
+            bar.id = 'pending-edits-bar';
+            bar.innerHTML = '<span id="pending-edits-text"></span>' +
+                '<button class="pe-apply" id="pe-apply-btn">Apply all changes</button>' +
+                '<button class="pe-discard" id="pe-discard-btn">Discard all</button>';
+            document.body.appendChild(bar);
+            document.getElementById('pe-apply-btn').onclick = () => window.applyAllPendingEdits();
+            document.getElementById('pe-discard-btn').onclick = () => window.discardAllPendingEdits();
+            return bar;
+        }
+
+        function updatePendingBar(customText) {
+            const bar = ensurePendingBar();
+            const n = window.pendingEdits.size;
+            bar.style.display = (n > 0 || window.__applyingBatch) ? 'flex' : 'none';
+            document.getElementById('pending-edits-text').textContent =
+                customText || `🟡 ${n} pending change${n === 1 ? '' : 's'}`;
+            const busy = window.__applyingBatch;
+            document.getElementById('pe-apply-btn').disabled = busy;
+            document.getElementById('pe-discard-btn').disabled = busy;
+        }
+
+        // Called from handleEditorSearch for every rendered card, and after staging/applying
+        window.__refreshPendingBadge = function (index, item) {
+            const btn = document.getElementById(`btn_save_${index}`);
+            if (!btn) return;
+            const card = btn.closest('.result-card');
+            if (!card) return;
+            const isPending = window.pendingEdits.has(window.__pendingKey(item));
+            card.classList.toggle('is-pending', isPending);
+            let badge = card.querySelector('.pending-badge');
+            if (isPending && !badge) {
+                badge = document.createElement('div');
+                badge.className = 'pending-badge';
+                badge.textContent = '🟡 Pending — not applied yet';
+                card.insertBefore(badge, card.firstChild);
+            } else if (!isPending && badge) {
+                badge.remove();
+            }
+            btn.disabled = false;
+            btn.style.backgroundColor = '';
+            btn.innerHTML = isPending
+                ? "<i class='ri-check-line'></i> Staged ✓"
+                : "<i class='ri-save-line'></i> Save to Batch";
+        };
+
+        // Post-save work for a group of questions: Top Mistakes cache + auto-resolve reports.
+        // Reports are fetched from Firestore ONCE for the whole group.
+        async function runPostSaveForEntries(entries) {
+            if (!entries || !entries.length) return 0;
+
+            // 1) Top Mistakes cache
+            if (typeof adminMistakesCache !== 'undefined' && adminMistakesCache['active_snapshot']) {
+                const snap = adminMistakesCache['active_snapshot'];
+                const lists = [snap.list, snap.listYear1, snap.listYear2, snap.listYear3];
+                entries.forEach(e => {
+                    const oldQ = (e.originalSnapshot.q || '').trim();
+                    lists.forEach(arr => {
+                        if (!Array.isArray(arr)) return;
+                        arr.forEach(m => {
+                            if (m && m.q && (m.q.trim() === e.newQ || m.q.trim() === oldQ)) {
+                                m.q = e.newQ; m.o = e.newO; m.a = e.newA;
+                            }
+                        });
+                    });
+                });
+                try { localStorage.setItem('medStorm_cached_top_mistakes', JSON.stringify(snap)); } catch (err) { }
+                if (typeof renderQuestionsAnalysis === 'function') {
+                    try { renderQuestionsAnalysis(snap); } catch (err) { }
+                }
+            }
+
+            // 2) Auto-resolve reports (match by old OR new question text)
+            const byNorm = new Map();
+            entries.forEach(e => {
+                byNorm.set(normQ(e.originalSnapshot.q), e);
+                byNorm.set(normQ(e.newQ), e);
+            });
+
+            let resolvedCount = 0;
+            const handledIds = new Set();
+            const fsUpdates = [];
+            const canWrite = !!(window.db && window.updateDoc && window.doc);
+
+            if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
+                allAdminReports.forEach(r => {
+                    if (!r || !r.question) return;
+                    const e = byNorm.get(normQ(r.question));
+                    if (!e) return;
+                    r.options = e.newO;
+                    r.correctIndex = e.newA;
+                    r.correctAnswer = e.newO[e.newA] || '';
+                    if (r.status !== 'resolved') {
+                        r.status = 'resolved';
+                        r.resolvedAt = Date.now();
+                        r.autoResolved = true;
+                        resolvedCount++;
+                        if (r.id) {
+                            handledIds.add(r.id);
+                            if (canWrite) {
+                                fsUpdates.push(
+                                    window.updateDoc(window.doc(window.db, 'reports', r.id), {
+                                        status: 'resolved', resolvedAt: Date.now(), autoResolved: true
+                                    }).catch(err => console.warn('Could not auto-resolve report:', r.id, err))
+                                );
+                            }
+                        }
+                    }
+                });
+            }
+
+            // One Firestore query for any other pending reports matching these questions
+            try {
+                if (window.collection && window.query && window.where && window.getDocs && canWrite) {
+                    const pSnap = await window.getDocs(
+                        window.query(window.collection(window.db, 'reports'), window.where('status', '==', 'pending'))
+                    );
+                    pSnap.forEach(d => {
+                        if (handledIds.has(d.id)) return;
+                        const dData = d.data();
+                        if (dData && dData.question && byNorm.has(normQ(dData.question))) {
+                            fsUpdates.push(
+                                window.updateDoc(d.ref, {
+                                    status: 'resolved', resolvedAt: Date.now(), autoResolved: true
+                                }).catch(() => { })
+                            );
+                            resolvedCount++;
+                            if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
+                                const inMem = allAdminReports.find(x => x.id === d.id);
+                                if (inMem) inMem.status = 'resolved';
+                            }
+                        }
+                    });
+                }
+            } catch (fsErr) {
+                console.warn('Firestore bulk resolve check error:', fsErr);
+            }
+
+            if (fsUpdates.length > 0) {
+                try { await Promise.all(fsUpdates); } catch (e) { }
+            }
+            if (typeof adminRenderReports === 'function') {
+                try { adminRenderReports(); } catch (e) { }
+            }
+            return resolvedCount;
+        }
+
+        // Called at the end of saveEditorDocToFirestore(docId): the whole module was just persisted,
+        // so any staged edits of that module are now saved (also covers move/delete/image saves).
+        window.__onDocPersisted = function (docId) {
+            const taken = [];
+            window.pendingEdits.forEach((e, k) => {
+                if (e.docId === docId) { taken.push(e); window.pendingEdits.delete(k); }
+            });
+            if (!taken.length) return;
+
+            document.querySelectorAll('.result-card.is-pending').forEach(card => {
+                const b = card.querySelector('[id^="btn_save_"]');
+                if (!b) return;
+                const idx = b.id.replace('btn_save_', '');
+                const it = window[`editRef_${idx}`];
+                if (it) window.__refreshPendingBadge(idx, it);
+            });
+
+            // During "Apply all" the post-save work is done once at the end instead
+            if (!window.__applyingBatch) runPostSaveForEntries(taken).catch(() => { });
+            updatePendingBar();
+        };
+
+        window.applyAllPendingEdits = async function () {
+            if (window.__applyingBatch || window.pendingEdits.size === 0) return;
+            const all = Array.from(window.pendingEdits.values());
+            const byDoc = {};
+            all.forEach(e => { (byDoc[e.docId] = byDoc[e.docId] || []).push(e); });
+            const docIds = Object.keys(byDoc);
+
+            if (!confirm(`Apply ${all.length} change(s) across ${docIds.length} module(s)?`)) return;
+
+            window.__applyingBatch = true;
+            const okEntries = [];
+            const failedDocs = [];
+
+            for (let i = 0; i < docIds.length; i++) {
+                const docId = docIds[i];
+                updatePendingBar(`⏳ Saving module ${i + 1}/${docIds.length}…`);
+                try {
+                    await saveEditorDocToFirestore(docId);   // hook removes these entries from pendingEdits
+                    okEntries.push(...byDoc[docId]);
+                } catch (err) {
+                    console.error('Apply failed for', docId, err);
+                    failedDocs.push(docId);
+                }
+            }
+
+            let resolved = 0;
+            try { resolved = await runPostSaveForEntries(okEntries); } catch (e) { console.warn(e); }
+
+            window.__applyingBatch = false;
+            updatePendingBar();
+
+            if (window.showToast) {
+                if (failedDocs.length === 0) {
+                    window.showToast(`Applied ${okEntries.length} changes across ${docIds.length} module(s)` +
+                        (resolved ? ` • ${resolved} report(s) auto-resolved` : ''), 'success');
+                } else {
+                    window.showToast(`Applied ${okEntries.length}. FAILED modules (still pending): ${failedDocs.join(', ')}`, 'error');
+                }
+            }
+        };
+
+        window.discardAllPendingEdits = function () {
+            if (window.__applyingBatch || window.pendingEdits.size === 0) return;
+            if (!confirm(`Discard ${window.pendingEdits.size} pending change(s)? Questions will be reverted to their saved version.`)) return;
+            window.pendingEdits.forEach(e => {
+                e.qRef.q = e.originalSnapshot.q;
+                e.qRef.o = e.originalSnapshot.o.slice();
+                e.qRef.a = e.originalSnapshot.a;
+            });
+            window.pendingEdits.clear();
+            updatePendingBar();
+            if (typeof window.handleEditorSearch === 'function') window.handleEditorSearch();
+        };
+
+        window.addEventListener('beforeunload', (e) => {
+            if (window.pendingEdits && window.pendingEdits.size > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // The per-question button: validate, then STAGE (no network).
+        window.saveEdits = function (index, docId) {
             const item = window[`editRef_${index}`];
             if (!item || !item.qRef) {
                 alert("Question reference not found. Please re-search and try again.");
                 return;
             }
-            const btn = document.getElementById(`btn_save_${index}`);
             const qInput = document.getElementById(`q_text_${index}`);
             const newQText = qInput ? qInput.value.trim() : '';
 
@@ -22244,7 +22494,7 @@
                 return;
             }
 
-            let newOptions = [];
+            const newOptions = [];
             let newAnswerIndex = -1;
 
             for (let rIdx = 0; rIdx < rows.length; rIdx++) {
@@ -22271,133 +22521,24 @@
                 return;
             }
 
-            const originalQText = item.qRef ? (item.qRef.q || '') : '';
-            btn.innerHTML = "<i class='ri-loader-4-line' style='animation:spin 1s linear infinite; display:inline-block;'></i> Saving... ⏳";
-            btn.disabled = true;
+            const qRef = item.qRef;
+            qRef.id = qRef.id || (typeof generateQuestionId === 'function' ? generateQuestionId() : Math.random().toString(36).substr(2, 12));
+            const key = docId + ':' + qRef.id;
+            const existing = window.pendingEdits.get(key);
+            // keep the ORIGINAL (first-staged) version so Discard and report matching work
+            const originalSnapshot = existing
+                ? existing.originalSnapshot
+                : { q: qRef.q || '', o: (qRef.o || []).slice(), a: qRef.a };
 
-            try {
-                item.qRef.q = newQText;
-                item.qRef.o = newOptions;
-                item.qRef.a = newAnswerIndex;
-                item.qRef.id = item.qRef.id || (typeof generateQuestionId === 'function' ? generateQuestionId() : Math.random().toString(36).substr(2, 12));
+            qRef.q = newQText;
+            qRef.o = newOptions;
+            qRef.a = newAnswerIndex;
 
-                await saveEditorDocToFirestore(docId);
+            window.pendingEdits.set(key, { docId, qRef, originalSnapshot, newQ: newQText, newO: newOptions, newA: newAnswerIndex });
 
-                // Real-time sync: update Top Mistakes cache if this question is in the mistakes list
-                if (typeof adminMistakesCache !== 'undefined' && adminMistakesCache['active_snapshot']) {
-                    const snap = adminMistakesCache['active_snapshot'];
-                    const syncList = (arr) => {
-                        if (!Array.isArray(arr)) return;
-                        arr.forEach(mItem => {
-                            if (mItem && mItem.q && (mItem.q.trim() === newQText || mItem.q.trim() === originalQText.trim())) {
-                                mItem.q = newQText;
-                                mItem.o = newOptions;
-                                mItem.a = newAnswerIndex;
-                            }
-                        });
-                    };
-                    syncList(snap.list);
-                    syncList(snap.listYear1);
-                    syncList(snap.listYear2);
-                    syncList(snap.listYear3);
-                    try { localStorage.setItem('medStorm_cached_top_mistakes', JSON.stringify(snap)); } catch (e) { }
-                    if (typeof renderQuestionsAnalysis === 'function') {
-                        try { renderQuestionsAnalysis(snap); } catch (e) { }
-                    }
-                }
-
-                // Real-time sync: AUTO-RESOLVE all reports for this question!
-                const normOld = (originalQText || '').trim().toLowerCase().replace(/\s+/g, ' ');
-                const normNew = (newQText || '').trim().toLowerCase().replace(/\s+/g, ' ');
-                let resolvedCount = 0;
-
-                if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
-                    const toUpdateInFirestore = [];
-                    allAdminReports.forEach(r => {
-                        if (!r || !r.question) return;
-                        const nq = r.question.trim().toLowerCase().replace(/\s+/g, ' ');
-                        if (nq === normOld || nq === normNew) {
-                            r.options = newOptions;
-                            r.correctIndex = newAnswerIndex;
-                            r.correctAnswer = newOptions[newAnswerIndex] || '';
-                            if (r.status !== 'resolved') {
-                                r.status = 'resolved';
-                                r.resolvedAt = Date.now();
-                                r.autoResolved = true;
-                                resolvedCount++;
-                                if (r.id && window.db && window.updateDoc && window.doc) {
-                                    toUpdateInFirestore.push(
-                                        window.updateDoc(window.doc(window.db, 'reports', r.id), {
-                                            status: 'resolved',
-                                            resolvedAt: Date.now(),
-                                            autoResolved: true
-                                        }).catch(err => console.warn('Could not auto-resolve report:', r.id, err))
-                                    );
-                                }
-                            }
-                        }
-                    });
-                    if (toUpdateInFirestore.length > 0) {
-                        try { await Promise.all(toUpdateInFirestore); } catch (e) { }
-                    }
-                }
-
-                // Also check and bulk-resolve any other pending reports in Firestore matching this question
-                try {
-                    if (window.collection && window.query && window.where && window.getDocs && window.updateDoc && window.db) {
-                        const qPending = window.query(
-                            window.collection(window.db, 'reports'),
-                            window.where('status', '==', 'pending')
-                        );
-                        const pSnap = await window.getDocs(qPending);
-                        const fsUpdates = [];
-                        pSnap.forEach(d => {
-                            const dData = d.data();
-                            if (dData && dData.question) {
-                                const dn = dData.question.trim().toLowerCase().replace(/\s+/g, ' ');
-                                if (dn === normOld || dn === normNew) {
-                                    fsUpdates.push(
-                                        window.updateDoc(d.ref, {
-                                            status: 'resolved',
-                                            resolvedAt: Date.now(),
-                                            autoResolved: true
-                                        }).catch(e => { })
-                                    );
-                                    if (typeof allAdminReports !== 'undefined' && Array.isArray(allAdminReports)) {
-                                        const inMem = allAdminReports.find(x => x.id === d.id);
-                                        if (inMem) inMem.status = 'resolved';
-                                    }
-                                }
-                            }
-                        });
-                        if (fsUpdates.length > 0) {
-                            await Promise.all(fsUpdates);
-                        }
-                    }
-                } catch (fsErr) {
-                    console.warn('Firestore bulk resolve check error:', fsErr);
-                }
-
-                if (typeof adminRenderReports === 'function') {
-                    try { adminRenderReports(); } catch (e) { }
-                }
-
-                btn.innerHTML = "<i class='ri-check-line'></i> Saved successfully";
-                btn.style.backgroundColor = "#10B981";
-                if (window.showToast) {
-                    window.showToast(resolvedCount > 0 ? `Saved! Auto-resolved ${resolvedCount} report(s) for this question.` : 'Question saved successfully!', 'success');
-                }
-                setTimeout(() => {
-                    btn.innerHTML = "<i class='ri-save-line'></i> Save Changes";
-                    btn.disabled = false;
-                    btn.style.backgroundColor = "";
-                }, 2000);
-            } catch (error) {
-                console.error("Save error:", error);
-                alert("An error occurred while saving: " + (error.message || error));
-                btn.innerHTML = "<i class='ri-save-line'></i> Save Changes";
-                btn.disabled = false;
-            }
+            window.__refreshPendingBadge(index, item);
+            updatePendingBar();
+            if (window.showToast) window.showToast(`Staged — ${window.pendingEdits.size} pending`, 'success');
         };
 
         window.uploadImage = async function (event, index, docId) {
