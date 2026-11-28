@@ -2016,6 +2016,138 @@
             color: #86efac;
         }
 
+        .question-explanation-box {
+            margin-top: 1.15rem;
+            background: rgba(16, 185, 129, 0.07);
+            border: 1px solid rgba(16, 185, 129, 0.28);
+            border-left: 4px solid var(--accent);
+            border-radius: 14px;
+            overflow: hidden;
+            animation: expSlideIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: left;
+        }
+
+        [data-theme='black'] .question-explanation-box {
+            background: rgba(16, 185, 129, 0.06);
+            border-color: rgba(255, 255, 255, 0.14);
+            border-left: 4px solid var(--accent);
+        }
+
+        [data-theme='light'] .question-explanation-box {
+            background: #F0FDF4;
+            border-color: rgba(21, 128, 61, 0.22);
+            border-left: 4px solid var(--accent);
+        }
+
+        [data-mode='mistakes'] .question-explanation-box {
+            background: rgba(239, 68, 68, 0.07);
+            border-color: rgba(239, 68, 68, 0.28);
+        }
+
+        [data-mode='favorites'] .question-explanation-box {
+            background: rgba(59, 130, 246, 0.07);
+            border-color: rgba(59, 130, 246, 0.28);
+        }
+
+        [data-theme='light'][data-mode='mistakes'] .question-explanation-box {
+            background: #FEF2F2;
+            border-color: rgba(220, 38, 38, 0.24);
+        }
+
+        [data-theme='light'][data-mode='favorites'] .question-explanation-box {
+            background: #EFF6FF;
+            border-color: rgba(37, 99, 235, 0.24);
+        }
+
+        @keyframes expSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .explanation-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--accent-light);
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            text-align: left;
+        }
+
+        [data-theme='light'] .explanation-header {
+            color: var(--accent-dark);
+        }
+
+        .explanation-header:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        [data-theme='light'] .explanation-header:hover {
+            background: rgba(15, 23, 42, 0.04);
+        }
+
+        .explanation-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .explanation-title i {
+            font-size: 1.05rem;
+            color: var(--accent);
+        }
+
+        .explanation-chevron {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            transition: transform 0.2s ease;
+        }
+
+        .question-explanation-box.collapsed .explanation-body {
+            display: none;
+        }
+
+        .explanation-body {
+            padding: 0 1rem 0.95rem 1rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.75rem;
+            font-size: 0.95rem;
+            line-height: 1.68;
+            color: var(--text-light);
+            word-break: break-word;
+        }
+
+        .explanation-body .exp-para {
+            margin: 0;
+        }
+
+        .explanation-body .exp-para + .exp-para {
+            margin-top: 0.55rem;
+        }
+
+        .explanation-body .exp-section-label {
+            color: var(--accent-light);
+            font-weight: 800;
+        }
+
+        [data-theme='light'] .explanation-body .exp-section-label {
+            color: var(--accent-dark);
+        }
+
         .finish-quiz-btn {
             display: inline-flex;
             align-items: center;
@@ -3571,6 +3703,22 @@
 
             #ai-explain-btn.hidden {
                 display: none !important;
+            }
+
+            .question-explanation-box {
+                margin-top: 0.95rem;
+                border-radius: 12px;
+            }
+
+            .explanation-header {
+                padding: 0.65rem 0.85rem;
+                font-size: 0.86rem;
+            }
+
+            .explanation-body {
+                padding: 0.65rem 0.85rem 0.85rem;
+                font-size: 0.89rem;
+                line-height: 1.62;
             }
 
             .map-drawer {
@@ -7178,6 +7326,18 @@
                         Loading question...
                     </div>
                     <div class="options-container" id="options-box"></div>
+
+                    <div id="question-explanation-box" class="question-explanation-box" style="display: none;">
+                        <button type="button" class="explanation-header" onclick="toggleExplanationBox()"
+                            aria-expanded="true" title="Toggle Explanation">
+                            <span class="explanation-title">
+                                <i class="ri-lightbulb-flash-fill"></i>
+                                <span>Explanation</span>
+                            </span>
+                            <i class="ri-arrow-up-s-line explanation-chevron" id="explanation-chevron"></i>
+                        </button>
+                        <div class="explanation-body" id="question-explanation-body" dir="auto"></div>
+                    </div>
 
                     <div class="quiz-footer">
                         <div class="action-buttons" style="display: flex; gap: 8px; align-items: center;">
@@ -12707,6 +12867,102 @@
             setTimeout(() => { toast.remove(); }, 4000);
         };
 
+        function decodeAndEscapeExplanation(raw) {
+            const entityMap = {
+                '&rarr;': '→',
+                '&larr;': '←',
+                '&harr;': '↔',
+                '&ge;': '≥',
+                '&le;': '≤',
+                '&ne;': '≠',
+                '&deg;': '°',
+                '&times;': '×',
+                '&plusmn;': '±',
+                '&alpha;': 'α',
+                '&beta;': 'β',
+                '&gamma;': 'γ',
+                '&delta;': 'δ',
+                '&mu;': 'μ',
+                '&nbsp;': ' ',
+                '&amp;': '&',
+                '&lt;': '<',
+                '&gt;': '>',
+                '&quot;': '"',
+                '&#39;': "'"
+            };
+            const decoded = String(raw).replace(/&(?:rarr|larr|harr|ge|le|ne|deg|times|plusmn|alpha|beta|gamma|delta|mu|nbsp|amp|lt|gt|quot|#39);/gi, m => {
+                return entityMap[m.toLowerCase()] ?? m;
+            });
+            return decoded
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatExplanationHTML(rawText) {
+            const headingsPattern = '(?:Clinical Significance|Clinical Principles|Clinical Pharmacology|Clinical Features|Clinical Use|Clinical Presentation|Differential Diagnosis|Pathophysiology|Pharmacology|Mechanism|Management|Diagnosis|Anatomy|Physiology|Etiology|Treatment|Complications|Prognosis|Epidemiology|Investigations|Risk Factors|Contraindications|Side Effects|Adverse Effects|Indications|Key Points|Summary|Note)';
+            let normalized = String(rawText).replace(/\r\n/g, '\n').trim();
+            normalized = normalized.replace(
+                new RegExp(`([.!?)]|\\S)\\s*(${headingsPattern}:)`, 'g'),
+                (match, prev, heading) => `${prev}\n${heading}`
+            );
+            normalized = normalized.replace(
+                new RegExp(`(^|\\n)(${headingsPattern}:)(\\S)`, 'g'),
+                '$1$2 $3'
+            );
+
+            const paragraphs = normalized.split(/\n+/).map(p => p.trim()).filter(Boolean);
+            const headingRegex = new RegExp(`^(${headingsPattern}:)\\s*(.*)$`);
+
+            return paragraphs.map(p => {
+                const m = p.match(headingRegex);
+                if (m) {
+                    const label = decodeAndEscapeExplanation(m[1]);
+                    const rest = decodeAndEscapeExplanation(m[2]);
+                    return `<p class="exp-para"><strong class="exp-section-label">${label}</strong>${rest ? ' ' + rest : ''}</p>`;
+                }
+                return `<p class="exp-para">${decodeAndEscapeExplanation(p)}</p>`;
+            }).join('');
+        }
+
+        function renderQuestionExplanation(q, shouldShow) {
+            const box = document.getElementById('question-explanation-box');
+            const body = document.getElementById('question-explanation-body');
+            if (!box || !body) return;
+
+            const rawExp = q && (typeof q.explanation === 'string' ? q.explanation : (typeof q.explain === 'string' ? q.explain : ''));
+            const expText = rawExp ? rawExp.trim() : '';
+
+            if (!shouldShow || !expText) {
+                box.style.display = 'none';
+                box.classList.remove('collapsed');
+                body.innerHTML = '';
+                return;
+            }
+
+            body.innerHTML = formatExplanationHTML(expText);
+            box.classList.remove('collapsed');
+            const header = box.querySelector('.explanation-header');
+            const chevron = document.getElementById('explanation-chevron');
+            if (header) header.setAttribute('aria-expanded', 'true');
+            if (chevron) chevron.className = 'ri-arrow-up-s-line explanation-chevron';
+            box.style.display = 'block';
+        }
+        window.renderQuestionExplanation = renderQuestionExplanation;
+
+        function toggleExplanationBox() {
+            const box = document.getElementById('question-explanation-box');
+            if (!box) return;
+            const collapsed = box.classList.toggle('collapsed');
+            const header = box.querySelector('.explanation-header');
+            const chevron = document.getElementById('explanation-chevron');
+            if (header) header.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            if (chevron) chevron.className = (collapsed ? 'ri-arrow-down-s-line' : 'ri-arrow-up-s-line') + ' explanation-chevron';
+        }
+        window.toggleExplanationBox = toggleExplanationBox;
+
         function loadQuestion() {
             if (typeof checkDevToolsSecurity === 'function') checkDevToolsSecurity();
             window._questionStartTime = Date.now();
@@ -12919,8 +13175,8 @@
             }
 
             const aiBtn = document.getElementById('ai-explain-btn');
+            const isAnswered = (ans !== null && Session.quizMode !== 'exam') || Session.reviewing;
             if (aiBtn) {
-                const isAnswered = (ans !== null && Session.quizMode === 'tutor') || Session.reviewing;
                 if (isAnswered) {
                     aiBtn.classList.remove('hidden');
                     aiBtn.style.display = 'inline-flex';
@@ -12930,6 +13186,7 @@
                 }
                 aiBtn.onclick = () => explainQuestionWithAI(q.q, q.o, q.a);
             }
+            renderQuestionExplanation(q, isAnswered);
 
             const favBtn = document.getElementById('btn-favorite');
             const isFav = getQuestionFavorite(q);
@@ -13087,6 +13344,7 @@
                 aiBtn.classList.remove('hidden');
                 aiBtn.style.display = 'inline-flex';
             }
+            renderQuestionExplanation(q, true);
 
             if (window.showToast) {
                 window.showToast("⏰ انتهى وقت السؤال!", "error");
@@ -13174,6 +13432,7 @@
                 aiBtn.classList.remove('hidden');
                 aiBtn.style.display = 'inline-flex';
             }
+            renderQuestionExplanation(q, true);
 
             recordVote(q.q, idx, q.o.length);
             showVotePercentages(q.q, q.o.length, Session.index);
@@ -13304,6 +13563,7 @@
                 aiBtn.classList.remove('hidden');
                 aiBtn.style.display = 'inline-flex';
             }
+            renderQuestionExplanation(q, true);
 
             if (!Session.answers.includes(null) && !Session.reviewing) {
                 setTimeout(() => { finishQuiz(); }, 1000);
